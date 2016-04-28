@@ -22,7 +22,7 @@
 
 
 </style>
-
+<load href=".__PUBLIC__/Js/bjinvoice.js"/>
 <div class="moduleMenu">
     <ul>
         <li>{$Think.lang.$navName}</li>
@@ -375,7 +375,7 @@
          * 发票开具
          */
         openInvoice: function (invoiceid) {
-
+            InvoiceOper.openInvoice();
             // 设定订单状态为已打印
             $.ajax({
                 type: "GET",
