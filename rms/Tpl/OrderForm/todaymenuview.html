@@ -1,0 +1,94 @@
+<div class="moduleMenu">
+    <ul>
+        <li><input id="todaymenuAfterDate" type="button" value="上一个日期" onclick="OrderFormTodayMenuModel.yesterdayMenuClick();"></li>
+        <li><input id="todaymenuSelectDate" name="todaymenuSelectDate" class="easyui-datebox" value="{$todayDate}"></li>
+        <li><input id="todaymenuBeforeDate" type="button" value="下一个日期" onclick="OrderFormTodayMenuModel.tomorrowMenuClick();"></li>
+        <li style="float: right;">按ESC键退出</li>
+    </ul>
+</div>
+<div style="height: 500px;">
+        <textarea id="todaymenuContent" class="detailedViewTextBox"
+                  style="border:1px solid black;width: 99%;height: 500px;" readonly="readonly" rows="20">{$todaymenuContent}</textarea>
+</div>
+<script>
+    var OrderFormTodayMenuModel = {
+        // 今日菜单功能中看昨天的菜单
+        yesterdayMenuClick: function () {
+            var date = $('#todaymenuSelectDate').datebox('getValue');
+            date = date.split("-");// 以"-"分割字符串，返回数组；
+            var d = new Date(date[0], date[1], date[2]);   // 格式化为Date对像;
+            if (d == "Invalid Date") {
+                alert("非日期");
+                return;
+            }
+            // 当前日期的毫秒数 + 天数 * 一天的毫秒数
+            var n = d.getTime() + 1 * 24 * 60 * 60 * 1000;
+            var result = new Date(n);
+            // 格式化日期
+            var month = result.getMonth();
+            if (month < 10) {
+                month = '0' + month;
+            }
+            var date = result.getDate();
+            if (date < 10) {
+                date = '0' + date;
+            }
+
+            var yesterday = result.getFullYear() + "-" + month + "-" + date;
+            $('#todaymenuSelectDate').datebox('setValue', yesterday);
+
+            $.ajax({
+                type: "GET",
+                url: "__URL__/getTodaymenuContent/date/" + yesterday,
+                dataType: "json",
+                success: function (returnData) {
+                    if(returnData['success'] == 'success'){
+                        $('#todaymenuContent').html(returnData['content']);
+                    }else{
+                        $('#todaymenuContent').html('');
+                    }
+                }
+            })
+        },
+
+        // 今日菜单功能中看明天的菜单
+        tomorrowMenuClick: function () {
+            var date = $('#todaymenuSelectDate').datebox('getValue');
+            date = date.split("-");// 以"-"分割字符串，返回数组；
+            var d = new Date(date[0], date[1], date[2]);   // 格式化为Date对像;
+            if (d == "Invalid Date") {
+                alert("非日期");
+                return;
+            }
+            // 当前日期的毫秒数 + 天数 * 一天的毫秒数
+            var n = d.getTime() - 1 * 24 * 60 * 60 * 1000;
+            var result = new Date(n);
+            // 格式化日期
+            var month = result.getMonth();
+            if (month < 10) {
+                month = '0' + month;
+            }
+            var date = result.getDate();
+            if (date < 10) {
+                date = '0' + date;
+            }
+
+            var tomorrow = result.getFullYear() + "-" + month + "-" + date;
+            $('#todaymenuSelectDate').datebox('setValue', tomorrow);
+            $.ajax({
+                type: "GET",
+                url: "__URL__/getTodaymenuContent/date/" + tomorrow,
+                dataType: "json",
+                success: function (returnData) {
+                    if(returnData['success'] == 'success'){
+                        $('#todaymenuContent').html(returnData['content']);
+                    }else{
+                        $('#todaymenuContent').html('');
+                    }
+                }
+            })
+        }
+
+
+    }
+</script>

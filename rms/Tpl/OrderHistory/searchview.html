@@ -1,0 +1,114 @@
+<div class="moduleMenu">
+    <ul>
+        <li>{$Think.lang.$navName}</li>
+        <li><a href="javascript:void(0);" class="moduleName" onclick="updateTab('__URL__/listview');">&nbsp;&gt;{$Think.lang.$moduleName}</a></li>
+        <li>&nbsp;&gt;历史订单查询操作</li>
+        <li style="width: 50px;">&nbsp;</li>
+
+
+        <li style="float: right;margin-right: 40px;"><a href="javascript:void(0);" class="moduleName" onclick="closeTab();">关闭</a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="closeTab();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
+    </ul>
+</div>
+
+<tagLib name="easyui" />
+<div style="height:400px;width:100%;clear:both;" class="ModuleListviewDiv">
+    <easyui:datagrid options="datagrid.options" fields="datagrid.fields"  />
+</div>
+
+<div id="orderhistory-searchview-datagrid-toolbar" style="padding:5px;height:auto">
+    <form>
+            查询选项
+            <select name="searchOption" id="searchOption" class="txtBox" style="width:100px">
+                <if condition='$searchOptionValue'>
+                    <option value="{$searchOptionValue}">{$Think.lang.$searchOptionValue}</option>
+                    <else/>
+                    <option>全部</option>
+                </if>
+                <foreach name="searchOption" item="value">
+                    <option value="{$value}">{$Think.lang.$value}</option>
+                </foreach>
+            </select>
+            查询内容
+            <input id="searchText" name="searchText"  type="text"   style="width:240px"  value="{$searchTextValue}">
+            开始日期:
+            <input id="startDate" name="startDate" type="text" class="easyui-datebox" required="required" value="{$startDate}" style="width:100px">
+            结束日期:
+            <input id="endDate" name="endDate" type="text" class="easyui-datebox" required="required" value="{$endDate}" style="width:100px">
+            午别：
+            <select name="searchAp" id="searchAp" class="txtBox" style="width:150px">
+                <if condition="$searchAp">
+                    <option value="{$searchAp}">{$searchAp}</option>
+                </if>
+                <option value="全天">全天</option>
+                <option value="上午">上午</option>
+                <option value="下午">下午</option>
+            </select>
+        <a href="javascript:;" onclick="OrderHistorySearchviewModule.search(this);" class="easyui-linkbutton" iconCls="icons-table-table">查询</a>
+    </form>
+</div>
+
+
+<script>
+    var OrderHistorySearchviewModule = {
+        dialog:   '#globel-dialog-div',
+        datagrid: '#orderhistory_index_datagrid',
+        //初始化
+        init:function(){
+            //设置div的高度
+            $('.ModuleListviewDiv').height(IndexIndexModule.operationHeight);
+        },
+
+        //操作格式化
+        operate: function (val, rowData, rowIndex) {
+            var btn = [];
+            btn.push('<a href="javascript:void(0);" onclick="OrderHistorySearchviewModule.detailview(' + rowData.orderformid + ')">查看</a>');
+            return btn.join(' | ');
+        },
+
+        //查看记录
+        detailview: function (id) {
+            var that = this;
+            $(that.dialog).dialog({
+                title: '历史订单详情',
+                iconCls: 'icons-application-application_add',
+                width: 1000,
+                height: 540,
+                cache: false,
+                href: "__URL__/detailview/ordersn/"+id,
+                modal: true,
+                collapsible: false,
+                minimizable: false,
+                resizable: false,
+                maximizable: false,
+                buttons: [{
+                    text: '关闭',
+                    iconCls: 'icons-arrow-cross',
+                    handler: function () {
+                        $(that.dialog).dialog('close');
+                    }
+                }]
+            });
+        },
+
+        //搜索
+        search: function(that){
+            var queryParams = $(this.datagrid).datagrid('options').queryParams;
+            $.each($(that).parent('form').serializeArray(), function() {
+                queryParams[this['name']] = this['value'];
+            });
+            $(this.datagrid).datagrid({pageNumber: 1});
+        }
+
+
+    }
+
+    $(function(){
+        OrderHistorySearchviewModule.init();
+    })
+</script>
+
+
+
+
+

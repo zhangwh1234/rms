@@ -1,0 +1,146 @@
+<script type="text/javascript">
+    $(function(){
+        $('#returnView{$moduleName}  input[name=returncontent]').focus();
+        
+        $('#returnView{$moduleName}').form({  
+            url:'__URL__/returnOrderOperation',
+            onSubmit: function(){  
+                //进行表单验证  
+                //如果返回false阻止提交 
+                if($('#returnView{$moduleName}  input[name=returncontent]').val() == ''){
+                    alert('退餐的原因不能为空!');
+                    return false;
+                }
+            },  
+            success:function(data){ 
+                //返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                //更新一个选项卡面板 
+                $('#operation').tabs('update',{  
+                    tab:tab,
+                    options: {
+                        cache : false,
+                        content : data,
+                        href:''
+                    }
+                });
+                return;
+                var data=eval("("+data+")");//转换为数组对象 
+                data = data.data;
+                //返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+
+                //更新一个选项卡面板  
+                $('#operation').tabs('update',{  
+                    tab:tab,
+                    options:{href:'__URL__/detailview?record='+data.record}                                                
+                });  
+            }  
+        }); 
+
+        //新建form提交程序
+        $('#returnView{$moduleName} input[name=createsave]').bind('click',function(){
+            //提交表单  
+            $('#returnView{$moduleName}').submit();
+        }) 
+
+    })
+</script>
+<div class="moduleoperator">
+    <form id="returnView{$moduleName}" name="returnView{$moduleName}" method="post" style="border:1px solid white;margin-top: 0px;" >  
+        <input id="{$moduleName}Action" type="hidden" value="createview" />  
+        <input name="record" type="hidden" value="{$record}" >
+        <input name="returnAction" type="hidden" value="{$returnAction}">    
+        <table border="0" cellspacing="0" cellpadding="0" width="100%" align="center" bgcolor="">     
+            <tr>
+                <td>
+                    <table border="0" cellspacing="0" cellpadding="3" width="100%" class="small">
+                        <tr style="line-height: 15px;" >
+                        <td class="dvtTabCache" style="width:20px" nowrap>&nbsp;</td>
+                        <td class="dvtSelectedCell" align="center" nowrap> 退餐操作 </td>
+                        <td class="dvtTabCache" style="width:80%">&nbsp;</td>
+                        <tr>
+                    </table>
+                </td>
+            </tr>
+
+            <tr>
+                <td valign="top" align="center" >
+                    <div id="basicTab" style="border: 1px solid #e0dddd; background: white;">
+                        <table border="0" cellspacing=0 cellpadding=0 width="98%" class="small">
+                            <tr>
+                                <td align="right"></td>
+                                <td align="left">
+                                    <input  name="createsave" title="" accessKey="" class="crmbutton small save"   type="button"   value="  {$Think.lang.Button_Save} F9 " style="width:80px;margin-left:200px;margin-right:2px;margin-top:2px;margin-bottom:2px;">
+                                    <input title="{$Think.lang.Button_Cancel}" accessKey="" class="crmbutton small cancel" onclick="updateTab('__APP__/{$moduleName}/{$returnAction}')" type="button" name="button" value="  {$Think.lang.Button_Cancel} F4 " style="width:80px;margin-left:2px;margin-top:2px;margin-bottom:2px;"></td>
+                                <td>
+
+                                <td> 
+                                </td>
+                            </tr>
+                            <volist name="returnBlocks"  id="data" >
+                                <tr>
+                                    <td colspan="4" class="tabBlockViewHeader">
+                                        {$Think.lang.$key}
+                                    </td>
+                                </tr>
+
+                                <!-- Here we should include the uitype handlings-->
+                                <volist key="label" id="subdata" name="data">
+                                    <tr style="border: 1px solid black;background: #F0F0F0;">
+                                        <volist key="mainlabel" id="maindata" name="subdata">                
+                                            <include file='Module/editviewUI' />       
+                                        </volist>
+                                    </tr>
+                                </volist>
+                                <tr style="line-height: 5px;"><td>&nbsp;</td></tr>
+                            </volist>
+
+                        </table>
+
+                    </div>
+                </td>        
+            </tr>
+        </table>
+    </form>       
+
+    <table border="0" cellspacing="0" cellpadding="0" width="99%" align="0" bgcolor="">
+
+        <tr>
+            <td valign=top align="center" >
+                <div id="basicTab" style="border: 1px solid #e0dddd; background: white;">
+                    <table border=0 cellspacing=0 cellpadding=0 width="98%" class="small">
+
+                        <!-- 这里显示具体的编辑 -->
+
+                        <volist name="blocks"  id="data" >
+                            <tr>
+                                <td colspan=4 class="tabBlockViewHeader">
+                                    {$Think.lang.$key}
+                                </td>
+                            </tr>
+
+                            <!-- Here we should include the uitype handlings-->
+                            <volist key="label" id="subdata" name="data">
+                                <tr style="height:30px;border: 1px solid black;background: #F0F0F0;">
+                                    <volist key="mainlabel" id="maindata" name="subdata">  
+                                         <include file='Module/detailviewUI' />       
+                                    </volist>
+                                </tr>
+                            </volist>
+                            <tr style="line-height: 2px;"><td>&nbsp;</td></tr>
+                        </volist>
+
+
+                    </table>
+
+                </div>
+
+
+            </td>
+        </tr>
+    </table>
+</div>
+
+ 
+ 

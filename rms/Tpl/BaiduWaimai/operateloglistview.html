@@ -1,0 +1,62 @@
+<!-- 操作信息管理列表 -->
+<table id="baiduwaimaiLogListviewTable" title="操作日志管理">
+</table>
+    
+<script>
+
+	Namespace.register('baiduwaimai.LogListview');
+	//定义列表
+	baiduwaimai.LogListview.table  = $('#baiduwaimaiLogListviewTable');
+	baiduwaimai.LogListview.table.datagrid(
+			{
+				nowrap : "true",
+				fitColumns : "true",
+				singleSelect : "true",
+				autoRowHeight : "true",
+				striped : "true",
+				border : "false",
+				rownumbers : "false", //显示行号
+				showFooter : 'true',
+				pagination : true,
+				pagePosition : 'bottom',
+				fit:true,
+				columns : [ [
+						{
+							field : 'logid',
+							title : 'id',
+							hidden : 'true',
+							width : 100
+						},
+						{
+							field : 'operate',
+							title : '操作情况',
+							width : 110,
+							align : 'center'
+						},
+						{
+							field : 'date',
+							title : '日期时间',
+							width : 50,
+							align : 'center'
+						}
+						
+						 ] ]
+				//onSelect : orderHandleSearchviewAddressSelectRow, //选择行
+				//onClickRow : orderHandleSearchviewAddressClickRow //单击行事件
+			});
+
+	
+	//定义查询返回的订单数据
+	baiduwaimai.LogListview.listData = '{$listData}';
+	console.info(baiduwaimai.LogListview.listData);
+	//转换成json对象
+	baiduwaimai.LogListview.listData = $.parseJSON( baiduwaimai.LogListview.listData  );
+	
+	//载入订单数据，初始化
+	baiduwaimai.LogListview.table.datagrid('loadData',
+			baiduwaimai.LogListview.listData);
+		
+	
+
+	
+</script>

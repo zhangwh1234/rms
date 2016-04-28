@@ -1,0 +1,220 @@
+<!-- 商户信息管理列表 -->
+<table id="baiduwaimaiShopinfoListviewTable" title="商户管理">
+</table>
+<div id="baiduwaimaiShopinfoListviewTableToolbar">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true"
+       onclick="baiduwaimaiShopinfoListviewCreate();">新建商户参数</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true"
+       onclick="baiduwaimaiShopinfoList('__URL__/shopinfoList');">显示百度服务器上商户信息</a>
+
+</div>
+
+<script>
+
+    Namespace.register('baiduwaimai.shopinfoListview');
+    //定义列表
+    baiduwaimai.shopinfoListview.table = $('#baiduwaimaiShopinfoListviewTable');
+    baiduwaimai.shopinfoListview.table.datagrid(
+            {
+                nowrap: "true",
+                fitColumns: "false",
+                singleSelect: "true",
+                autoRowHeight: "true",
+                striped: "true",
+                border: "false",
+                rownumbers: "false", //显示行号
+                showFooter: 'true',
+                pagination: true,
+                pagePosition: 'bottom',
+                fit: true,
+                toolbar: '#baiduwaimaiShopinfoListviewTableToolbar',
+                columns: [[
+                    {
+                        field: 'shopinfoid',
+                        title: 'id',
+                        hidden: 'true',
+                        width: 10
+                    },
+                    {
+                        field: 'name',
+                        title: '商户名称',
+                        width: 15,
+                        align: 'left'
+                    },
+
+                    {
+                        field: "shopinfooperation",
+                        width: 10,
+                        title: '商户参数管理',
+                        align: 'center',
+                        formatter: function (value, rowData,
+                                             rowIndex) {
+                            var operation;
+                            operation = '';
+                            operation += "<a href='javascript:void(0);' onclick='baiduwaimaiUpdateRegin(&apos;__URL__/shopinfoDetailview/shopinfoid/"
+                                    + rowData.shopinfoid + "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>查看</a>";
+                            operation += "<a href='javascript:void(0);' onclick='baiduwaimaiUpdateRegin(&apos;__URL__/shopinfoEditview/shopinfoid/"
+                                    + rowData.shopinfoid + "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>编辑</a>";
+
+                            return operation;
+                        }
+                    },
+
+                    {
+                        field: "operation",
+                        width: 90,
+                        title: '操作',
+                        align: 'center',
+                        formatter: function (value, rowData,
+                                             rowIndex) {
+                            var operation;
+                            operation = '';
+                                operation += "<a href='javascript:void(0);' onclick='baiduwaimaiCreateShopinfo(&apos;__URL__/shopinfoCreate/shopinfoid/"
+                                        + rowData.shopinfoid + "&apos;)' class='orderHandleDetailview'  style='margin-left:0px;'>创建商户</a>";
+                            operation += "&nbsp;|&nbsp;";
+                            operation += "<a href='javascript:void(0);' onclick='baiduwaimaiOfflineShopinfo(&apos;__URL__/shopinfoOffline/shopinfoid/"
+                                        + rowData.shopinfoid + "&apos;)' class='orderHandleDetailview'  style='margin-left:0px;'>下线商户</a>";
+                            operation += "&nbsp;|&nbsp;";
+                            operation += "<a href='javascript:void(0);' onclick='baiduwaimaiUpdateShopinfo(&apos;__URL__/shopinfoUpdate/shopinfoid/"
+                                    + rowData.shopinfoid + "&apos;)' class='orderHandleDetailview'  style='margin-left:0px;'>更新商户</a>";
+                            operation += "&nbsp;|&nbsp;";
+
+                            operation += "<a href='javascript:void(0);' onclick='baiduwaimaiCloseShopinfo(&apos;__URL__/shopinfoClose/shopinfoid/"
+                                        + rowData.shopinfoid + "&apos;)' class='orderHandleDetailview'  style='margin-left:0px;'>暂停营业</a>";
+                            operation += "&nbsp;|&nbsp;";
+                            operation += "<a href='javascript:void(0);' onclick='baiduwaimaiOpenShopinfo(&apos;__URL__/shopinfoOpen/shopinfoid/"
+                                        + rowData.shopinfoid + "&apos;)' class='orderHandleDetailview'  style='margin-left:0px;'>正常营业</a>";
+
+                            operation += "&nbsp;|&nbsp;";
+                            operation += "<a href='javascript:void(0);' onclick='baiduwaimaiThresholdShopinfo(&apos;__URL__/shopinfoThreshold/shopinfoid/"
+                                    + rowData.shopinfoid + "&apos;)' class='orderHandleDetailview' >上传订单阈值</a>";
+                            operation += "&nbsp;|&nbsp;";
+                            operation += "<a href='javascript:void(0);' onclick='baiduwaimaiDeliveryDelayShopinfo(&apos;__URL__/shopinfoDeliveryDelay/shopinfoid/"
+                                    + rowData.shopinfoid + "&apos;)' class='orderHandleDetailview'  style='margin-left:0px;'>设置配送时间</a>";
+                            operation += "&nbsp;|&nbsp;";
+                            operation += "<a href='javascript:void(0);' onclick='baiduwaimaiContentShopinfo(&apos;__URL__/shopinfoContent/shopinfoid/"
+                                    + rowData.shopinfoid + "&apos;)' class='orderHandleDetailview'  style='margin-left:0px;'>上传商户公告</a>";
+                            operation += "&nbsp;|&nbsp;";
+                            operation += "<a href='javascript:void(0);' onclick='baiduwaimaiGotoShopinfo(&apos;"
+                                    + rowData.baidu_shop_id + "&apos;)' class='orderHandleDetailview'  style='margin-left:0px;'>查看商户</a>";
+
+                            return operation;
+                        }
+                    }]]
+            });
+
+
+    //定义查询返回的订单数据
+    baiduwaimai.shopinfoListview.listData = '{$listData}';
+
+    //转换成json对象
+    baiduwaimai.shopinfoListview.listData = eval('('
+    + baiduwaimai.shopinfoListview.listData + ')');
+
+
+    //载入订单数据，初始化
+    baiduwaimai.shopinfoListview.table.datagrid('loadData',
+            baiduwaimai.shopinfoListview.listData);
+
+    //新建商户
+    var baiduwaimaiShopinfoListviewCreate = function () {
+        var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+        var regin = baiduwaimaiMainviewLayout.layout('panel', 'center');
+        regin.panel('refresh', '__URL__/shopinfoCreateview');
+    }
+
+
+    //普通操作
+    var  baiduwaimaiGeneralShopinfo = function(url) {
+        $.messager.progress();
+        $.ajax({
+            url: url,
+            success: function (data) {
+                $.messager.progress('close');
+                $.messager.alert('返回的结果',
+                        '操作内容:' + data.cmd + '</br>' +
+                        '商户ID:' + data.shop_id + '</br>' + '商户名称:'+data.name + '</br>'+
+                        '百度商户上的ID:' + data.cmd + '</br>' +
+                        '状态码:' + data.errno + '</br> 结果说明:'+data.error,'',function(){
+                            var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+                            var regin = baiduwaimaiMainviewLayout.layout('panel', 'center');
+                            regin.panel('refresh', '__URL__/shopinfoListview');
+                        });
+            }
+        })
+    }
+
+    //上传
+    var  baiduwaimaiCreateShopinfo = function(url) {
+        $.messager.progress();
+        $.ajax({
+            url: url,
+            success: function (data) {
+                $.messager.progress('close');
+                $.messager.alert('返回的结果',
+                        '操作内容:' + data.cmd + '</br>' +
+                        '商户ID:' + data.shop_id + '</br>' + '商户名称:'+data.name + '</br>'+
+                        '状态码:' + data.errno + '</br> 结果说明:'+data.error,'',function(){
+                            var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+                            var regin = baiduwaimaiMainviewLayout.layout('panel', 'center');
+                            regin.panel('refresh', '__URL__/shopinfoListview');
+                        });
+            }
+        })
+    }
+
+    //下线商户
+    var baiduwaimaiOfflineShopinfo =  baiduwaimaiGeneralShopinfo;
+
+    //列表商户
+    var baiduwaimaiShopinfoList = function(url){
+        $.messager.progress();
+        var msg = '';
+        $.ajax({
+            url: url,
+            success: function (data) {
+                $.messager.progress('close');
+                $.each(data.data,function(key,value){
+                    $.each(value,function(k,v){
+                        msg = msg + k + ': ' + v+ '</br>';
+                    })
+                })
+                $.messager.alert('返回的结果',
+                        '操作内容:' + data.cmd + '</br>' +
+                        '操作结果:' + msg + '</br>','',function(){
+                            var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+                            var regin = baiduwaimaiMainviewLayout.layout('panel', 'center');
+                            regin.panel('refresh', '__URL__/shopinfoListview');
+                        });
+            }
+        })
+    }
+
+    //更新
+    var  baiduwaimaiUpdateShopinfo = baiduwaimaiGeneralShopinfo;
+
+    //休息
+    var  baiduwaimaiCloseShopinfo = baiduwaimaiGeneralShopinfo;
+
+    //恢复营业
+   var  baiduwaimaiOpenShopinfo = baiduwaimaiGeneralShopinfo;
+
+    //上传订单阈值
+    var baiduwaimaiThresholdShopinfo = baiduwaimaiGeneralShopinfo;
+
+    //商户配送延时设置
+    var baiduwaimaiDeliveryDelayShopinfo = baiduwaimaiGeneralShopinfo;
+
+    //上传商户公告
+    var baiduwaimaiContentShopinfo =  baiduwaimaiGeneralShopinfo;
+
+    //到实际的网站上去看商户情况
+    var baiduwaimaiGotoShopinfo = function(baidu_shop_id){
+        if(baidu_shop_id) {
+            url = 'http://waimai.baidu.com/waimai/shop/' + baidu_shop_id;
+            window.open(url);
+        }
+
+    }
+
+</script>

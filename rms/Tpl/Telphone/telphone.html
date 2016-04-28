@@ -1,0 +1,127 @@
+<style type="text/css">
+    /*来电显示条*/
+    #telphoneCall{
+        height: 30px;
+        width: 100%;
+        border: 1px solid #9D9D9D;
+        background: #81C0C0;
+        margin-top:1px;
+        margin-bottom: 0px;
+    }
+    
+    #telphoneCall label,input,select,button{
+        float:left;
+        font-size: 14px;
+        margin-top: 3px;
+    }
+    
+    /*提示设置*/
+    #telphoneCall label{
+        margin-left: 10px;
+        margin-top: 7px;
+        margin-right: 3px;
+    }
+    
+    /*按钮*/
+    #telphoneOrderHistorySearch{
+        font-size: 14px;
+        font-family: cursive;
+    }
+</style>
+<div id="telphoneCall">
+    <label>来电号码</label>
+    <input id="telphoneNumber"  name="telphoneNumber" value=""  />
+    <label style="margin-left: 0px;">(!回车查询)</label>
+    <label>来电地址</label>
+    <select id="telphoneAddress" name="telphoneAddress" style="width:25%;"  >
+    </select>
+    <label style="margin-left: 0px;">(鼠标选择){$telphoneNoShow}</label>   
+    <label>所属分公司</label>
+    <input id="telphoneCompany" value="" readonly style="width: 7%;" />
+    <button  id="telphoneOrderHistorySearch">查询历史</button>
+     <button>设置华旗来电</button>
+    <if conditon="">
+    <button>设置华旗来电</button>
+    </if>
+</div>
+
+<script type="text/javascript">
+    //来电查询的操作
+    $(function(){
+        //输入来电号码，按回车查询地址
+        $('#telphoneNumber').bind('keydown',function(event){
+            //回车
+            switch (event.keyCode) { 
+                case 13: //回车查询
+                    $.ajax({
+                        type : "POST",
+                        url :  "__APP__/Telcustomer/getAddressByPhone/telphone/"+this.value,
+                        dataType : "json",
+                        success : function(data){  
+                            $('#telphoneAddress').empty();
+                            $.each(data,function(key,value){
+                                //
+                                $('#telphoneAddress').append('<option>'+value.address+'</option>');
+
+                            })  
+                            var telphoneNumber = $('#telphoneNumber').val();
+                            if(telphoneNumber == ''){
+                                alert('电话号码不能为空!');
+                                return;
+                            }
+                            window.open("__APP__/Telcustomer/getByPhoneOrderhistoryView?telponeNumber="+telphoneNumber,'telphonehistory');
+                        }
+                    });
+                    break;
+            }
+        })
+
+        //根据电话号码，查询订餐的历史
+        $('#telphoneOrderHistorySearch').bind('click',function(){
+            var telphoneNumber = $('#telphoneNumber').val();
+            if(telphoneNumber == ''){
+                alert('电话号码不能为空!');
+                return;
+            }
+            window.open("/newrmstest/rms/Telcustomer/getByPhoneOrderhistoryView?telponeNumber="+telphoneNumber,'telphonehistory');
+        })
+
+        //查询过去的来电记录
+        $('#telphoneHistory').bind('click',function(event){
+            // alert('功能正在开发中');
+        })
+
+        //当接线员选择地址下拉框的时候，将地址和来电和分公司输入订单中
+        $('#telphoneAddress').bind('click',function(){
+            //来电号码 ，地址，分公司
+            var telphoneNumber = $('#telphoneNumber').val();
+            var telphoneAddress = $('#telphoneAddress').val();
+            var telphoneCompany = $('#telphoneCompany').val();
+            $('#telphone').attr('value',telphoneNumber);
+            $('#address').attr('value',telphoneAddress);
+            $('#company').val(telphoneCompany);
+
+            //设置company的text的值
+            var count=$("#company").size();
+            for(var i=0;i<count;i++) 
+            {           
+                if($("#company").get(0).options[i].text == telphoneCompany) 
+                    { 
+                    $("#company").get(0).options[i].selected = true; 
+                    break; 
+                } 
+            }
+
+        })
+
+    })
+</script>
+<script type="text/javascript">
+    //改变header的高度，以便显示来电条
+    $(function(){
+        $('#main').layout('panel', 'north').panel('resize',{height:112});
+        $('#main').layout('resize');
+    })
+
+</script>
+ 

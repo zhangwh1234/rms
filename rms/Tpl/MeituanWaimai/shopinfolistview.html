@@ -1,0 +1,236 @@
+<!-- 美团商户信息管理列表 -->
+<table id="meituanShopinfoListviewTable" title="商户管理">
+</table>
+<div id="meituanShopinfoListviewTableToolbar">
+    <a href="javascript:void(0)" class="easyui-linkbutton"  iconCls="icon-add" plain="true" onclick="meituanShopinfoListviewCreate();">新建商户</a>
+</div>
+
+<script>
+
+    Namespace.register('meituan.shopinfoListview');
+    //定义列表
+    meituan.shopinfoListview.table  = $('#meituanShopinfoListviewTable');
+    meituan.shopinfoListview.table.datagrid(
+            {
+                nowrap : "true",
+                fitColumns : "true",
+                singleSelect : "true",
+                autoRowHeight : "true",
+                striped : "true",
+                border : "false",
+                rownumbers : "false", //显示行号
+                showFooter : 'true',
+                pagination : true,
+                pagePosition : 'bottom',
+                fit:true,
+                toolbar : '#meituanShopinfoListviewTableToolbar',
+                columns : [ [
+                    {
+                        field : 'id',
+                        title : 'id',
+                        hidden : 'true',
+                        width : 100
+                    },
+                    {
+                        field : 'app_poi_code',
+                        title : '美团商户ID',
+                        width : 15,
+                        align : 'center'
+                    },
+                    {
+                        field : 'name',
+                        title : '商户名称',
+                        width : 10,
+                        align : 'center'
+                    },
+
+                    {
+                        field : "address",
+                        width : 10,
+                        title : '地址'
+                    },
+
+                    {
+                        field: "shopinfooperation",
+                        width: 12,
+                        title: '商户参数管理',
+                        align: 'center',
+                        formatter: function (value, rowData,
+                                             rowIndex) {
+                            var operation;
+                            operation = '';
+                            operation += "<a href='javascript:void(0);' onclick='meituanUpdateRegin(&apos;__URL__/shopinfoDetailview/shopinfoid/"
+                                    + rowData.shopinfoid + "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>查看</a>";
+                            operation += "&nbsp;|&nbsp;"
+                            operation += "<a href='javascript:void(0);' onclick='meituanUpdateRegin(&apos;__URL__/shopinfoEditview/shopinfoid/"
+                                    + rowData.shopinfoid + "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>编辑</a>";
+
+                            return operation;
+                        }
+                    },
+                    {
+                        field : "operation",
+                        width : 70,
+                        title : '操作',
+                        align : 'center',
+                        formatter : function(value, rowData,
+                                             rowIndex) {
+                            var operation;
+                            operation ='';
+                            operation += "<a href='javascript:void(0);' onclick='meituanShopinfoOpen(&apos;__URL__/shopinfoOpen/shopinfoid/"
+                                    + rowData.shopinfoid+ "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>设置营业</a>";
+                            operation += "&nbsp;|&nbsp;"
+                            operation += "<a href='javascript:void(0);' onclick='meituanShopinfoClose(&apos;__URL__/shopinfoClose/shopinfoid/"
+                                    + rowData.shopinfoid+ "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>商户休息</a>";
+                            operation += "&nbsp;|&nbsp;"
+                            operation += "<a href='javascript:void(0);' onclick='meituanShopinfoSendtime(&apos;__URL__/shopinfoSendtime/shopinfoid/"
+                                    + rowData.shopinfoid+ "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>设置送时长</a>";
+                            operation += "&nbsp;|&nbsp;"
+                            operation += "<a href='javascript:void(0);' onclick='meituanShopinfoUpdatepromoteInfo(&apos;__URL__/shopinfoUpdatepromoteInfo/shopinfoid/"
+                                    + rowData.shopinfoid+ "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>更新商户公告</a>";
+
+                            operation += "&nbsp;|&nbsp;"
+                            operation += "<a href='javascript:void(0);' onclick='baiduwaimaiDeleteShopinfo(&apos;__URL__/shopinfoDelete/shopinfoid/"
+                                    + rowData.shopinfoid+ "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>更新送餐范围</a>";
+
+                            operation += "&nbsp;|&nbsp;"
+                            operation += "<a href='javascript:void(0);' onclick='baiduwaimaiDeleteShopinfo(&apos;__URL__/shopinfoDelete/shopinfoid/"
+                                    + rowData.shopinfoid+ "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>更新起送价</a>";
+
+
+                            return operation;
+                        }
+                    } ] ]
+
+            });
+
+
+    //定义查询返回的订单数据
+    meituan.shopinfoListview.listData = '{$listData}';
+
+    //转换成json对象
+    meituan.shopinfoListview.listData = eval('('
+    + meituan.shopinfoListview.listData + ')');
+
+
+    //载入订单数据，初始化
+    meituan.shopinfoListview.table.datagrid('loadData',
+            meituan.shopinfoListview.listData);
+
+    //新建商户
+    var meituanShopinfoListviewCreate = function(){
+        var meituanMainviewLayout = $('#meituanMainviewLayout');
+        var regin =  meituanMainviewLayout.layout('panel','center');
+        regin.panel('refresh','__URL__/shopinfoCreateview');
+    }
+
+    //商户营业状态
+    function meituanShopinfoOpen(url){
+        $.ajax({
+            url:url,
+            success:function(data){
+                console.info(data);
+                return false;
+                alert(data);
+
+            }
+        })
+    }
+
+    //商户休息状态
+    function meituanShopinfoClose(url){
+        $.ajax({
+            url:url,
+            success:function(data){
+                console.info(data);
+                return false;
+                alert(data);
+
+            }
+        })
+    }
+
+    //设置商户预计送达时长
+    function meituanShopinfoSendtime(url){
+        $.ajax({
+            url:url,
+            success:function(data){
+                console.info(data);
+                return false;
+                alert(data);
+
+            }
+        })
+    }
+
+    //设置商户公告信息
+    function meituanShopinfoUpdatepromoteInfo(url){
+        $.ajax({
+            url:url,
+            success:function(data){
+                console.info(data);
+                return false;
+                alert(data);
+
+            }
+        })
+    }
+
+
+    //查询
+    function meituanShowShopinfo(url){
+        $.ajax({
+            url:url,
+            success:function(data){
+                alert(data);
+            }
+        })
+    }
+
+    //更新
+    function meituanUpdateShopinfo(url){
+        $.ajax({
+            url:url,
+            success:function(data){
+                alert(data);
+            }
+        })
+    }
+
+    //休息
+    function meituanRestShopinfo(url){
+        $.ajax({
+            url:url,
+            success:function(data){
+                alert(data);
+                var meituanMainviewLayout = $('#meituanMainviewLayout');
+                var regin =  meituanMainviewLayout.layout('panel','center');
+                regin.panel('refresh','__URL__/shopinfoListview');
+            }
+        })
+    }
+
+    //恢复营业
+    function meituanOpenShopinfo(url){
+        $.ajax({
+            url:url,
+            success:function(data){
+                alert(data);
+                var meituanMainviewLayout = $('#meituanMainviewLayout');
+                var regin =  meituanMainviewLayout.layout('panel','center');
+                regin.panel('refresh','__URL__/shopinfoListview');
+            }
+        })
+    }
+
+    //删除
+    function meituanDeleteShopinfo(url){
+        $.ajax({
+            url:url,
+            success:function(data){
+                alert(data);
+            }
+        })
+    }
+
+</script>

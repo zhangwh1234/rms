@@ -1,0 +1,64 @@
+<div>
+    <a id="btn" href="#" class="easyui-linkbutton"
+       data-options="iconCls:'icon-search'" style="width: 200px;"
+       onClick="elemeCenterviewPlatformIntroduce();"
+            >平台说明</a>
+
+    <a id="btn" href="#" class="easyui-linkbutton"
+       data-options="iconCls:'icon-search'" style="width: 200px;"
+       onClick="elemeShopinfoListview();"
+            >商户管理</a>
+
+    <a id="btn" href="#" class="easyui-linkbutton"
+       data-options="iconCls:'icon-search'" style="width: 200px;"
+       onClick="elemeCategoryMgrListview()"
+            >菜单分类管理</a>
+
+    <a id="btn" href="#" class="easyui-linkbutton"
+       data-options="iconCls:'icon-search'" style="width: 200px;"
+       onClick="elemeMenumgrListview()"
+            >菜单管理</a>
+
+
+    <a id="btn" href="#" class="easyui-linkbutton"
+       data-options="iconCls:'icon-search'" style="width: 200px;"
+       onClick="operatelogListview()"
+            >操作日志</a>
+</div>
+<script>
+    //百度平台说明
+    var elemeCenterviewPlatformIntroduce = function(){
+        var elemeMainviewLayout = $('#elemeMainviewLayout');
+        var regin =  elemeMainviewLayout.layout('panel','center');
+        regin.panel('refresh','__URL__/mainviewPlatformIntroduce');
+    }
+    //商户管理列表
+    var elemeShopinfoListview = function(){
+        var elemeMainviewLayout = $('#elemeMainviewLayout');
+        var regin =  elemeMainviewLayout.layout('panel','center');
+        regin.panel('refresh','__URL__/shopinfolistview');
+    }
+
+    //菜单管理列表
+    var elemeCategoryMgrListview = function(){
+        var elemeMainviewLayout = $('#elemeMainviewLayout');
+        var regin =  elemeMainviewLayout.layout('panel','center');
+        regin.panel('refresh','__URL__/categorymgrListview');
+    }
+
+    //菜单管理列表
+    var elemeMenumgrListview = function(){
+        var elemeMainviewLayout = $('#elemeMainviewLayout');
+        var regin =  elemeMainviewLayout.layout('panel','center');
+        regin.panel('refresh','__URL__/menumgrListview');
+    }
+
+
+
+    //操作日志管理
+    var operatelogListview = function(){
+        var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+        var regin =  baiduwaimaiMainviewLayout.layout('panel','center');
+        regin.panel('refresh','__URL__/operatelogListview');
+    }
+</script>

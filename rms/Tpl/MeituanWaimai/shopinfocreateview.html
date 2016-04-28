@@ -1,0 +1,203 @@
+<!-- 新建商户页面 -->
+<style>
+    #meituanShopmgrCreateviewToolbar{
+        margin:0px;
+        padding-top:0px;
+        background:#fafafa;
+        border:0px solid red;
+    }
+
+    table{
+        border-collapse: collapse;
+        border: none;
+    }
+
+    td{
+        border: solid 	#d0d0d0 1px;
+    }
+</style>
+
+<div id="meituanShopinfoCreateviewToolbar" style="">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="meituanShopinfoListviewInsert();">保存</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="meituanShopinfoListviewCancel();">放弃并返回</a>
+</div>
+
+<div id="p" class="easyui-panel" title="新建商户"
+     style="width:500px;height:150px;padding:10px;background:#fafafa;"
+     data-options="iconCls:'icon-save',closable:true,
+    collapsible:true,minimizable:true,maximizable:true"  fit="true" collapsible="false" minimizable="false" maximizable ="false" closable="false" bodyCls="baiduwaimaiShopmgrBodyCls" border="false"
+        >
+    <form id="meituanShopinfoInsert" method="post">
+        <table width="100%" >
+            <tr>
+                <td width="15%" align="right">商户ID:</td>
+                <td width="35%"><input name="app_poi_code" class="easyui-textbox" data-options="required:true" style="width:80%;height:25px;"></td>
+                <td width="15%" align="right">商户名:</td>
+                <td width="25%"><input name="name" class="easyui-textbox" data-options="required:true" style="width:300px;height:25px;" /></td>
+            </tr>
+            <tr>
+                <td width="15%" align="right">商户地址:</td>
+                <td width="35%"><input name="address" class="easyui-textbox" data-options="required:true" style="width:80%;height:25px;"></td>
+                <td width="15%" align="right">门店图片:</td>
+                <td width="25%"><input name="pic_url" class="easyui-textbox" data-options="required:true" style="width:300px;height:25px;" /></td>
+            </tr>
+            <tr>
+                <td width="15%" align="right">商户纬度:</td>
+                <td width="35%"><input name="latitude" class="easyui-textbox" data-options="required:true" style="width:80%;height:25px;"></td>
+                <td width="15%" align="right">商户经度:</td>
+                <td width="25%"><input name="longitude" class="easyui-textbox" data-options="required:true" style="width:300px;height:25px;" /></td>
+            </tr>
+            <tr>
+                <td width="15%" align="right">客服电话号码:</td>
+                <td width="35%"><input name="phone" class="easyui-textbox" data-options="prompt:'Enter a email address...',validType:'email'" style="width:80%;height:15px"></td>
+                <td width="15%" align="right">门店电话号码:</td>
+                <td width="25%"><input name="standby_tel" class="easyui-textbox" data-options="iconCls:'icon-search'" style="width:300px" /></td>
+            </tr>
+            <tr>
+                <td width="15%" align="right">门店营业时间:</td>
+                <td width="35%"><input name="shipping_time" class="easyui-textbox" data-options="prompt:'Enter a email address...',validType:'email'" style="width:80%;height:15px"></td>
+                <td width="15%" align="right">配送费:</td>
+                <td width="25%"><input name="shipping_fee" class="easyui-textbox" data-options="prompt:'Enter a email address...',validType:'email'" style="width:80%;height:15px"></td>
+            </tr>
+            <tr>
+                <td width="15%" align="right">门店推广信息:</td>
+                <td width="35%"><input name="promotion_info" class="easyui-textbox" data-options="prompt:'Enter a email address...',validType:'email'" style="width:80%;height:15px"></td>
+                <td width="15%" align="right">门店营业状态:</td>
+                <td width="25%"><input name="open_level" class="easyui-textbox" data-options="iconCls:'icon-search'" style="width:300px" /></td>
+            </tr>
+            <tr>
+                <td width="15%" align="right">门店上下线:</td>
+                <td width="35%"><input name="is_online" class="easyui-textbox" data-options="prompt:'Enter a email address...',validType:'email'" style="width:80%;height:15px"></td>
+                <td width="15%" align="right">支持发票:</td>
+                <td width="25%"><input name="invoice_support" class="easyui-textbox" data-options="iconCls:'icon-search'" style="width:300px" /></td>
+            </tr>
+            <tr>
+                <td width="15%" align="right">门店支持发票最小订单单价:</td>
+                <td width="35%"><input name="invoice_min_price" class="easyui-textbox" data-options="prompt:'Enter a email address...',validType:'email'" style="width:80%;height:15px" value="餐饮"></td>
+                <td width="15%" align="right">发票相关说明:</td>
+                <td width="25%"><input name="invoice_description" class="easyui-textbox" data-options="iconCls:'icon-search'" style="width:300px" value="小吃快餐" /></td>
+            </tr>
+
+            <tr>
+                <td width="15%" align="right">APP方品类名称:</td>
+                <td width="35%"><input name="third_tag_name" class="easyui-textbox" data-options="prompt:'Enter a email address...',validType:'email'" style="width:80%;height:15px"></td>
+                <td width="15%" align="right">支持预订:</td>
+                <td width="25%"><input name="pre_book" class="easyui-textbox" data-options="prompt:'Enter a email address...',validType:'email'" style="width:80%;height:15px"></td></td>
+            </tr>
+            <tr>
+                <td width="15%" align="right">是否支持预下单:</td>
+                <td width="35%"><input name="geo_json" class="easyui-textbox" data-options="prompt:'Enter a email address...',validType:'email'" style="width:80%;height:15px"></td>
+                <td width="15%" align="right"></td>
+                <td width="25%"></td>
+            </tr>
+
+        </table>
+    </form>
+</div>
+
+<script>
+    $('#baiduwaimaiShopinfoInsert').form(
+            {
+                url:'__URL__/shopinfoSave',
+                onSubmit: function(){
+
+                    if($("input[name='poi_name']").val() == ''){
+                        alert('商户名不能为空')
+                        return false;
+                    }
+                    if($("input[name='alias']").val() == ''){
+                        alert('商户别名不能为空')
+                        return false;
+                    }
+                    if($("input[name='city']").val() == ''){
+                        alert('城市名不能为空')
+                        return false;
+                    }
+                    if($("input[name='county']").val() == ''){
+                        alert('城区不能为空')
+                        return false;
+                    }
+                    if($("input[name='longiture']").val() == ''){
+                        alert('经度坐标不能为空')
+                        return false;
+                    }
+                    if($("input[name='latitude']").val() == ''){
+                        alert('维度坐标不能为空')
+                        return false;
+                    }
+                    if($("input[name='category1']").val() == ''){
+                        alert('category1不能为空')
+                        return false;
+                    }
+                    if($("input[name='category2']").val() == ''){
+                        alert('category2不能为空')
+                        return false;
+                    }
+                    if($("input[name='takeout_service_phone']").val() == ''){
+                        alert('合作方客服电话不能为空')
+                        return false;
+                    }
+                    if($("input[name='takeout_area']").val() == ''){
+                        alert('外卖送餐范围不能为空')
+                        return false;
+                    }
+                    if($("input[name='takeout_radius']").val() == ''){
+                        alert('外卖送餐半径不能为空')
+                        return false;
+                    }
+                    if($("input[name='takeout_open_time']").val() == ''){
+                        alert('外卖营业时间不能为空')
+                        return false;
+                    }
+                    if($("input[name='overall_rating']").val() == ''){
+                        alert('综合评分不能为空')
+                        return false;
+                    }
+                    if($("input[name='takeout_phone']").val() == ''){
+                        alert('商家外卖电话不能为空')
+                        return false;
+                    }
+                    if($("input[name='takeout_deliver_regions']").val() == ''){
+                        alert('外卖送餐坐标范围不能为空')
+                        return false;
+                    }
+                    if($("input[name='takeout_pirce']").val() == ''){
+                        alert('外送起送价格不能为空')
+                        return false;
+                    }
+                    if($("input[name='takeout_cost']").val() == ''){
+                        alert('外卖配送费用不能为空')
+                        return false;
+                    }
+                    if($("input[name='takeout_average_time']").val() == ''){
+                        alert('平均送达时间不能为空')
+                        return false;
+                    }
+                },
+                success:function(data){
+                    data =  eval('('+data+')');
+                    if(data.info == 'success'){
+                        alert('保存成功!');
+                        var elemeMainviewLayout = $('#elemeMainviewLayout');
+                        var regin =  elemeMainviewLayout.layout('panel','center');
+                        regin.panel('refresh','__URL__/shopinfoListview');
+                    }
+
+                    if(data.info == 'error'){
+                        alert('保存失败！');
+                    }
+
+                }
+            });
+    //保存订单
+    var elemeShopinfoListviewInsert = function(){
+        $('#elemeShopinfoInsert').submit();
+    }
+
+    //放弃保存订单
+    function elemeShopinfoListviewCancel(){
+        var elemeMainviewLayout = $('#elemeMainviewLayout');
+        var regin =  elemeMainviewLayout.layout('panel','center');
+        regin.panel('refresh','__URL__/shopinfoListview');
+    }
+</script>

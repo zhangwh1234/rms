@@ -1,0 +1,26 @@
+<notempty name="orderproducts">
+<table class="dv-table" style="width:90%;background:#fafafa;padding:0px;margin-top:0px;border:1px solid red;">
+        <tr>
+            <td>产品代码</td>
+            <td>产品名称</td>
+            <td>单价</td>
+            <td>数量</td>
+            <td>金额</td>
+        </tr>
+        <foreach name="orderproducts" item="value">
+        <tr>
+            <td>{$value.code}</td>
+            <td>{$value.name}</td>
+            <td>{$value.price}</td>
+            <td>{$value.number}</td>
+            <td>{$value.money}</td>
+        </tr>
+        </foreach>
+</table>
+</notempty>
+
+<table style="width:90%;background:#fafafa;padding:0px;margin-top:1px;border:1px solid red;">
+    <tr>
+    <td>备注:{$orderform.beizhu}</td>
+    </tr>
+</table>

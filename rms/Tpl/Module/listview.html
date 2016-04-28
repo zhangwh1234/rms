@@ -1,0 +1,28 @@
+<div class="moduleMenu" id="listviewMenu" >
+	<ul>
+		<li>{$Think.lang.$navName}</li>
+		<li><a href="javascript:void(0);"  onclick="IndexIndexModule.updateOperateTab('__URL__/listview/delsession/del');">&nbsp;&gt;{$Think.lang.$moduleName}</a></li>
+		<li>&nbsp;&gt;<a href="javascript:void(0);"  onclick="IndexIndexModule.updateOperateTab('__URL__/listview/delsession/del');">列表操作</a></li>
+		<li style="width: 50px;">&nbsp;</li>
+		<li style="margin-left: 10px;"><a href="javascript:void(0);" onclick="IndexIndexModule.updateOperateTab('__URL__/createview');"><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+		<li><a href="javascript:void(0);"  onclick="IndexIndexModule.updateOperateTab('__URL__/createview');">新建<span>^1</span></a></li>
+		<li style="margin-left: 10px;"><a href="javascript:void(0);" onclick="IndexIndexModule.search('{$moduleName}','{$Think.lang.$moduleName}');"><img src=".__PUBLIC__/Images/searchBtn.png" alt="" title="" border="0"></a></li>
+		<li><a href="javascript:void(0);"  onclick="IndexIndexModule.search('{$moduleName}','{$Think.lang.$moduleName}');">查询<span>^3</span></a></li>
+		<if condition="$searchIntroduce neq ''">
+			<li style="margin-left: 20px;font-size:14px;font-family:'宋体';line-height: 30px;">{$searchIntroduce}</li>
+			<li style="width: 50px;">&nbsp;</li>
+			<li style="margin-left: 10px;"><a href="javascript:;" onclick="IndexIndexModule.updateOperateTab('__URL__/listview/delsession/del');" ><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+			<li><a href="javascript:void(0);"  onclick="IndexIndexModule.updateOperateTab('__URL__/listview/delsession/del');">返回列表<span>^4</span></a></li>
+		</if>
+		<li style="float: right;margin-right: 60px;"><a href="javascript:void(0);"   onclick="IndexIndexModule.closeOperateTab();" >关闭</a></li>
+		<li style="float:right;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
+
+	</ul>
+</div>
+
+<tagLib name="easyui" />
+<div style="height:400px;width:100%;clear:both;" class="ModuleListviewDiv">
+<easyui:datagrid options="datagrid.options" fields="datagrid.fields"  />
+</div>
+<input id="{$moduleName}Action" type="hidden"  value="Listview" />
+

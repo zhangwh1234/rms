@@ -1,0 +1,64 @@
+<div>
+    <a id="btn" href="#" class="easyui-linkbutton"
+       data-options="iconCls:'icon-search'" style="width: 200px;"
+       onClick="meituanCenterviewPlatformIntroduce();"
+            >平台说明</a>
+
+    <a id="btn" href="#" class="easyui-linkbutton"
+       data-options="iconCls:'icon-search'" style="width: 200px;"
+       onClick="meituanShopinfoListview();"
+            >商户管理</a>
+
+    <a id="btn" href="#" class="easyui-linkbutton"
+       data-options="iconCls:'icon-search'" style="width: 200px;"
+       onClick="meituanCategoryMgrListview()"
+            >菜单分类管理</a>
+
+    <a id="btn" href="#" class="easyui-linkbutton"
+       data-options="iconCls:'icon-search'" style="width: 200px;"
+       onClick="meituanMenumgrListview()"
+            >菜单管理</a>
+
+
+    <a id="btn" href="#" class="easyui-linkbutton"
+       data-options="iconCls:'icon-search'" style="width: 200px;"
+       onClick="meituanoperatelogListview()"
+            >操作日志</a>
+</div>
+<script>
+    //百度平台说明
+    var meituanCenterviewPlatformIntroduce = function(){
+        var meituanMainviewLayout = $('#meituanMainviewLayout');
+        var regin =  meituanMainviewLayout.layout('panel','center');
+        regin.panel('refresh','__URL__/mainviewPlatformIntroduce');
+    }
+    //商户管理列表
+    var meituanShopinfoListview = function(){
+        var meituanMainviewLayout = $('#meituanMainviewLayout');
+        var regin =  meituanMainviewLayout.layout('panel','center');
+        regin.panel('refresh','__URL__/shopinfolistview');
+    }
+
+    //菜单管理列表
+    var meituanCategoryMgrListview = function(){
+        var meituanMainviewLayout = $('#meituanMainviewLayout');
+        var regin =  meituanMainviewLayout.layout('panel','center');
+        regin.panel('refresh','__URL__/categorymgrListview');
+    }
+
+    //菜单管理列表
+    var meituanMenumgrListview = function(){
+        var meituanMainviewLayout = $('#meituanMainviewLayout');
+        var regin =  meituanMainviewLayout.layout('panel','center');
+        regin.panel('refresh','__URL__/menumgrListview');
+    }
+
+
+
+    //操作日志管理
+    var meituanOperatelogListview = function(){
+        var meituanMainviewLayout = $('#meituanMainviewLayout');
+        var regin =  meituanMainviewLayout.layout('panel','center');
+        regin.panel('refresh','__URL__/operatelogListview');
+    }
+</script>

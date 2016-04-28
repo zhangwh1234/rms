@@ -1,0 +1,80 @@
+<include file="Module/listview" />
+
+<script type="text/javascript">
+
+    var UserListviewModule = {
+        dialog: '#globel-dialog-div',
+        datagrid: '#user_index_datagrid',
+
+
+        init: function () {
+            //设置div的高度
+            $('.ModuleListviewDiv').height(IndexIndexModule.operationHeight);
+        },
+
+
+        //操作格式化
+        operate: function (val, rowData, rowIndex) {
+            var btn = [];
+            btn.push('<a href="javascript:void(0);" onclick="UserListviewModule.detailview(' + rowData.userid + ')">查看</a>');
+            btn.push('<a href="javascript:void(0);" onclick="UserListviewModule.editview(' + rowData.userid + ')">编辑</a>');
+            btn.push('<a href="javascript:void(0);" onclick="UserListviewModule.delete(' + rowData.userid + ')">删除</a>');
+            btn.push('<a href="javascript:void(0);" onclick="UserListviewModule.editviewUserOrganization(' + rowData.userid + ')">设置部门</a>');
+            return btn.join(' | ');
+        },
+
+        //刷新
+        refresh: function () {
+            $(this.datagrid).datagrid('reload');
+        },
+
+        //查看记录
+        detailview: function (id) {
+            var url = "__URL__/detailview/record/"+id;
+            IndexIndexModule.updateOperateTab(url);
+        },
+
+        //编辑用户记录
+        editview: function (id) {
+            var url = "__URL__/editview/record/"+id;
+            IndexIndexModule.updateOperateTab(url);
+        },
+
+        //删除用户记录
+        delete: function (id) {
+            var that = this;
+            $.messager.confirm('提示信息', '确定要删除吗？', function (result) {
+                if (!result) return false;
+
+                $.messager.progress({text: '处理中，请稍候...'});
+                $.get('__URL__/delete', {record: id}, function (res) {
+                    $.messager.progress('close');
+
+                    if (!res.status) {
+                        $.app.method.tip('提示信息', res.info, 'error');
+                    } else {
+                        $.app.method.tip('提示信息', res.info, 'info');
+                        that.refresh();
+                    }
+                }, 'json'
+                )
+                ;
+            });
+        },
+
+        //设置用户部门记录
+        editviewUserOrganization:function(id){
+            var url = "{:U('User/editviewUserOrganization')}";
+            url += url.indexOf('?') != -1 ? '&record=' + id : '?id=' + id;
+            IndexIndexModule.updateOperateTab(url);
+        }
+
+    };
+
+    $(function(){
+        UserListviewModule.init();
+    })
+</script>
+
+
+

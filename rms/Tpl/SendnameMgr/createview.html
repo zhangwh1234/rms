@@ -1,0 +1,113 @@
+<include file="Module/createview" />
+
+<script>
+    var SendnameMgrCreateviewModule = {
+
+        //初始化
+        init :function(){
+            $('.moduleOperatert').height(IndexIndexModule.operationHeight);
+            this.quickKeyboardAction();
+        },
+
+        //保存记录
+        insert: function () {
+            $('#SendnameMgrCreateviewForm').form('submit', {
+                url: '__URL__/insert',
+                onSubmit: function () {
+                    var isValid = $(this).form('validate');
+                    if (!isValid) {
+                        return false;
+                    }
+                    if($('#SendnameMgrCreateviewForm  input[name=code]').val() == ''){
+                        alert('代码不能为空!');
+                        return false;
+                    }
+                    var sendname = $('#SendnameMgrCreateviewForm  input[name=code]').val();
+                    if( sendname.length == 1){
+                        alert('送餐员代码长度必须大于2');
+                        return false;
+                    }
+                    if($('#SendnameMgrCreateviewForm  input[name=name]').val() == ''){
+                        alert('姓名不能为空!');
+                        return false;
+                    }
+                },
+                success: function (res) {
+                    var data = eval('(' + res + ')');
+                    if(!data.status){
+                        $.app.method.tip('提示信息', data.info, 'error');
+                    }else{
+                        $.app.method.tip('提示信息', data.info, 'info');
+                        IndexIndexModule.updateOperateTab(data.url);
+                    }
+                }
+            });
+        },
+
+        //放弃保存
+        cancel: function(){
+            var url = '__URL__/listview';
+            IndexIndexModule.updateOperateTab(url);
+        },
+
+        keyboardMove:function(){
+            //新建定制键盘移动方案
+            $('#SendnameMgrCreateviewForm  #code').bind('keydown',function(event){
+
+                if((event.which == 13) || (event.which == 40)){
+                    $('#SendnameMgrCreateviewForm  #name').focus();
+                }
+            })
+            //姓名
+            $('#SendnameMgrCreateviewForm #name').bind('keydown',function(event){
+                if((event.which == 13) || (event.which == 40)){
+                    $('#SendnameMgrCreateviewForm  #telphone').focus();
+                }
+                if(event.which == 38){  //上移
+                    $('#SendnameMgrCreateviewForm  #code').focus();
+                }
+            })
+            //号码
+            $('#SendnameMgrCreateviewForm  #telphone').bind('keydown',function(event){
+                if(event.which == 38){  //上移
+                    $('#SendnameMgrCreateviewForm  input[name=name]').focus();
+                }
+            })
+
+        },
+
+        //新建的快捷操作
+        quickKeyboardAction: function () {
+            // ctrl+9快捷键,保存公告
+            Mousetrap.bind(['ctrl+9', 'ctrl+f9', 'f9'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '送餐员管理' && ($('#SendnameMgrAction').val() == 'createview')) {
+                    SendnameMgrCreateviewModule.insert();
+                };
+            });
+
+            // ctrl+4快捷键,放弃
+            Mousetrap.bind(['ctrl+4', 'ctrl+f4', 'f4'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '送餐员管理' && ($('#SendnameMgrAction').val() == 'createview')) {
+                    IndexIndexModule.updateOperateTab('__URL__/listview');
+                };
+            });
+        }
+    }
+
+    $(function () {
+        SendnameMgrCreateviewModule.init();
+        setTimeout(function(){
+            //$('#SendnameMgrCreateviewForm input[name=code]').focus();
+            //$('#textboxid').textbox().next('span').find('input').focus();
+            //$("#SendnameMgrCreateviewForm input[name=code]").numberbox().next("span").children().first().focus();
+        },200);
+
+    })
+</script>
+

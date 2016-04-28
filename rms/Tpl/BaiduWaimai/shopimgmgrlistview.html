@@ -1,0 +1,116 @@
+<!-- 商户图片信息管理列表 -->
+<table id="baiduwaimaiShopimgmgrListviewTable" title="商户图片管理">
+    </table>
+<div id="baiduwaimaiShopimgmgrListviewTableToolbar">
+    	  <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="waimaiShopimgmgrListviewCreateShop()">新建商户图片</a>
+</div>
+    
+<script>
+
+	Namespace.register('baiduwaimai.shopimgmgrListview');
+	//定义列表
+	baiduwaimai.shopimgmgrListview.table  = $('#baiduwaimaiShopimgmgrListviewTable');
+	baiduwaimai.shopimgmgrListview.table.datagrid(
+			{
+				nowrap : "true",
+				fitColumns : "true",
+				singleSelect : "true",
+				autoRowHeight : "true",
+				striped : "true",
+				border : "false",
+				rownumbers : "false", //显示行号
+				showFooter : 'true',
+				pagination : true,
+				pagePosition : 'bottom',
+				fit:true,
+				toolbar : '#baiduwaimaiShopimgmgrListviewTableToolbar',
+				columns : [ [
+						{
+							field : 'shopimgmgrid',
+							title : 'id',
+							hidden : 'true',
+							width : 100
+						},
+						{
+							field : 'shop_id',
+							title : '商户ID',
+							width : 110,
+							align : 'left'
+						},
+						{
+							field : 'source_name',
+							title : '合作方名称',
+							width : 50,
+							align : 'center'
+						},
+						{
+							field : "type",
+							width : 30,
+							title : '图片类型'
+						},
+						{
+							field : "img",
+							width : 20,
+							title : '图片地址',
+							align : 'center'
+						},
+						{
+							field : "desc",
+							width : 30,
+							title : '图片说明'
+						},						
+						{
+							field : "operation",
+							width : 70,
+							title : '操作',
+							align : 'center',
+							formatter : function(value, rowData,
+									rowIndex) {
+								var operation;
+								operation ='';
+								operation += "<a href='javascript:void(0);' onclick='baiduwaimaiUpdateRegin(&apos;__URL__/shopimgmgrDetailview/shopimgmgrid/"
+											+ rowData.shopimgmgrid + "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>查看</a>";
+								operation += "<a href='javascript:void(0);' onclick='baiduwaimaiUpdateRegin(&apos;__URL__/shopimgmgrEditview/shopimgmgrid/"
+											+ rowData.shopimgmgrid+ "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>编辑</a>";
+								operation += "<a href='javascript:void(0);' onclick='baiduwaimaiUploadShopinfo(&apos;__URL__/shopimgmgrUpload/shopimgmgrid/"
+											+ rowData.shopimgmgrid+ "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>上传</a>";
+																										
+								return operation;
+							}
+						} ] ]
+				//onSelect : orderHandleSearchviewAddressSelectRow, //选择行
+				//onClickRow : orderHandleSearchviewAddressClickRow //单击行事件
+			});
+
+	
+	//定义查询返回的订单数据
+	baiduwaimai.shopimgmgrListview.listData = '{$listData}';
+
+	//转换成json对象
+	baiduwaimai.shopimgmgrListview.listData = eval('('
+			+ baiduwaimai.shopimgmgrListview.listData + ')');
+	
+	
+	//载入订单数据，初始化
+	baiduwaimai.shopimgmgrListview.table.datagrid('loadData',
+			baiduwaimai.shopimgmgrListview.listData);
+		
+	//新建商户
+	var waimaiShopimgmgrListviewCreateShop = function(){
+		var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+		var regin =  baiduwaimaiMainviewLayout.layout('panel','center');
+		regin.panel('refresh','__URL__/shopimgmgrCreateview');
+	}
+	
+	//上传
+	function baiduwaimaiUploadShopinfo(url){
+		$.ajax({
+			url:url,
+			success:function(data){
+				alert(data);
+			}
+		})
+	}
+	
+	
+</script>

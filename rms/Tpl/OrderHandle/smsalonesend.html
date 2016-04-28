@@ -1,0 +1,24 @@
+<div id="smsAloneOrderhandleWin" class="easyui-window"
+     data-options="title:'单发消息',collapsible:false,
+    minimizable:false,
+    maximizable:false,
+    modal:true,
+    onClose:function(){
+    refreshOrder = true;
+    },
+    closed:true
+    "
+     style="width: 500px; height: 80px;">
+    <table style="margin-left: 5px; margin-top: 5px;">
+        <tr>
+            <td style="font-size: 16px; margin-top: 10px;">送餐员代码</td>
+            <td><input id="smsAloneOrderHandleWinInput"
+                       name="smsAloneOrderHandleWinInput" style="width: 80px;"
+                       style="font-size: 16px;margin-top: 0px;"
+                       onkeydown="sendnameSearchQuickKey(event,this);" value=""/></td>
+            <td style=""><span id="smsAloneOrderHandleWinSpan"
+                               style="font-size: 16px; margin-left: 10px;"></span></td>
+            <td><input id="smsContent" name="smsContent" value=""></td>
+        <tr>
+    </table>
+</div>

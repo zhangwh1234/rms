@@ -1,0 +1,52 @@
+<!-- 查看分类页面 -->
+<style>
+    #elemeCategorymgrDetailviewToolbar{
+        margin:0px;
+        padding-top:0px;
+        background:#fafafa;
+        border:1px solid red;
+    }
+
+    #elemeCategorymgrDetailview table{
+        border-collapse: collapse;
+        border: none;
+    }
+
+    #elemeCategorymgrDetailview td{
+        border: solid #d0d0d0 1px;
+    }
+</style>
+
+<div id="elemeCategoryinfoDetailviewToolbar" style="">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="elemeCategorymgrDetailviewCancel();">放弃并返回</a>
+</div>
+
+<div id="elemeCategorymgrDetailview" class="easyui-panel" title="新建菜单"
+     style="width:500px;height:150px;padding:10px;background:#fafafa;"
+     data-options="iconCls:'icon-save',closable:true,
+    collapsible:true,minimizable:true,maximizable:true"  fit="true" collapsible="false" minimizable="false" maximizable ="false" closable="false" bodyCls="elemeShopmgrBodyCls" border="false"
+        >
+    <form id="elemeCategorymgrUpdate" method="post">
+        <table width="100%" >
+            <tr>
+                <td width="15%" align="right">分类名称:</td>
+                <td width="35%"><input name="name" class="easyui-textbox" data-options="required:true" style="width:80%;height:25px" value="{$categorymgr.name}"  readonly /></td>
+                <td width="15%" align="right">分类序号:</td>
+                <td width="25%"><input name="rank" class="easyui-textbox" data-options="" style="width:300px" value="{$categorymgr.rank}" readonly /></td>
+            </tr>
+
+        </table>
+
+    </form>
+</div>
+
+<script>
+
+
+    //放弃保存订单
+    var  elemeCategorymgrDetailviewCancel = function(){
+        var elemeMainviewLayout = $('#elemeMainviewLayout');
+        var regin =  elemeMainviewLayout.layout('panel','center');
+        regin.panel('refresh','__URL__/CategorymgrListview');
+    }
+</script>

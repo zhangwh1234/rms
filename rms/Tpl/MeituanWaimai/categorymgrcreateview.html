@@ -1,0 +1,77 @@
+<!-- 新建分类页面 -->
+<style>
+    #meituanCategorymgrCreateviewToolbar{
+        margin:0px;
+        padding-top:0px;
+        background:#fafafa;
+        border:1px solid red;
+    }
+
+    #meituanCategorymgrCreateview table{
+        border-collapse: collapse;
+        border: none;
+    }
+
+    #meituanCategorymgrCreateview td{
+        border: solid #d0d0d0 1px;
+    }
+</style>
+
+<div id="meituanCategoryinfoCreateviewToolbar" style="">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="meituanCategorymgrListviewInsert();">保存</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="meituanCategorymgrListviewCancel();">放弃并返回</a>
+</div>
+
+<div id="meituanCategorymgrCreateview" class="easyui-panel" title="新建菜单"
+     style="width:500px;height:150px;padding:10px;background:#fafafa;"
+     data-options="iconCls:'icon-save',closable:true,
+    collapsible:true,minimizable:true,maximizable:true"  fit="true" collapsible="false" minimizable="false" maximizable ="false" closable="false" bodyCls="meituanShopmgrBodyCls" border="false"
+        >
+    <form id="meituanCategorymgrInsert" method="post" enctype="multipart/form-data">
+        <table width="100%" >
+            <tr>
+                <td width="15%" align="right">分类名称:</td>
+                <td width="35%"><input name="category_name" class="easyui-textbox" data-options="required:true" style="width:80%;height:25px"></td>
+                <td width="15%" align="right">分类序号:</td>
+                <td width="25%"><input name="sequence" class="easyui-textbox" data-options="" style="width:300px" /></td>
+            </tr>
+
+        </table>
+    </form>
+</div>
+
+<script>
+    $('#meituanCategorymgrInsert').form(
+            {
+                url:'__URL__/categorymgrSave',
+                onSubmit: function() {
+                    var isValid = $(this).form('validate');
+                    if (!isValid) return false;
+                    return true;
+                },
+                success:function(data){
+                    data =  eval('('+data+')');
+                    if(data.info == 'success'){
+                        alert('保存成功!');
+                        var meituanMainviewLayout = $('#meituanMainviewLayout');
+                        var regin =  meituanMainviewLayout.layout('panel','center');
+                        regin.panel('refresh','__URL__/CategorymgrListview');
+                    }
+
+                    if(data.info == 'error'){
+                        alert('保存失败！');
+                    }
+                }
+            });
+    //保存订单
+    var meituanCategorymgrListviewInsert = function(){
+        $('#meituanCategorymgrInsert').submit();
+    }
+
+    //放弃保存订单
+    function meituanCategorymgrListviewCancel(){
+        var meituanMainviewLayout = $('#meituanMainviewLayout');
+        var regin =  meituanMainviewLayout.layout('panel','center');
+        regin.panel('refresh','__URL__/CategorymgrListview');
+    }
+</script>

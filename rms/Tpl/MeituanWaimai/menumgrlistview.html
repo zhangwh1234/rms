@@ -1,0 +1,158 @@
+<!-- 菜单信息管理列表 -->
+<table id="meituanMenumgrListviewTable" title="菜单管理" >
+
+    </table>
+    <div id="meituanShopmgrListviewTableToolbar">
+    	  <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="meituanMenumgrListviewCreate()">新建菜单</a>
+    </div>
+    
+<script>
+Namespace.register('meituan.menumgrListview');
+//定义列表
+meituan.menumgrListview.table  = $('#meituanMenumgrListviewTable');
+meituan.menumgrListview.table.datagrid(
+		{
+			nowrap : "true",
+			fitColumns : "true",
+			singleSelect : "true",
+			autoRowHeight : "true",
+			striped : "true",
+			border : "false",
+			rownumbers : "false", //显示行号
+			showFooter : 'true',
+			pagination : true,
+			pagePosition : 'bottom',
+			fit:true,
+			toolbar : '#meituanShopmgrListviewTableToolbar',
+			columns : [ [
+					{
+						field : 'menuid',
+						title : 'id',
+						hidden : 'true',
+						width : 100
+					},
+					{
+						field : 'name',
+						title : '菜品名称',
+						width : 20,
+						align : 'left'
+					},
+					{
+						field : 'catalog',
+						title : '菜品分类',
+						width : 10,
+						align : 'center'
+					},
+					{
+						field : "price",
+						width : 10,
+						title : '单价'
+					},
+				{
+					field : "menuoperation",
+					width : 30,
+					title : '操作',
+					align : 'center',
+					formatter : function(value, rowData,
+										 rowIndex) {
+						var operation;
+						operation = "";
+						operation += "<a href='javascript:void(0);' onclick='meituanUpdateRegin(&apos;__URL__/menumgrDetailview/menuid/"
+								+ rowData.menuid
+								+ "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>查看</a>";
+						operation += "&nbsp;|&nbsp;";
+						operation += "<a href='javascript:void(0);' onclick='meituanUpdateRegin(&apos;__URL__/menumgrEditview/menuid/"
+								+ rowData.menuid
+								+ "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>编辑</a>";
+						return operation;
+					}
+				},
+					{
+						field : "operation",
+						width : 80,
+						title : '操作',
+						align : 'center',
+						formatter : function(value, rowData,
+								rowIndex) {
+							var operation;
+							operation = "";
+							operation += "<a href='javascript:void(0);' onclick='meituanUpdateRegin(&apos;__URL__/menumgrDetailview/menuid/"
+										+ rowData.menuid
+										+ "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>上传</a>";
+							operation += "&nbsp;|&nbsp;"
+							operation += "<a href='javascript:void(0);' onclick='meituanUpdateRegin(&apos;__URL__/menumgrEditview/menuid/"
+										+ rowData.menuid
+										+ "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>更新</a>";
+							operation += "&nbsp;|&nbsp;"
+							operation += "<a href='javascript:void(0);' onclick='meituanMenumgrUpload(&apos;__URL__/menumgrUpload/menuid/"
+										+ rowData.menuid
+										+ "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>删除</a>";
+							
+							operation += "&nbsp;|&nbsp;"
+							operation += "<a href='javascript:void(0);' onclick='meituanMenumgrDelete(&apos;__URL__/menumgrDelete/menuid/"
+											+ rowData.menuid
+											+ "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>上线</a>";
+							operation += "&nbsp;|&nbsp;"
+							operation += "<a href='javascript:void(0);' onclick='meituanMenumgrDelete(&apos;__URL__/menumgrDelete/menuid/"
+									+ rowData.menuid
+									+ "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>下线</a>";
+							operation += "&nbsp;|&nbsp;"
+							operation += "<a href='javascript:void(0);' onclick='meituanMenumgrDelete(&apos;__URL__/menumgrDelete/menuid/"
+									+ rowData.menuid
+									+ "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>阈值设置</a>";
+							return operation;
+						}
+					} ] ]
+			//onSelect : orderHandleSearchviewAddressSelectRow, //选择行
+			//onClickRow : orderHandleSearchviewAddressClickRow //单击行事件
+		});
+
+
+//定义查询返回的订单数据
+meituan.menumgrListview.listData = '{$listData}';
+
+//转换成json对象
+meituan.menumgrListview.listData = eval('('
+		+ meituan.menumgrListview.listData + ')');
+
+
+//载入订单数据，初始化
+meituan.menumgrListview.table.datagrid('loadData',
+		meituan.menumgrListview.listData);
+		
+	//新建商户
+	var meituanMenumgrListviewCreate = function(){
+		var meituanMainviewLayout = $('#meituanMainviewLayout');
+		var regin =  meituanMainviewLayout.layout('panel','center');
+		regin.panel('refresh','__URL__/menumgrCreateview');
+	}
+	
+	//上传
+	function meituanMenumgrUpload(url){
+		$.ajax({
+			url:url,
+			success:function(data){
+				alert(data);
+				var meituanMainviewLayout = $('#meituanMainviewLayout');
+				var regin =  meituanMainviewLayout.layout('panel','center');
+				regin.panel('refresh','__URL__/menumgrListview');
+			}
+		})
+	}
+	
+	
+	//删除
+	function meituanMenumgrDelete(url){
+		$.ajax({
+			url:url,
+			success:function(data){
+				alert(data);
+				var meituanMainviewLayout = $('#meituanMainviewLayout');
+				var regin =  meituanMainviewLayout.layout('panel','center');
+				regin.panel('refresh','__URL__/menumgrListview');
+			}
+		})
+	}
+	
+	
+</script>

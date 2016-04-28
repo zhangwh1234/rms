@@ -1,0 +1,450 @@
+<style>
+    /*设置datagrid*/
+    .datagrid-cell {
+        font-size: 16px;
+    }
+
+    .datagrid-row {
+        height: 30px;
+    }
+
+    .orderFormDetailview {
+        font-size: 16px;
+        float: left;
+        border: 0px solid red;
+        margin-left: 2px;
+        margin-right: 2px;
+        line-height: 24px;
+    }
+
+    #orderDistributionOtherInfoOther {
+        height: 18px;
+        padding-left: 20px;
+        margin-top: 2px;
+        font-size: 16px;
+    }
+
+
+    /*定义备注字段*/
+    #beizhuOrderDistributionOther .l-btn-text {
+        font-size: 16px;
+        color: #33338c;
+        margin-right: 0px;
+    }
+</style>
+<div class="moduleMenu">
+    <ul>
+        <li>{$Think.lang.$navName}</li>
+        <li><a href="#">&nbsp;&gt;{$Think.lang.$moduleName}</a></li>
+        <li>&nbsp;&gt;分配其他查询</li>
+        <li style="width: 50px;">&nbsp;</li>
+
+        <li style="width: 20px;">&nbsp;</li>
+        <li style="margin-left: 10px;"><a href="javascript:;" onMouseOver=""><img
+                src=".__PUBLIC__/Images/addressBtn.jpg" alt="" title="" border="0"></a></li>
+        <li><a href="#" class="moduleName"
+               onclick="OrderDistributionSearchviewOtherModule.otherSearchInput();">综合查询<span>⌃8</span></a>
+        </li>
+        <li style="float: right;margin-right: 40px;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
+        <li style="float:right;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();"><img
+                src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
+    </ul>
+</div>
+
+<div id="orderDistributionSearchviewOtherDiv" class="easyui-layout"  border="false" style="height: 500px;width: 100%;">
+    <div data-options="region:'center',border:false" style="padding:0px;background:#eee;">
+        <table id="orderdistribution_searchviewother_datagrid" fit="true"></table>
+    </div>
+    <div data-options="region:'south',split:false,border:false" style="height:24px;">
+        <div class="pagestop">
+            <div id="orderDistributionOtherInfoOther" style="height: 22px;" align="center">
+                接线员:
+            </div>
+        </div>
+    </div>
+</div>
+
+<input id="OrderDistributionSearchviewOtherAction" type="hidden"  value="" />
+
+<script>
+    var OrderDistributionSearchviewOtherModule = {
+        dialog:   '#globel-dialog-div',
+        datagrid: '#orderdistribution_searchviewother_datagrid',
+
+        focusNumberOtherOD : 0,
+        //定义分公司分配数组
+        companyMgrCode: new Array(), //分公司代码
+        companyMgrName: new Array(), //分公司名称
+
+        init:function(){
+            //设置div的高度
+            $('#orderDistributionSearchviewOtherDiv').height(IndexIndexModule.operationHeight);
+            this.setDatagrid();
+            this.gridKeyboardMove();
+            this.getCompany();
+            this.dataPage();
+            this.firstGetOrderForm();
+            this.quickKeyboardAction();
+        },
+
+        //设置订单分配的表格
+        setDatagrid: function () {
+            //定义订单orderform处理表
+            $(this.datagrid).datagrid({
+                nowrap: "false",
+                fitColumns: "true",
+                singleSelect: "true",
+                autoRowHeight: "true",
+                striped: "true",
+                border: "false",
+                rownumbers: "false",  //显示行号
+                showFooter: 'true',
+                pagination: true,
+                pagePosition: 'bottom',
+                columns: [[
+                    {field: 'orderformid', title: 'id', hidden: 'true', width: 100},
+                    {field: 'address', title: '地址', width: 100, align: 'left'},
+                    {field: 'ordertxt', title: '数量规格', width: 50, align: 'center'},
+                    {field: "telphone", width: 30, title: '电话', align: 'center'},
+                    {field: "totalmoney", width: 20, title: '金额'},
+                    {field: "custtime", width: 20, title: '要餐时间'},
+                    {field: "state", width: 20, title: '状态'},
+                    {field: "beizhu", width: 20, title: '备注'},
+                    {field: "company", width: 20, title: '分公司'},
+                    {
+                        field: "operation",
+                        width: 44,
+                        title: '操作',
+                        formatter: function (value, rowData, rowIndex) {
+                            var operation;
+                            operation = "<input class='distributionOrder' id='orderDistributionOtherTask" + rowIndex + "' name='orderDistributionOtherTask" + rowIndex + "' type='text'  size='8' onkeyup='OrderDistributionSearchviewOtherModule.distributionOrder(event,this," + rowData.orderformid + "," + rowIndex + ");' onclick='OrderDistributionSearchviewOtherModule.distributionClick(" + rowData.orderformid + ");' tabindex='" + rowIndex + "'  >" + "";
+                            operation += "<a href='javascript:void(0);' class='distributionDetailview' onclick='IndexIndexModule.updateOperateTab(&apos;__URL__/detailview/record/" + rowData.orderformid + "/returnAction/searchviewCompany&apos;)' style='margin-left:5px;' > 查看 </a>";
+                            operation += "<a href='javascript:void(0);' class='distributionDetailview' onclick='IndexIndexModule.updateOperateTab(&apos;__URL__/cancelview/record/" + rowData.orderformid + "/returnAction/searchviewCompany&apos;)' style='margin-left:5px;' >作废</a>";
+                            return operation;
+                        }
+                    }
+
+                ]],
+                onClickRow: this.clickDataGridRow,   //鼠标点击行事件
+                onSelect: this.selectDataGridRow      //选择行事件
+            });
+
+            //定义订单分页表
+            var pager = $(this.datagrid).datagrid().datagrid('getPager')
+            pager.pagination({
+                showRefresh: false,
+                layout: ['first', 'links', 'last'],
+                buttons: [{
+                    id: 'beizhuOrderDistributionOther',
+                    text: '备注:'
+
+                }]
+            });
+
+        },
+
+        /**
+         * 定义表格移动的键盘处理
+         */
+        gridKeyboardMove: function () {
+            var that = this;
+            $(this.datagrid).datagrid('getPanel').panel('panel').attr('tabindex', 1).bind('keydown', function (e) {
+                switch (e.keyCode) {
+                    case 38: // up  上移动
+                        if (that.focusNumberOtherOD == 0) return;  //为0，就是到顶了，不用再移动了
+                        that.focusNumberOtherOD = that.focusNumberOtherOD - 1;
+                        $(that.datagrid).datagrid('selectRow', that.focusNumberOtherOD);
+                        $('#orderDistributionOtherTask' + that.focusNumberOtherOD).focus();
+                        //显示货物
+                        //that.orderProductsShow(that.focusOrderformidOD);
+                        break;
+                    case 40: // down 下移动
+                        var rowsObj = $(that.datagrid).datagrid('getRows');  //返回当前页的记录
+                        var rowLength = rowsObj.length - 1;
+                        if (that.focusNumberOtherOD == rowLength) return;  //到表格尾部了，就不用再移动了
+                        that.focusNumberOtherOD = that.focusNumberOtherOD + 1;
+                        $(that.datagrid).datagrid('selectRow', that.focusNumberOtherOD);
+                        $('#orderDistributionOtherTask' + that.focusNumberOtherOD).focus();
+                        //显示货物
+                        //that.orderProductsShow(that.focusOrderformidOD);
+                        break;
+                }
+            });
+        },
+
+        //单击订单表格一行
+        clickDataGridRow: function (rowIndex, rowData) {
+            //显示当前行订单的订货的内容
+            if (rowData) { //初始化的时候，可能没有数据
+                //缓存光标位置
+                OrderDistributionSearchviewOtherModule.focusNumberOtherOD = rowIndex;
+                //当前行输入框获得焦点
+                $('#orderDistributionOtherTask' + rowIndex).focus();
+            }
+        },
+
+        //选择行事件
+        selectDataGridRow:function(rowIndex,rowData){
+            //显示当前行订单的订货的内容
+            if (rowData) { //初始化的时候，可能没有数据
+                //显示备注
+                $('#beizhuOrderDistributionOther').linkbutton({text: '备注:' + rowData.beizhu});
+                $('#orderDistributionOtherInfoOther').html('录入员:' + rowData.telname + ' 录入时间:' + rowData.rectime
+                  + ' 催送次数: 催送时间: 更改人: 更改时间:');
+            }
+        },
+
+        /**
+         * 单击，选中输入框
+         */
+        distributionClick: function (orderformid) {
+            //更新焦点订单号
+            this.focusOrderformidOD = orderformid;
+            //行选中
+            $(this.datagrid).datagrid('selectRow', this.focusNumberOtherOD);
+            //显示焦点
+            $('#orderDistributionOtherTask'+this.focusNumberOtherOD).focus();
+        },
+
+        /**
+         * 输入框获得焦点
+         */
+        distributionFocus:function(orderformid){
+            //更新焦点订单号
+            this.focusOrderformidOD = orderformid;
+        },
+
+        /**
+         * 表格的分页事件
+         */
+        dataPage: function () {
+            var that = this;
+            $(that.datagrid).datagrid('getPager').pagination({
+                onSelectPage: function (pageNumber, pageSize) {
+                    var data = {'page':pageNumber};
+                    $.ajax({
+                        type: "POST",
+                        url: "__URL__/searchviewOther",
+                        data:data,
+                        dataType: "json",
+                        success: function (data) {
+                            //选择第一行焦点
+                            $(that.datagrid).datagrid('loadData', data);
+
+                            //行选中
+                            $(that.datagrid).datagrid('selectRow',0);
+                            //显示焦点
+                            $('#orderDistributionOtherTask0').focus();
+                            that.focusNumberOtherOD = 0;
+                        }
+                    })
+                }
+            });
+        },
+
+        /**
+         * 第一次启动
+         */
+        firstGetOrderForm: function () {
+            var that = this;
+            setTimeout(function () {
+                $.ajax({
+                    type: "POST",
+                    url:  "{$url}",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.rows.length > 0) {
+                            //选择第一行焦点
+                            $(that.datagrid).datagrid('loadData', data);
+                            that.focusNumberOtherOD = 0;  //初始定位
+
+                            //显示焦点
+                            $('#orderDistributionOtherTask' + that.focusNumberOtherOD).focus();
+                            //行选中
+                            $(that.datagrid).datagrid('selectRow', that.focusNumberOtherOD);
+                        }
+                    }
+                })
+            }, 100);
+        },
+
+
+        /**
+         * 分配订单,要改写成从 orderformid找到订单，然后给订单改变值，这样，就不怕刷新了
+         */
+        distributionOrder: function (event, obj, orderformid, rowIndex) {
+            var findCompanyName = false;  //是否有分配名
+            //定义根据输入的键，获得的分公司名称
+            var event = event || window.event;
+            var inputCode = event.which ? event.which : event.keyCode;
+            var inputValue = String.fromCharCode(inputCode);
+            if ((inputCode >= 48 && inputCode <= 57) || (inputCode >= 65 && inputCode <= 90) || (inputCode >= 96 && inputCode <= 105)) {
+                if(inputCode >= 96){
+                    inputValue = String.fromCharCode(inputCode - 48);
+                }
+                $(this.datagrid).datagrid('updateRow', {
+                    index: rowIndex,    //定位行
+                    row: {
+                        company:(this.companyMgrName[inputValue])
+                    }
+                });
+                findCompanyName = true;  //分配名称存在
+                var url = "__URL__/orderDistributionByCode/orderformid/" + orderformid + "/code/" + inputValue;
+                $.get(url);
+                var rowsObj = $(this.datagrid).datagrid('getRows');  //返回当前页的记录
+                var rowLength = rowsObj.length - 1;
+                if(rowIndex == rowLength){
+                    rowIndex = rowIndex;   //已经到行尾
+                }else{
+                    rowIndex += 1;
+                }
+                //行选中
+                $(this.datagrid).datagrid('selectRow', rowIndex);
+                $('#orderDistributionOtherTask' + rowIndex).focus(); //下一个节点获得焦点
+
+                this.focusNumberOtherOD = rowIndex;
+                //*********************/
+                return false;
+                for (var k in this.companyMgrCode) {
+                    if (this.companyMgrCode[k] == inputValue) {
+                        $(obj).val(this.companyMgrName[k]);
+                        $(this.datagrid).datagrid('updateRow', {
+                            index: rowIndex,    //定位行
+                            row: {
+                                company:this.companyMgrName[k]
+                            }
+                        });
+
+                    }
+                };
+                if (findCompanyName == false) {
+                    $.messager.show({
+                        title: '分配提示',
+                        msg: '分配名称没有,代码输入有误!'+inputCode,
+                        height: 70,
+                        timeout: 5000,
+                        showType: 'slide',
+                        style: {
+                            left: 0,
+                            right: '',
+                            top: '',
+                            bottom: -document.body.scrollTop - document.documentElement.scrollTop
+                        }
+                    });
+                    $(obj).val('');
+                }
+            }
+
+        },
+
+        /**
+         * 返回所有送餐公司
+         */
+        getCompany: function () {
+            var that = this;
+            //返回所有分公司的名称和分配代码
+            $.ajax({
+                type: "POST",
+                url: '__APP__/OrderDistribution/getCompanyMgr',
+                dataType: "json",
+                success: function (data) {
+                    if (!data)  return;
+                    that.companyMgrName = data;
+                }
+            })
+        },
+
+        /**
+         * 综合查询
+         * @param event
+         * @param obj
+         */
+        otherSearchInput: function (event, obj) {
+            this.ODrefreshOrder = false;   //禁止刷新
+            var that = this;
+            $(that.dialog).dialog({
+                title: '分配综合查询',
+                iconCls: 'icons-application-application_add',
+                width: 500,
+                height: 140,
+                cache: false,
+                href: "{:U('OrderDistribution/searchOtherInput')}",
+                modal: true,
+                collapsible: false,
+                minimizable: false,
+                resizable: false,
+                maximizable: false,
+                buttons: [{
+                    text: '确定',
+                    iconCls: 'icons-other-tick',
+                    handler: function () {
+                        $(that.dialog).find('form').eq(0).form('submit', {
+                            onSubmit: function () {
+                                var isValid = $(this).form('validate');
+                                if (!isValid) return false;
+
+                                var formArray = $(this).serializeArray();
+                                var url = '__URL__/searchviewOther/';
+                                $.each(formArray, function (key, value) {
+                                    url = url + value.name + '/' + value.value;
+                                });
+                                url = encodeURI(url);
+                                IndexIndexModule.updateOperateTab(url, '分配综合查询');
+                                that.ODrefreshOrder = true;   //开启刷新
+                                $(that.dialog).dialog('close');
+                                $('#orderTask' + that.focusNumberOD).focus();
+                                return false;
+                            }
+                        });
+                    }
+                }, {
+                    text: '取消',
+                    iconCls: 'icons-arrow-cross',
+                    handler: function () {
+                        that.ODrefreshOrder = true;   //开启刷新
+                        $(that.dialog).dialog('close');
+                        $('#orderTask' + that.focusNumberOD).focus();
+
+                    }
+                }]
+            });
+        },
+
+        //新建的快捷操作
+        quickKeyboardAction:function(){
+            var that = this;
+
+            // ctrl+6快捷键, 地址查询
+            Mousetrap.bind(['ctrl+8','ctrl+f8','f8'], function(e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '分配综合查询') {
+                    that.otherSearchInput();
+                };
+            });
+
+
+            // ESC键
+            Mousetrap.bind('esc', function(e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '分配综合查询') {
+                    if( $(that.dialog).parent().is(":hidden")  == true){ //隐藏
+                        // 更新一个选项卡面板
+                        $('#operation').tabs('select','订单分配');
+                    }else {  //对话框打开
+                        $(IndexIndexModule.dialog).dialog('close');
+                    }
+                }
+            });
+        }
+
+
+    }
+
+    $(function(){
+        OrderDistributionSearchviewOtherModule.init();
+    })
+</script>

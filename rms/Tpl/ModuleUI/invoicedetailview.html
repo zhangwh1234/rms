@@ -1,0 +1,29 @@
+<style>
+    #DetailOrderFormInvoice td{
+        height: 25px;
+        border-style:solid none none solid;
+        border-width:1px;
+        border-color: #CCCCCC;
+        font-size:14px;
+    }
+
+    #DetailOrderFormInvoice span{
+        margin-left:4px;
+        font-size:14px;
+    }
+
+</style>
+<table id="DetailOrderFormInvoice" width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+        <td width="10%" align="right" >
+            <span style="margin-right: 5px;">发票抬头:</span></td>
+        <td width="45%"  align="left" style="background: #F5F5F5;">
+            <span>{$info.invoiceheader}</span>
+        </td>
+        <td width="10%" align="right">
+            <span style="margin-right:5px;">发票内容:</span></td>
+        <td  align="left" style="background: #F5F5F5;">
+            <span>{$info.invoicebody}</span>
+        </td>
+    </tr>
+</table>

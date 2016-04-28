@@ -1,0 +1,170 @@
+<!-- 菜单信息管理列表 -->
+<table id="baiduwaimaiMenumgrListviewTable" title="菜单管理" >
+
+    </table>
+    <div id="baiduwaimaiShopmgrListviewTableToolbar">
+    	  <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="baiduwaimaiMenumgrListviewCreate()">新建菜单</a>
+    </div>
+
+<script>
+Namespace.register('baiduwaimai.menumgrListview');
+//定义列表
+baiduwaimai.menumgrListview.table  = $('#baiduwaimaiMenumgrListviewTable');
+baiduwaimai.menumgrListview.table.datagrid(
+		{
+			nowrap : "true",
+			fitColumns : "true",
+			singleSelect : "true",
+			autoRowHeight : "true",
+			striped : "true",
+			border : "false",
+			rownumbers : "false", //显示行号
+			showFooter : 'true',
+			pagination : true,
+			pagePosition : 'bottom',
+			fit:true,
+			toolbar : '#baiduwaimaiShopmgrListviewTableToolbar',
+			columns : [ [
+					{
+						field : 'menuid',
+						title : 'id',
+						hidden : 'true',
+						width : 100
+					},
+					{
+						field : 'name',
+						title : '菜品名称',
+						width : 20,
+						align : 'left'
+					},
+					{
+						field : 'catalog',
+						title : '菜品分类',
+						width : 10,
+						align : 'center'
+					},
+					{
+						field : "price",
+						width : 10,
+						title : '单价'
+					},
+				{
+					field : "menuoperation",
+					width : 30,
+					title : '操作',
+					align : 'center',
+					formatter : function(value, rowData,
+										 rowIndex) {
+						var operation;
+						operation = "";
+						operation += "<a href='javascript:void(0);' onclick='baiduwaimaiUpdateRegin(&apos;__URL__/menumgrDetailview/menuid/"
+								+ rowData.menuid
+								+ "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>查看</a>";
+						operation += "&nbsp;|&nbsp;";
+						operation += "<a href='javascript:void(0);' onclick='baiduwaimaiUpdateRegin(&apos;__URL__/menumgrEditview/menuid/"
+								+ rowData.menuid
+								+ "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>编辑</a>";
+						return operation;
+					}
+				},
+					{
+						field : "operation",
+						width : 80,
+						title : '操作',
+						align : 'center',
+						formatter : function(value, rowData,
+								rowIndex) {
+							var operation;
+							operation = "";
+							operation += "<a href='javascript:void(0);' onclick='baiduwaimaiMenumgrCreate(&apos;__URL__/menumgrCreate/menuid/"
+										+ rowData.menuid
+										+ "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>新增菜品</a>";
+							operation += "&nbsp;|&nbsp;"
+							operation += "<a href='javascript:void(0);' onclick='baiduwaimaiMenumgrUpdate(&apos;__URL__/menumgrUpdate/menuid/"
+										+ rowData.menuid
+										+ "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>更新</a>";
+							operation += "&nbsp;|&nbsp;"
+							operation += "<a href='javascript:void(0);' onclick='baiduwaimaiMenumgrDelete(&apos;__URL__/menumgrDelete/menuid/"
+										+ rowData.menuid
+										+ "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>删除</a>";
+
+							operation += "&nbsp;|&nbsp;"
+							operation += "<a href='javascript:void(0);' onclick='baiduwaimaiMenumgrOnline(&apos;__URL__/menumgrOnline/menuid/"
+											+ rowData.menuid
+											+ "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>上线</a>";
+							operation += "&nbsp;|&nbsp;"
+							operation += "<a href='javascript:void(0);' onclick='baiduwaimaiMenumgrOffline(&apos;__URL__/menumgrOffline/menuid/"
+									+ rowData.menuid
+									+ "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>下线</a>";
+							operation += "&nbsp;|&nbsp;"
+							operation += "<a href='javascript:void(0);' onclick='baiduwaimaiMenumgrThreshold(&apos;__URL__/menumgrThreshold/menuid/"
+									+ rowData.menuid
+									+ "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>阈值设置</a>";
+							return operation;
+						}
+					} ] ]
+		});
+
+
+//定义查询返回的订单数据
+baiduwaimai.menumgrListview.listData = '{$listData}';
+
+//转换成json对象
+baiduwaimai.menumgrListview.listData = eval('('
+		+ baiduwaimai.menumgrListview.listData + ')');
+
+
+//载入订单数据，初始化
+baiduwaimai.menumgrListview.table.datagrid('loadData',
+		baiduwaimai.menumgrListview.listData);
+
+	//新建商户
+	var baiduwaimaiMenumgrListviewCreate = function(){
+		var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+		var regin =  baiduwaimaiMainviewLayout.layout('panel','center');
+		regin.panel('refresh','__URL__/menumgrCreateview');
+	}
+
+
+	//上传
+	var baiduwaimaiMenumgrCreate = function(url){
+		$.messager.progress();
+		var msg = '';
+		$.ajax({
+			url:url,
+			success:function(data){
+				$.messager.progress('close');
+				$.each(data.data,function(key,value){
+					msg = msg + '内容: '+ value+'</br>';
+				})
+				$.messager.alert('返回的结果',
+						'操作内容:' + data.cmd + '</br>' +
+						'菜品名称:'+data.name + '</br>'+
+						 msg,'',function(){
+							var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+							var regin =  baiduwaimaiMainviewLayout.layout('panel','center');
+							regin.panel('refresh','__URL__/menumgrListview');
+						});
+
+			}
+		})
+	}
+
+	//菜品更新
+	var baiduwaimaiMenumgrUpdate = baiduwaimaiMenumgrCreate;
+
+	//菜品删除
+	var baiduwaimaiMenumgrDelete = baiduwaimaiMenumgrCreate;
+
+	//菜品上线
+	var baiduwaimaiMenumgrOnline = baiduwaimaiMenumgrCreate;
+
+	//菜品下线
+	var baiduwaimaiMenumgrOffline = baiduwaimaiMenumgrCreate;
+
+	//菜品阈值设置
+	var baiduwaimaiMenumgrThreshold = baiduwaimaiMenumgrCreate;
+
+	
+	
+</script>

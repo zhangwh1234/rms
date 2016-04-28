@@ -1,0 +1,72 @@
+<include file="Module/createview" />
+
+<script>
+    var BeizhuOrderMgrCreateviewModule = {
+
+        //初始化
+        init :function(){
+            $('.moduleOperatert').height(IndexIndexModule.operationHeight);
+            this.quickKeyboardAction();
+        },
+
+        //保存记录
+        insert: function () {
+            $('#BeizhuOrderMgrCreateviewForm').form('submit', {
+                url: '__URL__/insert',
+                onSubmit: function () {
+                    var isValid = $(this).form('validate');
+                    if (!isValid) {
+                        return false;
+                    }
+                },
+                success: function (res) {
+                    var data = eval('(' + res + ')');
+                    if(!data.status){
+                        $.app.method.tip('提示信息', data.info, 'error');
+                    }else{
+                        $.app.method.tip('提示信息', data.info, 'info');
+                        IndexIndexModule.updateOperateTab(data.url);
+                    }
+                }
+            });
+        },
+
+        //放弃保存
+        cancel: function(){
+            var url = '__URL__/listview';
+            IndexIndexModule.updateOperateTab(url);
+        },
+
+        //新建的快捷操作
+        quickKeyboardAction: function () {
+            // ctrl+9快捷键,保存公告
+            Mousetrap.bind(['ctrl+9', 'ctrl+f9', 'f9'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '备注管理' && ($('#BeizhuOrderMgrAction').val() == 'createview')) {
+                    CompanyMgrCreateviewModule.insert();
+                };
+            });
+
+            // ctrl+4快捷键,放弃
+            Mousetrap.bind(['ctrl+4', 'ctrl+f4', 'f4'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '备注管理' && ($('#BeizhuOrderAction').val() == 'createview')) {
+                    IndexIndexModule.updateOperateTab('__URL__/listview');
+                };
+            });
+        }
+    }
+
+    $(function () {
+        BeizhuOrderMgrCreateviewModule.init();
+        setTimeout(function(){
+            $('#BeizhuOrderMgrCreateviewForm input[name=name]').focus();
+        },100);
+
+    })
+</script>
+

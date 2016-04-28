@@ -1,0 +1,64 @@
+<script type="text/javascript">
+    var orderMonitTable;
+    $(function(){
+        orderMonitTable = $('#orderMonitTable').datagrid({  
+            fitColumns:true,            
+            title :"订单情况显示",
+            border:false, 
+            closable:true,
+            columns:[[  
+            {field:'name',title:'名称',width:100},  
+            {field:'totalnumber',title:'订单量',width:50},  
+            {field:'notask',title:'未处理',width:50,align:'center'},
+            {field:'task',title:'已处理',width:50,align:'center'},   
+            {field:'fast',title:'催餐',width:50,align:'center'},
+            {field:'web',title:'网订',width:50,align:'center'},
+            {field:'cancel',title:'作废',width:50,align:'center'},
+            {field:'returnorder',title:'退餐',width:50,align:'center'}, 
+            {field:'totalmoney',title:'金额',width:100,align:'center'}          
+            ]],
+            onClose:function(){
+                $('#operation').tabs('close','订单情况');
+            } 
+        });  
+    })
+
+    //已启动，就显示
+    setTimeout(function(){
+        $.ajax({
+            type : "POST",
+            url : "__URL__/getOrderMonit",
+            dataType : "json",
+            success : function(data){ 
+            	orderMonitTable.datagrid('loadData', data);  
+            }
+        });
+    },300);
+
+    //定时显示
+    setInterval(function(){
+        $.ajax({
+            type : "POST",
+            url : "__URL__/getOrderMonit",
+            dataType : "json",
+            success : function(data){ 
+            	if(!data){
+            		orderMonitTable.datagrid('loadData', data);  
+            	}
+            }
+        });
+    },10000);
+
+    //修改选项卡，加上关闭按钮
+    /**
+    var tab =  $('#operation').tabs('getSelected'); 
+    $('#operation').tabs('update', {
+    tab: tab,
+    options: {
+    closable:true
+    }
+    });        **/
+</script>
+<div id="orderMonitDiv" style="border: 1px solid blue;height:500px;background-color: #FFFAF0;">
+    <table id="orderMonitTable"></table>
+</div> 

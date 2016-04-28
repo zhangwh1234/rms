@@ -1,0 +1,202 @@
+<!-- 编辑商户页面 -->
+<style>
+	#baiduwaimaiShopmgrCreateviewToolbar {
+		margin: 0px;
+		padding-top: 0px;
+		background: #fafafa;
+		border: 0px solid red;
+	}
+
+	table {
+		border-collapse: collapse;
+		border: none;
+	}
+
+	td {
+		border: solid #d0d0d0 1px;
+		padding-top: 2px;
+		padding-bottom: 2px;
+	}
+
+	#baiduwaimaiShopinfoCreateviewDiv {
+		overflow: scroll;
+	}
+</style>
+
+<div id="baiduwaimaiShopinfoEditviewToolbar" style="">
+	<a href="javascript:void(0)" id="baiduwaimaiShopinfoEditviewUpdateButton" class="easyui-linkbutton" iconCls="icon-add" plain="true"
+	   onclick="baiduWaimaiShopinfoListviewUpdate();">保存</a>
+	<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-bakc" plain="true"
+	   onclick="baiduWaimaiShopinfoListviewCancel();">放弃并返回</a>
+</div>
+
+<div id="baiduwaimaiShopinfoEditviewDiv" class="easyui-panel" title="新建商户"
+	 style="width:500px;height:150px;padding:10px;background:#fafafa;"
+	 data-options="iconCls:'icon-save',closable:true,
+    collapsible:true,minimizable:true,maximizable:true" fit="true" collapsible="false" minimizable="false"
+	 maximizable="false" closable="false" bodyCls="baiduwaimaiShopmgrBodyCls" border="false"
+		>
+	<form id="baiduwaimaiShopinfoUpdate" method="post"  style="height:800px;" enctype="multipart/form-data">
+		<table width="100%">
+			<tr>
+				<td width="15%" align="right">商户名称:</td>
+				<td width="35%"><input name="name" class="easyui-textbox" data-options="required:true"
+									   style="width:80%;height:25px;" value="{$shopinfo.name}"></td>
+				<td width="15%" align="right">商户图片:</td>
+				<td width="25%"><input name="shop_logo_tmp" type="file"
+									    style="width:300px;height:25px;" value="{$shopinfo.shop_logo}" />
+					<input name="shop_logo"
+						   style="width:300px;height:25px;" value="{$shopinfo.shop_logo}" />
+				<img src="{$shopinfo.shop_logo}" />
+				</td>
+			</tr>
+			<tr>
+				<td width="15%" align="right">商户所在的省份:</td>
+				<td width="35%"><input name="province" class="easyui-textbox" data-options="prompt:'请输入省',required:true"
+									   style="width:80%;height:25px;" value="{$shopinfo.province}"></td>
+				<td width="15%" align="right">商户所在的城市:</td>
+				<td width="25%"><input name="city" class="easyui-textbox" data-options="required:true"
+									   style="width:300px;height:25px;" value="{$shopinfo.city}"/></td>
+			</tr>
+			<tr>
+				<td width="15%" align="right">商户所在的区县:</td>
+				<td width="35%"><input name="county" class="easyui-textbox" data-options="required:true"
+									   style="width:80%;height:25px" value="{$shopinfo.county}"></td>
+				<td width="15%" align="right">商户所在的地址:</td>
+				<td width="25%"><input name="address" class="easyui-textbox" data-options="required:true"
+									   style="width:300px;height:25px;" value="{$shopinfo.address}"/></td>
+			</tr>
+			<tr>
+				<td width="15%" align="right">品牌:</td>
+				<td width="35%"><input name="brand" class="easyui-textbox" data-options="required:true"
+									   style="width:80%;height:25px" value="{$shopinfo.brand}"></td>
+				<td width="15%" align="right">一级分类:</td>
+				<td width="25%"><input name="category1" class="easyui-textbox" data-options="required:true"
+									   style="width:80%;height:25px" value="餐饮" readonly></td>
+			</tr>
+			<tr>
+				<td width="15%" align="right">二级分类:</td>
+				<td width="35%"><input name="category2" class="easyui-textbox" data-options="prompt:'请输入',required:true"
+									   style="width:80%;height:25px" value="小吃快餐" readonly></td>
+				<td width="15%" align="right">三级分类:</td>
+				<td width="25%"><input name="category3" class="easyui-textbox" data-options="required:true"
+									   style="width:300px;height:25px;" value="快餐/简餐" readonly/></td>
+			</tr>
+			<tr>
+				<td width="15%" align="right">商户座机电话:</td>
+				<td width="35%"><input name="phone" class="easyui-textbox" data-options="required:true"
+									   style="width:80%;height:25px" value="{$shopinfo.phone}">
+				</br>区号-电话，例：0519-88811711
+				</td>
+				<td width="15%" align="right">商户客服电话:</td>
+				<td width="25%"><input name="service_phone" class="easyui-textbox" data-options="required:true"
+									   style="width:300px;height:25px;"  value="{$shopinfo.service_phone}" />
+				</td>
+			</tr>
+			<tr>
+				<td width="15%" align="right">商户坐标经度:</td>
+				<td width="35%"><input name="longitude" class="easyui-textbox" data-options="required:true"
+									   style="width:80%;height:25px;" value="{$shopinfo.longitude}" /></td>
+				<td width="15%" align="right">商户坐标维度:</td>
+				<td width="25%"><input name="latitude" class="easyui-textbox" data-options="required:true"
+									   style="width:300px;height:25px;" value="{$shopinfo.latitude}" /></td>
+			</tr>
+			<input type="hidden" name="coord_type" value="bdll"/>
+			<tr>
+				<td width="15%" align="right">配送区域名称:</td>
+				<td width="35%"><input name="delivery_region_name" class="easyui-textbox" data-options="prompt:'',required:true"
+									   style="width:80%;height:35px" value="{$shopinfo.delivery_region_name}" ></td>
+				<td width="15%" align="right">配送区域坐标:</td>
+				<td width="25%"><textarea name="delivery_region_region"
+										  data-options="iconCls:'icon-search'" style="width:300px;height:135px;font-size: 14px;" >{$shopinfo.delivery_region_region}</textarea>
+					</br><span>格式：12.12312,123.111,2321,12312</span>
+				</td>
+			</tr>
+			<tr>
+				<td width="15%" align="right">配送时长:</td>
+				<td width="35%"><input name="delivery_region_time" class="easyui-textbox" data-options="prompt:'',required:true"
+									   style="width:80%;height:35px" value="{$shopinfo.delivery_region_time}"></td>
+				<td width="15%" align="right">配送费:</td>
+				<td width="25%"><input name="delivery_region_fee" class="easyui-textbox"
+									   data-options="iconCls:'icon-search'" style="width:300px;height:35px;" value="{$shopinfo.delivery_region_fee}"/></td>
+			</tr>
+			<tr>
+				<td width="15%" align="right">营业时间:</td>
+				<td width="35%"><input name="business_time" class="easyui-textbox" data-options="required:true"
+									   style="width:300px;height:25px;" value="{$shopinfo.business_time}" />
+					</br><span>格式：10:00,13:00,16:00,19:30</span>
+				</td>
+				<td width="15%" align="right">提前下单时间:</td>
+				<td width="25%"><input name="book_ahead_time" class="easyui-textbox"
+									   data-options="iconCls:'icon-search'" style="width:300px;height:25px;" value="{$shopinfo.book_ahead_time}" /></td>
+			</tr>
+			<tr>
+				<td width="15%" align="right">是否可以提供发票:</td>
+				<td width="35%"><select name="invoice_support" style="width:50%;height:25px;">
+					<option value="1">带发票</option>
+					<option value="2">不带发票</option>
+				</select>
+				</td>
+				<td width="15%" align="right">外卖起送价:</td>
+				<td width="25%"><input name="min_order_price" class="easyui-textbox"
+									   data-options="iconCls:'icon-search'" style="width:300px;height:25px;" value="{$shopinfo.min_order_price}" /></td>
+			</tr>
+			<tr>
+				<td width="15%" align="right">打包费:</td>
+				<td width="35%"><input name="package_box_price" class="easyui-textbox" data-options="prompt:''"
+									   style="width:80%;height:25px;" value="{$shopinfo.package_box_price}" ></td>
+				<td width="15%" align="right">订单阈值设置:</td>
+				<td width="25%"><input name="threshold" class="easyui-textbox" data-options="iconCls:'icon-search'"
+									   style="width:300px;height:25px;" value="{$shopinfo.threshold}" /></td>
+			</tr>
+			<tr>
+				<td width="15%" align="right">配送时间设置:</td>
+				<td width="35%"><input name="delivery_delay_time" class="easyui-textbox" data-options="prompt:''"
+									   style="width:80%;height:25px;" value="{$shopinfo.delivery_delay_time}"></td>
+				<td width="15%" align="right">商户公告:</td>
+				<td width="25%"><textarea name="content"  data-options="iconCls:'icon-search'"
+										  style="width:300px;height:125px;" value="{$shopinfo.content}" /></td>
+			</tr>
+		</table>
+			<input name="shopinfoid" type="hidden" value="{$shopinfo.shopinfoid}" />
+	</form>
+</div>
+
+<script>
+	$('#baiduwaimaiShopinfoUpdate').form(
+			{
+				url: '__URL__/shopinfoEditUpdate',
+				onSubmit: function () {
+					var isValid = $(this).form('validate');
+					if (!isValid) return false;
+					return true;
+				},
+				success: function (data) {
+
+					data = eval('(' + data + ')');
+					if (data.info == 'success') {
+						alert('保存成功!');
+					}
+
+					if (data.info == 'error') {
+						alert('没有保存的内容！');
+					}
+
+					var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+					var regin = baiduwaimaiMainviewLayout.layout('panel', 'center');
+					regin.panel('refresh', '__URL__/shopinfoListview');
+
+				}
+			});
+	//保存订单
+	var baiduWaimaiShopinfoListviewUpdate = function () {
+		$('#baiduwaimaiShopinfoUpdate').submit();
+	}
+
+	//放弃保存订单
+	function baiduWaimaiShopinfoListviewCancel() {
+		var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+		var regin = baiduwaimaiMainviewLayout.layout('panel', 'center');
+		regin.panel('refresh', '__URL__/shopinfoListview');
+	}
+</script>

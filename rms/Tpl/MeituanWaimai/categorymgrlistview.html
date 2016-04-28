@@ -1,0 +1,120 @@
+<!-- 菜单分类信息管理列表 -->
+<table id="meituanCategorymgrListviewTable" title="分类管理" >
+</table>
+<div id="meituanCategorymgrListviewTableToolbar">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="meituanCategorymgrListviewCreateview()">新建分类</a>
+</div>
+
+<script>
+    Namespace.register('meituan.categorymgrListview');
+    //定义列表
+    meituan.categorymgrListview.table  = $('#meituanCategorymgrListviewTable');
+    meituan.categorymgrListview.table.datagrid(
+            {
+                nowrap : "true",
+                fitColumns : "true",
+                singleSelect : "true",
+                autoRowHeight : "true",
+                striped : "true",
+                border : "false",
+                rownumbers : "false", //显示行号
+                showFooter : 'true',
+                pagination : true,
+                pagePosition : 'bottom',
+                fit:true,
+                toolbar : '#meituanCategorymgrListviewTableToolbar',
+                columns : [ [
+                    {
+                        field : 'categoryid',
+                        title : 'id',
+                        hidden : 'true',
+                        width : 100
+                    },
+                    {
+                        field : 'category_name',
+                        title : '分类名称',
+                        width : 20,
+                        align : 'left'
+                    },
+                    {
+                        field : 'sequence',
+                        title : '排序',
+                        width : 10,
+                        align : 'center'
+                    },
+                    {
+                        field: "categoryoperation",
+                        width: 25,
+                        title: '分类参数管理',
+                        align: 'center',
+                        formatter: function (value, rowData,
+                                             rowIndex) {
+                            var operation;
+                            operation = '';
+                            operation += "<a href='javascript:void(0);' onclick='meituanUpdateRegin(&apos;__URL__/categorymgrDetailview/categoryid/"
+                                    + rowData.categoryid + "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>查看</a>";
+                            operation += "&nbsp;|&nbsp;";
+                            operation += "<a href='javascript:void(0);' onclick='meituanUpdateRegin(&apos;__URL__/categorymgrEditview/categoryid/"
+                                    + rowData.categoryid + "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>编辑</a>";
+
+                            return operation;
+                        }
+                    },
+                    {
+                        field : "operation",
+                        width : 74,
+                        title : '操作',
+                        align : 'center',
+                        formatter : function(value, rowData,
+                                             rowIndex) {
+                            var operation;
+                            operation = "";
+                            operation += "<a href='javascript:void(0);' onclick='meituanCategoryUpdate(&apos;__URL__/categoryUpdate/categoryid/"
+                                    + rowData.categoryid+ "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>更新分类</a>";
+
+
+                            return operation;
+                        }
+                    } ] ]
+            });
+
+
+    //定义查询返回的订单数据
+    meituan.categorymgrListview.listData = '{$listData}';
+
+    //转换成json对象
+    meituan.categorymgrListview.listData = eval('('
+    + meituan.categorymgrListview.listData + ')');
+
+    //载入订单数据，初始化
+    meituan.categorymgrListview.table.datagrid('loadData',
+            meituan.categorymgrListview.listData);
+
+    //新建商户
+    var meituanCategorymgrListviewCreateview = function(){
+        var meituanMainviewLayout = $('#meituanMainviewLayout');
+        var regin =  meituanMainviewLayout.layout('panel','center');
+        regin.panel('refresh','__URL__/categorymgrCreateview');
+    }
+
+
+
+    //更新分类
+    var meituanCategoryUpdate = function(url){
+        $.ajax({
+            url:url,
+            success:function(data){
+                console.info(data);
+                return false;
+                alert(data);
+                var meituanMainviewLayout = $('#meituanMainviewLayout');
+                var regin =  meituanMainviewLayout.layout('panel','center');
+                regin.panel('refresh','__URL__/categoryListview');
+            }
+        })
+    }
+
+
+
+
+</script>

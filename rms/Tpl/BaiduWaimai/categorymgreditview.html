@@ -1,0 +1,78 @@
+<!-- 新建分类页面 -->
+<style>
+    #baiduwaimaiCategorymgrEditviewToolbar{
+        margin:0px;
+        padding-top:0px;
+        background:#fafafa;
+        border:1px solid red;
+    }
+
+    #baiduwaimaiCategorymgrEditview table{
+        border-collapse: collapse;
+        border: none;
+    }
+
+    #baiduwaimaiCategorymgrEditview td{
+        border: solid #d0d0d0 1px;
+    }
+</style>
+
+<div id="baiduwaimaiCategoryinfoEditviewToolbar" style="">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="baiduWaimaiCategorymgrEditviewUpdate();">保存</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-back" plain="true" onclick="baiduWaimaiCategorymgrEditviewCancel();">放弃并返回</a>
+</div>
+
+<div id="baiduwaimaiCategorymgrEditview" class="easyui-panel" title="新建菜单"
+     style="width:500px;height:150px;padding:10px;background:#fafafa;"
+     data-options="iconCls:'icon-save',closable:true,
+    collapsible:true,minimizable:true,maximizable:true"  fit="true" collapsible="false" minimizable="false" maximizable ="false" closable="false" bodyCls="baiduwaimaiShopmgrBodyCls" border="false"
+        >
+    <form id="baiduwaimaiCategorymgrUpdate" method="post">
+        <table width="100%" >
+            <tr>
+                <td width="15%" align="right">分类名称:</td>
+                <td width="35%"><input name="name" class="easyui-textbox" data-options="required:true" style="width:80%;height:25px" value="{$categorymgr.name}"></td>
+                <td width="15%" align="right">分类序号:</td>
+                <td width="25%"><input name="rank" class="easyui-textbox" data-options="" style="width:300px" value="{$categorymgr.rank}" /></td>
+            </tr>
+
+        </table>
+        <input name="categoryid" type="hidden" value="{$categorymgr.categoryid}" />
+    </form>
+</div>
+
+<script>
+    $('#baiduwaimaiCategorymgrUpdate').form(
+            {
+                url:'__URL__/categorymgrEditUpdate',
+                onSubmit: function() {
+                    var isValid = $(this).form('validate');
+                    if (!isValid) return false;
+                    return true;
+                },
+                success:function(data){
+                    data =  eval('('+data+')');
+                    if(data.info == 'success'){
+                        alert('保存成功!');
+                    }
+
+                    if(data.info == 'error'){
+                        alert('没有修改的内容！');
+                    }
+                    var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+                    var regin =  baiduwaimaiMainviewLayout.layout('panel','center');
+                    regin.panel('refresh','__URL__/CategorymgrListview');
+                }
+            });
+    //保存订单
+    var baiduWaimaiCategorymgrEditviewUpdate = function(){
+        $('#baiduwaimaiCategorymgrUpdate').submit();
+    }
+
+    //放弃保存订单
+    var  baiduWaimaiCategorymgrEditviewCancel = function(){
+        var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+        var regin =  baiduwaimaiMainviewLayout.layout('panel','center');
+        regin.panel('refresh','__URL__/CategorymgrListview');
+    }
+</script>

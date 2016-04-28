@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    <title>{$Think.lang.welcome}</title>
+    <link REL="SHORTCUT ICON" HREF="__PUBLIC__/Images/zhkc/favicon.ico">    
+    <link rel="stylesheet" type="text/css" href="/newrmstest/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/newrmstest/themes/icon.css">
+    <load href="__PUBLIC__/Css/demo.css" />
+    <load href="__PUBLIC__/Js/jquery-1.8.0.min.js" />     
+    <load href="__PUBLIC__/Js/jquery.easyui.min.js" />
+    <load href="__PUBLIC__/Js/datagrid-detailview.js" />
+    <load href="__PUBLIC__/Js/easyui-lang-zh_CN.js" />
+    <load href="__PUBLIC__/Js/general.js" />
+    <load href="__PUBLIC__/Css/style.css" />
+</head>
+<body>
+<div id="status" style="position:absolute;display:yes;right:135px;top:1px;height:27px;white-space:nowrap;border:1px solid white;"><img src="__PUBLIC__/Images/status.gif"></div>
+<div id="subject" align="center"><span> 选 择 (产品)</span></div>
+<div style="position:absolute;float: left;top:1px;"><img src="__PUBLIC__/Images/basicSearchLens.gif"></div>
+<div style="background-color: red;padding-top: 0px;padding-bottom: 1px;height: 1px;"></div>
+<div class="moduleMenu">
+    <ul>
+        <li>{$Think.lang.$tabName}</li>
+        <li><a href="javascript:void(0);" class="moduleName" onclick="updateTab('__URL__/listview');">&nbsp;&gt;{$Think.lang.$moduleName}</a></li>
+        <li>&nbsp;&gt;选择操作</li>
+        <li style="width: 50px;">&nbsp;</li>
+        <li><a href="javascript:;" id="showSubMenu"  onMouseOver="" ><img src="__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);" class="moduleName" onclick="updateTab('__URL__/listview');">多项选择</a></li>
+        <li style="width: 50px;">&nbsp;</li>
+        <li><a href="javascript:;" id="showSubMenu"  onMouseOver="" ><img src="__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);" class="moduleName" onclick="updateTab('__URL__/listview');">查询</a></li>
+        
+        
+        <li style="float: right;margin-right: 40px;"><a href="javascript:void(0);" class="moduleName" onclick="updateTab('__URL__/listview');">关闭</a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="closeTab();"><img src="__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <div style="clear:both;"></div>
+    </ul>
+</div>
+
+<div class="pages" align="center">{$page}</div>
+<div class="list">    
+    <table  border="0" cellspacing="1" cellpadding="3" width="100%" class="lvt"   align="center">
+        <tr class="listHeader">
+            <td class=""><input class="listColCheck" type="checkbox"  name="selectall" ></td>
+            <foreach name="listHeader" item="header">
+                <td class="listHeader">{$Think.lang.$header}</td>
+            </foreach>
+            <td class="listHeader" >操作</td>
+        </tr>
+        <volist id="entity"  name="listEntries" key='ad'>
+            <assign name='record' value="$key" />
+            <tr bgcolor="white" onMouseOver="this.className='lvtColDataHover'" onMouseOut="this.className='lvtColData'" ondblclick="alert('row_{$record}');" id="row_{$entity_id}">
+
+                <volist name="entity" id="id">
+                    <if condition="$key eq $moduleId">
+                        <td class="listColCheck" width="2%"><input  type="checkbox" name="selected_id" id="{$record}" value= '{$record}'></td> 
+                        <elseif condition="$key eq $list_link_field" />
+                        <td><a class="small" href="javascript:void(0);" onclick="updateTab(&apos;{:U('detailview',array('record'=> $record,'returnAction' => 'listview'))}&apos;);">{$id}</a></td>
+                        <else />                  
+                        <td class="listColData">{$id}</td>                   
+                    </if>
+                </volist>               
+                <td><center><a href="javascript:void(0);" onclick="updateTab(&apos;{:U('detailview',array('record'=> $record,'returnAction' => $returnAction))}&apos;);">选择</a></center></td>
+            </tr>
+        </volist>
+    </table>
+</div>
+<div class="pages">{$page}</div>
+
+<script type="text/javascript">   
+  //定义返回的产品代码，产品名称和行
+  function set_return_order(code,name,price,row){
+     //首先检查父窗口表格是否有存在输入的代码和产品
+     //javascript:
+     var rowLength = window.opener.$("#productsTable tr").length;
+     for(i=1;i<rowLength;i++){
+         var productsName = window.opener.$("#productsName_"+i).attr('value');
+         if(productsName == name ){
+             alert('产品已经存在');
+             return;
+         }
+     } 
+     
+     //window.opener.$("#productsNumber_"+row).focus();  //让数量获得焦点 
+     //window.opener.document.getElementById("productsNumber_"+row).focus();
+     window.opener.$("#productsCode_"+row).attr('value',code); //返回产品代码
+     window.opener.$("#productsName_"+row).attr('value',name); //返回产品名称 
+     window.opener.$("#productsPrice_"+row).attr('value',price); //返回产品单价      
+              
+     window.close();
+  }
+  
+  //多选
+  function selectProducts(obj,code,name,row){
+     // alert('ok');
+      //alert($(obj).attr("value"));
+    //首先检查父窗口表格是否有存在输入的代码和产品
+     var rowLength = window.opener.$("#productsTable tr").length;
+     //alert(rowLength);
+     for(i=1;i<rowLength;i++){
+         var productsName = window.opener.$("#productsName_"+i).attr('value');
+         if(productsName == name){
+             alert('产品已经存在');
+             $(obj).attr('checked','false');
+             return;
+         }
+     } 
+   
+  }
+</script>
+
+</body>
+</html>
+

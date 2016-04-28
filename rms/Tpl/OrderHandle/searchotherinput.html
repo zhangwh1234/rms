@@ -1,0 +1,39 @@
+<!-- 综合查询  -->
+<form style="overflow:hidden;">
+    <table cellspacing="6" width="100%" style="margin-left: 10px;margin-top:10px;">
+        <tr>
+            <td>
+                <span style="font-size: 16px;">综合查询</span>
+                <input type="text" class="easyui-validatebox" id="orderHandleListviewOtherSearchInput"
+                       name="searchTextOther"
+                       style="font-size: 16px;width:80%;" value=""/>
+            </td>
+        <tr>
+    </table>
+</form>
+<script>
+    $(function(){
+        $('#orderHandleListviewOtherSearchInput').focus();
+        $('#orderHandleListviewOtherSearchInput').keydown(function(event){
+            var that = this;
+            if(event.keyCode == 13){
+                var dialog = '#globel-dialog-div';
+                var moduleName =  $(dialog).find("form input[name='searchTextOther']").val();
+                $(dialog).find('form').eq(0).form('submit', {
+                    onSubmit: function () {
+                        var isValid = $(this).form('validate');
+                        if (!isValid) return false;
+                        var searchTextOther = $('#orderHandleListviewOtherSearchInput').val();
+                        var url = '__URL__/searchviewOther/searchTextOther/'+ encodeURIComponent(searchTextOther);
+                        url = encodeURI(url);
+                        IndexIndexModule.openOperateTab(url, '配送综合查询');
+                        $(dialog).dialog('close');
+                        OrderHandleListviewModule.setRefresh(); //开启刷新
+                        return false;
+                    }
+                });
+                return false;
+            }
+        })
+    })
+</script>

@@ -1,0 +1,91 @@
+<script type="text/javascript">
+
+    //处理订单 ,根据送餐员编码
+    function {$actionName}OrderHandle(event,obj,orderformid,rowIndex){
+        //定义根据输入值，处理订单
+        var inputCode = $(obj).val();
+        //输入的键值 
+        var event = event || window.event;
+        var keyCode = event.which ? event.which : event.keyCode;    
+        if(keyCode == 13){   //订单处理  
+            var objValue = $(obj).val();
+            switch(objValue){
+                case '0':  //对退餐的处理
+                    searchCancelOrder(objValue,orderformid,rowIndex);
+                    break;
+                case '7' :  //返回订单
+                    searchBackOrder(objValue,orderformid,rowIndex);
+                    break;
+                case '8' : //订单打印
+                    searchOrderPrintData(orderformid,rowIndex);
+                    break;
+                default:  //对订单处理到送餐员身上                        
+                    $.ajax({
+                        type : "GET",
+                        url : "__URL__/orderHandleByCode/orderformid/"+orderformid+"/code/"+inputCode,
+                        dataType : "json",
+                        success : function(returnData){                 
+                            if(returnData['error'] == 'error'){
+                                $.messager.show({
+                                    title:'提示',
+                                    msg:'输入代码输入有误!',
+                                    height:70,
+                                    timeout:5000,
+                                    showType:'slide',
+                                    style:{
+                                        left:0,right:'',top:'',
+                                        bottom:-document.body.scrollTop-document.documentElement.scrollTop
+                                    }
+                                });
+                                return false;
+                            }
+
+                            if(returnData['success'] == 'success'){ 
+                                handleData = returnData['data'];
+                                rowIndex = rowIndex - 1;
+                                $("#table{$actionName} tr:gt(0):eq("+rowIndex+") td:eq(7)").html(handleData.sendname);
+                            }
+                        }
+
+                    });  
+            }
+        }  
+        //F8订单打印
+        if(keyCode == 119){
+            searchOrderPrintData(orderformid,rowIndex);  
+        }                                      
+    }
+</script>
+<div class="pages">{$page}</div>
+<div class="list" id="list{$moduleName}"  >
+    <table  id="table{$actionName}" border="0" cellspacing="1" cellpadding="3" width="100%" class="lvt"   align="center">
+        <tr class="listHeader">
+            <td class=""><input class="listColCheck" type="checkbox"  name="selectall" ></td>
+            <foreach name="listHeader" item="header">
+                <td class="listHeader">{$Think.lang.$header}</td>
+            </foreach>
+            <td class="listHeader" >操作</td>
+        </tr>
+        <volist id="entity"  name="listEntries" key='row'>
+            <assign name='record' value="$key" />
+            <tr bgcolor="white" onMouseOver="this.className='lvtColDataHover'" onMouseOut="this.className='lvtColData'" ondblclick="alert('row_{$record}');" id="row_{$entity_id}">
+
+                <volist name="entity" id="id">
+                    <if condition="$key eq $moduleId">
+                        <td class="listColCheck" width="2%"><input  type="checkbox" name="selected_id" id="{$record}" value= '{$record}'></td> 
+                        <elseif condition="$key eq $list_link_field" />
+                        <td><a class="small" href="#" onclick="updateTab('__URL__/detailview/record/{$record}/returnAction/{$returnAction}');">{$id}</a></td>
+                        <else />                  
+                        <td class="listColData">{$id}</td>                   
+                    </if>
+                </volist>               
+                <td><center><input id="{$actionName}OrderHandle{$row}" class="easyui-numberbox" value=""  size="6" maxlength="6" style="font-size: 16px;"  onkeydown="{$actionName}OrderHandle(event,this,'{$record}','{$row}');" />          
+                        <a href="javascript:void(0);" onclick="updateTab('__URL__/detailview/record/{$record}/returnAction/{$returnAction}');">查看</a>
+                        <a href="javascript:void(0);" onclick="orderPrintData('{$record}','{$row}')">打印</a>
+                        </center></td>
+            </tr>
+        </volist>
+    </table>
+</div>
+
+<div class="pages">{$page}</div>

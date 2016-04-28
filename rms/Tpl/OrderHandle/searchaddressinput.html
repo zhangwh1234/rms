@@ -1,0 +1,53 @@
+<!-- 地址查询  -->
+<form style="overflow:hidden;" method="get">
+    <table cellspacing="6" width="100%" style="margin-left: 10px;margin-top:10px;">
+        <tr>
+            <td>
+                <span style="font-size: 16px;">地址查询</span>
+                <input type="text" class="easyui-validatebox" id="orderHandleListviewAddressSearchInput"
+                       name="searchTextAddress"
+                       style="font-size: 16px;width:80%;" autocomplete="off" value="" />
+                <input type="text" style="width:0px;visibility:hidden;" >
+            </td>
+        <tr>
+    </table>
+</form>
+<script>
+    var orderHandleListviewAddressSearch = {
+        init:function(){
+            $('#orderHandleListviewAddressSearchInput').focus();
+            this.inputAddressEvent();
+        },
+
+        //输入送餐地址回车键事件
+        inputAddressEvent:function(){
+            $('#orderHandleListviewAddressSearchInput').keydown(function(event){
+                var that = this;
+                if(event.keyCode == 13){
+                    var dialog = '#globel-dialog-div';
+                    $(dialog).find('form').eq(0).form('submit', {
+                        onSubmit: function () {
+                            var isValid = $(this).form('validate');
+                            if (!isValid) return false;
+
+                            var formArray = $(this).serializeArray();
+                            var url = '__URL__/searchviewAddress/';
+                            $.each(formArray, function (key, value) {
+                                url = url + value.name + '/' + value.value;
+                            });
+                            url = encodeURI(url);
+                            IndexIndexModule.openOperateTab(url, '配送地址查询');
+                            $(dialog).dialog('close');
+                            OrderHandleListviewModule.setRefresh();
+                            return false;
+                        }
+                    });
+                    return false;
+                }
+            });
+        }
+    }
+    $(function(){
+        orderHandleListviewAddressSearch.init();
+    })
+</script>

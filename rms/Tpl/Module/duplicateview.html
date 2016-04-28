@@ -1,0 +1,78 @@
+<div class="moduleMenu">
+    <ul>
+        <li>{$Think.lang.$tabName}</li>
+        <li><a href="javascript:void(0);" class="moduleName" onclick="updateTab('__URL__/listview');">&nbsp;&gt;{$Think.lang.$moduleName}</a></li>
+        <li>&nbsp;&gt;复制操作操作</li>
+        <li style="width: 50px;">&nbsp;</li>
+
+
+        <li style="margin-left: 10px;"><a href="javascript:;" id="showSubMenu"  onMouseOver="" ><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);" class="moduleName" onclick="updateTab('__URL__/{$returnAction}');">返回列表 ^4 </a></li>
+
+        <li style="float: right;margin-right: 40px;"><a href="javascript:void(0);" class="moduleName" onclick="updateTab('__URL__/listview');">关闭</a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="closeTab();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
+    </ul>
+</div>
+
+<div class="moduleoperator">
+    <form id="{$moduleName}DuplicateviewForm" name="{$moduleName}DuplicateviewForm" method="POST" style="border: 1px solid white;"  >
+        <input id="{$moduleName}Action" type="hidden" value="Duplicateview" />
+        <input type="hidden" name="pagenumber" value="{$smarty.request.start}">
+        <input type="hidden" name="module" value="{$MODULE}">
+        <input type="hidden" name="record" value="{$record}">
+        <table border=0 cellspacing=0 cellpadding=0 width=99% align=center bgcolor="">
+            <tr>
+                <td>
+                    <table border=0 cellspacing=0 cellpadding=3 width=100% class="small">
+                        <tr>
+                            <td class="dvtTabCache" style="width:20px" nowrap>&nbsp;</td>
+                            <td class="dvtSelectedCell" align="center" nowrap> 复制 </td>
+                            <td class="dvtTabCache" style="width:80%">&nbsp;</td>
+                        <tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td valign=top align="center" >
+
+                    <!-- Basic Information Tab Opened -->
+                    <div id="basicTab" style="border: 1px solid #e0dddd; background: white;">
+                        <table border=0 cellspacing=0 cellpadding=0 width="98%" class="small" style="padding-top: 10px;">
+                            <volist name="blocks"  id="data" >
+                                <tr>
+                                    <td colspan=4 class="tabBlockViewHeader">
+                                        {$Think.lang.$key}
+                                    </td>
+                                </tr>
+
+                                <!-- Here we should include the uitype handlings-->
+                                <volist key="label" id="subdata" name="data">
+                                    <tr style="height:35px;border: 1px solid black;background: #F0F0F0;">
+                                        <volist key="mainlabel" id="maindata" name="subdata">
+                                            <include file='Module/editviewUI' />
+                                        </volist>
+                                    </tr>
+                                </volist>
+                                <tr style="line-height: 2px;"><td>&nbsp;</td></tr>
+                            </volist>
+
+                            <tr>
+                                <td colspan="4" align="center">
+                                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-other-tick'"
+                                       onclick="{$moduleName}DuplicateviewModule.update();" style="width:100px;margin-right:40px;">确认</a>
+                                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-arrow-cross'"
+                                       onclick="IndexIndexModule.updateOperateTab('__URL__/listview');" style="width:100px;">放弃</a>
+                                </td>
+                            </tr>
+                        </table>
+
+                    </div>
+
+
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+

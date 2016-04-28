@@ -1,0 +1,82 @@
+<script type="text/javascript"> 
+    $(function(){  
+        $('#searchViewForSendname{$moduleName} input[name=searchSendnameCode]').focus();
+
+        //form提交程序
+        $('#searchViewForSendname{$moduleName} input[name=searchViewBtn]').bind('click',function(){   
+            //返回选项卡
+            var tab = $('#operation').tabs('getSelected');
+            var queryString = $('#searchViewForSendname{$moduleName}').serialize();
+            //提交表单 
+            url = '__URL__/searchviewForSendname/'+queryString;
+            $('#operation').tabs('update',{  
+                tab:tab,
+                options:{href:url}                                                
+            });    
+        }) 
+
+        //按回车不自动提交
+        $('#searchViewForSendname{$moduleName} input[name=searchSendnameCode]').keyup(function(event){
+            if(event.which == 13){
+                var inputCode = $(this).val();
+                $.ajax({
+                    type : "GET",
+                    url : "__URL__/getSendnameByCode/code/"+inputCode,
+                    dataType : "json",
+                    success : function(returnData){                 
+                        if(returnData['error'] == 'error'){
+                            $.messager.show({
+                                title:'提示',
+                                msg:'输入代码输入有误!',
+                                height:70,
+                                timeout:5000,
+                                showType:'slide',
+                                style:{
+                                    left:0,right:'',top:'',
+                                    bottom:-document.body.scrollTop-document.documentElement.scrollTop
+                                }
+                            });
+                            return false;
+                        }
+
+                        if(returnData['success'] == 'success'){ 
+                            handleData = returnData['data'];
+                            $('#searchSendname').attr('value',handleData.sendname);
+                            //查询并显示送餐员的情况
+                            $.ajax({
+                                type:'GET',
+                                url : '__URL__/getSendnameproductsByName/name/'+handleData.sendname,
+                                dataType : 'html',
+                                success : function(htmlData){
+                                    $('#listsendnameproducts').html(htmlData);
+                                }
+
+                            })
+                        }
+                    }
+
+                });  
+                return false;
+            }
+        })
+    })
+</script>
+
+<div class="searchDiv">
+    <form id="searchViewForSendname{$moduleName}" name="searchViewForSendname{$moduleName}"  method="post"  style="border: 1px solid white;">
+        <ul class="searchOption">
+            <li>送餐员代码</li>
+            <li>   <input id="searchSendnameCode" name="searchSendnameCode"  type="text" class="easyui-numberbox"   style="width:140px"  value="" AUTOCOMPLETE="off" /></li>
+            <li>查询送餐员</li>
+            <li>   <input id="searchSendname" name="searchSendname"  type="text" readonly="readonly"   style="width:240px"  value="{$searchSendname}" /></li>
+            <li>&nbsp;</li>
+            <li><input id="searchViewBtn" name="searchViewBtn" type="button" class="crmbutton small create"  value=" 查  询  " />&nbsp;</li>
+            <li>
+        </ul>  
+    </form>
+</div>
+
+<div class="list" id="listsendnameproducts" style="clear: both;"  >  
+</div>
+
+

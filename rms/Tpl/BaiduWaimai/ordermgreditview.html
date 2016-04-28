@@ -1,0 +1,96 @@
+<!-- 编辑商户页面 -->
+<style>
+    #baiduwaimaiShopmgrCreateviewToolbar {
+        margin: 0px;
+        padding-top: 0px;
+        background: #fafafa;
+        border: 0px solid red;
+    }
+
+    table {
+        border-collapse: collapse;
+        border: none;
+    }
+
+    td {
+        border: solid #d0d0d0 1px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+    }
+
+    #baiduwaimaiShopinfoCreateviewDiv {
+        overflow: scroll;
+    }
+</style>
+
+<div id="baiduwaimaiShopinfoEditviewToolbar" style="">
+    <a href="javascript:void(0)" id="baiduwaimaiShopinfoEditviewUpdateButton" class="easyui-linkbutton" iconCls="icon-add" plain="true"
+       onclick="baiduWaimaiShopinfoListviewUpdate();">保存</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-bakc" plain="true"
+       onclick="baiduWaimaiShopinfoListviewCancel();">放弃并返回</a>
+</div>
+
+<div id="baiduwaimaiShopinfoEditviewDiv" class="easyui-panel" title="新建商户"
+     style="width:500px;height:150px;padding:10px;background:#fafafa;"
+     data-options="iconCls:'icon-save',closable:true,
+    collapsible:true,minimizable:true,maximizable:true" fit="true" collapsible="false" minimizable="false"
+     maximizable="false" closable="false" bodyCls="baiduwaimaiShopmgrBodyCls" border="false"
+        >
+    <form id="baiduwaimaiShopinfoUpdate" method="post"  style="height:800px;" enctype="multipart/form-data">
+        <table width="100%">
+            <tr>
+                <td width="15%" align="right">订单号:</td>
+                <td width="35%"><input name="province" class="easyui-textbox" data-options="prompt:'请输入省',required:true"
+                                       style="width:80%;height:25px;" value="{$ordermgr.order_id}"></td>
+                <td width="15%" align="right"></td>
+                <td width="25%"></td>
+            </tr>
+            <tr>
+                <td width="15%" align="right">取消原因分类:</td>
+                <td width="35%"><input name="county" style="width:80%;height:25px" value="{$ordermgr.type}"></td>
+                <td width="15%" align="right">取消原因说明:</td>
+                <td width="25%"><input name="address" style="width:300px;height:25px;" value="{$ordermgr.reason}"/></td>
+            </tr>
+        </table>
+        <input name="shopinfoid" type="hidden" value="{$shopinfo.shopinfoid}" />
+    </form>
+</div>
+
+<script>
+    $('#baiduwaimaiShopinfoUpdate').form(
+            {
+                url: '__URL__/shopinfoEditUpdate',
+                onSubmit: function () {
+                    var isValid = $(this).form('validate');
+                    if (!isValid) return false;
+                    return true;
+                },
+                success: function (data) {
+
+                    data = eval('(' + data + ')');
+                    if (data.info == 'success') {
+                        alert('保存成功!');
+                    }
+
+                    if (data.info == 'error') {
+                        alert('没有保存的内容！');
+                    }
+
+                    var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+                    var regin = baiduwaimaiMainviewLayout.layout('panel', 'center');
+                    regin.panel('refresh', '__URL__/shopinfoListview');
+
+                }
+            });
+    //保存订单
+    var baiduWaimaiShopinfoListviewUpdate = function () {
+        $('#baiduwaimaiShopinfoUpdate').submit();
+    }
+
+    //放弃保存订单
+    function baiduWaimaiShopinfoListviewCancel() {
+        var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+        var regin = baiduwaimaiMainviewLayout.layout('panel', 'center');
+        regin.panel('refresh', '__URL__/shopinfoListview');
+    }
+</script>

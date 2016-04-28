@@ -1,0 +1,101 @@
+
+<script type="text/javascript">
+    //定义当前的导航名
+    var category = '#{$category}_subnav';
+</script>
+<style type="text/css">
+
+</style>
+{//导航菜单}
+<div id="nav">
+    <div id="mainnav">
+        <ul>
+            <volist name='navmenu' id='tab' >
+                <if condition="$key eq $category">
+                    <li> <a class="select" href="javascript:void(0);" onclick="clickTabMenu('{$Think.lang.$key}','{$key}_subnav',this);" >{$Think.lang.$key}</a></li>
+                    <else/>
+                    <li> <a href="javascript:void(0);"  onclick="clickTabMenu('{$Think.lang.$key}','{$key}_subnav',this);" >{$Think.lang.$key}</a></li>
+                </if>
+            </volist>
+        </ul>
+    </div>
+    <div id="subnav">
+        <span>子菜单:</span>
+        <volist name='navmenu' id='tab'>
+            <if condition="$key eq $category">
+                <ul id="{$key}_subnav">
+                    <volist name="tab" id="sub">
+                        <li><a  href="javascript:void(0);" onclick="clickSubMenu('__APP__/{$sub}/index/delsession/del','{$Think.lang.$sub}','{$key}_subnav',this);">{$Think.lang.$sub}</a></li>
+                    </volist>
+                </ul>
+                <else/>
+                <ul id="{$key}_subnav" style="display: none;">
+                    <volist name="tab" id="sub">
+                        <li><a href="javascript:void(0);" onclick="clickSubMenu('__APP__/{$sub}/index/delsession/del','{$Think.lang.$sub}','{$key}_subnav',this);">{$Think.lang.$sub}</a></li>
+                    </volist>
+                </ul>
+            </if>
+        </volist>
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+
+
+    $(function(){
+        $('#menu').panel({
+            border:false
+        });
+
+
+    })
+
+    //点击导航菜单
+    function clickTabMenu(title,bottomMenu,obj){   //       
+        var t =  $('#operation').tabs('exists',title);
+        if(t){
+            $('#operation').tabs('select',title);
+            return;
+        }
+
+        //选中，改变颜色
+        $("#mainnav a").removeClass("select");
+        $(obj).addClass('select');  
+
+
+
+        //显得当前的模块
+        $(category).hide();
+        //显示底部菜单
+        $('#'+bottomMenu).show();
+        //设置当前的底部菜单
+        category = '#'+ bottomMenu;
+    }
+
+    //点击子菜单
+    function clickSubMenu(url,title,bottomMenu,obj){
+        var t =  $('#operation').tabs('exists',title);
+        if(t){
+            $('#operation').tabs('select',title);
+            return;
+        }
+
+        //选中，改变颜色
+        $("#subnav a").removeClass("select");
+        $(obj).addClass('select');  
+
+        //添加一个选项卡面板
+        $('#operation').tabs('add',{ 
+            closable:false, 
+            title:title,  
+            href:url,  
+            closable:false
+        });
+
+    }
+</script> 
+
+
+

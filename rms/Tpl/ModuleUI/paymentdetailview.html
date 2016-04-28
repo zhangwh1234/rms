@@ -1,0 +1,27 @@
+<style>
+    #DetailOrderFormPayment td{
+        height: 25px;
+        border-style:solid none none solid;
+        border-width:1px;
+        border-color: #CCCCCC;
+        font-size:14px;
+    }
+
+</style>
+<table id="DetailOrderFormPayment" style="BORDER-COLLAPSE: collapse"  borderColor="white" cellSpacing="0" width="100%"
+       align="center" border="1">
+    <foreach name="orderpayment" item="vo">
+    <tr>
+        <td width="10%" align="right" >
+            <span style="margin-right: 5px;">支付名称:</span></td>
+        <td width="45%"  align="left" style="background: #F5F5F5;">
+            <span>{$vo.name}</span>
+        </td>
+        <td width="10%" align="right" >
+            <span style="margin-right:5px;">支付金额:</span></td>
+        <td  align="left" style="background: #F5F5F5;">
+            <span>{$vo.money}</span>
+        </td>
+    </tr>
+    </foreach>
+</table>

@@ -1,0 +1,164 @@
+<style type="text/css">
+    .crea{
+        width:100%;
+        border:1px sold red;
+        /* background: #F0F0F0; */
+        background: white;
+    }
+
+    #basicTab{
+        width:100%;
+        margin: 0 auto;
+    }
+    /* 显示基本信息 */
+    .dvtSelectedCell {
+        border-left:1px solid #e0dddd;
+        border-top:1px solid #e0dddd;
+        border-bottom:0px solid #e0dddd;
+        border-right:1px solid #e0dddd;
+        padding-left:20px;
+        padding-right:20px;
+        /*background-color:#dedede;*/
+        /*background:#d9dde6 url(images/light-bg11.png) bottom repeat-x; */
+        background:#ffffff url(__PUBLIC__/Images/tab.gif) top repeat-x; 
+        font-weight:bold;
+        color: black;
+        line-height:20px;
+    }
+
+    /* block头 */
+    .detailedViewHeader{
+        border:1px solid #DDDDDD;
+        padding:8px;
+        background:  #dddcdd   url(__PUBLIC__/Images/inner.gif) bottom repeat-x; 
+        color: #000000;  
+
+    }
+
+</style>
+
+<script type="text/javascript">
+    //指定某个字段获得焦点
+    $(document).ready(function(){
+        $("#{$fields_focus}").focus();  
+    });
+
+    $('#createView').form({  
+        url:'__URL__/saveSetPrint',
+        onSubmit: function(){  
+            //进行表单验证  
+            //如果返回false阻止提交  
+        },  
+        success:function(data){ 
+            //返回选项卡
+            var tab = $('#center').tabs('getSelected');
+
+            //更新一个选项卡面板  
+            $('#center').tabs('update',{  
+                tab:tab,
+                options:{href:'__URL__/setprintdetailview'}                                                
+            });  
+        }  
+    }); 
+
+    //form提交程序
+    $('#createView input[name=createsave]').bind('click',function(){
+        //提交表单  
+        $('#createView').submit();
+    }) 
+</script>
+<load href="__PUBLIC__/Js/editui.js" />
+<div id="center">
+    <form id="createView" name="CreateView" method="POST" action="__URL__/saveSetPrint" >
+        <input type="hidden" name="module" value="{$MODULE}">
+        <input type="hidden" name="record" value="{$ID}">
+        <input type="hidden" name="mode" value="{$MODE}">
+        <input type="hidden" name="action" value="Save">
+        <input type="hidden" name="parenttab" value="{$CATEGORY}">
+        <input type="hidden" name="return_module" value="{$RETURN_MODULE}">
+        <input type="hidden" name="return_id" value="{$RETURN_ID}">
+        <input type="hidden" name="return_action" value="{$RETURN_ACTION}">
+        <input type="hidden" name="return_viewname" value="{$RETURN_VIEWNAME}">
+
+        <table border=0 cellspacing=0 cellpadding=0 width=99% align=center bgcolor="">
+            <tr>
+                <td>
+                    <table border=0 cellspacing=0 cellpadding=3 width=100% class="small">
+                        <tr>
+                        <td class="dvtTabCache" style="width:10px" nowrap>&nbsp;</td>
+                        <td class="dvtSelectedCell" align=center nowrap> 新建 </td>
+                        <td class="dvtTabCache" style="width:65%">&nbsp;</td>
+
+                        <tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td valign=top align="center" >
+
+                    <!-- Basic Information Tab Opened -->
+                    <div id="basicTab" style="border: 1px solid #e0dddd; background: #F0F0F0;">
+                        <table border=0 cellspacing=0 cellpadding=0 width="98%" class="small">
+                            <tr>
+                                <td  colspan=4 style="padding:5px" align="center">
+
+                                    <input  name="createsave" title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="crmbutton small save"   type="button"   value="{$Think.lang.Button_Save}" style="width:70px" >
+                                    <input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="crmbutton small cancel" onclick="updateTab('__URL__/listview')" type="button" name="button" value="  {$Think.lang.Button_Cancel}  " style="width:70px">
+
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td colspan=4 class="detailedViewHeader">
+                                    <b>打印类型</b>
+                                </td>
+                            </tr>
+
+                            <!-- Here we should include the uitype handlings-->
+                            <tr>
+                                <td width="15%" class="dvtCellLabel" align=right>
+                                    打印纸质类型&nbsp;&nbsp;&nbsp;&nbsp;
+                                </td>
+                                <td width="35%" align=left class="dvtCellInfo" style="font-size: 16px;">
+                                    <select name="printtypesetup" id="printtypesetup"  class="detailedViewTextBox" style="width:150px"  >                                   
+                                        <option value="60hot">60热敏</option>
+                                        <option value="30lian">三联单</option>
+
+                                    </select>
+                                </td>   
+                            </tr>
+                            <tr style="height:25px"><td>&nbsp;</td></tr>
+                            <tr>
+                                <td colspan=4 class="detailedViewHeader">
+                                    <b>类型图示</b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="35%" align=left class="dvtCellInfo">
+                                    <img src="" />
+                                </td>   
+                            </tr>
+
+                            <tr style="height:25px"><td>&nbsp;</td></tr>
+                            <tr>
+                                <td  colspan=4 style="padding:5px" align="center">
+
+                                    <input  name="createsave" title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="crmbutton small save"  type="button"  value="  {$Think.lang.Button_Save}  " style="width:70px" >
+                                    <input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="crmbutton small cancel" onclick="updateTab('__URL__/listview')" type="button" name="button" value="  {$Think.lang.Button_Cancel}  " style="width:70px">
+
+                                </td>
+                            </tr>
+                        </table>
+
+                    </div>
+
+
+                </td>
+            </tr>
+        </table>
+
+
+    </form>
+
+
+</div> 

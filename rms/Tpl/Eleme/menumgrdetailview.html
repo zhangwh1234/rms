@@ -1,0 +1,83 @@
+<!-- 查看菜单页面 -->
+<style>
+  #elemeMenumgrCreateviewToolbar{
+ 	margin:0px;
+ 	padding-top:0px;
+ 	background:#fafafa;
+ }
+ 
+  table{
+            border-collapse: collapse;
+            border: none;
+        }
+        
+  td{
+            border: solid 	#d0d0d0 1px;
+        }
+        
+  #elemeMenumgrDetailview  input{
+ 	background-color:#F0F0F0;
+ 	border:1px solid #F0F0F0;
+ }
+</style>
+ 
+<div id="elemeMenumgrCreateviewToolbar" style="">
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="elemeMenumgrDetailviewCancel();">放弃并返回</a>
+</div> 
+	 
+<div id="elemeMenumgrDetailview" class="easyui-panel" title="查看菜单"
+    style="width:500px;height:150px;padding:10px;background:#fafafa;"
+    data-options="iconCls:'icon-save',closable:true,
+    collapsible:true,minimizable:true,maximizable:true"  fit="true" collapsible="false" minimizable="false" maximizable ="false" closable="false" bodyCls="elemeShopmgrBodyCls" border="false"
+    >
+    <form id="elemeMenumgrInsert" method="post">
+    	<table width="100%" >
+			<tr>
+				<td width="15%" align="right">菜品名称</td>
+				<td width="35%"><input name="name" class="easyui-textbox" data-options="" style="width:80%;height:25px" value="{$menumgr.name}" readonly /></td>
+				<td width="15%" align="right">菜品图片URL:</td>
+				<td width="25%"><input name="pic" type="file" class="easyui-textbox" data-options="iconCls:'icon-search'" style="width:300px" value="{$menumgr.pic}" readonly /></td>
+			</tr>
+			<tr>
+				<td width="15%" align="right">菜品单价:</td>
+				<td width="35%"><input name="price" class="easyui-textbox" data-options="" style="width:80%;height:25px" value="{$menumgr.price}" readonly /></td>
+				<td width="15%" align="right">条形码:</td>
+				<td width="25%"><input name="upc" class="easyui-textbox" data-options="iconCls:'icon-search'" style="width:300px" value="{$menumgr.upc}"  readonly /></td>
+			</tr>
+			<tr>
+				<td width="15%" align="right">最小起订数量:</td>
+				<td width="35%"><input name="min_order_num" class="easyui-textbox" data-options="" style="width:80%;height:25px" value="{$menumgr.min_order_num}" readonly /></td>
+				<td width="15%" align="right">餐盒数量:</td>
+				<td width="25%"><input name="package_box_num" class="easyui-textbox" data-options="iconCls:'icon-search'" style="width:300px" value="{$menumgr.package_box_num}" readonly /></td>
+			</tr>
+			<tr>
+				<td width="15%" align="right">可售时间:</td>
+				<td width="35%"><input name="available_times" class="easyui-textbox" data-options="" style="width:80%;height:25px" value="{$menumgr.available_times}" readonly /></td>
+				<td width="15%" align="right">描述信息:</td>
+				<td width="25%"><textarea name="description" class="easyui-textbox" data-options="iconCls:'icon-search'" style="width:300px;height: 45px;" value="{$menumgr.description}" readonly /></td>
+			</tr>
+			<tr>
+				<td width="15%" align="right">菜品库存设置:</td>
+				<td width="35%"><input name="threshold" class="easyui-textbox" data-options="" style="width:80%;height:25px" value="{$menumgr.threshold}" readonly /></td>
+				<td width="15%" align="right">分类名称:</td>
+				<td width="25%"><input name="category" class="easyui-textbox" data-options="iconCls:'icon-search'" style="width:300px" value="{$menumgr.category}" readonly /></td>
+			</tr>
+    		
+    	</table>
+    </form>
+</div>
+
+<script>
+	
+	//保存订单
+	var elemeMenumgrListviewInsert = function(){
+		$('#elemeMenumgrInsert').submit();
+	}
+	
+	//放弃保存订单
+	function elemeMenumgrDetailviewCancel(){
+		var elemeMainviewLayout = $('#elemeMainviewLayout');
+		var regin =  elemeMainviewLayout.layout('panel','center');
+		regin.panel('refresh','__URL__/menumgrListview');
+	}
+</script>

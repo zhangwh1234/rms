@@ -1,0 +1,30 @@
+<!-- 百度外卖管理主面板 -->
+<div id="baiduwaimaiMainviewLayout" class="easyui-layout" data-options="fit:true,border:false">
+	<div data-options="region:'north',href:'__URL__/mainviewTopMenu'
+	" style="height:35px;">
+	</div>
+	<div data-options="region:'west',split:true,
+		title:'功能菜单',
+		href:'__URL__/mainviewLeftMenu'"
+		style="width: 180px"></div>
+	<div data-options="region:'center',href:'__URL__/mainviewPlatformIntroduce'">
+	</div>
+</div>
+<script>
+	var BaiduWaimaiModule = {
+
+		init: function () {
+			//设置div的高度
+			$('#baiduwaimaiMainviewLayout').height(IndexIndexModule.operationHeight - IndexIndexModule.listviewMenuHeight - 40);
+		}
+	}
+
+	$(function(){
+		BaiduWaimaiModule.init();
+	})
+	function baiduwaimaiUpdateRegin(url){
+    	var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+		var regin =  baiduwaimaiMainviewLayout.layout('panel','center');
+		regin.panel('refresh',url);
+	}
+</script>

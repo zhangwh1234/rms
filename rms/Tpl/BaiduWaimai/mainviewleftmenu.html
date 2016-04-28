@@ -1,0 +1,85 @@
+<div>
+	<a  href="#" class="easyui-linkbutton"
+		data-options="iconCls:'icon-search'" style="width: 200px;"
+		onClick="baiduCenterviewPlatformIntroduce();"
+		>平台说明</a>
+	
+	<a  href="#" class="easyui-linkbutton"
+		data-options="iconCls:'icon-search'" style="width: 200px;"
+		onClick="baiduShopinfoListview();"
+		>商户管理</a>
+		
+	<a  href="#" class="easyui-linkbutton"
+		data-options="iconCls:'icon-search'" style="width: 200px;"
+		onClick="baiduShopimgmgrListview()"
+		>商户资质图片管理</a>
+
+	<a  href="#" class="easyui-linkbutton"
+	   data-options="iconCls:'icon-search'" style="width: 200px;"
+	   onClick="baiduCategorymgrListview()"
+			>菜单分类</a>
+
+	<a  href="#" class="easyui-linkbutton"
+		data-options="iconCls:'icon-search'" style="width: 200px;"
+		onClick="baiduMenumgrListview()"
+		>菜单管理</a>
+
+	<a  href="#" class="easyui-linkbutton"
+		data-options="iconCls:'icon-search'" style="width: 200px;"
+		onClick="baiduOrdermgrListview()"
+			>订单管理</a>
+
+	<a  href="#" class="easyui-linkbutton"
+		data-options="iconCls:'icon-search'" style="width: 200px;"
+		onClick="operatelogListview()"
+		>操作日志</a>
+</div>
+<script>
+//百度平台说明
+var baiduCenterviewPlatformIntroduce = function(){
+	var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+	var regin =  baiduwaimaiMainviewLayout.layout('panel','center');
+	regin.panel('refresh','__URL__/mainviewPlatformIntroduce');
+}
+//商户管理列表
+var baiduShopinfoListview = function(){
+	var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+	var regin =  baiduwaimaiMainviewLayout.layout('panel','center');
+	regin.panel('refresh','__URL__/shopinfolistview');
+}
+
+//菜单管理列表
+var baiduMenumgrListview = function(){
+	var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+	var regin =  baiduwaimaiMainviewLayout.layout('panel','center');
+	regin.panel('refresh','__URL__/menumgrListview');
+}
+
+//分类管理列表
+var baiduCategorymgrListview = function(){
+	var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+	var regin =  baiduwaimaiMainviewLayout.layout('panel','center');
+	regin.panel('refresh','__URL__/categorymgrListview');
+}
+
+//商户图片管理
+var baiduShopimgmgrListview = function(){
+	var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+	var regin =  baiduwaimaiMainviewLayout.layout('panel','center');
+	regin.panel('refresh','__URL__/shopimgmgrListview');
+}
+
+//订单管理
+var baiduOrdermgrListview = function(){
+	var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+	var regin =  baiduwaimaiMainviewLayout.layout('panel','center');
+	regin.panel('refresh','__URL__/ordermgrListview');
+}
+
+//操作日志管理
+var operatelogListview = function(){
+	var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+	var regin =  baiduwaimaiMainviewLayout.layout('panel','center');
+	regin.panel('refresh','__URL__/operatelogListview');
+}
+</script>

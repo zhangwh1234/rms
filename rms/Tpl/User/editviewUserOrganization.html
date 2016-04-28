@@ -1,0 +1,156 @@
+<style type="text/css">
+    #wrap{
+        width:96%;
+        height:auto;
+        overflow:hidden;
+        margin:5px auto;
+        padding:4px 10px;
+        border:1px solid #ccc;
+        font-family: '黑体';
+    }
+
+    #wrap  strong{
+        font-size:16px;
+        color:#0b99d8;
+    }
+
+    #wrap input{
+        float: left;
+    }
+
+    #wrap dl{
+        clear:both;
+        margin:10px 0;
+        border:1px solid #dcdcdc;
+        height:auto;
+        overflow:hidden;
+    }
+
+    #wrap  dl dt{
+        display:block;
+        height:25px;
+        line-height:25px;
+        background:#e6e6fa;
+        text-indent:10px;
+    }
+
+    #wrap  dl dt strong{
+        font-size:14px;
+        color:#61;
+        float:left;
+    }
+
+    #wrap dl dt input{
+        font-size: 16px;
+        margin-top: 8px;
+        margin-left: 5px;
+    }
+
+    #wrap  dl dd{
+        padding:5px;
+        float:left;
+    }
+
+    #wrap dd span,a{
+        font-size: 14px;
+    }
+
+    #wrap dd span{
+        float: left;
+    }
+    #wrap dd input{
+        margin-top: -4px;
+        margin-left: 2px;
+        font-size: 6px;   
+    }
+</style>
+
+<div class="moduleMenu">
+    <ul>
+        <li>{$Think.lang.$navName}</li>
+        <li><a href="javascript:void(0);" class="moduleName"
+               onclick="IndexIndexModule.updateOperateTab('__URL__/listview');">&nbsp;&gt;{$Think.lang.$moduleName}</a>
+        </li>
+        <li>&nbsp;&gt;新建操作</li>
+        <li style="width: 50px;">&nbsp;</li>
+
+        <li style="margin-left: 20px;"><a href="javascript:;" onclick="UserEditviewOrganizationModule.update();"><img
+                src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);" onclick="UserEditviewOrganizationModule.update();">保存<span>^9</span></a></li>
+
+        <li style="margin-left: 10px;"><a href="javascript:;"
+                                          onclick="IndexIndexModule.updateOperateTab('__URL__/listview');"><img
+                src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);"
+               onclick="IndexIndexModule.updateOperateTab('__URL__/listview');">放弃新建,返回列表<span>^4</span></a></li>
+
+        <li style="float: right;margin-right: 60px;"><a href="javascript:void(0);"
+                                                        onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="IndexIndexModule.closeOperateTab();"><img
+                src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
+    </ul>
+</div>
+
+<div id="wrap">
+    <form id="editviewUserOrganizationForm" name="editviewUserOrganizationForm" method="post" >
+        <input name="uid" type="hidden" value="{$uid}">
+
+        <foreach name='userorganization' item='action'>
+            <dl>
+                <dt>
+                    <strong>{$action.name}</strong>
+                    <input type="checkbox" name="organize[]" value="{$action.id}_1" level="1"  
+                    <if condition='$action["access"]'>checked='checked'</if>
+                    />
+                </dt>
+                <foreach name='action.child' item='method'>
+                    <dd>
+                        <span>{$method.name}</span>
+                        <input type="checkbox" name="organize[]" value="{$method.id}_2"  level="2"
+                        <if condition='$method["access"]'>checked='checked'</if>
+                        />                       
+                    </dd>
+                </foreach>
+            </dl>
+        </foreach>
+        <table border="0" cellspacing=0 cellpadding=0 width="98%" class="small">
+            <tr>
+                <td colspan="4" align="center">
+                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-other-tick'"
+                       onclick="UserEditviewOrganizationModule.update();"
+                       style="width:100px;margin-right:40px;">确认</a>
+                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-arrow-cross'"
+                       onclick="IndexIndexModule.updateOperateTab('__URL__/listview');" style="width:100px;">放弃</a>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<script>
+    var UserEditviewOrganizationModule ={
+
+        //保存记录
+        update: function () {
+            $('#editviewUserOrganizationForm').form('submit', {
+                url: '__URL__/editUserOrganization',
+                onSubmit: function () {
+                    var isValid = $(this).form('validate');
+                    if (!isValid) {
+                        return false;
+                    }
+                },
+                success: function (res) {
+                    var data = eval('(' + res + ')');
+                    if(!data.status){
+                        $.app.method.tip('提示信息', data.info, 'error');
+                    }else{
+                        $.app.method.tip('提示信息', data.info, 'info');
+                        IndexIndexModule.updateOperateTab(data.url);
+                    }
+                }
+            });
+        }
+
+    }
+</script>

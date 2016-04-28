@@ -1,0 +1,225 @@
+<!-- 商户信息管理列表 -->
+<table id="elemeShopinfoListviewTable" title="商户管理">
+</table>
+<div id="elemeShopinfoListviewTableToolbar">
+    <a href="javascript:void(0)" class="easyui-linkbutton"  iconCls="icon-add" plain="true" onclick="elemeShopinfoListviewCreate();">新建商户</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true"
+       onclick="elemeOrderGetNew('__URL__/orderGetNew');">显示商户新订单</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true"
+       onclick="elemeShopGetOwn('__URL__/shopGetOwn');">显示商户所有门店的ID</a>
+</div>
+
+<script>
+
+    Namespace.register('eleme.shopinfoListview');
+    //定义列表
+    eleme.shopinfoListview.table  = $('#elemeShopinfoListviewTable');
+    eleme.shopinfoListview.table.datagrid(
+            {
+                nowrap : "true",
+                fitColumns : "true",
+                singleSelect : "true",
+                autoRowHeight : "true",
+                striped : "true",
+                border : "false",
+                rownumbers : "false", //显示行号
+                showFooter : 'true',
+                pagination : true,
+                pagePosition : 'bottom',
+                fit:true,
+                toolbar : '#elemeShopinfoListviewTableToolbar',
+                columns : [ [
+                    {
+                        field : 'id',
+                        title : 'id',
+                        hidden : 'true',
+                        width : 10
+                    },
+                    {
+                        field : 'restaurant_id',
+                        title : '饿了么商户ID',
+                        width : 10,
+                        align : 'center'
+                    },
+                    {
+                        field : 'name',
+                        title : '商户名称',
+                        width : 20,
+                        align : 'center'
+                    },
+
+                    {
+                        field : "address_test",
+                        width : 10,
+                        title : '地址'
+                    },
+                    {
+                        field : "agent_fee",
+                        width : 5,
+                        title : '配送费',
+                        align : 'center'
+                    },
+                    {
+                        field: "shopinfooperation",
+                        width: 15,
+                        title: '商户参数管理',
+                        align: 'center',
+                        formatter: function (value, rowData,
+                                             rowIndex) {
+                            var operation;
+                            operation = '';
+                            operation += "<a href='javascript:void(0);' onclick='elemeUpdateRegin(&apos;__URL__/shopinfoDetailview/shopinfoid/"
+                                    + rowData.shopinfoid + "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>查看</a>";
+                            operation += "&nbsp;|&nbsp;"
+                            operation += "<a href='javascript:void(0);' onclick='elemeUpdateRegin(&apos;__URL__/shopinfoEditview/shopinfoid/"
+                                    + rowData.shopinfoid + "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>编辑</a>";
+
+                            return operation;
+                        }
+                    },
+                    {
+                        field : "operation",
+                        width : 70,
+                        title : '操作',
+                        align : 'center',
+                        formatter : function(value, rowData,
+                                             rowIndex) {
+                            var operation;
+                            operation ='';
+                            operation += "<a href='javascript:void(0);' onclick='elemeShopinfoGetShopInfo(&apos;__URL__/shopinfoGetShopInfo/shopinfoid/"
+                                    + rowData.shopinfoid+ "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;' title='从饿了吗网站查询餐厅信息' >查询餐厅信息</a>";
+                            operation += "&nbsp;|&nbsp;"
+
+                            operation += "<a href='javascript:void(0);' onclick='elemeShopinfoUpdate(&apos;__URL__/shopinfoUpdate/shopinfoid/"
+                                    + rowData.shopinfoid+ "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>更新基本信息</a>";
+                            operation += "&nbsp;|&nbsp;"
+                            operation += "<a href='javascript:void(0);' onclick='elemeShopinfoUpdate(&apos;__URL__/updateShopBussinessStatus/shopinfoid/"
+                                    + rowData.shopinfoid+ "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>更新营业信息</a>";
+
+                            operation += "&nbsp;|&nbsp;"
+                            operation += "<a href='javascript:void(0);' onclick='baiduwaimaiDeleteShopinfo(&apos;__URL__/shopinfoDelete/shopinfoid/"
+                                    + rowData.shopinfoid+ "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>更新送餐范围</a>";
+
+                            operation += "&nbsp;|&nbsp;"
+                            operation += "<a href='javascript:void(0);' onclick='baiduwaimaiDeleteShopinfo(&apos;__URL__/shopinfoDelete/shopinfoid/"
+                                    + rowData.shopinfoid+ "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>更新起送价</a>";
+
+
+                            return operation;
+                        }
+                    } ] ]
+            });
+
+
+    //定义查询返回的订单数据
+    eleme.shopinfoListview.listData = '{$listData}';
+
+    //转换成json对象
+    eleme.shopinfoListview.listData = eval('('
+    + eleme.shopinfoListview.listData + ')');
+
+
+    //载入订单数据，初始化
+    eleme.shopinfoListview.table.datagrid('loadData',
+            eleme.shopinfoListview.listData);
+
+    //新建商户
+    var elemeShopinfoListviewCreate = function(){
+        var elemeMainviewLayout = $('#elemeMainviewLayout');
+        var regin =  elemeMainviewLayout.layout('panel','center');
+        regin.panel('refresh','__URL__/shopinfoCreateview');
+    }
+
+    //上传
+    var elemeShopinfoUpdate = function(url){
+        $.ajax({
+            url:url,
+            success:function(data){
+                console.info(data);
+                return false;
+                alert(data);
+            }
+        })
+    }
+
+    var elemeShopinfoGetShopInfo = elemeShopinfoUpdate;
+
+
+
+    //查询
+    function elemeShowShopinfo(url){
+        $.ajax({
+            url:url,
+            success:function(data){
+                alert(data);
+            }
+        })
+    }
+
+    //更新
+    function elemeUpdateShopinfo(url){
+        $.ajax({
+            url:url,
+            success:function(data){
+                alert(data);
+            }
+        })
+    }
+
+    //休息
+    function elemeRestShopinfo(url){
+        $.ajax({
+            url:url,
+            success:function(data){
+                alert(data);
+                var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+                var regin =  baiduwaimaiMainviewLayout.layout('panel','center');
+                regin.panel('refresh','__URL__/shopinfoListview');
+            }
+        })
+    }
+
+    //恢复营业
+    function elemeOpenShopinfo(url){
+        $.ajax({
+            url:url,
+            success:function(data){
+                alert(data);
+                var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+                var regin =  baiduwaimaiMainviewLayout.layout('panel','center');
+                regin.panel('refresh','__URL__/shopinfoListview');
+            }
+        })
+    }
+
+    //删除
+    function elemeDeleteShopinfo(url){
+        $.ajax({
+            url:url,
+            success:function(data){
+                alert(data);
+            }
+        })
+    }
+
+    //显示商户下面的门店信息
+    function elemeShopGetOwn(url){
+        $.ajax({
+            url:url,
+            success:function(data){
+                alert(data);
+            }
+        })
+    }
+
+    //显示商户新订单id
+    function elemeOrderGetNew(url){
+        $.ajax({
+            url:url,
+            success:function(data){
+                alert(data);
+            }
+        })
+    }
+
+</script>

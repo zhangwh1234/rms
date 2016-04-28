@@ -1,0 +1,20 @@
+
+<table width="100%"  style="BORDER-COLLAPSE: collapse;font-size:16px;"  borderColor="#CCCCCC" cellSpacing="0" width="100%"
+       align="center" border="1">
+    <tr>
+        <td width="45%" class="invoiceTableLeftTd" align="center">
+            <span>来电发票历史记录</span>
+            <select id="invoiceheaderselect" class="easyui-combox" style="width:50%;" >
+
+            </select>
+        </td>
+        <td class="invoceTableRightTd">
+            <span style="margin-left: 10px;">发票抬头</span>
+            <input type="text" name="invoiceheader"  value="{$info.invoiceheader}"
+                    style="margin-left: 1px;width:50%;"/>
+            <span>发票内容</span>
+            <input type="text" name="invoicebody"   value="{$info.invoicebody}"
+                   style="margin-left: 1px;width:20%;"/>
+        </td>
+    </tr>
+</table>

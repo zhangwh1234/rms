@@ -1,0 +1,131 @@
+<div class="moduleMenu">
+    <ul>
+        <li>{$Think.lang.$navName}</li>
+        <li><a href="javascript:void(0);" class="moduleName" onclick="javascript.void(0);">&nbsp;&gt;{$Think.lang.$moduleName}</a></li>
+        <li>&nbsp;&gt;查看操作</li>
+        <li style="width: 50px;">&nbsp;</li>
+
+        <li style="margin-left: 10px;"><a href="javascript:;" onclick="OrderFormEditviewModule.cancel();"><img
+                src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);" onclick="OrderDistributionCancelviewModule.cancel();">作废订单<span>^9</span></a></li>
+
+        <li style="width: 50px;">&nbsp;</li>
+        <li style="margin-left: 10px;"><a href="javascript:;" onclick="IndexIndexModule.updateOperateTab('__URL__/{$returnAction}');" ><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);"  onclick="IndexIndexModule.updateOperateTab('__URL__/{$returnAction}');">放弃;返回列表</a></li>
+
+        <li style="float: right;margin-right: 40px;"><a href="javascript:;" class="moduleName" onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="IndexIndexModule.closeOperateTab();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
+    </ul>
+</div>
+
+<div class="moduleoperator" style="border: 1px solid white;">
+    <table border="0" cellspacing="0" cellpadding="0" width="99%" align="0" bgcolor="">
+        <tr>
+            <td>
+                <table border=0 cellspacing=0 cellpadding=3 width=100% class="small">
+                    <tr>
+                    <td class="dvtTabCache" style="width:20px" nowrap>&nbsp;</td>
+                    <td class="dvtSelectedCell" align="center" nowrap> 查看 </td>
+                    <td class="dvtTabCache" style="width:80%">&nbsp;</td>
+                    <tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td valign=top align="center" >
+                <div id="basicTab" style="border: 1px solid #e0dddd; background: white;">
+                    <table border=0 cellspacing=0 cellpadding=0 width="98%" class="small">
+
+                        <!-- 这里显示具体的数据 -->
+
+                        <volist name="blocks"  id="data" >
+                            <tr>
+                                <td colspan=4 class="tabBlockViewHeader">
+                                    {$Think.lang.$key}
+                                </td>
+                            </tr>
+
+                            <!-- Here we should include the uitype handlings-->
+                            <volist key="label" id="subdata" name="data">
+                                <tr style="height:30px;border: 1px solid black;background: #F0F0F0;">
+                                    <volist key="mainlabel" id="maindata" name="subdata">                                                                    <include file='Module/detailviewUI' />       
+                                    </volist>
+                                </tr>
+                            </volist>
+                            <tr style="line-height: 2px;"><td>&nbsp;</td></tr>
+                        </volist>
+
+                        <tr>
+                            <td></td>
+                            <td align="right">
+                            </td>
+                            <td> 
+                                <input title="" accessKey="" class="crmbutton small cancel" onclick="updateTab('__APP__/{$moduleName}/cancel/record/{$record}')" type="button" name="button" value="  {$Think.lang.Button_Cancel}  "  style="width:70px;float:left;margin-left:2px;margin-top:2px;margin-bottom:2px;"></td>
+                            <td> 
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+
+
+            </td>
+        </tr>
+    </table>
+</div>
+<input name="record" type="hidden" value="{$record}"  />
+<input id="OrderDistributionAction" type="hidden" value="Cancelview"/>
+
+<script>
+    var OrderDistributionCancelviewModule = {
+        //初始化
+        init:function(){
+            $('.moduleOperatert').height(IndexIndexModule.operationHeight);
+            this.quickKeyboardAction();
+        },
+
+        //保存记录
+        cancel: function () {
+
+            $.messager.confirm('确认', '是否真的需要作废?', function (r) {
+                if (r) {
+                    $.ajax({
+                        type: "GET",
+                        url: "__URL__/cancel/returnAction/{$returnAction}/record/{$record}",
+                        dataType: "json",
+                        success: function (returnData) {
+                            if (returnData.status == 'success') {
+                                $.app.method.tip('提示信息', returnData.info, 'info');
+                                IndexIndexModule.updateOperateTab(returnData.url);
+                            }
+                        }
+                    });
+                } else {
+                }
+            });
+
+        },
+
+        //新建的快捷操作
+        quickKeyboardAction: function () {
+
+            // ctrl+4快捷键,放弃
+            Mousetrap.bind(['ctrl+4', 'ctrl+f4', 'f4'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                //if (tabOptions.title == '订餐单' ) {
+                IndexIndexModule.updateOperateTab("__URL__/{$returnAction}");
+                //};
+            });
+        }
+    }
+
+    $(function(){
+        OrderDistributionCancelviewModule.init();
+    })
+</script>
+
+
+ 
+ 

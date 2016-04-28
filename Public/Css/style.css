@@ -1,0 +1,402 @@
+
+body{
+    font-size: 14px;
+    margin: 0px;
+    padding: 0px;
+}
+
+ul { list-style-type:none;}
+a {
+    text-decoration:none;
+    color:#0070BA;    
+}
+
+a:hover {
+    text-decoration:underline;
+}
+
+
+
+/* 顶部区域 */
+#top{
+    margin: 0px;
+    padding: 0px;
+    position: relative;
+    background:#ffffff url('../../Public/Images/header-bg.png') repeat-x;   
+    height:28px; 
+}
+
+/*  系统标志 */
+#logo{
+    background-image: url('../../Public/Images/logo.gif');
+    background-repeat: no-repeat;
+    margin: 0px;
+    padding: 0px;
+    float:left;
+    height:28px;
+    width:200px;
+    position:absolute;
+}
+
+#logo span{
+    display: none;
+}
+
+/*  系统名称 */
+#subject{
+    /* background-image: url('../../Public/Images/jiezhang.gif'); */
+    background-repeat: no-repeat;
+    background-position: center;
+    height:30px;
+    top:0px;  
+}
+
+#subject span{
+    font-size: 24px;
+    font-family: '黑体';
+    line-height: 30px;
+    font-weight: 300;
+    font-style:normal;
+}
+
+/*   顶部导航菜单  */
+#topnav{
+    top:2px;
+    position:absolute;
+    right: 10px;           
+}
+
+#topnav ul{
+    display: inline;
+}
+
+#topnav ul li{
+    list-style-type: none;
+    float:left;
+}
+
+#topnav ul li a{
+    font-size: 14px;
+}
+/*****************************/
+/*导航菜单*/
+#mainnav { 
+    height:32px;
+    background:url('../../Public/Images/menu_bg.jpg') repeat-x;
+    margin-top:0px ;
+}
+#mainnav ul { 
+    height:30px; 
+    width:930px; 
+    line-height:30px;
+    background:url(../../Public/Images/menu_bg.jpg) repeat-x;
+    margin-left: 150px; 
+    margin-top: 0px;
+}
+#mainnav ul li { 
+    float:left;
+}
+#mainnav ul li a {
+    font-size:16px;  
+    padding:0 20px;
+    height:30px; 
+    color: white;
+    display:block; 
+    float:left; 
+    background:url(../../Public/Images/menu_border.jpg) no-repeat right top;
+}
+#mainnav ul li a:hover { 
+    color:#ffff00;
+    background:url(../../Public/Images/menu_bg_hover.jpg) repeat-x;
+}
+#mainnav ul li a.end {
+    color: white; 
+    background:none;
+}
+#mainnav ul li a.select {
+    color:#ffff00; 
+    background:url(../../Public/Images/menu_bg_hover.jpg) repeat-x;
+}
+#mainnav ul li a.end:hover { 
+    background:url(../../Public/Images/menu_bg_hover.jpg) repeat-x;
+}
+/*导航子菜单*/
+#subnav{
+    height: 18px;
+    margin: 0px;
+    padding: 0px;
+    border-bottom: 1px solid #d0d0d0;
+}
+
+#subnav span{
+    float: left;
+    font-size: 14px;
+    margin-top: 1px;
+    margin-left: 10px;
+    margin-right: 60px;
+}
+
+#subnav ul{
+    margin-top:0px ;
+    height: 20px;
+}
+
+#subnav ul li{
+    float: left;
+}
+
+#subnav ul li a{
+    font-size: 14px;
+    padding: 0 16px;
+    padding-top:2px;
+    color:blue;
+    line-height: 18px;
+}
+
+#subnav ul li a:hover{
+    color:red;
+}
+
+#subnav ul li a.select{
+    color: red;
+}
+
+/****************************************************************************/
+/*页面定义  center定义*/
+.tabcenter{
+    width:100%;
+    margin: 0 auto;
+}
+
+/* 显示基本信息 */
+.dvtSelectedCell {
+    border-left:1px solid #e0dddd;
+    border-top:1px solid #e0dddd;
+    border-bottom:0px solid #e0dddd;
+    border-right:1px solid #e0dddd;
+    padding-left:20px;
+    padding-right:20px;
+    background:#ffffff url('../../Public/Images/tab.gif') top repeat-x;      
+    color: black;
+    font-size: 14px;
+}
+
+/* block头 */
+.tabBlockViewHeader{
+    border-left:1px solid #e0dddd;
+    border-top:1px solid #e0dddd;
+    border-bottom:0px solid #e0dddd;
+    border-right:1px solid #e0dddd;
+    background:  #ddf ; 
+    color: #000000;  
+    font-size: 16px;
+    height:20px;
+}
+
+/* 查看的字段大小 */
+.detailedViewTextBox {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    color: #000000;
+    border:1px solid #bababa;
+    padding-left:5px;
+    background-color:#ffffff;
+}
+
+
+/************************************************************************/
+
+
+
+
+/***********************************************/
+
+/* 模块菜单*/
+.moduleMenu{
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding: 0px;
+    height:28px;
+    clear:both;
+    border:1px solid #FFFFFF;
+}
+
+.moduleMenu ul{
+    margin-top: 0px;
+    margin-left: 0px;
+    padding-top:0px;
+    padding: 0;
+    padding-left: 10px;
+}
+
+.moduleMenu li{
+    display: block;
+    float: left;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    color: #33338c;
+    font-weight:bold;
+    line-height: 1.7; /*行高*/
+}
+
+.moduleMenu ul li a{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    color: #33338c;
+    font-weight:bold;
+}
+/********************************************/
+
+/*listview部分 */
+/* 分页 */
+.pages{
+    border:1px solid #d0d0d0;
+    margin-top: 1px;
+    margin-bottom: 0px ;        
+    width:100%;
+    height: 28px;
+    background-color: #F4F4F4;
+    line-height: 25px;
+    text-align: center;
+    font-size: 14px;
+    clear :both;
+}
+
+.pages a{
+    font-size: 14px;    
+}
+
+.pages ul li{
+    float:left;    
+}
+
+.pages span{
+    font-size: 14px;
+}
+
+.pagesul{
+    margin-top: 0px;
+    border:1px solid white;
+}
+
+/***************************************************************/
+
+/*listview div*/
+.list{
+    margin-top: 0px;
+    padding: 0px;
+    border: 0px solid red;
+    margin-bottom: 5px;
+}
+
+
+.lvt {
+    background-color:#ddf;
+    border:1px solid #cce; 
+    width: 100%;
+    padding-bottom: 1px;
+    margin-top: 0px;
+    padding-top: 0px;
+}
+/* 列表头*/
+.listHeader {
+    background:#A3D1D1 ;
+    height: 20px;
+    text-align: center;
+    font-size: 14px;
+}
+/*列表的选择框 */
+.listColCheck{
+    text-align: center;
+    font-weight:bold;
+    font-size: 14px;
+}
+
+.listColData {
+    font-size: 14px;
+    height: 25px;
+}
+
+.list a{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+}
+
+.list a:hover {
+    background-color:#FFB5B5;
+}
+
+.lvtColData {
+    background-color:#ffffff;
+}
+
+.lvtColDataHover {
+    background-color:#ffffcc;
+}
+
+/****************************************************************/
+
+/*模块操作去*/
+.moduleOperater{
+    margin-top:0px;
+    padding: 0px;
+    overflow:scroll;
+    clear:both;
+}
+
+/*******************************************************************/
+/*查询*/
+.searchviewForm{
+    background-color: blue;
+    border-top:1px solid red;
+    border-bottom:1px solid red;
+    border-left:1px solid red;
+    border-right:1px solid red;
+    margin: 0 auto;
+}
+
+/*查询明细 */
+.searchOption{
+    border:1px solid #e6e6fa;
+    height:30px; 
+    margin-left: 0px;
+    margin-top: 0px;
+    float: left;
+
+}
+
+.searchOption li{
+    float:left;
+    font-size: 14px;
+    margin-left: 10px;
+    line-height: 30px;
+}
+
+.searchDiv{
+    background:#e6e6fa;
+    height: 35px;
+    border:0px solid #e6e6fa;
+    margin-bottom: 0px;
+}
+/*百度地图*/
+#l-map{height:3px;width:1%;}
+    
+  /*error*/
+    .errorInfoCls{padding: auto; margin: auto; background: #fff; font-family: '微软雅黑'; color: #333; font-size: 16px; }
+    .system-message{ padding: 124px 448px; }
+    .system-message h1{ font-size: 100px; font-weight: normal; line-height: 120px; margin-bottom: 12px; }
+    .system-message .jump{ padding-top: 10px;font-size: 10px;}
+    .system-message .jump a{ color: #333;}
+    .system-message .success,.system-message .error{ line-height: 1.8em; font-size: 36px }
+    .system-message .detail{ font-size: 12px; line-height: 20px; margin-top: 12px; display:none}
+
+
+/**修改easyui datagrid的样式*/
+/*设置datagrid*/
+.datagrid-cell {
+    font-size: 16px;
+}
+
+.datagrid-row {
+    height: 30px;
+}

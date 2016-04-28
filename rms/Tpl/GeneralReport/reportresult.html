@@ -1,0 +1,19 @@
+
+<table  id="table{$actionName}" border="0" cellspacing="1" cellpadding="3" width="100%" class="lvt"   align="center">
+        <tr class="listHeader">
+            <td class=""></td>
+            <foreach name="listHeader" item="header">
+                <td class="listHeader">{$Think.lang.$header}</td>
+            </foreach>
+        </tr>
+        <foreach item="entity"  name="tongji" >
+        <assign name='record' value="$key" />
+        <tr bgcolor="white" onMouseOver="this.className='lvtColDataHover'" onMouseOut="this.className='lvtColData'" ondblclick="alert('row_{$record}');" id="row_{$entity_id}">
+            <td class="listColData">{$key}</td>
+            <foreach name="entity"  item="id">
+                <td class="listColData">{$id}</td>                  
+            </foreach>               
+        </tr>
+        </foreach>
+</table>
+

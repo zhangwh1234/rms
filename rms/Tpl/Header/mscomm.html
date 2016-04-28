@@ -1,0 +1,75 @@
+<OBJECT   CLASSID="clsid:648A5600-2C6E-101B-82B6-000000000014" id="MSComm1"     codebase="MSCOMM32.OCX"   type="application/x-oleobject"  style="LEFT:   54px;   TOP:   14px"   > 
+<SCRIPT   ID=clientEventHandlersJS   LANGUAGE=javascript>   
+    <!--   
+    //重写mscomm控件的唯一事件处理代码   
+    function   MSComm1_OnComm()     
+    {   
+        var   len=0; 
+        // window.alert("happy");  
+        if(MSComm1.CommEvent==1)//如果是发送事件   
+            {   
+            window.alert("ok");//这句正常，说明发送成功了   
+        }   
+        else   if(MSComm1.CommEvent==2)//如果是接收事件   
+            {   
+            document.form1.txtReceive.value=document.form1.txtReceive.value + MSComm1.Input; 
+
+            //在界面上显示号码
+            $('#telphoneNumber').attr('value',IncomingNum);
+            //查询电话地址
+
+            $.ajax({
+                type : "POST",
+                url :  "__APP__/Telcustomer/getAddressByPhone/telphone/"+IncomingNum,
+                dataType : "json",
+                success : function(data){  
+                    $('#telphoneAddress').empty();
+                    $.each(data,function(key,value){
+                        //
+                        $('#telphoneAddress').append('<option>'+value.address+'</option>');
+                    })  
+                }
+            });
+        }   
+
+        return   false;   
+    }   
+</SCRIPT> 
+<SCRIPT   LANGUAGE=javascript   FOR=MSComm1   EVENT=OnComm>   
+    <!--  
+    // MSComm1控件每遇到OnComm事件就调用MSComm1_OnComm()函数 
+
+    MSComm1_OnComm() 
+    //-->   
+</SCRIPT> 
+
+<script   language="JavaScript"   type="text/JavaScript">   
+    <!-- 
+    //打开端口并发送命令程序    
+    function   OpenPort()   
+    {   
+        if(MSComm1.PortOpen==false)   
+            {   
+            MSComm1.PortOpen=true;   
+            MSComm1.Output='ate0'+'\r\n';//发送命令 
+            setTimeout(function(){
+                MSComm1.Output='at+fclass=8'+'\r\n';
+            },100);
+            setTimeout(function(){
+                MSComm1.Output= 'at+vcid=1'+'\r\n';
+            },300);
+
+
+        }     
+        else   
+            {   
+            //window.alert   ("已经开始接收数据!");     
+        }   
+    } 
+
+    //打开端口
+    OpenPort();
+
+    -->   
+  </script>   
+  

@@ -1,0 +1,120 @@
+<!-- 新建菜单页面 -->
+<style>
+ #meituanShopmgrCreateviewToolbar{
+ 	margin:0px;
+ 	padding-top:0px;
+ 	background:#fafafa;
+ 	border:1px solid red;
+ }
+ 
+ #meituanMenumgrCreateview table{
+            border-collapse: collapse;
+            border: none;
+        }
+        
+ #meituanMenumgrCreateview td{
+            border: solid #d0d0d0 1px;
+        }
+</style>
+ 
+<div id="meituanShopinfoCreateviewToolbar" style="">
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="meituanMenumgrCreateviewInsert();">保存</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="meituanMenumgrCreateviewCancel();">放弃并返回</a>
+</div> 
+	 
+<div id="meituanMenumgrCreateview" class="easyui-panel" title="新建菜单"
+    style="width:500px;height:150px;padding:10px;background:#fafafa;"
+    data-options="iconCls:'icon-save',closable:true,
+    collapsible:true,minimizable:true,maximizable:true"  fit="true" collapsible="false" minimizable="false" maximizable ="false" closable="false" bodyCls="meituanShopmgrBodyCls" border="false"
+    >
+    <form id="meituanMenumgrInsert" method="post" enctype="multipart/form-data">
+    	<table width="100%" >
+			<tr>
+				<td width="15%" align="right">商户id</td>
+				<br width="35%"><input name="app_poi_code" class="easyui-textbox" data-options="" style="width:80%;height:25px">
+				</br>使用,分割不同的商户id
+				</td>
+				<td width="15%" align="right">菜品图片URL:</td>
+				<td width="25%"><input name="pic" type="file" class="easyui-textbox" data-options="iconCls:'icon-search'" style="width:300px" /></td>
+			</tr>
+    		<tr>
+    			<td width="15%" align="right">菜品名称</td>
+    			<td width="35%"><input name="name" class="easyui-textbox" data-options="" style="width:80%;height:25px"></td>
+    			<td width="15%" align="right">菜品图片URL:</td>
+    			<td width="25%"><input name="pic" type="file" class="easyui-textbox" data-options="iconCls:'icon-search'" style="width:300px" /></td>
+    		</tr>
+    		<tr>
+    			<td width="15%" align="right">菜品单价:</td>
+    			<td width="35%"><input name="price" class="easyui-textbox" data-options="" style="width:80%;height:25px"></td>
+    			<td width="15%" align="right">条形码:</td>
+    			<td width="25%"><input name="upc" class="easyui-textbox" data-options="iconCls:'icon-search'" style="width:300px" /></td>
+    		</tr>
+    		<tr>
+    			<td width="15%" align="right">最小起订数量:</td>
+    			<td width="35%"><input name="min_order_num" class="easyui-textbox" data-options="" style="width:80%;height:25px"></td>
+    			<td width="15%" align="right">餐盒数量:</td>
+    			<td width="25%"><input name="package_box_num" class="easyui-textbox" data-options="iconCls:'icon-search'" style="width:300px" /></td>
+    		</tr>
+    		<tr>
+				<td width="15%" align="right">可售时间:</td>
+				<td width="35%"><input name="available_times" class="easyui-textbox" data-options="" style="width:80%;height:25px"></td>
+    			<td width="15%" align="right">描述信息:</td>
+    			<td width="25%"><textarea name="description" class="easyui-textbox" data-options="iconCls:'icon-search'" style="width:300px;height: 45px;" /></td>
+    		</tr>
+    		<tr>
+				<td width="15%" align="right">菜品库存设置:</td>
+				<td width="35%"><input name="threshold" class="easyui-textbox" data-options="" style="width:80%;height:25px"></td>
+    			<td width="15%" align="right">分类名称:</td>
+    			<td width="25%"><input name="category" class="easyui-textbox" data-options="iconCls:'icon-search'" style="width:300px" /></td>
+    		</tr>
+    		<tr>
+    			<td width="15%" align="right">商户ID:</td>
+    			<td width="35%"><select name="shop_id">
+    								<option value="0">全部商户</option>
+    								<foreach name="shopinfo" item="shopinfoitem">
+    									<option value="{$shopinfoitem.shopinfoid}">{$shopinfoitem.poi_name}</option>
+    								</foreach>
+    							</select>
+    			</td>
+    			<td width="15%" align="right"></td>
+    			<td width="25%"></td>
+    		</tr>   	
+    	</table>
+    </form>
+</div>
+
+<script>
+	$('#meituanMenumgrInsert').form(
+	    {
+			url:'__URL__/menumgrSave',
+		    onSubmit: function(){
+				var isValid = $(this).form('validate');
+				if (!isValid) return false;
+				return true;
+		    },
+		    success:function(data){
+		    	data =  eval('('+data+')');  
+		    	if(data.info == 'success'){
+		    		alert('保存成功!');
+		    		var meituanMainviewLayout = $('#meituanMainviewLayout');
+					var regin =  meituanMainviewLayout.layout('panel','center');
+					regin.panel('refresh','__URL__/menumgrListview');
+		    	}
+		    	
+		    	if(data.info == 'error'){
+		    		alert('保存失败！');
+		    	}
+		    }
+	    });
+	//保存订单
+	var meituanMenumgrCreateviewInsert = function(){
+		$('#meituanMenumgrInsert').submit();
+	}
+	
+	//放弃保存订单
+	function meituanMenumgrCreateviewCancel(){
+		var meituanMainviewLayout = $('#meituanMainviewLayout');
+		var regin =  meituanMainviewLayout.layout('panel','center');
+		regin.panel('refresh','__URL__/menumgrListview');
+	}
+</script>

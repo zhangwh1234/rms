@@ -1,0 +1,372 @@
+<style>
+    .orderFormDetailview {
+        font-size: 16px;
+        float: left;
+        border: 0px solid red;
+        margin-left: 2px;
+        margin-right: 2px;
+        line-height: 24px;
+    }
+</style>
+<div class="moduleMenu">
+    <ul>
+        <li>{$Think.lang.$navName}</li>
+        <li><a href="javascript:void(0);" onclick="IndexIndexModule.updateOperateTab('__URL__/listview');">&nbsp;&gt;{$Think.lang.$moduleName}</a>
+        </li>
+        <li>&nbsp;&gt;列表操作</li>
+        <li style="width: 30px;">&nbsp;</li>
+
+        <li style="margin-left: 10px;"><a href="javascript:void(0);"
+                                          onclick="IndexIndexModule.openOperateTab('__URL__/createview/returnAction/{$returnAction}');"><img
+                src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);"
+               onclick="IndexIndexModule.updateOperateTab('__URL__/createview/returnAction/{$returnAction}');">新建订单<span>^1</span></a></li>
+
+        <li style="margin-left: 10px;"><a href="javascript:void(0);"
+                                          onclick="OrderFormListviewModule.addressSearchInput();"><img
+                src=".__PUBLIC__/Images/addressBtn.jpg" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);"
+               onclick="OrderFormListviewModule.addressSearchInput();">地址查询<span>^6</span></a></li>
+
+        <li style="margin-left: 10px;"><a href="javascript:void(0);"
+                                          onclick="OrderFormListviewModule.telphoneSearchInput();"><img
+                src=".__PUBLIC__/Images/phone.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);"
+               onclick="OrderFormListviewModule.telphoneSearchInput();">电话号码查询<span>^7</span></a>
+        </li>
+
+        <li style="margin-left: 10px;"><a href="javascript:void(0);"
+                                          onclick="OrderFormListviewModule.comeinTelphoneSearchInput();"><img
+                src=".__PUBLIC__/Images/phone.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);" onclick="OrderFormListviewModule.comeinTelphoneSearchInput();">来电记录查询<span>^8</span></a>
+        </li>
+
+        <li style="margin-left: 10px;"><a href="javascript:;" onMouseOver=""><img
+                src=".__PUBLIC__/Images/addressBtn.jpg" alt="" title="" border="0"></a></li>
+        <li><a href="#" class="moduleName"
+               onclick="OrderFormListviewModule.otherSearchInput();">综合查询<span>^9</span></a>
+        </li>
+        <li style="float: right;margin-right: 10px;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
+        <li style="float:right;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();"><img
+                src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
+    </ul>
+</div>
+
+<tagLib name="easyui"/>
+<div id="OrderFormListviewDiv" style="height:400px;width:100%;clear:both;">
+    <easyui:datagrid options="datagrid.options" fields="datagrid.fields"/>
+</div>
+<input id="{$moduleName}Action" type="hidden"  value="Listview" />
+<script>
+    var OrderFormListviewModule = {
+        dialog: '#globel-dialog-div',
+        datagrid: '#orderform_index_datagrid',
+
+        init: function () {
+            //设置div的高度
+            $('#OrderFormListviewDiv').height(IndexIndexModule.operationHeight);
+            this.quickKeyboardAction();
+        },
+
+        //操作格式化
+        operate: function (val, rowData, rowIndex) {
+            var btn = [];
+            btn.push('<a href="javascript:void(0);" onclick="OrderFormListviewModule.detailview(' + rowData.orderformid + ')">查看</a>');
+            btn.push('<a href="javascript:void(0);" onclick="OrderFormListviewModule.editview(' + rowData.orderformid + ')">改单</a>');
+            btn.push('<a href="javascript:void(0);" onclick="OrderFormListviewModule.hurry(' + rowData.orderformid + ')">催送</a>');
+            return btn.join(' | ');
+        },
+
+        //刷新
+        refresh: function () {
+            $(this.datagrid).datagrid('reload');
+        },
+
+        //查看记录
+        detailview: function (id) {
+            var url = '__URL__/detailview/returnAction/{$returnAction}/record/'+id;
+            IndexIndexModule.updateOperateTab(url);
+        },
+
+        //修改订单
+        editview: function (id) {
+            var url = '__URL__/editview/returnAction/{$returnAction}/record/'+id;
+            IndexIndexModule.updateOperateTab(url);
+        },
+
+        //催送订单
+        hurry:function(id){
+
+            var that = this;
+            $.messager.confirm('提示信息', '确定要催送订单吗？', function(result){
+                if(!result) return false;
+
+                $.messager.progress({text:'处理中，请稍候...'});
+                $.post("{:U('OrderForm/hurry')}", {record: id}, function(res){
+                    $.messager.progress('close');
+                    $('#orderform_index_datagrid').datagrid('reload');
+                    $.app.method.tip('提示信息', res.info, 'info');
+
+                }, 'json');
+            });
+        },
+
+        //订单地址输入
+        addressSearchInput: function () {
+            var that = this;
+            $(that.dialog).dialog({
+                title: '订餐地址查询',
+                iconCls: 'icons-application-application_add',
+                width: 500,
+                height: 140,
+                cache: false,
+                href: "{:U('OrderForm/searchAddressInput')}",
+                modal: true,
+                collapsible: false,
+                minimizable: false,
+                resizable: false,
+                maximizable: false,
+                buttons: [{
+                    text: '确定',
+                    iconCls: 'icons-other-tick',
+                    handler: function () {
+                        $(that.dialog).find('form').eq(0).form('submit', {
+                            onSubmit: function () {
+                                var isValid = $(this).form('validate');
+                                if (!isValid) return false;
+
+                                var formArray = $(this).serializeArray();
+                                var url = '__URL__/searchviewAddress/';
+                                $.each(formArray, function (key, value) {
+                                    url = url + value.name + '/' + value.value;
+                                })
+                                IndexIndexModule.openOperateTab(url, '订餐地址查询');
+                                $(that.dialog).dialog('close');
+                                return false;
+                            }
+                        });
+                    }
+                }, {
+                    text: '取消',
+                    iconCls: 'icons-arrow-cross',
+                    handler: function () {
+                        $(that.dialog).dialog('close');
+                    }
+                }]
+            });
+        },
+
+        //电话查询
+        telphoneSearchInput: function () {
+            var that = this;
+            $(that.dialog).dialog({
+                title: '订餐电话查询',
+                iconCls: 'icons-application-application_add',
+                width: 500,
+                height: 140,
+                cache: false,
+                href: "{:U('OrderForm/searchTelphoneInput')}",
+                modal: true,
+                collapsible: false,
+                minimizable: false,
+                resizable: false,
+                maximizable: false,
+                buttons: [{
+                    text: '确定',
+                    iconCls: 'icons-other-tick',
+                    handler: function () {
+                        $(that.dialog).find('form').eq(0).form('submit', {
+                            onSubmit: function () {
+                                var isValid = $(this).form('validate');
+                                if (!isValid) return false;
+
+                                var formArray = $(this).serializeArray();
+                                var url = '__URL__/searchviewTelphone/';
+                                $.each(formArray, function (key, value) {
+                                    url = url + value.name + '/' + value.value;
+                                })
+                                IndexIndexModule.openOperateTab(url, '订餐电话查询');
+                                $(that.dialog).dialog('close');
+                                return false;
+                            }
+                        });
+                    }
+                }, {
+                    text: '取消',
+                    iconCls: 'icons-arrow-cross',
+                    handler: function () {
+                        $(that.dialog).dialog('close');
+                    }
+                }]
+            });
+        },
+
+        //来电记录查询
+        comeinTelphoneSearchInput: function(){
+            var that = this;
+            $(that.dialog).dialog({
+                title: '来电记录查询',
+                iconCls: 'icons-application-application_add',
+                width: 500,
+                height: 140,
+                cache: false,
+                href: "{:U('OrderForm/searchComeintelphoneInput')}",
+                modal: true,
+                collapsible: false,
+                minimizable: false,
+                resizable: false,
+                maximizable: false,
+                buttons: [{
+                    text: '确定',
+                    iconCls: 'icons-other-tick',
+                    handler: function () {
+                        $(that.dialog).find('form').eq(0).form('submit', {
+                            onSubmit: function () {
+                                var isValid = $(this).form('validate');
+                                if (!isValid) return false;
+
+                                var formArray = $(this).serializeArray();
+                                var url = '__URL__/searchviewComeinTelphone/';
+                                $.each(formArray, function (key, value) {
+                                    url = url + value.name + '/' + value.value;
+                                })
+                                IndexIndexModule.openOperateTab(url, '来电记录查询');
+                                $(that.dialog).dialog('close');
+                                return false;
+                            }
+                        });
+                    }
+                }, {
+                    text: '取消',
+                    iconCls: 'icons-arrow-cross',
+                    handler: function () {
+                        $(that.dialog).dialog('close');
+                    }
+                }]
+            });
+        },
+
+        /**
+         * 其他查询：综合查询，查询多个字段,或者叫普通查询
+         */
+        otherSearchInput: function () {
+            var that = this;
+            $(that.dialog).dialog({
+                title: '订餐综合查询',
+                iconCls: 'icons-application-application_add',
+                width: 500,
+                height: 140,
+                cache: false,
+                href: "{:U('OrderForm/searchOtherInput')}",
+                modal: true,
+                collapsible: false,
+                minimizable: false,
+                resizable: false,
+                maximizable: false,
+                buttons: [{
+                    text: '确定',
+                    iconCls: 'icons-other-tick',
+                    handler: function () {
+                        $(that.dialog).find('form').eq(0).form('submit', {
+                            onSubmit: function () {
+                                var isValid = $(this).form('validate');
+                                if (!isValid) return false;
+
+                                var formArray = $(this).serializeArray();
+                                var url = '__URL__/searchviewOther/';
+                                $.each(formArray, function (key, value) {
+                                    url = url + value.name + '/' + value.value;
+                                })
+                                IndexIndexModule.openOperateTab(url, '订餐综合查询');
+                                $(that.dialog).dialog('close');
+                                return false;
+                            }
+                        });
+                    }
+                }, {
+                    text: '取消',
+                    iconCls: 'icons-arrow-cross',
+                    handler: function () {
+                        $(that.dialog).dialog('close');
+                    }
+                }]
+            });
+        },
+
+
+
+        //新建的快捷操作
+        quickKeyboardAction:function(){
+            var that = this;
+            // ctrl+1快捷键,新建公告
+            Mousetrap.bind(['ctrl+1','ctrl+f1','f1'], function(e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '订餐单' && ($('#OrderFormAction').val() == 'Listview')) {
+                    IndexIndexModule.updateOperateTab('__URL__/createview');
+                };
+            });
+
+            // ctrl+6快捷键, 地址查询
+            Mousetrap.bind(['ctrl+6','ctrl+f6','f6'], function(e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '订餐单' && ($('#OrderFormAction').val() == 'Listview')) {
+                    that.addressSearchInput();
+                };
+            });
+
+            // ctrl+7快捷键,电话查询
+            Mousetrap.bind(['ctrl+7', 'ctrl+f7', 'f7'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '订餐单' && ($('#OrderFormAction').val() == 'Listview')) {
+                    that.telphoneSearchInput();
+                };
+            });
+
+            // ctrl+8快捷键,来电记录查询
+            Mousetrap.bind(['ctrl+8', 'ctrl+f8', 'f8'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '订餐单' && ($('#OrderFormAction').val() == 'Listview')) {
+                    that.comeinTelphoneSearchInput();
+                };
+            });
+
+            // ctrl+9快捷键 ,综合查询
+            Mousetrap.bind(['ctrl+9', 'ctrl+f9', 'f9'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '订餐单' && ($('#OrderFormAction').val() == 'Listview')) {
+                    that.otherSearchInput();
+                };
+            });
+
+            // ESC键
+            Mousetrap.bind('esc', function(e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '订餐单') {
+                    $(IndexIndexModule.dialog).dialog('close');
+                }
+            });
+        }
+
+
+    }
+
+    $(function () {
+        OrderFormListviewModule.init();
+    })
+
+</script>
+
+
+

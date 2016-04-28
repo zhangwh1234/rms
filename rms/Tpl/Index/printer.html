@@ -1,0 +1,15 @@
+
+<if condition="$PrinterOn eq '开启11'">
+    <load href=".__PUBLIC__/Js/LodopFuncs.js"/>
+    <object id="LODOP_OB" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width=0 height=0>
+        <embed id="LODOP_EM" type="application/x-print-lodop" width=0 height=0></embed>
+    </object>
+    <script type="text/javascript">
+        var LODOP;
+        setTimeout(function(){
+            LODOP = getLodop(document.getElementById('LODOP_OB'), document.getElementById('LODOP_EM'));
+            //显示所先的打印机名称
+            LODOP.SET_LICENSES("北京龙城丽华快餐有限公司", "653625970697469919278901905623", "", "");
+        },100);
+    </script>
+</if>

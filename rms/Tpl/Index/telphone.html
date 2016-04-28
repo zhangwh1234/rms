@@ -1,0 +1,164 @@
+<script>
+    var cpe_id; //来电参数
+    //定义一个来电地址显示的全局显示对象
+    var teladdressObj;
+    var teladdressObjId;  //地址的当前ID；缓存用
+    var telphoneHeigth = 0;  //定义来电条高度，在indexModel需要计算
+</script>
+<if condition="$TelphoneOn eq '开启'">
+    <script>
+        //来电条高度赋值
+        telphoneHeigth =  30;
+    </script>
+    <!-- 开启来电显示，才启动百度地址帮助 -->
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=jLheOGOPRm4rZtnkii8ZOy7C"></script>
+    <if condition="$TelphoneType eq 'yeahdone'"> {// 亿宏达来电组件 }
+        <OBJECT ID="YeahDone1" WIDTH=7 HEIGHT=3 CLASSID="CLSID:68E13FA4-E8E5-4719-986B-DE6A6476BF44"
+                CODEBASE="FR60.OCX"></OBJECT>
+        <script LANGUAGE="JavaScript" FOR="YeahDone1" EVENT="OnPhoneIncoming(cpe_id, IncomingNum)">
+            //在界面上显示号码
+            $('#telphoneNumber').val(IncomingNum);
+            //查询电话地址
+            localStorage.telphoneNumber = IncomingNum;  //缓存来电号码
+            //显示来电历史
+            $.ajax({
+                type: "POST",
+                url: "__APP__/Telcustomer/getAddressByPhone/telphone/" + IncomingNum,
+                dataType: "json",
+                success: function (data) {
+                    if (data.teladdress.length == 0) return;
+                    teladdressObj = data.teladdress; //缓存来电地址数据
+                    teladdressObjId = data.teladdress[0].teladdressid;     //缓存第一个来电的ID
+                    var teladdress = new Array();
+                    $.each(data.teladdress, function (key, value) {
+                        teladdress.push({
+                            'id': value.teladdressid,
+                            'teladdress': value.company + '  |  ' + value.address
+                        });
+                    })
+                    $('#telphoneAddress').combobox('loadData', teladdress);
+                    $("#telphoneAddress").combobox('showPanel');
+                    $(document).unbind(".combo").bind("mousedown.combo", function (e) {
+                    });  //固定Panle
+
+
+                    if (data.telhistory) {
+                        var telhistoryHtml = '';  //开始组装来电历史记录
+                        $.each(data.telhistory, function (key, value) {
+                            telhistoryHtml += value.teltime + ' ' + value.teltask + "<br>";
+                        })
+                        $('#telhistoryWin').html(telhistoryHtml);
+                        $('#telhistoryWin').window('open');
+                    } else {
+                        $('#telhistoryWin').window('close');
+                    }
+                }
+            });
+        </script>
+    </if>
+
+
+    {// 华旗呼叫中心的来电显示部件 }
+    <if condition="$TelphoneType eq 'CCLinkServer'">
+        <object classid="clsid:4CFBD1C3-7492-4F9D-92BF-4001D006387E" id="CCLink" width="0" height="0"></object>
+        <script language="javascript" type="text/javascript">
+            var LinkHost = localStorage.cclinkHost;
+            var LinkPort = localStorage.cclinkPort;
+            var LinkExtCode = localStorage.cclinkExtCode;
+
+            function Link_ConnectServer() {
+                if (LinkExtCode != "") {
+                    var Err = CCLink.Link_ConnectServer(LinkHost, LinkPort, 1); //建立客户端和服务器端连接
+                    if (Err != "") {
+                        alert("连接呼叫中心服务器失败!");
+                        return;
+                    }
+                    Err = CCLink.Ext_Assign(LinkExtCode, LinkExtCode); //绑定到分机设备
+                    if (Err != "") {
+                        alert('绑定分机失败,' + Err);
+                        return;
+                    }
+                    CCLink.Ext_SetExtName(LinkExtCode, '{$UserName}');
+                    //CCLink.Ext_SetExtWorkNo(Com,Com);
+                    CCLink.Ext_CheckInQueue(LinkExtCode); //将分机签入队列
+                }
+                return;
+            }
+
+            function Link_DisconnectServer() {
+                CCLink.Link_DisConnectServer(); //断开客户端和服务器端连接
+                return;
+            }
+            //连接CTI服务器
+            Link_ConnectServer();
+        </script>
+
+        <script LANGUAGE="JavaScript" FOR="CCLink" Event="LinkEvent_OnDisconnected()">//与呼叫中心断开
+        alert("与呼叫中心服务器断开!");
+        </script>
+
+        <script LANGUAGE="JavaScript" FOR="CCLink"
+                Event="ExtEvent_OnDoNotDisturbChange(ExtCode,DoNotDisturb)">//分机免打扰标志改变事件
+        if (DoNotDisturb == 0) {
+            alert("分机" + ExtCode + "致闲!");
+        }
+        else {
+            alert("分机" + ExtCode + "致忙!");
+        }
+        </script>
+
+        <script LANGUAGE="JavaScript" FOR="CCLink"
+                Event="ExtEvent_OnCallIn(ExtCode,OtherCode,OtherRole,TransferCode,TransferRole,CallData)">//分机呼入事件
+        //alert("分机"+ExtCode+"电话呼入:"+OtherCode);
+        //在界面上显示号码
+        $('#telphoneNumber').val(OtherCode);
+        //查询电话地址
+        localStorage.telphoneNumber = OtherCode;  //缓存来电号码
+        //显示来电历史
+        $.ajax({
+            type: "POST",
+            url: "__APP__/Telcustomer/getAddressByPhone/telphone/" + OtherCode,
+            dataType: "json",
+            success: function (data) {
+                if (data.teladdress.length == 0) {
+                    $('#telphoneAddress').combobox('loadData', []);
+                    $("#telphoneAddress").combobox('hidePanel');
+                }
+                teladdressObj = data.teladdress; //缓存来电地址数据
+                teladdressObjId = data.teladdress[0].teladdressid;     //缓存第一个来电的ID
+                var teladdress = new Array();
+                $.each(data.teladdress, function (key, value) {
+                    teladdress.push({
+                        'id': value.teladdressid,
+                        'teladdress': value.company + '  |  ' + value.address
+                    });
+                })
+                $('#telphoneAddress').combobox('loadData', teladdress);
+                $("#telphoneAddress").combobox('showPanel');
+                $(document).unbind(".combo").bind("mousedown.combo", function (e) {
+                });  //固定Panle
+
+                if (data.telhistory) {
+                    var telhistoryHtml = '';  //开始组装来电历史记录
+                    $.each(data.telhistory, function (key, value) {
+                        telhistoryHtml += value.teltime + ' ' + value.teltask + "<br>";
+                    })
+                    $('#telhistoryWin').html(telhistoryHtml);
+                    $('#telhistoryWin').window('open');
+                } else {
+                    $('#telhistoryWin').window('close');
+                }
+            }
+        });
+        </script>
+
+        <script LANGUAGE="JavaScript" FOR="CCLink"
+                Event="ExtEvent_OnConnected(ExtCode,OtherCode,OtherRole,TransferCode,TransferRole,CallData)">//分机通话事件
+        //alert("分机"+ExtCode+"电话接通:"+OtherCode+"；录音文件："+Ext_GetCallInfo_RecordFile(ExtCode));
+        //在界面上显示号码
+        </script>
+
+        <script LANGUAGE="JavaScript" FOR="CCLink" Event="ExtEvent_OnDisconnected(ExtCode)">//分机挂机事件
+        </script>
+    </if>
+</if>

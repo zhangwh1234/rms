@@ -1,0 +1,117 @@
+<style type="text/css">
+    #wrap{
+        width:96%;
+        height:auto;
+        overflow:hidden;
+        margin:5px auto;
+        padding:4px 10px;
+        border:1px solid #ccc;
+        font-family: '黑体';
+    }
+
+    #wrap  strong{
+        font-size:16px;
+        color:#0b99d8;
+    }
+
+    #wrap input{
+        float: left;
+    }
+
+    #wrap dl{
+        clear:both;
+        margin:10px 0;
+        border:1px solid #dcdcdc;
+        height:auto;
+        overflow:hidden;
+    }
+
+    #wrap  dl dt{
+        display:block;
+        height:25px;
+        line-height:25px;
+        background:#e6e6fa;
+        text-indent:10px;
+    }
+
+    #wrap  dl dt strong{
+        font-size:14px;
+        color:#61;
+        float:left;
+    }
+
+    #wrap dl dt input{
+        font-size: 16px;
+        margin-top: 8px;
+        margin-left: 5px;
+    }
+
+    #wrap  dl dd{
+        padding:5px;
+        float:left;
+    }
+
+    #wrap dd span,a{
+        font-size: 14px;
+    }
+
+    #wrap dd span{
+        float: left;
+    }
+    #wrap dd input{
+        margin-top: -4px;
+        margin-left: 2px;
+        font-size: 6px;   
+    }
+</style>
+
+<div class="moduleMenu">
+    <ul>
+        <li>{$Think.lang.$navName}</li>
+        <li><a href="javascript:void(0);"  onclick="updateTab('__URL__/listview');">&nbsp;&gt;{$Think.lang.$moduleName}</a></li>
+        <li>&nbsp;&gt;添加模块功能操作</li>
+        <li style="width: 50px;">&nbsp;</li>
+
+        <li style="margin-left: 10px;"><a href="javascript:;" onclick="javascript.void(0);"><img src=".__PUBLIC__/Images/returnBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);"  onclick="IndexIndexModule.updateOperateTab('__URL__/listview');">返回列表</a></li>
+
+
+        <li style="float: right;margin-right: 60px;"><a href="javascript:void(0);"   onclick="IndexIndexModule.closeOperateTab();" >关闭</a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="IndexIndexModule.closeOperateTab();"><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+
+    </ul>
+</div>
+<div id="wrap">
+
+        <foreach name='userorganization' item='action'>
+            <dl>
+                <dt>
+                    <strong>{$action.name}</strong>
+                    <if condition='$action["access"]'>
+                    <img src=".__PUBLIC__/Images/checkbox.gif" />
+                    </if>
+                </dt>
+                <foreach name='action.child' item='method'>
+                    <dd>
+                        <span>{$method.name}</span>
+                        <if condition='$method["access"]'>
+                        <img src=".__PUBLIC__/Images/checkbox.gif" />
+                        </if>
+                                               
+                    </dd>
+                </foreach>
+            </dl>
+        </foreach>
+        <table border="0" cellspacing=0 cellpadding=0 width="98%" class="small">
+            <tr>
+                <td width="25%"></td>
+                <td width="25%">
+                   &nbsp;</td>
+                <td width="25%">
+                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-arrow-cross'"
+                       onclick="IndexIndexModule.updateOperateTab('__URL__/listview');" style="width:100px;">放弃</a>
+                <td> 
+                </td>
+            </tr>
+        </table>
+</div>

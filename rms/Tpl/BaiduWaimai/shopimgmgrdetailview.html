@@ -1,0 +1,65 @@
+<!-- 新建菜单页面 -->
+<style>
+ #baiduwaimaiShopimgmgrDetailviewToolbar{
+ 	margin:0px;
+ 	padding-top:0px;
+ 	background:#fafafa;
+ 	border:0px solid red;
+ }
+ 
+ #baiduwaimaiShopimgmgrDetailview table{
+            border-collapse: collapse;
+            border: none;
+        }
+        
+ #baiduwaimaiShopimgmgrDetailview td{
+            border: solid #d0d0d0 1px;
+        }
+</style>
+ 
+<div id="baiduwaimaiShopimgmgrDetailviewToolbar" style="">
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-back" plain="true" onclick="baiduWaimaiShopimgmgrDetailviewCancel();">放弃并返回</a>
+</div> 
+	 
+<div id="baiduwaimaiShopimgmgrDetailview" class="easyui-panel" title="新建商户图片"
+    style="width:500px;height:150px;padding:10px;background:#fafafa;"
+    data-options="iconCls:'icon-save',closable:true,
+    collapsible:true,minimizable:true,maximizable:true"  fit="true" collapsible="false" minimizable="false" maximizable ="false" closable="false" bodyCls="baiduwaimaiShopmgrBodyCls" border="false"
+    >
+    <form id="baiduwaimaiShopimgmgrInsert" method="post">
+    	<table width="100%" >
+    		<tr>
+    			<td width="15%" align="right">合作方名称:</td>
+    			<td width="35%"><input name="source_name" class="easyui-textbox" data-options="" style="width:80%;height:15px" value="{$shopimgmgr.source_name}" readonly></td>
+    			<td width="15%" align="right">商户ID:</td>
+    			<td width="35%">{$shopimgmgr.shop_id}
+    			</td>
+    		</tr>
+    		<tr>
+    			<td width="15%" align="right">图片类型</td>
+    			<td width="35%">{$shopimgmgr.type}
+    			</td>
+    			<td width="15%" align="right">图片路径:</td>
+    			<td width="25%">{$shopimgmgr.img}</td>
+    		</tr>
+    		<tr>
+    			<td width="15%" align="right">图片说明:</td>
+    			<td width="35%"><input name="desc" class="easyui-textbox" data-options="" style="width:80%;height:35px" value="{$shopimgmgr.desc}"></td>
+    			<td width="15%" align="right"></td>
+    			<td width="25%"></td>
+    		</tr>
+    	
+    	</table>
+    </form>
+</div>
+
+<script>
+	
+	
+	//放弃保存订单
+	function baiduWaimaiShopimgmgrDetailviewCancel(){
+		var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+		var regin =  baiduwaimaiMainviewLayout.layout('panel','center');
+		regin.panel('refresh','__URL__/shopimgmgrListview');
+	}
+</script>

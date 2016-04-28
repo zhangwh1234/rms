@@ -1,0 +1,153 @@
+<!-- 菜单分类信息管理列表 -->
+<table id="baiduwaimaiCategorymgrListviewTable" title="分类管理" >
+</table>
+<div id="baiduwaimaiCategorymgrListviewTableToolbar">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="baiduwaimaiCategorymgrListviewCreateview()">新建分类</a>
+</div>
+
+<script>
+    Namespace.register('baiduwaimai.categorymgrListview');
+    //定义列表
+    baiduwaimai.categorymgrListview.table  = $('#baiduwaimaiCategorymgrListviewTable');
+    baiduwaimai.categorymgrListview.table.datagrid(
+            {
+                nowrap : "true",
+                fitColumns : "true",
+                singleSelect : "true",
+                autoRowHeight : "true",
+                striped : "true",
+                border : "false",
+                rownumbers : "false", //显示行号
+                showFooter : 'true',
+                pagination : true,
+                pagePosition : 'bottom',
+                fit:true,
+                toolbar : '#baiduwaimaiCategorymgrListviewTableToolbar',
+                columns : [ [
+                    {
+                        field : 'categoryid',
+                        title : 'id',
+                        hidden : 'true',
+                        width : 100
+                    },
+                    {
+                        field : 'name',
+                        title : '分类名称',
+                        width : 20,
+                        align : 'left'
+                    },
+                    {
+                        field : 'rank',
+                        title : '排序',
+                        width : 10,
+                        align : 'center'
+                    },
+                    {
+                        field: "categoryoperation",
+                        width: 25,
+                        title: '分类参数管理',
+                        align: 'center',
+                        formatter: function (value, rowData,
+                                             rowIndex) {
+                            var operation;
+                            operation = '';
+                            operation += "<a href='javascript:void(0);' onclick='baiduwaimaiUpdateRegin(&apos;__URL__/categorymgrDetailview/categoryid/"
+                                    + rowData.categoryid + "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>查看</a>";
+                            operation += "&nbsp;|&nbsp;";
+                            operation += "<a href='javascript:void(0);' onclick='baiduwaimaiUpdateRegin(&apos;__URL__/categorymgrEditview/categoryid/"
+                                    + rowData.categoryid + "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>编辑</a>";
+
+                            return operation;
+                        }
+                    },
+                    {
+                        field : "operation",
+                        width : 74,
+                        title : '操作',
+                        align : 'center',
+                        formatter : function(value, rowData,
+                                             rowIndex) {
+                            var operation;
+                            operation = "";
+                            operation += "<a href='javascript:void(0);' onclick='baiduwaimaiCategorymgrCreate(&apos;__URL__/categorymgrCreate/categoryid/"
+                                    + rowData.categoryid
+                                    + "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>新增菜品分类</a>";
+                            operation += "&nbsp;|&nbsp;";
+                            operation += "<a href='javascript:void(0);' onclick='baiduwaimaiCategorymgrUpdate(&apos;__URL__/categorymgrUpdate/categoryid/"
+                                    + rowData.categoryid
+                                    + "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>更新菜品分类</a>";
+
+                            return operation;
+                        }
+                    } ] ]
+            });
+
+
+    //定义查询返回的订单数据
+    baiduwaimai.categorymgrListview.listData = '{$listData}';
+
+    //转换成json对象
+    baiduwaimai.categorymgrListview.listData = eval('('
+    + baiduwaimai.categorymgrListview.listData + ')');
+
+    //载入订单数据，初始化
+    baiduwaimai.categorymgrListview.table.datagrid('loadData',
+            baiduwaimai.categorymgrListview.listData);
+
+    //新建商户
+    var baiduwaimaiCategorymgrListviewCreateview = function(){
+        var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+        var regin =  baiduwaimaiMainviewLayout.layout('panel','center');
+        regin.panel('refresh','__URL__/categorymgrCreateview');
+    }
+
+    //新增分类
+    function baiduwaimaiCategorymgrCreate(url){
+        $.messager.progress();
+        var msg = '';
+        $.ajax({
+            url:url,
+            success:function(data){
+                $.messager.progress('close');
+                $.each(data.data,function(key,value){
+                    msg = msg + '内容: '+ value+'</br>';
+                })
+                $.messager.alert('返回的结果',
+                        '操作内容:' + data.cmd + '</br>' +
+                         '分类名称:'+data.name + '</br>'+
+                         msg,'',function(){
+                            var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+                            var regin =  baiduwaimaiMainviewLayout.layout('panel','center');
+                            regin.panel('refresh','__URL__/categorymgrListview');
+                        });
+
+            }
+        })
+    }
+
+    //更新分类
+    function baiduwaimaiCategorymgrUpdate(url){
+        $.messager.progress();
+        var msg = '';
+        $.ajax({
+            url:url,
+            success:function(data){
+                $.messager.progress('close');
+                $.each(data.data,function(key,value){
+                    msg = msg + '内容: '+ value+'</br>';
+                })
+                $.messager.alert('返回的结果',
+                        '操作内容:' + data.cmd + '</br>' +
+                        '旧分类名称:'+data.old_name + '</br>'+
+                        '新分类名称:'+data.name + '</br>'+
+                         msg,'',function(){
+                            var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+                            var regin =  baiduwaimaiMainviewLayout.layout('panel','center');
+                            regin.panel('refresh','__URL__/categorymgrListview');
+                        });
+            }
+        })
+    }
+
+
+</script>

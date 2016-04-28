@@ -1,0 +1,144 @@
+<style type="text/css">
+    #OrganizationListviewOperationDiv{
+        width:96%;
+        height:auto;
+        overflow:hidden;
+        margin:5px auto;
+        padding:4px 10px;
+        border:1px solid #ccc;
+        font-family: '黑体';
+    }
+
+    #OrganizationListviewOperationDiv  strong{
+        font-size:16px;
+        color:#0b99d8;
+    }
+
+    #OrganizationListviewOperationDiv dl{
+        margin:10px 0;
+        border:1px solid #dcdcdc;
+        height:auto;
+        overflow:hidden;
+    }
+
+    #OrganizationListviewOperationDiv  dl dt{
+        display:block;
+        height:36px;
+        line-height:36px;
+        background:#e6e6fa;
+        text-indent:10px;
+    }
+
+    #OrganizationListviewOperationDiv  dl dt strong{
+        font-size:14px;
+        color:#61
+    }
+
+    #OrganizationListviewOperationDiv  dl dd{
+        padding:5px;
+        float:left;
+    }
+
+    #OrganizationListviewOperationDiv dd span,a{
+        font-size: 14px;
+    }
+</style>
+
+<div class="moduleMenu">
+    <ul>
+        <li>{$Think.lang.$navName}</li>
+        <li><a href="javascript:void(0);"  onclick="IndexIndexModule.updateOperateTab('__URL__/listview');">&nbsp;&gt;{$Think.lang.$moduleName}</a></li>
+        <li>&nbsp;&gt;列表操作</li>
+        <li style="width: 50px;">&nbsp;</li>
+
+        <li style="margin-left: 10px;"><a href="javascript:;" onclick="IndexIndexModule.updateOperateTab('__URL__/createviewDepartment');"><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);"  onclick="IndexIndexModule.updateOperateTab('__URL__/createviewDepartment');">新建部门</a></li>
+
+
+        <li style="float: right;margin-right: 60px;"><a href="javascript:void(0);"   onclick="IndexIndexModule.closeOperateTab();" >关闭</a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="IndexIndexModule.closeOperateTab();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
+
+    </ul>
+</div>
+
+<div id="OrganizationListviewOperationDiv">
+    <foreach name='organization' item='action'>
+        <dl>
+            <dt>
+                <span>部门名称:</span>
+                <strong>{$action.name}</strong>
+                [<a href="#" onclick="IndexIndexModule.updateOperateTab(&apos;{:U('Organization/createviewTeam',array('pid'=>$action['id'],'level'=>2))}&apos;)">添加班组</a>]
+                [<a href="#" onclick="IndexIndexModule.updateOperateTab(&apos;{:U('Organization/editviewDepartment',array('record'=>$action['id'],'level'=>2))}&apos;)">修改</a>]
+                [<a href="#" onclick="OrganizationListviewModule.deleteDepartment('{$action.id}');">删除</a>]
+            </dt>
+            <foreach name='action.child' item='method'>
+                <dd>
+                    <span>班组名称:</span>
+                    <strong>{$method.name}</strong>
+                    [<a href="#" onclick="IndexIndexModule.updateOperateTab(&apos;{:U('Organization/editviewTeam',array('record'=>$method['id'],'level'=>2))}&apos;)">修改</a>]
+                    [<a href="#" onclick="OrganizationListviewModule.deleteTeam('{$method.id}');">删除</a>]
+                </dd>
+            </foreach>
+        </dl>
+    </foreach>
+</div>
+
+<script>
+    var OrganizationListviewModule = {
+
+        init:function(){
+            //设置div的高度
+            $('#OrganizationListviewOperationDiv').height(IndexIndexModule.operationHeight);
+        },
+
+        //删除模块
+        deleteDepartment: function (id) {
+            var that = this;
+            $.messager.confirm('提示信息', '确定要删除吗？', function (result) {
+                if (!result) return false;
+
+                $.messager.progress({text: '处理中，请稍候...'});
+                $.get("{:U('Organization/deleteDepartment')}", {record: id}, function (res) {
+                            $.messager.progress('close');
+
+                            if (!res.status) {
+                                $.app.method.tip('提示信息', res.info, 'error');
+                            } else {
+                                $.app.method.tip('提示信息', res.info, 'info');
+                                that.refresh();
+                            }
+                        }, 'json'
+                )
+                ;
+            });
+        },
+
+        //删除功能
+        deleteTeam: function (id) {
+            var that = this;
+            $.messager.confirm('提示信息', '确定要删除吗？', function (result) {
+                if (!result) return false;
+
+                $.messager.progress({text: '处理中，请稍候...'});
+                $.get("{:U('Organization/deleteTeam')}", {record: id}, function (res) {
+                            $.messager.progress('close');
+
+                            if (!res.status) {
+                                $.app.method.tip('提示信息', res.info, 'error');
+                            } else {
+                                $.app.method.tip('提示信息', res.info, 'info');
+                                that.refresh();
+                            }
+                        }, 'json'
+                )
+                ;
+            });
+        },
+
+        //刷新
+        refresh: function () {
+            IndexIndexModule.updateOperateTab('__URL__/listview');
+        }
+    }
+</script>
+

@@ -1,0 +1,60 @@
+<!-- 订单信息管理列表 -->
+<style>
+    #baiduwaimaiShopmgrCreateviewToolbar {
+        margin: 0px;
+        padding-top: 0px;
+        background: #fafafa;
+        border: 0px solid red;
+    }
+
+    table {
+        border-collapse: collapse;
+        border: none;
+    }
+
+    td {
+        border: solid #d0d0d0 1px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+    }
+
+</style>
+<div class="easyui-panel" title="订单管理"  style="width:100%;height:150px;padding:10px;background:#fafafa;"
+     data-options="iconCls:'icon-save',closable:false,
+                collapsible:false,minimizable:false,maximizable:false">
+    <table style="width:100%;">
+        <tr>
+            <td align="left">订单号：</td>
+            <td><input id="baiduwaimaiordermgrorderidinput" size="50" /></td>
+            <td><button onclick="BaiduWaimaiOrderMgrModel.orderComplete();">确认完成</button></td>
+        </tr>
+    </table>
+</div>
+
+<script>
+    var BaiduWaimaiOrderMgrModel = {
+        //订单完成
+        orderComplete:function(){
+            orderid = $('#baiduwaimaiordermgrorderidinput').val();
+            url = '__URL__/ordermgrComplete/orderid/'+orderid;
+            $.messager.progress();
+            var msg = '';
+            $.ajax({
+                url: url,
+                success: function (data) {
+                    $.messager.progress('close');
+                    $.each(data.data,function(key,value){
+                        msg = msg + key + ': ' + value+ '</br>';
+                    })
+                    $.messager.alert('返回的结果',
+                            '操作内容:' + data.cmd + '</br>' +
+                            '操作结果:' + msg + '</br>','',function(){
+                                var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+                                var regin = baiduwaimaiMainviewLayout.layout('panel', 'center');
+                                regin.panel('refresh', '__URL__/orderMgrListview');
+                            });
+                }
+            })
+        }
+    }
+</script>

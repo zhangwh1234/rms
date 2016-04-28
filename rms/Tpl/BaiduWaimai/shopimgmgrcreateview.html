@@ -1,0 +1,119 @@
+<!-- 新建菜单页面 -->
+<style>
+ #baiduwaimaiShopimgmgrCreateviewToolbar{
+ 	margin:0px;
+ 	padding-top:0px;
+ 	background:#fafafa;
+ 	border:0px solid red;
+ }
+ 
+ #baiduwaimaiShopimgmgrCreateview table{
+            border-collapse: collapse;
+            border: none;
+        }
+        
+ #baiduwaimaiShopimgmgrCreateview td{
+            border: solid #d0d0d0 1px;
+        }
+</style>
+ 
+<div id="baiduwaimaiShopimgmgrCreateviewToolbar" style="">
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="baiduWaimaiShopimgmgrListviewInsert();">保存</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-back" plain="true" onclick="baiduWaimaiShopimgmgrListviewCancel();">放弃并返回</a>
+</div> 
+	 
+<div id="baiduwaimaiShopimgmgrCreateview" class="easyui-panel" title="新建商户图片"
+    style="width:500px;height:150px;padding:10px;background:#fafafa;"
+    data-options="iconCls:'icon-save',closable:true,
+    collapsible:true,minimizable:true,maximizable:true"  fit="true" collapsible="false" minimizable="false" maximizable ="false" closable="false" bodyCls="baiduwaimaiShopmgrBodyCls" border="false"
+    >
+    <form id="baiduwaimaiShopimgmgrInsert" method="post" enctype="multipart/form-data">
+    	<table width="100%" >
+    		<tr>
+    			<td width="15%" align="right">合作方名称:</td>
+    			<td width="35%"><input name="source_name" class="easyui-textbox" data-options="" style="width:80%;height:15px"></td>
+    			<td width="15%" align="right">商户ID:</td>
+    			<td width="35%"><select name="shop_id">
+    								<foreach name="shopinfo" item="shopinfoitem">
+    									<option value="{$shopinfoitem.shopinfoid}">{$shopinfoitem.poi_name}</option>
+    								</foreach>
+    							</select>
+    			</td>
+    		</tr>
+    		<tr>
+    			<td width="15%" align="right">图片类型</td>
+    			<td width="35%"><select name="type" class="easyui-textbox" data-options="" style="width:80%;height:15px">
+    							<option value="1">营业执照</option>
+    							<option value="2">门脸照片</option>
+    							<option value="3">实景照片</option>
+    							<option value="4">菜品照片</option>
+    							<option value="5">信息采集表</option>
+    							<option value="6">其他证件</option>
+    							<option value="7">合同</option>
+    							<option value="8">特许证件</option>
+    							</select>
+    			</td>
+    			<td width="15%" align="right">图片路径:</td>
+    			<td width="25%"><input name="img" type="file" class="easyui-textbox" data-options="iconCls:'icon-search'" style="width:300px" /></td>
+    		</tr>
+    		<tr>
+    			<td width="15%" align="right">图片说明:</td>
+    			<td width="35%"><input name="desc" class="easyui-textbox" data-options="" style="width:80%;height:15px"></td>
+    			<td width="15%" align="right"></td>
+    			<td width="25%"></td>
+    		</tr>
+    	
+    	</table>
+    </form>
+</div>
+
+<script>
+	$('#baiduwaimaiShopimgmgrInsert').form(
+	    {
+			url:'__URL__/shopimgmgrSave',
+		    onSubmit: function(){ 
+		    	if($("input[name='source_name']").val() == ''){
+		        	alert('合作方名不能为空')
+		        	return false;
+		        }
+		    	if($("input[name='shop_id']").val() == ''){
+		        	alert('商户ID不能为空')
+		        	return false;
+		        }
+		    	if($("input[name='type']").val() == ''){
+		        	alert('类型不能为空')
+		        	return false;
+		        }
+		    	if($("input[name='img']").val() == ''){
+		        	alert('路径为空')
+		        	return false;
+		        }
+		    	
+		    },
+		    success:function(data){
+
+		    	data =  eval('('+data+')');  
+		    	if(data.info == 'success'){
+		    		alert('保存成功!');
+		    		var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+					var regin =  baiduwaimaiMainviewLayout.layout('panel','center');
+					regin.panel('refresh','__URL__/shopimgmgrListview');
+		    	}
+		    	
+		    	if(data.info == 'error'){
+		    		alert('保存失败！');
+		    	}
+		    }
+	    });
+	//保存订单
+	var baiduWaimaiShopimgmgrListviewInsert = function(){
+		$('#baiduwaimaiShopimgmgrInsert').submit();
+	}
+	
+	//放弃保存订单
+	function baiduWaimaiShopimgmgrListviewCancel(){
+		var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+		var regin =  baiduwaimaiMainviewLayout.layout('panel','center');
+		regin.panel('refresh','__URL__/shopimgmgrListview');
+	}
+</script>

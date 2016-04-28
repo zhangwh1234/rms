@@ -1,0 +1,66 @@
+<include file="Module/editview"  />
+
+<script>
+    var NodeEditviewModule = {
+
+        //初始化
+        init :function(){
+            $('.moduleOperatert').height(IndexIndexModule.operationHeight);
+            this.quickKeyboardAction();
+        },
+
+        //保存记录
+        update: function () {
+            $('#NodeEditviewForm').form('submit', {
+                url: '__URL__/update',
+                onSubmit: function () {
+                    var isValid = $(this).form('validate');
+                    if (!isValid) {
+                        return false;
+                    }
+                },
+                success: function (res) {
+                    var data = eval('(' + res + ')');
+                    if(!data.status){
+                        $.app.method.tip('提示信息', data.info, 'error');
+                    }else{
+                        $.app.method.tip('提示信息', data.info, 'info');
+                        IndexIndexModule.updateOperateTab(data.url);
+                    }
+                }
+            });
+        },
+
+        //新建的快捷操作
+        quickKeyboardAction: function () {
+            // ctrl+9快捷键,新建公告
+            Mousetrap.bind(['ctrl+9','ctrl+f9','f9'], function(e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '群发消息' && ($('#MessagesAction').val() == 'editview')) {
+                    MessagesEditviewModule.update();
+                };
+            });
+
+            // ctrl+4快捷键,放弃
+            Mousetrap.bind(['ctrl+4', 'ctrl+f4', 'f4'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '群发消息' && ($('#MessagesAction').val() == 'editview')) {
+                    IndexIndexModule.updateOperateTab('__URL__/listview');
+                };
+            });
+        }
+    }
+
+    $(function () {
+
+        NodeEditviewModule.init();
+        setTimeout(function(){
+            $('#NodeEditviewForm input[name=name]').focus();
+        },100);
+
+    })
+</script>

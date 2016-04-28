@@ -1,0 +1,57 @@
+<script type="text/javascript"> 
+    $(function(){  
+        //设立焦点
+        $('#searchViewForAddress{$moduleName}Address input[name=searchAddress]').focus();
+
+        //form提交程序
+        $('#searchViewForAddress{$moduleName}Address input[name=searchViewBtn]').bind('click',function(){   
+            //返回选项卡
+            var tab = $('#operation').tabs('getSelected');
+            var queryString = $('#searchViewForAddress{$moduleName}Address').serialize();
+            //提交表单 
+            url = '__URL__/searchviewForAddress/&'+queryString;
+            $('#operation').tabs('update',{  
+                tab:tab,
+                options:{href:url}                                                
+            });    
+        }) 
+
+        //按回车不自动提交
+        $('#searchViewForAddress{$moduleName}Address input[name=searchAddress]').keydown(function(event){
+            if(event.which == 13){
+                //返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var queryString = $('#searchViewForAddress{$moduleName}Address').serialize();
+                //提交表单 
+                url = '__URL__/searchviewForAddress/&'+queryString;
+                $('#operation').tabs('update',{  
+                    tab:tab,
+                    options:{href:url}                                                
+                });    
+                return false;
+            }
+        })
+
+
+    })
+</script>
+
+<div class="searchDiv">
+    <form id="searchViewForAddress{$moduleName}Address" name="searchViewForAddress{$moduleName}Address"  method="post"  style="border: 1px solid white;">
+        <ul class="searchOption">
+            <li>查询内容</li>
+            <li>   <input id="searchAddress" name="searchAddress"  type="text"   style="width:240px"  value="{$searchAddress}"  /></li>
+            <li>&nbsp;</li>
+            <li><select name="searchAp">
+                    <if condition="$searchAp">
+                        <option value="{$searchAp}">{$searchAp}</option>
+                    </if>
+                    <option value="上午">上午</option>
+                    <option value="下午">下午</option>
+                </select>
+            </li>
+            <li><input id="searchViewBtn" name="searchViewBtn" type="button" class="crmbutton small create"  value=" 查  询  " />&nbsp;</li>
+            <li><input id="searchViewForAddress{$moduleName}Action" type="hidden" value="listview" /> </li>
+        </ul>  
+    </form>
+</div>

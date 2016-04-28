@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{$Think.lang.welcome}</title>
+    <link REL="SHORTCUT ICON" HREF=".__PUBLIC__/Images/lhkc/favicon.ico">
+    <link rel="stylesheet" type="text/css" href=".__PUBLIC__/Css/icons.css"/>
+    <link rel="stylesheet" type="text/css" href=".__PUBLIC__/Css/themes/default/easyui.css" title="default"/>
+    <link rel="stylesheet" type="text/css" href=".__PUBLIC__/Css/themes/gray/easyui.css" title="gray"/>
+    <link rel="stylesheet" type="text/css" href=".__PUBLIC__/Css/themes/bootstrap/easyui.css" title="bootstrap"/>
+    <link rel="stylesheet" type="text/css" href=".__PUBLIC__/Css/themes/metro/easyui.css" title="metro"/>
+    <load href=".__PUBLIC__/Css/style.css"/>
+    <script type="text/javascript" src=".__PUBLIC__/Js/jquery.min.js"></script>
+    <script type="text/javascript" src=".__PUBLIC__/Js/jquery.cookie.js"></script>
+    <script type="text/javascript" src=".__PUBLIC__/Js/jquery.json.min.js"></script>
+    <script type="text/javascript" src=".__PUBLIC__/Js/jquery.easyui.min.1.4.1.js"></script>
+    <script type="text/javascript" src=".__PUBLIC__/Js/easyui/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src=".__PUBLIC__/Js/easyui/plugins/jquery.portal.js"></script>
+    <script type="text/javascript" src=".__PUBLIC__/Js/jquery.app.js"></script>
+    <load href=".__PUBLIC__/Js/mousetrap.js"/>
+
+    <script language="JavaScript">
+        //指定当前组模块URL地址
+        var APP = '__APP__';
+        var PUBLIC = '__PUBLIC__';
+    </script>
+
+    <include file="telphone" />
+    <include file="printer" />
+
+    <load href=".__PUBLIC__/Js/general.js"/>
+</head>
+<body class="easyui-layout" id="main">
+
+<div id="header" data-options="region:'north',href:'__APP__/Header',border:false" style="height:79px;overflow: hidden;">
+</div>
+
+<div id="center" data-options="region:'center',border:false" style="overflow: visible;">
+    <div id="operation" class="easyui-tabs" data-options="">
+        <foreach name="startModule" item="moduleName">
+            <div title="{$Think.lang.$moduleName}" href='__APP__/{$moduleName}' data-options="cache:true"></div>
+        </foreach>
+    </div>
+</div>
+
+<div id="footer" data-options="region:'south',href:'__APP__/Footer'" style="height:20px;overflow: hidden;">
+</div>
+
+<!-- 公共部分 -->
+<div id="globel-dialog-div" class="word-wrap" style="line-height:1.5"></div>
+<div id="globel-dialog2-div" class="word-wrap" style="line-height:1.5"></div>
+<!-- 特殊情况可能需要弹出第2个弹出层 -->
+
+
+<div id="telhistoryWin" class="easyui-window"
+     data-options="modal:false,closed:true,iconCls:'icon-save',title:'来电历史',collapsible:false,minimizable:false,maximizable:false,border:false"
+     style="top:1px;left:1000px;width:500px;height:130px;padding:0px;display: none;">
+
+</div>
+
+
+<script type="text/javascript">
+    //定义页面基础工作类
+    window.IndexIndexModule = {
+        dialog: '#globel-dialog-div',
+        operationHeight: 0,
+        //头部高度
+        topHeight: 28,
+        //导航菜单高度
+        navmenuHeight:50,
+        //来电条高度
+        telphoneHeight:30,
+        //底部高度
+        footerHeight: 20,
+        //列表菜单高度
+        viewMenuHeight: 28,
+        //操作区高度
+        operationHeight:0,
+
+        getOperationHeight: function () {
+            var bodyHeight = $(document).height();
+            var centerHeight = bodyHeight - this.topHeight - this.navmenuHeight - this.viewMenuHeight - this.footerHeight -40;
+            //如果启动来电条需要减去来电条的高度
+            centerHeight = centerHeight - telphoneHeigth;
+            return centerHeight;
+        },
+
+        //初始化
+        init: function () {
+            this.operationHeight = this.getOperationHeight();
+            this.calculateMaxRows();
+            this.messages();
+        },
+
+
+        //计算maxrow的数量，并形成session
+        calculateMaxRows : function(){
+            var operationHeight = this.getOperationHeight();
+            var maxRows = parseInt(operationHeight / 33) ;
+            $.ajax({
+                type:'get',
+                url:'__URL__/setMaxRows/maxRows/'+maxRows,
+                success : function(){}
+
+            })
+        },
+
+        // 开启一个操作tab页
+        openOperateTab: function (url, title) {
+            if ($('#operation').tabs('exists', title)) {
+                $('#operation').tabs('select', title);
+                var tab = $('#operation').tabs('getSelected');  // get selected panel
+                $('#operation').tabs('update', {
+                    tab: tab,
+                    options: {
+                        title: title,
+                        href:  url  // the new content URL
+                    }
+                });
+            } else {
+                $('#operation').tabs('add', {title: title, href: url, closable: true, cache: true});
+            }
+
+        },
+
+        // 关闭一个操作tab页
+        closeOperateTab: function () {
+            // 返回选项卡
+            var tab = $('#operation').tabs('getSelected');
+            // 返回选项卡的index
+            var index = $('#operation').tabs('getTabIndex', tab);
+            // 关闭选项卡
+            $('#operation').tabs('close', index);
+
+        },
+
+        //更新一个操作tab页
+        updateOperateTab: function (url) {
+            // 返回选项卡
+            var tab = $('#operation').tabs('getSelected');
+            // 更新一个选项卡面板
+            $('#operation').tabs('update', {
+                tab: tab,
+                options: {href: url}
+            });
+        },
+
+        //通用查询功能
+        search: function (moduleName, title) {
+            var that = this;
+            $(that.dialog).dialog({
+                title: '查询',
+                iconCls: 'icons-application-application_add',
+                width: 500,
+                height: 140,
+                cache: false,
+                href: APP + '/' + moduleName + '/searchInput',
+                modal: true,
+                collapsible: false,
+                minimizable: false,
+                resizable: false,
+                maximizable: false,
+                buttons: [{
+                    text: '确定',
+                    iconCls: 'icons-other-tick',
+                    handler: function () {
+                        $(that.dialog).find('form').eq(0).form('submit', {
+                            onSubmit: function () {
+                                var isValid = $(this).form('validate');
+                                if (!isValid) return false;
+                                var searchText = $(that.dialog).find("form input[name='searchText']").val();
+                                var url = APP + '/' + moduleName + '/listview/searchText/' + searchText;
+                                IndexIndexModule.updateOperateTab(url);
+                                $(that.dialog).dialog('close');
+                                return false;
+                            }
+                        });
+                    }
+                }, {
+                    text: '取消',
+                    iconCls: 'icons-arrow-cross',
+                    handler: function () {
+                        $(that.dialog).dialog('close');
+                    }
+                }]
+            });
+
+
+        },
+
+        //启动消息群发功能
+        messages: function () {
+            setInterval(function () {
+                $.get("{:U('Messages/getMessages')}", function (data) {
+                    if (data) {
+                        $.messager.show({
+                            title: '消息提示',
+                            msg: data,
+                            showType: 'show',
+                            timeout: 0
+
+                        });
+                    }
+                }, 'json');
+
+            }, 15000);
+        }
+
+    }
+
+    $(function () {
+        IndexIndexModule.init();
+
+        $('#operation').tabs({
+            onSelect : function(title,index){
+                    //初始化快键键
+                     initializeKeyboard();
+                    var ActionName = '#'+title_module(title)+'Action';
+                    var Action = $(ActionName).val();
+                    //如果网页还没有建立，就不执行快捷键脚本
+                    if(typeof Action == 'undefined') return;
+                    var ActionModule = title_module(title)+Action+'Module';
+
+                    var ObjAction = eval("("+ActionModule+")"); //建立对象变量
+
+                    if(typeof ObjAction === 'object'){
+                            //执行快捷键
+                            ObjAction.quickKeyboardAction();
+                    }
+
+
+
+            }
+        })
+    });
+
+
+
+    //定义Tab选择事件继承类
+    window.selectTabModule = {
+        action : new Array(),
+        key : 0,
+
+        //加入选择代码
+        addSelectTabFun:function(fun){
+            this.action[this.key] = fun;
+            this.key += 1;
+        },
+
+        //执行代码
+        selectTab:function(title,index){
+            for(var i=0;i< this.action.length;++i){
+                this.action[i](title,index);
+            }
+        }
+    };
+</script>

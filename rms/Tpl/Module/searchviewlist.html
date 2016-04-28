@@ -1,0 +1,33 @@
+<div class="searchList" style="margin: 0px;"> 
+    <div class="pages">{$page}</div>    
+    <div class="list"  >
+        <table  border="0" cellspacing="1" cellpadding="3" width="100%" class="lvt small"  align="center">
+            <tr class="lvtCol">
+                <td class="lvtCol"><input type="checkbox"  name="selectall" ></td>
+                <foreach name="listHeader" item="header">
+                    <td class="lvtCol1">{$Think.lang.$header}</td>
+                </foreach>
+                <td class="lvtCol1" >操作</td>
+            </tr>
+            <volist id="entity"  name="listEntries" key='ad'>
+                <assign name='record' value="$key" />
+                <tr bgcolor="white" onMouseOver="this.className='lvtColDataHover'" onMouseOut="this.className='lvtColData'" ondblclick="alert('row_{$record}');" id="row_{$entity_id}">
+
+                    <volist name="entity" id="id">
+                        <if condition="$key eq $moduleId">
+                            <td class="lvtCol1" width="2%"><input  type="checkbox" name="selected_id" id="{$record}" value= '{$record}'></td> 
+                            <elseif condition="$key eq $list_link_field" />
+                            <td ><a href="javascript:void(0);" onclick="updateTab('__APP__/{$moduleName}/detailview/record={$record}');">{$id}</a></td>
+                            <else />                  
+                            <td >{$id}</td>                   
+                        </if>
+                    </volist>               
+                    <td><center><a href="javascript:void(0);" onclick="updateTab('__APP__/{$moduleName}/detailview&returnAction=searchview&record={$record}')">查看</a><span >&nbsp&nbsp|&nbsp&nbsp</span>
+                            <a href="javascript:void(0);" onclick="updateTab('__APP__/{$moduleName}/editview&returnAction=searchview&record={$record}');">编辑</a>&nbsp&nbsp|&nbsp&nbsp</span>
+                            <a href="javascript:void(0);" onclick="deleteRecord('{$record}');">删除</a></center></td>
+                </tr>
+            </volist>
+        </table>
+    </div>
+    <div class="pages">{$page}</div>
+</div>

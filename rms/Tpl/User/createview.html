@@ -1,0 +1,92 @@
+<include file="Module/createview" />
+
+<script>
+    var UserCreateviewModule = {
+
+        //初始化
+        init :function(){
+            $('.moduleOperatert').height(IndexIndexModule.operationHeight);
+            this.keyboardMovie();
+        },
+
+        //键盘移动
+        keyboardMovie : function(){
+            //定制键盘移动方案
+            $('#UserCreateviewForm input[name=name]').bind('keydown', function(event) { //联系人
+                if ((event.which == 13) || (event.which == 40)) {
+                    $('#UserCreateviewForm input[name=password]').focus();
+                }
+                if (event.which == 38) {
+
+                }
+            });
+
+            //密码
+            $('#UserCreateviewForm input[name=password]').bind('keydown', function(event) { //联系人
+                if ((event.which == 13) || (event.which == 40)) {
+                    $('#UserCreateviewForm input[name=passwordtwo]').focus();
+                }
+                if (event.which == 38) {
+                    $('#UserCreateviewForm input[name=name]').focus();
+                }
+            })
+
+            //密码2
+            $('#UserCreateviewForm input[name=passwordtwo]').bind('keydown', function(event) { //联系人
+                if ((event.which == 13) || (event.which == 40)) {
+                    $('#UserCreateviewForm input[name=truename]').focus();
+                }
+                if (event.which == 38) {
+                    $('#UserCreateviewForm input[name=password]').focus();
+                }
+            });
+
+            //用户真实姓名
+            $('#UserCreateviewForm input[name=truename]').bind('keydown', function(event) { //联系人
+                if ((event.which == 13) || (event.which == 40)) {
+
+                }
+                if (event.which == 38) {
+                    $('#UserCreateviewForm input[name=passwordtwo]').focus();
+                }
+            });
+        },
+
+        //保存记录
+        insert: function () {
+            $('#UserCreateviewForm').form('submit', {
+                url: '__URL__/insert',
+                onSubmit: function () {
+                    var isValid = $(this).form('validate');
+                    if (!isValid) {
+                        return false;
+                    }
+                },
+                success: function (res) {
+                    var data = eval('(' + res + ')');
+                    if(!data.status){
+                        $.app.method.tip('提示信息', data.info, 'error');
+                    }else{
+                        $.app.method.tip('提示信息', data.info, 'info');
+                        IndexIndexModule.updateOperateTab(data.url);
+                    }
+                }
+            });
+        },
+
+        //放弃保存
+        cancel: function(){
+            var url = '__URL__/listview';
+            IndexIndexModule.updateOperateTab(url);
+        }
+    }
+
+    $(function () {
+        UserCreateviewModule.init();
+        setTimeout(function(){
+            $('#UserCreateviewForm input[name=name]').focus();
+        },100);
+
+    })
+</script>
+

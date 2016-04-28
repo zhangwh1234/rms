@@ -1,0 +1,50 @@
+<include file="Module/editview" />
+<script>
+    var UserEditviewModule = {
+
+        //初始化
+        init :function(){
+            $('.moduleOperatert').height(500);
+
+        },
+
+        //保存记录
+        update: function () {
+            $('#UserEditviewForm').form('submit', {
+                url: '__URL__/update',
+                onSubmit: function () {
+                    alert('ee');
+                    var isValid = $(this).form('validate');
+                    if (!isValid) {
+                        return false;
+                    }
+                },
+                success: function (res) {
+                    var data = eval('(' + res + ')');
+                    if(!data.status){
+                        $.app.method.tip('提示信息', data.info, 'error');
+                    }else{
+                        $.app.method.tip('提示信息', data.info, 'info');
+                        IndexIndexModule.updateOperateTab(data.url);
+                    }
+                }
+            });
+        },
+
+        //放弃保存
+        cancel: function(){
+            var url = '__URL__/listview';
+            IndexIndexModule.updateOperateTab(url);
+        }
+    }
+
+    $(function () {
+        $('#UserEditviewForm textarea[name=content]').focus();
+        UserEditviewModule.init();
+        setTimeout(function(){
+
+        },100);
+
+    })
+</script>
+

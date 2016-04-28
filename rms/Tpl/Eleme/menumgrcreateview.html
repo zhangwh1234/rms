@@ -1,0 +1,115 @@
+<!-- 新建菜单页面 -->
+<style>
+ #elemeShopmgrCreateviewToolbar{
+ 	margin:0px;
+ 	padding-top:0px;
+ 	background:#fafafa;
+ 	border:1px solid red;
+ }
+ 
+ #elemeMenumgrCreateview table{
+            border-collapse: collapse;
+            border: none;
+        }
+        
+ #elemeMenumgrCreateview td{
+            border: solid #d0d0d0 1px;
+        }
+</style>
+ 
+<div id="elemeShopinfoCreateviewToolbar" style="">
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="elemeMenumgrCreateviewInsert();">保存</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="elemeMenumgrCreateviewCancel();">放弃并返回</a>
+</div> 
+	 
+<div id="elemeMenumgrCreateview" class="easyui-panel" title="新建菜单"
+    style="width:500px;height:150px;padding:10px;background:#fafafa;"
+    data-options="iconCls:'icon-save',closable:true,
+    collapsible:true,minimizable:true,maximizable:true"  fit="true" collapsible="false" minimizable="false" maximizable ="false" closable="false" bodyCls="elemeShopmgrBodyCls" border="false"
+    >
+    <form id="elemeMenumgrInsert" method="post" enctype="multipart/form-data">
+    	<table width="100%" >
+    		<tr>
+    			<td width="15%" align="right">菜品名称</td>
+    			<td width="35%"><input name="name" class="easyui-textbox" data-options="required:true" style="width:80%;height:25px"></td>
+    			<td width="15%" align="right">菜品图片URL:</td>
+    			<td width="25%"><input name="image_hash" type="file" class="easyui-textbox" data-options="iconCls:'icon-search'" style="width:300px" /></td>
+    		</tr>
+    		<tr>
+    			<td width="15%" align="right">菜品单价:</td>
+    			<td width="35%"><input name="price" class="easyui-textbox" data-options="required:true" style="width:80%;height:25px"></td>
+				<td width="15%" align="right">描述信息:</td>
+				<td width="25%"><textarea name="description" class="easyui-textbox" data-options="required:true" style="width:300px;height: 45px;" /></td>
+			</tr>
+    		<tr>
+    			<td width="15%" align="right">最大库存:</td>
+    			<td width="35%"><input name="max_stock" class="easyui-textbox" data-options="required:true" style="width:80%;height:25px"></td>
+    			<td width="15%" align="right">当前库存:</td>
+    			<td width="25%"><input name="stock" class="easyui-textbox" data-options="required:true" style="width:300px" /></td>
+    		</tr>
+    		<tr>
+				<td width="15%" align="right">是否是新菜品:</td>
+				<td width="35%"><input name="is_new" class="easyui-textbox" data-options="" style="width:80%;height:25px">
+				</br>1：新菜 0：非新菜
+				</td>
+    			<td width="15%" align="right">是否是招牌菜:</td>
+    			<td width="25%"><input name="is_featured" class="easyui-textbox" data-options="iconCls:'icon-search'" style="width:300px;height: 25px;" />
+				</br>1：招牌菜 0：非招牌菜
+				</td>
+    		</tr>
+			<tr>
+				<td width="15%" align="right">是否是配菜:</td>
+				<td width="35%"><input name="is_gum" class="easyui-textbox" data-options="" style="width:80%;height:25px">
+				</br>1：配菜 0：不是配菜
+				</td>
+				<td width="15%" align="right">味道是否辣:</td>
+				<td width="25%"><input name="is_spicy" class="easyui-textbox" data-options="iconCls:'icon-search'" style="width:300px;height: 25px;" />
+				</br>1：辣 0：不辣
+				</td>
+			</tr>
+			<tr>
+				<td width="15%" align="right">是否是新菜品:</td>
+				<td width="35%"><input name="packing_fee" class="easyui-textbox" data-options="" style="width:80%;height:25px"></td>
+				<td width="15%" align="right"></td>
+				<td width="25%"></td>
+			</tr>
+
+    	</table>
+    </form>
+</div>
+
+<script>
+	$('#elemeMenumgrInsert').form(
+	    {
+			url:'__URL__/menumgrSave',
+		    onSubmit: function(){
+				var isValid = $(this).form('validate');
+				if (!isValid) return false;
+				return true;
+		    },
+		    success:function(data){
+		    	data =  eval('('+data+')');  
+		    	if(data.info == 'success'){
+		    		alert('保存成功!');
+		    		var elemeMainviewLayout = $('#elemeMainviewLayout');
+					var regin =  elemeMainviewLayout.layout('panel','center');
+					regin.panel('refresh','__URL__/menumgrListview');
+		    	}
+		    	
+		    	if(data.info == 'error'){
+		    		alert('保存失败！');
+		    	}
+		    }
+	    });
+	//保存订单
+	var elemeMenumgrCreateviewInsert = function(){
+		$('#elemeMenumgrInsert').submit();
+	}
+	
+	//放弃保存订单
+	function elemeMenumgrCreateviewCancel(){
+		var elemeMainviewLayout = $('#elemeMainviewLayout');
+		var regin =  elemeMainviewLayout.layout('panel','center');
+		regin.panel('refresh','__URL__/menumgrListview');
+	}
+</script>

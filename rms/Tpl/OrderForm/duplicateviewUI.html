@@ -1,0 +1,223 @@
+<style>
+    .moduleOperater {
+        clear: both;
+        margin: 0px;
+        padding: 0px;
+        overflow: scroll;
+    }
+</style>
+<div class="moduleOperater">
+    <form id="OrderFormDuplicateviewForm" method="post">
+        <input type="hidden" name="returnAction" value="{$returnAction}"/>
+        <input type="hidden" name="record" value="{$record}"/>
+        <table border="0" cellspacing="0" cellpadding="0" width="99%" align="center">
+            <tr>
+                <td>
+                    <table border="0" cellspacing="0" cellpadding="3" width="100%" class="small">
+                        <tr>
+                            <td class="dvtTabCache" style="width:20px" nowrap>&nbsp;</td>
+                            <td class="dvtSelectedCell" align="center" nowrap> 复制 </td>
+                            <td class="dvtTabCache" style="width:80%">&nbsp;</td>
+                        <tr>
+                    </table>
+                </td>
+            </tr>
+
+            <tr>
+                <td valign="top" align="center">
+                    <div class="BaseForm" style="border: 1px solid #e0dddd; background: white;">
+                        <table style="BORDER-COLLAPSE: collapse;font-size:16px;" borderColor="#CCCCCC" cellSpacing="0"
+                               width="100%"
+                               align="center" border="1">
+                            <tr>
+                                <td colspan="4" class="tabBlockViewHeader">
+                                    订单基本信息
+                                </td>
+                            </tr>
+                            <tr style="background: #FFFFFF;">
+                                <td width="15%" align="right" class="createFormLeftTd">
+                                    <span style="font-size:14px;margin-right:10px;">客户姓名:</span>
+                                </td>
+                                <td width="50%" align="left" class="createFormLeftTd">
+                                    <input type="text" class="easyui-validatebox" name="clientname"
+                                           style="font-size:16px;width:150px;" value="{$info.clientname}"/>
+                                </td>
+                                <td width="15%" align="right" class="createFormLeftTd">
+                                    <span style="font-size:14px;margin-right:10px;">电话:</span>
+                                </td>
+                                <td width="20%" align="left" class="createFormRightTd">
+                                    <!-- 电话 -->
+                                    <input type="text" name="telphone"
+                                           style="width:50%;font-size:16px;" value="{$info.telphone}"/>
+                                </td>
+                            </tr>
+                            <tr style="background: #FFFFFF;">
+                                <td width="15%" align="right" class="createFormLeftTd">
+                                    <span style="font-size:14px;margin-right:10px;">地址:</span>
+                                </td>
+                                <td width="50%" align="left" class="createFormLeftTd">
+                                    <input type="text" class="easyui-number" name="address"
+                                           data-options="required:true,validType:{length:[2,20]}"
+                                           style="font-size:16px;width: 90%;" value="{$info.address}"/>
+                                </td>
+                                <td width="15%" align="right" class="createFormLeftTd">
+                                    <span style="font-size:14px;margin-right:10px;">要餐时间:</span>
+                                </td>
+                                <td width="20%" align="left" class="createFormRightTd">
+                                    <input type="text" class="easyui-timespinner" name="custtime"
+                                           data-options="required:false"
+                                           style="width:100px;font-size:16px;" value="{$info.custtime}"/>
+                                </td>
+                            </tr>
+                            <tr style="background: #FFFFFF;">
+                                <td width="15%" align="right" class="createFormLeftTd">
+                                    <span style="font-size:14px;margin-right:10px;">备注:</span>
+                                </td>
+                                <td width="50%" align="left" class="createFormLeftTd">
+                                    <input name="beizhu" value="{$info.beizhu}"
+                                           style="width:90%;font-size:16px;"/>
+                                </td>
+                                <td width="15%" align="right" class="createFormLeftTd">
+                                    <span style="font-size:14px;margin-right:10px;">分公司:</span>
+                                </td>
+                                <td width="20%" align="left" class="createFormRightTd">
+                                    <select class="easyui-easyui-combobox" name="company"
+                                            data-options="required:true,validType:{length:[2,20]}"
+                                            style="width:50%;font-size:16px;">
+
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr style="background: #FFFFFF;">
+                                <td width="15%" align="right" class="createFormLeftBottomTd">
+                                    <span style="font-size:14px;margin-right:10px;">订单金额:</span>
+                                </td>
+                                <td width="50%" align="left" class="createFormLeftBottomTd">
+                                    <table width="100%">
+                                        <tr>
+                                            <td><span style="font-size:14px;">总金额:</span></td>
+                                            <td>
+                                                <input type="text" name="totalmoney"
+                                                       readonly
+                                                       style="font-size:16px;width:80px;" value="{$info.totalmoney}"/>
+                                            </td>
+                                            <td><span style="font-size:14px;">已收金额:</span></td>
+                                            <td>
+                                                <input type="text" name="moneypaid"
+                                                       readonly
+                                                       style="font-size:16px;width:80px;" value="{$info.paidmoney}"/>
+                                            </td>
+                                            <td><span style="font-size:14px;">应收金额:</span></td>
+                                            <td>
+                                                <input type="text" name="shouldmoney"
+                                                       readonly
+                                                       style="font-size:16px;width:80px;" value="{$info.shouldmoney}"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td width="15%" align="right" class="createFormLeftBottomTd">
+                                    <span style="font-size:14px;margin-right:10px;">送餐费:</span>
+                                </td>
+                                <td width="20%" align="left" class="createFormRightBottomTd">
+                                    <input type="text" name="shippingmoney"
+                                           style="font-size:16px;"  value="{$info.shippingmoney}"/>
+
+                                </td>
+                            </tr>
+                        </table>
+
+                        <table border="0" cellspacing="0" cellpadding="0" width="100%"
+                               style="margin-top:5px; border: 1px solid #e0dddd; ">
+                            <tr>
+                                <td colspan="4" class="tabBlockViewHeader">
+                                    产品基本信息
+                                </td>
+                            </tr>
+                            <tr style="background: #FFFFFF;">
+                                <td colspan="4">
+                                    <include file='ModuleUI:goodseditview'/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <table border="0" cellspacing="0" cellpadding="0" width="100%"
+                               style="margin-top:5px; border: 1px solid #e0dddd; ">
+                            <tr>
+                                <td colspan="4" class="tabBlockViewHeader">
+                                    发票基本信息
+                                </td>
+                            </tr>
+                            <tr style="background: #FFFFFF;">
+                                <td colspan="4">
+                                    <include file='ModuleUI:invoiceeditview'/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <notempty name="orderactivity">
+                            <table border="0" cellspacing="0" cellpadding="0" width="100%"
+                                   style="margin:1px; border: 1px solid #e0dddd; ">
+                                <tr>
+                                    <td colspan="4" class="tabBlockViewHeader">
+                                        营销活动信息
+                                    </td>
+                                </tr>
+                                <tr style="background: #FFFFFF;">
+                                    <td colspan="4">
+                                        <include file='ModuleUI:activitydetailview'/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </notempty>
+
+                        <notempty name="orderpayment">
+                            <table border="0" cellspacing="0" cellpadding="0" width="100%"
+                                   style="margin-top:2px; border: 1px solid #e0dddd; ">
+                                <tr>
+                                    <td colspan="4" class="tabBlockViewHeader">
+                                        支付方式
+                                    </td>
+                                </tr>
+                                <tr style="background: #FFFFFF;">
+                                    <td colspan="4">
+                                        <include file='ModuleUI:paymentdetailview'/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </notempty>
+
+                        <table border="0" cellspacing="0" cellpadding="0" width="100%"
+                               style="margin-top:2px; border: 1px solid #e0dddd; ">
+                            <tr>
+                                <td colspan="4" class="tabBlockViewHeader">
+                                    订单状态
+                                </td>
+                            </tr>
+                            <tr style="background: #FFFFFF;">
+                                <td colspan="4">
+                                    <include file='ModuleUI:orderstateview'/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <tr style="line-height: 5px;">
+                            <td>&nbsp;</td>
+                        </tr>
+
+                        <tr style="line-height: 5px;">
+                            <td colspan="4" align="center">
+                                <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-other-tick'"
+                                   onclick="OrderFormEditviewModule.update();"
+                                   style="width:100px;margin-right:40px;">确认</a>
+                                <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-arrow-cross'"
+                                   onclick="IndexIndexModule.updateOperateTab('__URL__/{$returnAction}');"
+                                   style="width:100px;">放弃</a>
+                            </td>
+                        </tr>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>

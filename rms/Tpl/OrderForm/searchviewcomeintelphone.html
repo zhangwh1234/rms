@@ -1,0 +1,131 @@
+<style>
+    /*设置datagrid*/
+    .datagrid-cell {
+        font-size: 16px;
+    }
+
+    .datagrid-row {
+        height: 30px;
+    }
+
+    .orderFormDetailview {
+        font-size: 16px;
+        float: left;
+        border: 0px solid red;
+        margin-left: 2px;
+        margin-right: 2px;
+        line-height: 24px;
+    }
+</style>
+<div class="moduleMenu">
+    <ul>
+        <li>{$Think.lang.$navName}</li>
+        <li><a href="#">&nbsp;&gt;{$Think.lang.$moduleName}</a></li>
+        <li>&nbsp;&gt;订单来电查询</li>
+        <li style="width: 50px;">&nbsp;</li>
+
+        <li style="margin-left: 10px;"><a href="javascript:void(0);"
+                                          onclick="OrderFormSearchviewComeinTelphoneModule.comeinTelphoneSearchInput();"><img
+                src=".__PUBLIC__/Images/addressBtn.jpg" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);" onclick="OrderFormSearchviewComeinTelphoneModule.comeinTelphoneSearchInput();">来电记录查询<span>^8</span></a></li>
+
+
+        <li style="float: right;margin-right: 40px;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
+        <li style="float:right;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();"><img
+                src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
+    </ul>
+</div>
+
+<tagLib name="easyui"/>
+<div class="moduleOperatert" style="height:300px;width:100%;clear:both;">
+    <easyui:datagrid options="datagrid.options" fields="datagrid.fields"/>
+</div>
+
+<script>
+    var OrderFormSearchviewComeinTelphoneModule = {
+        dialog:   '#globel-dialog-div',
+
+        //初始化
+        init :function(){
+            $('.moduleOperatert').height(IndexIndexModule.operationHeight);
+            this.quickKeyboardAction();
+        },
+
+
+        //来电记录查询
+        comeinTelphoneSearchInput: function () {
+            var that = this;
+            $(that.dialog).dialog({
+                title: '来电记录查询',
+                iconCls: 'icons-application-application_add',
+                width: 500,
+                height: 140,
+                cache: false,
+                href: "{:U('OrderForm/searchComeintelphoneInput')}",
+                modal: true,
+                collapsible: false,
+                minimizable: false,
+                resizable: false,
+                maximizable: false,
+                buttons:[{
+                    text:'确定',
+                    iconCls:'icons-other-tick',
+                    handler: function(){
+                        $(that.dialog).find('form').eq(0).form('submit', {
+                            onSubmit: function(){
+                                var isValid = $(this).form('validate');
+                                if (!isValid) return false;
+
+                                var formArray = $(this).serializeArray();
+                                var url = '__URL__/searchviewComeinTelphone/';
+                                $.each(formArray, function (key, value) {
+                                    url = url + value.name + '/' + value.value;
+                                })
+                                IndexIndexModule.openOperateTab(url, '来电记录查询');
+                                $(that.dialog).dialog('close');
+                                return false;
+                            }
+                        });
+                    }
+                },{
+                    text:'取消',
+                    iconCls:'icons-arrow-cross',
+                    handler: function(){
+                        $(that.dialog).dialog('close');
+                    }
+                }]
+            });
+        },
+
+        //新建的快捷操作
+        quickKeyboardAction:function(){
+            var that = this;
+
+            // ctrl+8快捷键,来电记录查询
+            Mousetrap.bind(['ctrl+8', 'ctrl+f8', 'f8'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '来电记录查询') {
+                    that.comeinTelphoneSearchInput();
+                };
+            });
+
+            // ESC键
+            Mousetrap.bind('esc', function(e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '来电记录查询') {
+                    $(IndexIndexModule.dialog).dialog('close');
+                }
+            });
+        }
+
+
+    }
+
+    $(function(){
+        OrderFormSearchviewComeinTelphoneModule.init();
+    })
+</script>

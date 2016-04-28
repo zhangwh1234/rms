@@ -1,0 +1,102 @@
+<!-- 查看商户页面 -->
+<style>
+    #elemeShopmgrCreateviewToolbar{
+        margin:0px;
+        padding-top:0px;
+        background:#fafafa;
+        border:0px solid red;
+    }
+
+    table{
+        border-collapse: collapse;
+        border: none;
+    }
+
+    td{
+        border: solid 	#d0d0d0 1px;
+        font-size: 14px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+    }
+
+    td input{
+        font-size: 16px;
+    }
+
+</style>
+
+<div id="elemeShopinfoCreateviewToolbar" style="">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="elemeShopinfoListviewCancel();">返回列表</a>
+</div>
+
+<div id="p" class="easyui-panel" title="查看商户"
+     style="width:500px;height:550px;padding:10px;background:#fafafa;"
+     data-options="iconCls:'icon-save',closable:true,
+    collapsible:true,minimizable:true,maximizable:true,fit:true"  collapsible="false" minimizable="false" maximizable ="false" closable="false" bodyCls="baiduwaimaiShopmgrBodyCls" border="false"
+        >
+    <form id="elemeShopinfoInsert" method="post">
+        <table width="100%" style="overflow: auto;">
+            <tr>
+                <td width="15%" align="right">商户ID:</td>
+                <td width="35%"><input name="restaurant_id"  class="easyui-textbox" style="width:80%;height:25px;" value="{$shopinfo.restaurant_id}" readonly /></td>
+                <td width="15%" align="right">商户名:</td>
+                <td width="25%"><input name="name"  class="easyui-textbox"  style="width:300px;height:25px;" value="{$shopinfo.name}" readonly /></td>
+            </tr>
+            <tr>
+                <td width="15%" align="right">商户地址:</td>
+                <td width="35%"><input name="address_text"   class="easyui-textbox" style="width:80%;height:25px" value="{$shopinfo.address_text}" readonly  /></td>
+                <td width="15%" align="right">商户坐标:</td>
+                <td width="25%"><input name="geo"  class="easyui-textbox"  style="width:300px;height:25px;" value="{$shopinfo.geo}" readonly /></td>
+            </tr>
+            <tr>
+                <td width="15%" align="right">配送费:</td>
+                <td width="35%"><input name="agent_fee"   class="easyui-textbox" style="width:80%;height:25px" value="{$shopinfo.agent_fee}" readonly /></td>
+                <td width="15%" align="right">配送额外说明:</td>
+                <td width="25%"><input name="deliver_description"  class="easyui-textbox"  style="width:300px;height:25px;" value="{$shopinfo.deliver_description}" readonly /></td>
+            </tr>
+            <tr>
+                <td width="15%" align="right">关店描述信息:</td>
+                <td width="35%"><input name="close_description"  class="easyui-textbox"  style="width:80%;height:25px" value="{$shopinfo.close_description}"  readonly /></td>
+                <td width="15%" align="right">商户简介:</td>
+                <td width="25%"><input name="description"   class="easyui-textbox" style="width:90%;height:45px" value="{$shopinfo.description}" readonly  /></td>
+            </tr>
+            <tr>
+                <td width="15%" align="right">是否接受预订:</td>
+                <td width="35%"><input name="is_bookable"   class="easyui-textbox" style="width:80%;height:25px" value="{$shopinfo.is_book}" readonly /></td>
+                <td width="15%" align="right">商户营业时间:</td>
+                <td width="25%"><input name="open_time"   class="easyui-textbox" style="width:300px;height:25px;" value="{$shopinfo.open_time}" readonly /></td>
+            </tr>
+            <tr>
+                <td width="15%" align="right">商户联系电话:</td>
+                <td width="35%"><input name="phone"   class="easyui-textbox" style="width:50%;height:25px" value="{$shopinfo.phone}" readonly /></td>
+                <td width="15%" align="right">商户公告信息:</td>
+                <td width="25%"><input name="promotion_info"   class="easyui-textbox" style="width:300px;height:25px;" value="{$shopinfo.promotion_info}" readonly /></td>
+            </tr>
+            <tr>
+                <td width="15%" align="right">商户当前营业状态:</td>
+                <td width="35%"><select name="is_open" style="width:50%;height:25px;">
+                    <option value="1">正常营业</option>
+                    <option value="0">暂停营业</option>
+                </select>
+                </td>
+                <td width="15%" align="right">起送价:</td>
+                <td width="25%"><input name="delivery_price"  class="easyui-textbox"  style="width:300px;height:25px;" value="{$shopinfo.delivery_price}" readonly /></td>
+            </tr>
+            <tr>
+                <td width="15%" align="right">配送范围:</td>
+                <td width="75%" colspan="3"><input name="geo_json"  class="easyui-textbox"  style="width:80%;height:155px" value="{$shopinfo.geo_json}" readonly></td>
+            </tr>
+
+        </table>
+    </form>
+</div>
+
+<script>
+
+    //放弃保存订单
+    function elemeShopinfoListviewCancel(){
+        var elemeMainviewLayout = $('#elemeMainviewLayout');
+        var regin =  elemeMainviewLayout.layout('panel','center');
+        regin.panel('refresh','__URL__/shopinfoListview');
+    }
+</script>

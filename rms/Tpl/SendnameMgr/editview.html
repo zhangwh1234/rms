@@ -1,0 +1,72 @@
+<include file="Module/editview" />
+<script>
+    var SendnameMgrEditviewModule = {
+
+        //初始化
+        init :function(){
+            $('.moduleOperatert').height(IndexIndexModule.operationHeight);
+
+        },
+
+        keyboardMove:function(){
+            //编辑定制键盘移动方案
+            $('#SendnameMgrEditviewForm  #code').bind('keydown',function(event){
+                if((event.which == 13) || (event.which == 40)){
+                    $('#SendnameMgrEditviewForm  input[name=name]').focus();
+                }
+            })
+            //姓名
+            $('#SendnameMgrEditviewForm  input[name=name]').bind('keydown',function(event){
+                if((event.which == 13) || (event.which == 40)){
+                    $('#SendnameMgrEditviewForm  #telphone').focus();
+                }
+                if(event.which == 38){  //上移
+                    $('#SendnameMgrEditviewForm  #code').focus();
+                }
+            })
+            //号码
+            $('#SendnameMgrEditviewForm  #telphone').bind('keydown',function(event){
+                if(event.which == 38){  //上移
+                    $('#SendnameMgrEditviewForm  input[name=name]').focus();
+                }
+            })
+        },
+
+        //保存记录
+        update: function () {
+            $('#SendnameMgrEditviewForm').form('submit', {
+                url: '__URL__/update',
+                onSubmit: function () {
+                    var isValid = $(this).form('validate');
+                    if (!isValid) {
+                        return false;
+                    }
+                },
+                success: function (res) {
+                    var data = eval('(' + res + ')');
+                    if(!data.status){
+                        $.app.method.tip('提示信息', data.info, 'error');
+                    }else{
+                        $.app.method.tip('提示信息', data.info, 'info');
+                        IndexIndexModule.updateOperateTab(data.url);
+                    }
+                }
+            });
+        },
+
+        //放弃保存
+        cancel: function(){
+            var url = '__URL__/listview';
+            IndexIndexModule.updateOperateTab(url);
+        }
+    }
+
+    $(function () {
+        SendnameMgrEditviewModule.init();
+        setTimeout(function(){
+            $('#SendnameMgrEditviewForm input[name=code]').focus();
+        },100);
+
+    })
+</script>
+

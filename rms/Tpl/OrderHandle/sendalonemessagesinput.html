@@ -1,0 +1,72 @@
+<!-- 单独发送消息  -->
+<form style="overflow:hidden;" method="get">
+    <table cellspacing="6" width="100%" style="margin-left: 10px;margin-top:10px;">
+        <tr>
+            <td>
+                <span style="font-size: 16px;">送餐员代码输入</span>
+                <input type="text"  id="orderHandleListviewSendAloneMessageInputSendCode"
+                       name="searchTextSendcode"
+                       style="font-size: 16px;width:20%;" value="" autocomplete="off"/>
+                <input type="text" name="searchTextSendname" id="orderHandleListviewSendAloneMessageInputSendname"
+                       style="font-size: 16px;width:40%;"
+                       value="" autocomplete="off" readonly>
+            </td>
+        <tr>
+        <tr>
+            <td>
+                <textarea id="orderHandleListviewSendAloneMessageInputContent"
+                          name="orderHandleListviewSendAloneMessageInputContent"
+                          style="width:90%;height:100px;"></textarea>
+            </td>
+        </tr>
+    </table>
+</form>
+
+<script>
+    var OrderHandleListviewSendAloneMessageInputModule = {
+        //初始化
+        init:function(){
+            //载入函数
+            this.inputSendcodeEvent();
+        },
+
+        inputSendcodeEvent:function(){
+            $('#orderHandleListviewSendAloneMessageInputSendCode').keydown(function(event){
+                if(event.keyCode == 13){
+                    sendcode = $('#orderHandleListviewSendAloneMessageInputSendCode').val();
+                    url = "__URL__/getSendnameByCode/code/"+sendcode;
+                    $.get(url,function(data){
+                        if(data.error == 'error'){
+                            $.messager.show({
+                                title:'提示',
+                                msg:data.msg,
+                                showType:'show',
+                                style:{
+                                    left:0,
+                                    right:'',
+                                    top:'',
+                                    bottom:-document.body.scrollTop-document.documentElement.scrollTop
+                                }
+                            });
+
+                        }else if(data.success){
+                            $('#orderHandleListviewSendAloneMessageInputSendname').val(data.data.sendname);
+                            $('#orderHandleListviewSendAloneMessageInputContent').focus();
+                        }
+                    });
+
+                }
+            });
+        }
+    }
+
+    $(function(){
+        //启动工作类
+        OrderHandleListviewSendAloneMessageInputModule.init();
+
+        setTimeout(function(){
+            //初始设置焦点
+            $('#orderHandleListviewSendAloneMessageInputSendCode').focus();
+        },200);
+    })
+</script>

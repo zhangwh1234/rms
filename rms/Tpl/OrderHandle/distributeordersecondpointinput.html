@@ -1,0 +1,127 @@
+<!-- 分送店选择 -->
+<table id="orderHandleListviewSecondPointInputTable">
+</table>
+<script>
+    var OrderHandleListviewSecondPointInputModule = {
+        orderFormHandleGrid: '',   //订单处理表
+
+        className:"{$className}",  //父级类名
+        orderformid:"{$orderformid}", //订单号
+        rowIndex:"{$rowIndex}",    //光标序号
+
+
+        init: function () {
+            this.orderFormHandleGrid = $('#orderHandleListviewSecondPointInputTable');
+            this.createDatagrid();
+            this.quickKeyEscCloseWindow();
+            this.datagridKeyMove();
+        },
+
+        createDatagrid: function () {
+            this.orderFormHandleGrid.datagrid({
+                nowrap: "true",
+                fitColumns: "true",
+                singleSelect: "true",
+                autoRowHeight: "true",
+                striped: "true",
+                border: "false",
+                rownumbers: "false",  //显示行号
+                showFooter: 'true',
+                pagination: false,
+                url: '__URL__/distributeOrderSecondPointInput',
+                columns: [[
+                    {field: 'secondpointmgrid', title: 'id', hidden: 'true', width: 100},
+                    {field: "name", width: 30, title: '分送点名称', align: 'center'}
+
+                ]],
+                onSelect: this.selectDataGridRow   //选择行事件
+                //onClickRow: clickDataGridRow   //单击行的处理事件
+            });
+
+
+        },
+
+        //
+        selectDataGridRow: function () {
+
+        },
+
+        //快键键关闭备注输入窗口
+        quickKeyEscCloseWindow: function () {
+            var that = this;
+            // ctrl+5快捷键 f5是不能用的
+            Mousetrap.bind(['esc', 'esc'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '订单配送') {
+                    $('#globel-dialog-div').dialog('close');
+                    $('.orderHandleCls').attr("disabled", false);
+                }
+            });
+        },
+
+        //定义表格移动的键盘处理
+        datagridKeyMove: function () {
+            var that = this;
+            this.orderFormHandleGrid.datagrid('getPanel').panel('panel').attr('tabindex', 1).bind('keydown', function (e) {
+                //当前选择的行
+                var selectedRowObj = that.orderFormHandleGrid.datagrid('getSelected');
+                //当前选择行的number
+                var selectedRowIndex = that.orderFormHandleGrid.datagrid('getRowIndex', selectedRowObj);
+                switch (e.keyCode) {
+                    case 38: // up  上移动
+                        if (selectedRowIndex == 0) return false;//为0，就是到顶了，不用再移动了
+                        selectedRowIndex -= 1;
+                        that.orderFormHandleGrid.datagrid('selectRow', selectedRowIndex);
+                        break;
+                    case 40: // down 下移动
+                        var rowsObj = that.orderFormHandleGrid.datagrid('getRows');  //返回当前页的记录
+                        var rowLength = rowsObj.length - 1;
+                        if (selectedRowIndex == rowLength) return;  //到表格尾部了，就不用再移动了
+                        selectedRowIndex += 1;
+                        that.orderFormHandleGrid.datagrid('selectRow', selectedRowIndex);
+                        break;
+                    case 13: //回车，确认选择分送点
+                        //获得备注名称
+                        var secondPointName = selectedRowObj.name;
+
+                        //备注写入数据库
+                        $.ajax({
+                            type: "GET",
+                            url: APP + "/OrderHandle/setSecondPoint/orderformid/" + that.orderformid +
+                            '/secondPointName/' + encodeURIComponent(secondPointName),
+                            dataType: "json",
+                            success: function (data) {
+                                //配送地址查询的处理
+                                if(that.className == 'OrderHandleSearchviewAddressModule'){
+                                    //更新状态
+                                    $('#OrderHandleSearchviewAddressTable').datagrid('updateRow', {
+                                        index: that.rowIndex,    //定位行
+                                        row: {
+                                            state: '已转分送点'
+                                        }
+                                    });
+                                    $('#globel-dialog-div').dialog('close');
+                                    $('#orderHandleSearchviewAddressOperation' + that.rowIndex).val(); //输入框恢复空
+                                    $('#orderHandleSearchviewAddressOperation' + that.rowIndex).focus(); //输入框恢复空
+                                }
+                            }
+                        })
+                        break;
+                }
+            });
+        }
+
+
+    }
+
+    $(function () {
+        OrderHandleListviewSecondPointInputModule.init();
+        setTimeout(function () {
+            $('#orderHandleListviewSecondPointInputTable').datagrid('getPanel').panel('panel').focus();
+            $('#orderHandleListviewSecondPointInputTable').datagrid('selectRow', 0);
+        }, 200);
+
+    })
+</script>

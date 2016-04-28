@@ -1,0 +1,30 @@
+<!-- 饿了么外卖管理主面板 -->
+<div id="meituanMainviewLayout" class="easyui-layout" data-options="fit:true,border:false">
+    <div data-options="region:'north',href:'__URL__/mainviewTopMenu'
+	" style="height:35px;">
+    </div>
+    <div data-options="region:'west',split:true,
+		title:'功能菜单',
+		href:'__URL__/mainviewLeftMenu'"
+         style="width: 180px"></div>
+    <div data-options="region:'center',href:'__URL__/mainviewPlatformIntroduce'">
+    </div>
+</div>
+<script>
+    var meituanModule = {
+
+        init: function () {
+            //设置div的高度
+            $('#meituanMainviewLayout').height(IndexIndexModule.operationHeight+30);
+        }
+    }
+
+    $(function(){
+        meituanModule.init();
+    })
+    function meituanUpdateRegin(url){
+        var meituanMainviewLayout = $('#meituanMainviewLayout');
+        var regin =  meituanMainviewLayout.layout('panel','center');
+        regin.panel('refresh',url);
+    }
+</script>

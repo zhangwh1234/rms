@@ -1,0 +1,118 @@
+<style>
+
+    #orderPrintHandleTable {
+        background-color: transparent;
+    }
+
+    #orderPrintHandleTable td{
+        height: 25px;
+    }
+
+    #productsTable span{
+        font-size:16px;
+    }
+
+    #orderPrintHandleTable input{
+        font-size : 16px;
+    }
+
+</style>
+<table id="orderPrintHandleTable" style="BORDER-COLLAPSE: collapse"  borderColor="#CCCCCC" cellSpacing="0" width="100%"
+       align="center" border="1">
+    <tr class="orderPrintHandleTableHead">
+        <td width="5%" align="center">序号</td>
+        <td width="10%" align="center">打印编号</td>
+        <td width="75%" align="center">打印订单内容</td>
+        <td width="10%" align="center">操作</td>
+    </tr>
+    <foreach name="orderPrintHandle" item="vo" >
+        <tr>
+            <td width="5%" align="center">{$key+1}</td>
+            <td width="10%" align="center"><input id="orderPrintHandleid_{$key+1}" name="orderPrintHandleid_{$key+1}" type="text" size="10" autocomplete="off" value="{$vo.orderPrintHandleid}" onkeyup="getOrderByid({$key+1},event,this);" /></td>
+            <td width="75%" align="center"><input id="addressOrdertxt_{$key+1}" name="addressOrdertxt_{$key+1}" type="text" size="98" autocomplete="off" value="{$vo.content}" /></td>
+            <td width="10%" align="center"><a href="#" onclick="clearAddressOrdertxt('{$key+1}');" >清空内容</a></td>
+        </tr>
+    </foreach>
+    <empty name="orderPrintHandle">
+        <for start="0" end="10" name="key">
+            <tr>
+                <td width="5%" align="center">{$key+1}</td>
+                <td width="10%" align="center"><input id="orderPrintHandleid_{$key+1}" name="orderPrintHandleid_{$key+1}" type="text" size="10" value="" onkeyup="getOrderByid({$key+1},event,this);" /></td>
+                <td width="75%" align="center"><input id="addressOrdertxt_{$key+1}" name="addressOrdertxt_{$key+1}" type="text" size="98" value="" /></td>
+                <td width="10%" align="center"><a href="#" onclick="clearAddressOrdertxt('{$key+1}');" >清空内容</a></td>
+            </tr>
+        </for>
+    </empty>
+</table>
+<table width="100%" style="BORDER-COLLAPSE: collapse"  borderColor="#CCCCCC" cellSpacing="0" width="100%"
+       align="center" border="1">
+    <tr>
+        <td class="productsTableXiaojiLeftTd" width="75%">
+            <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-car_cart_basket-basket_add'"
+               onclick="GoodsEditViewModule.addProducts();" style="font-size:16px;">添加产品行</a>
+            <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-car_cart_basket-basket_delete'"
+               onclick="GoodsEditViewModule.delProducts();" style="font-size:16px;margin-left:30px;">删除产品最后一行</a>
+            <input id="orderPrintHandleLengt" name="orderPrintHandleLength" type="hidden" value="{$key+1}"/>
+        </td>
+
+        <td class="productsTableXiaojiRightTd"> {// 金额小计}
+            <span>小计</span>
+            <input id="productsTotalMoney" name="productsTotalMoney" type="text" size="10" readonly="readonly"
+                   style="border: 0px;" value="{$info.goodsmoney}"/>
+        </td>
+    </tr>
+</table>
+
+<script type="text/javascript">
+    //添加地址
+    function addTelAddress(){
+        //取得表格行的长度
+        var rowNum = $("#orderPrintHandleTable tr").length;
+        var tableTrAppend =  "<tr style='height:25px;border: 1px solid black;background: #F0F0F0;' class='CaseRow' >";
+        tableTrAppend += "<td width='10%' align='center' class='dvtCellLabel'>"+rowNum+"</td>";
+        tableTrAppend += "<td width='10%' align='left' class='dvtCellLabel'><input id='telAddress_"+rowNum+"' name='telAddress_"+rowNum+"'   type='text' size='10' value='' /></td> ";
+        tableTrAppend += "<td width='70%' align='center' class='dvtCellLabel'><input id='telCompany_"+rowNum+"' name='telCompany_"+rowNum+"'   type='text' size='80' value='' /></td> ";
+
+        tableTrAppend += "<td width='10%' align='center' class='dvtCellLabel'><a href='#' onclick='clearTelAddress("+rowNum+")' >清空地址</a></td></tr>";
+
+        $("#telAddressTable").append(tableTrAppend);
+        $("#orderPrintHandleLengt").attr("value",rowNum+1);  //表格行数保存
+    }
+
+    //根据输入的订单号，显示订单内容
+    function getOrderByid(rowNum,evt,obj){
+        evt = evt ? evt : ((window.event) ? window.event : null);
+        var key = evt.keyCode ? evt.keyCode : evt.which;
+        var orderPrintHandleid = $(obj).val();
+        if(key == 13){
+            $.ajax({
+                url:"__URL__/getOrderByid/printNumber/"+orderPrintHandleid,
+                async:true,
+                beforeSend:function(){
+
+                },
+                complete:function(){
+                },
+                success:function(mydata){
+                    if(mydata.error == 'error'){
+                        $.messager.show({
+                            title:'提示',
+                            msg:'输入号码有误!',
+                            height:70,
+                            timeout:5000,
+                            showType:'slide',
+                            style:{
+                                left:0,right:'',top:'',
+                                bottom:-document.body.scrollTop-document.documentElement.scrollTop
+                            }
+                        });
+                        return false;
+                    }
+                    if(mydata.success == 'success'){
+                        $('#addressOrdertxt_'+rowNum).val(mydata.addressOrdertxt);
+                    }
+                }
+            })
+        }
+    }
+</script>

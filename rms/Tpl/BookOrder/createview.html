@@ -1,0 +1,62 @@
+<include file="Module/createview" />
+
+<script>
+    var BookOrderCreateviewModule = {
+        dialog: '#globel-dialog-div',
+        checkSubmitFlg : false,
+
+
+        //初始化
+        init :function(){
+            $('.moduleOperatert').height(IndexIndexModule.operationHeight);
+
+        },
+
+        //保存记录
+        insert: function () {
+            //防止重复提交
+            if(this.checkSubmitFlg == false){
+                this.checkSubmitFlg = true;
+            }else{
+                return;
+            }
+            $('#BookOrderCreateviewForm').form('submit', {
+                url: '__URL__/insert',
+                onSubmit: function () {
+                    var isValid = $(this).form('validate');
+                    if (!isValid) {
+                        return false;
+                    }
+                    if ($('#BookOrderCreateviewForm input[name=address]').val() == '') {
+                        alert('地址不能为空!');
+                        return false;
+                    }
+                },
+                success: function (res) {
+                    var data = eval('(' + res + ')');
+                    if(!data.status){
+                        $.app.method.tip('提示信息', data.info, 'error');
+                    }else{
+                        $.app.method.tip('提示信息', data.info, 'info');
+                        IndexIndexModule.updateOperateTab(data.url);
+                    }
+                }
+            });
+        },
+
+        //放弃保存
+        cancel: function(){
+            var url = '__URL__/listview';
+            IndexIndexModule.updateOperateTab(url);
+        }
+    }
+
+    $(function () {
+        BookOrderCreateviewModule.init();
+        setTimeout(function(){
+            $('#BookOrderCreateviewForm input[name=name]').focus();
+        },100);
+
+    })
+</script>
+

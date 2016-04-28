@@ -1,0 +1,64 @@
+<?php
+$arr = array(
+    //'配置项'=>'配置值'   
+    //'APP_DEBUG' => true, 
+    'DB_TYPE' => 'mysql',
+    'DB_HOST' => 'localhost',
+    'DB_NAME' => 'rms',
+    'DB_USER' => 'root',
+    'DB_PWD' => '',
+    'DB_PORT' => '3306',
+    'DB_PREFIX' => 'rms_',
+    'SHOW_RUN_TIME' => false,
+    'LANG_SWITCH_ON' => true,
+    'LANG_AUTO_DETECT' => true, // 自动侦测语言 开启多语言功能后有效
+    'LANG_LIST' => 'zh-cn', // 允许切换的语言列表 用逗号分隔
+    'VAR_LANGUAGE' => 'l', // 默认语言切换变量
+    'URL_CASE_INSENSITIVE' => false,
+    'URL_MODEL' => 3,
+    'TMPL_CACHE_ON' => false,
+    'TMPL_CACHE_TIME' => 1,
+    'HTML_CACHE_ON' => false,
+    'SESSION_AUTO_START' => true,  //驱动sesson
+    'SESSION_TYPE' => 'Db',
+    'LOG_RECORD' => true, // 开启日志记录
+    'LOG_LEVEL' => 'INFO', // 只记录EMERG ALERT CRIT ERR 错误
+    'RBAC_SUPERADMIN' => 'admin',      //超级管理员
+    'ADMIN_AUTH_KEY' => 'SUPERADMIN',  //超级管理员识别
+    'USER_AUTH_ON' => TRUE,            //是否开启验证
+    'USER_AUTH_TYPE' => 1,             //1登陆验证  2时时验证
+    'USER_AUTH_KEY' => 'uid',         //用户认证识别号
+    'NOT_AUTH_MODULE' => '',           //无需认证的模块
+    'NOT_AUTH_ACTION' => '',           //无需认证的动作方法
+    'RBAC_ROLE_TABLE' => '',           //角色表验证名称
+    'RBAC_USER_TABLE' => '',           //角色与用户的中间表名称
+    'RBAC_ACCESS_TABLE' => '',         //权限表名称
+    'RBAC_NODE_TABLE' => '',          //节点表名称
+    'localhost' => 'mysql:127.0.0.1/root/ddklsdkl',
+    'SESSION_OPTIONS' => array('expire' => 443600),  //SESSION参数设置
+    'ncmqServer' => '115.29.43.18',
+    'ncmqPort' => '1818',
+    'RMS_CONNECT' => 'mysql://root:@localhost/rms#utf8',
+);
+//return $arr;
+$array = array(
+    'APP_AUTOLOAD_PATH' => '@.TagLib',
+    'SESSION_AUTO_START' => true,
+    'USER_AUTH_ON' => true,
+    'USER_AUTH_TYPE' => 1,        // 默认认证类型 1 登录认证 2 实时认证
+    'USER_AUTH_KEY' => 'authId',    // 用户认证SESSION标记
+    'ADMIN_AUTH_KEY' => 'administrator',
+    'USER_AUTH_MODEL' => 'User',    // 默认验证数据表模型
+    'AUTH_PWD_ENCODER' => 'md5',    // 用户认证密码加密方式
+    'USER_AUTH_GATEWAY' => '/Login/login',// 默认认证网关
+    'NOT_AUTH_MODULE' => 'Public',    // 默认无需认证模块
+    'REQUIRE_AUTH_MODULE' => '',        // 默认需要认证模块
+    'NOT_AUTH_ACTION' => '',        // 默认无需认证操作
+    'REQUIRE_AUTH_ACTION' => '',        // 默认需要认证操作
+    'GUEST_AUTH_ON' => false,    // 是否开启游客授权访问
+    'GUEST_AUTH_ID' => 0,        // 游客的用户ID
+    'LIST_MAX_ROWS' => 15,
+);
+return array_merge($arr, $array);
+
+?>

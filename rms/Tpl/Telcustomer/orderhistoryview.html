@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>来电历史显示</title>
+        <link REL="SHORTCUT ICON" HREF="__PUBLIC__/Images/lhkc/favicon.ico">    
+        <link rel="stylesheet" type="text/css" href="__PUBLIC__/themes/default/easyui.css">
+        <link rel="stylesheet" type="text/css" href="__PUBLIC__/themes/icon.css">
+        <load href="__PUBLIC__/Css/demo.css" />
+        <load href="__PUBLIC__/Js/jquery-1.10.1.min.js" />     
+        <load href="__PUBLIC__/Js/jquery.easyui.min.js" />
+        <load href="__PUBLIC__/Js/easyui-lang-zh_CN.js" />
+        <load href="__PUBLIC__/Css/style.css" />
+    </head>
+    <body>
+        <div id="center">
+            <div style="margin-top: 0px;border: 0px solid black;"><img src="__PUBLIC__/Images/phone.ico" style="width: 30px;margin-top: 0px;border: 0px solid red;" /><span id="callTelphone" style="font-size: 20px;">来电号码:{$calltelphone}&nbsp;&nbsp;&nbsp;&nbsp;来电时间:{$time}</span></div>
+            <div style="background-color: red;padding-top: 0px;padding-bottom: 1px;height: 1px;"></div>
+            <div class="moduleMenu">
+                <ul>
+                    <li>{$Think.lang.$moduleName}</li>
+                    <li><a href="#" class="moduleName" onclick="updateTab('__URL__/listview');">&nbsp;&gt;来电历史查询</a></li>
+                    <li>&nbsp;&gt;来电历史</li>
+                    <li style="width: 50px;">&nbsp;</li>
+                    <li>查询地址</li>
+                    <li><input name="searchText" id="searchText" type="text" class="easyui-searchbox" value="{$searchText}" style="width: 200px;" data-options="prompt:'请输入查询内容',searcher:doSearch" /></li>
+
+                    <li style="float: right;margin-right: 40px;"><a href="#" class="moduleName" onclick="updateTab('__URL__/listview');">关闭</a></li>
+                    <li style="float:right;"><a href="javascript:;" onclick="closeTab();"><img src="__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+                    <div style="clear:both;"></div>
+                </ul>
+            </div>
+            <div class="pages" align="center">{$page}</div>
+            <div class="list"  >
+                <table  border=0 cellspacing=1 cellpadding=3 width=100% class="lvt"  align="center">
+                    <tr class="listHeader">
+                        <td class=""><input class="listColCheck" type="checkbox"  name="selectall" ></td>
+                        <foreach name="listHeader" item="header">
+                           <if condition="$header eq $moduleId">
+                           <else/>
+                            <td class="listHeader">{$Think.lang.$header}</td>
+                            </if>
+                        </foreach>
+                    </tr>
+                    <volist id="entity"  name="listviewEntity" key='ad'>
+                        <assign name='record' value="$key" />
+                        <tr bgcolor="white" onMouseOver="this.className='lvtColDataHover'" onMouseOut="this.className='lvtColData'" ondblclick="" id="row_{$entity_id}">
+                            <volist name="entity" id="id">
+                                <if condition="$key eq $moduleId">
+                                    <td class="lvtCol1" width="2%"><input  type="checkbox" name="selected_id" id="{$record}" value= '{$record}'></td> 
+                                <elseif condition="$key eq $list_link_field" />
+                                    <td ><a href="__URL__/detailview/?&record={$record}&date={$date}">{$id}</a></td>
+                                <else />                  
+                                    <td class="listColData">{$id}</td>                   
+                                </if>
+                            </volist>               
+                        </tr>
+                    </volist>
+                </table>
+            </div>
+
+            <div class="pages">{$page}</div>
+        </div>
+
+        <script type="text/javascript">
+            function doSearch(value){
+                location.href =  "__APP__/Telcustomer/getOrderhistoryView/searchText/"+value;              
+            }
+        </script>
+    </body>
+</html>

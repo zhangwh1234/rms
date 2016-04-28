@@ -1,0 +1,139 @@
+<!-- 菜单分类信息管理列表 -->
+<table id="elemeCategorymgrListviewTable" title="分类管理" >
+</table>
+<div id="elemeCategorymgrListviewTableToolbar">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="elemeCategorymgrListviewCreateview();">新建分类</a>
+</div>
+
+<script>
+    Namespace.register('eleme.categorymgrListview');
+    //定义列表
+    eleme.categorymgrListview.table  = $('#elemeCategorymgrListviewTable');
+    eleme.categorymgrListview.table.datagrid(
+            {
+                nowrap : "true",
+                fitColumns : "true",
+                singleSelect : "true",
+                autoRowHeight : "true",
+                striped : "true",
+                border : "false",
+                rownumbers : "false", //显示行号
+                showFooter : 'true',
+                pagination : true,
+                pagePosition : 'bottom',
+                fit:true,
+                toolbar : '#elemeCategorymgrListviewTableToolbar',
+                columns : [ [
+                    {
+                        field : 'categoryid',
+                        title : 'id',
+                        hidden : 'true',
+                        width : 100
+                    },
+                    {
+                        field : 'name',
+                        title : '分类名称',
+                        width : 20,
+                        align : 'left'
+                    },
+                    {
+                        field : 'weight',
+                        title : '排序',
+                        width : 10,
+                        align : 'center'
+                    },
+                    {
+                        field: "categoryoperation",
+                        width: 25,
+                        title: '分类参数管理',
+                        align: 'center',
+                        formatter: function (value, rowData,
+                                             rowIndex) {
+                            var operation;
+                            operation = '';
+                            operation += "<a href='javascript:void(0);' onclick='elemeUpdateRegin(&apos;__URL__/categorymgrDetailview/categoryid/"
+                                    + rowData.categoryid + "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>查看</a>";
+                            operation += "&nbsp;|&nbsp;";
+                            operation += "<a href='javascript:void(0);' onclick='elemeUpdateRegin(&apos;__URL__/categorymgrEditview/categoryid/"
+                                    + rowData.categoryid + "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>编辑</a>";
+
+                            return operation;
+                        }
+                    },
+                    {
+                        field : "operation",
+                        width : 74,
+                        title : '操作',
+                        align : 'center',
+                        formatter : function(value, rowData,
+                                             rowIndex) {
+                            var operation;
+                            operation = "";
+                            operation += "<a href='javascript:void(0);' onclick='elemeCategorymgrCreate(&apos;__URL__/categorymgrCreate/categoryid/"
+                                    + rowData.categoryid +
+                                    "&apos;)'  class='orderHandleDetailview'  style='margin-left:4px;'>新增分类</a>";
+                            operation += "&nbsp;|&nbsp;";
+                            operation += "<a href='javascript:void(0);' onclick='elemeCategorymgrUpdate(&apos;__URL__/categorymgrUpdate/categoryid/"
+                                    + rowData.categoryid
+                                    + "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>更新</a>";
+                            operation += "&nbsp;|&nbsp;";
+                            operation += "<a href='javascript:void(0);' onclick='elemeCategorymgrDelete(&apos;__URL__/categorymgrDelete/categoryid/"
+                                    + rowData.categoryid
+                                    + "&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>删除</a>";
+
+                            return operation;
+                        }
+                    } ] ]
+            });
+
+
+    //定义查询返回的订单数据
+    eleme.categorymgrListview.listData = '{$listData}';
+
+    //转换成json对象
+    eleme.categorymgrListview.listData = eval('('
+    + eleme.categorymgrListview.listData + ')');
+
+    //载入订单数据，初始化
+    eleme.categorymgrListview.table.datagrid('loadData',
+            eleme.categorymgrListview.listData);
+
+    //新建商户
+    var elemeCategorymgrListviewCreateview = function(){
+        var elemeMainviewLayout = $('#elemeMainviewLayout');
+        var regin =  elemeMainviewLayout.layout('panel','center');
+        regin.panel('refresh','__URL__/categorymgrCreateview');
+    }
+
+    //新增
+    function elemeCategorymgrCreate(url){
+        var msg = '';
+        $.ajax({
+            url:url,
+            success:function(data){
+                console.info(data);
+                return;
+                $.each(data.data,function(key,value){
+                    msg = msg + '内容: '+ value+'</br>';
+                })
+                $.messager.alert('返回的结果',
+                        '操作内容:' + data.cmd + '</br>' +
+                        '分类名称:'+data.name + '</br>'+
+                        msg,'',function(){
+                            var elemeMainviewLayout = $('#elemeMainviewLayout');
+                            var regin = elemeMainviewLayout.layout('panel', 'center');
+                            regin.panel('refresh','__URL__/categorymgrListview');
+                        });
+
+            }
+        })
+    }
+
+    //更新
+    var elemeCategorymgrUpdate = elemeCategorymgrCreate;
+
+    //删除
+    var elemeCategorymgrDelete = elemeCategorymgrCreate;
+
+
+</script>

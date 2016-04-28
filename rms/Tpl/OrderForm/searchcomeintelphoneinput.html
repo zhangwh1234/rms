@@ -1,0 +1,37 @@
+<!-- 来电记录查询  -->
+<form style="overflow: hidden;">
+    <table cellspacing="6" width="100%" style="margin-left: 10px;margin-top:10px;">
+        <tr>
+            <td>
+                <span style="font-size: 16px;">来电记录查询</span>
+                <input type="text" class="easyui-validatebox" id="orderFormListviewComeintelphoneSearchInput"
+                       name="searchTextTelphone"
+                       style="font-size: 16px;width:60%;" value=""/>
+                <input type="text" style="width:0px;visibility:hidden;" >
+            </td>
+        <tr>
+    </table>
+</form>
+<script>
+    $(function(){
+        $('#orderFormListviewComeintelphoneSearchInput').focus();
+        $('#orderFormListviewComeintelphoneSearchInput').keydown(function(event){
+            var that = this;
+            if(event.keyCode == 13){
+                var dialog = '#globel-dialog-div';
+                $(dialog).find('form').eq(0).form('submit', {
+                    onSubmit: function () {
+                        var isValid = $(this).form('validate');
+                        if (!isValid) return false;
+                        var searchTextTelphone = $(that).val();
+                        var url = '__URL__/searchviewComeinTelphone/searchTextTelphone/'+searchTextTelphone;
+                        IndexIndexModule.openOperateTab(url, '来电记录查询');
+                        $(dialog).dialog('close');
+                        return false;
+                    }
+                });
+                return false;
+            }
+        })
+    })
+</script>
