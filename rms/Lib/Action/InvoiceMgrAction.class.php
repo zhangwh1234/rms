@@ -217,5 +217,25 @@
 
         }
 
+        //返回发票信息
+        public function getInvoiceInfo($invoiceid){
+            // 取得模块的名称
+            $moduleName = $this->getActionName();
+            $this->assign('moduleName', $moduleName); // 模块名称
+
+            // 启动当前模块
+            $focus = D($moduleName);
+
+            $where = array();
+            $where['invoiceid'] = $invoiceid;
+
+            $fields = array(
+              'invoiceid','header','body','ordermoney'
+            );
+            $invoiceResult = $focus->field($fields)->where($where)->find();
+
+            $this->ajaxReturn($invoiceResult);
+        }
+
     }
 ?>

@@ -152,7 +152,6 @@
                 //缓存光标位置
                 InvoiceMgrListviewModule.focusNumberOH = rowIndex;
                 InvoiceMgrListviewModule.focusOrderformidOH = rowData.orderformid;
-                InvoiceMgrListviewModule.orderProductsShow(InvoiceMgrListviewModule.focusOrderformidOH);
             }
         },
 
@@ -375,7 +374,17 @@
          * 发票开具
          */
         openInvoice: function (invoiceid) {
-            InvoiceOper.openInvoice();
+            //获取发票所需要的信息
+            $.ajax({
+                type: "GET",
+                url: "__URL__/getInvoiceInfo/invoiceid/"+invoiceid,
+                dataType: "json",
+                success: function (data) {
+                    InvoiceOper.openInvoice(data);
+                }
+            })
+            return false;
+
             // 设定订单状态为已打印
             $.ajax({
                 type: "GET",
