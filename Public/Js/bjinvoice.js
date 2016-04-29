@@ -33,8 +33,8 @@
                 }else if (this.kpdriver.RetCode=="1001"){
                     alert("开票信息初始化失败，请重启浏览器或重装开票系统后重试");
                 }else if (this.kpdriver.RetCode=="1005"){
-                    closeCard();
-                    checkSetup();
+                    this.closeCard();
+                    this.checkSetup();
                 }else {
                     alert("金税卡开启失败，错误代码："+this.kpdriver.RetCode);
                 }
@@ -329,12 +329,15 @@
             this.checkSetup();
             //开启金税盘
             this.openCard();
+
             //获取开发票的票号等信息
-            invoiceInfo = this.getInfo(2);
-            invoiceInfo.main.invtype = 2;  //增值税普通发票
+            var invoiceInfo = this.getInfo(2);
+            invoiceInfo.main = {};
+            invoiceInfo.main.invtype = '2';  //增值税普通发票
             invoiceInfo.main.clientname = data.header;  //购货方名称,发票抬头
-            var list = array();
-            list[0]['listgoodsname'] = data.body;  //发票内容
+            var list = new Array();
+            list[0] = {};
+            list[0]['listgoodsname'] = 1;  //发票内容
             list[0]['listnumber'] = 1;
             list[0]['listprice'] = data.ordermoney;
             list[0]['listunit'] = '份';
@@ -344,7 +347,7 @@
             //开启发票
             var invoiceResult = this.invoice(invoiceInfo);
             //打印发票
-            //this.printInv();
+            this.printInv('2','1100111650','08257515',0,1);
         }
 
 
