@@ -77,5 +77,7 @@
            1:clientnotifyid,ordersn,telphone,app_tk,contenttype,origin,domain 其中contentype包括(comfirm,sendname,complete)
 2016-04-25 修改了装箱,在装箱产品中,添加分公司名称,产品等数据.
 2016-04-28 开始使用github系统。
+2016-05-02 更新了pagination,让分页显示更好.
+           完成客户通知程序.comfirm是确认消息,sendname是这个订单让这个送餐员配送,complete是这个订单已经完成配送.
 
 

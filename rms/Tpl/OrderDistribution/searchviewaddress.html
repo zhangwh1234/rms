@@ -36,8 +36,8 @@
                 src=".__PUBLIC__/Images/addressBtn.jpg" alt="" title="" border="0"></a></li>
         <li><a href="javascript:void(0);" onclick="OrderDistributionSearchviewAddressModule.addressSearchInput();">地址查询<span>^6</span></a></li>
 
-        <li style="float: right;margin-right: 40px;"><a href="javascript:void(0);" onclick="closeTab();">关闭</a></li>
-        <li style="float:right;"><a href="javascript:void(0);" onclick="closeTab();"><img
+        <li style="float: right;margin-right: 40px;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
+        <li style="float:right;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();"><img
                 src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
     </ul>
 </div>
@@ -121,7 +121,7 @@
             var pager = $(this.datagrid).datagrid().datagrid('getPager')
             pager.pagination({
                 showRefresh: false,
-                layout: ['first', 'links', 'last'],
+                layout: ['sep','first','prev','manual','links','next','last'],
                 buttons: [{
                     id: 'beizhuOrderDistributionAddress',
                     text: '备注:'

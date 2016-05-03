@@ -264,7 +264,8 @@
 			//定义订单分页表
 			this.datagrid.datagrid('getPager').pagination({
 				showRefresh: false,
-				layout: ['first', 'links', 'last'],
+				pageSize : IndexIndexModule.gridRowsNumber,
+				layout: ['sep','first','prev','manual','links','next','last'],
 				buttons: [{
 					id: 'orderHandleSearchviewSendnameTb',
 					text: '备注:'

@@ -14,6 +14,17 @@
         },
 
 
+        //重新设置page
+        setPagination:function(){
+            //定义订单分页表
+            var pager = $('#todaymenu_index_datagrid').datagrid().datagrid('getPager')
+            pager.pagination({
+                showRefresh: false,
+                pageSize : IndexIndexModule.gridRowsNumber,
+                layout: ['sep','first','prev','manual','links','next','last']
+            });
+        },
+
         //操作格式化
         operate: function (val, rowData, rowIndex) {
             var btn = [];
@@ -109,6 +120,9 @@
 
     $(function(){
         TodayMenuListviewModule.init();
+        setTimeout(function(){
+            TodayMenuListviewModule.setPagination();
+        },100);
     })
 </script>
 

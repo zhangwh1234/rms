@@ -75,6 +75,8 @@
         viewMenuHeight: 28,
         //操作区高度
         operationHeight:0,
+        //表格区可以显示行数的变量
+        gridRowsNumber:0,
 
         getOperationHeight: function () {
             var bodyHeight = $(document).height();
@@ -96,11 +98,13 @@
         calculateMaxRows : function(){
             var operationHeight = this.getOperationHeight();
             var maxRows = parseInt(operationHeight / 33) ;
+            this.gridRowsNumber = maxRows;  //保存在全局变量中
             $.ajax({
                 type:'get',
                 url:'__URL__/setMaxRows/maxRows/'+maxRows,
-                success : function(){}
+                success : function(data){
 
+                }
             })
         },
 
@@ -203,7 +207,49 @@
                 }, 'json');
 
             }, 15000);
+        },
+
+        //修改用户密码
+        changeCode:function(){
+            var that = this;
+            $(that.dialog).dialog({
+                title: '修改用户密码',
+                iconCls: 'icons-application-application_add',
+                width: 500,
+                height: 140,
+                cache: false,
+                href:'',
+                modal: true,
+                collapsible: false,
+                minimizable: false,
+                resizable: false,
+                maximizable: false,
+                buttons: [{
+                    text: '确定',
+                    iconCls: 'icons-other-tick',
+                    handler: function () {
+                        $(that.dialog).find('form').eq(0).form('submit', {
+                            onSubmit: function () {
+                                var isValid = $(this).form('validate');
+                                if (!isValid) return false;
+                                var searchText = $(that.dialog).find("form input[name='searchText']").val();
+                                var url = APP + '/' + moduleName + '/listview/searchText/' + searchText;
+                                IndexIndexModule.updateOperateTab(url);
+                                $(that.dialog).dialog('close');
+                                return false;
+                            }
+                        });
+                    }
+                }, {
+                    text: '取消',
+                    iconCls: 'icons-arrow-cross',
+                    handler: function () {
+                        $(that.dialog).dialog('close');
+                    }
+                }]
+            });
         }
+
 
     }
 

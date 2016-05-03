@@ -32,6 +32,22 @@
             this.quickKeyboardAction();
         },
 
+        //重新设置page
+        setPagination:function(){
+            //定义订单分页表
+            var pager = $('#orderform_searchviewaddress_datagrid').datagrid().datagrid('getPager')
+            pager.pagination({
+                showRefresh: false,
+                pageSize : IndexIndexModule.gridRowsNumber,
+                layout: ['sep','first','prev','manual','links','next','last'],
+                buttons: [{
+                    id: 'orderformOtherMsg',
+                    text: '{$orderformOtherMsg}'
+
+                }]
+            });
+        },
+
         //操作格式化
         operate: function (val, rowData, rowIndex) {
             var btn = [];
@@ -165,5 +181,8 @@
 
     $(function(){
         OrderFormSearchviewAddressModule.init();
+        setTimeout(function(){
+            OrderFormSearchviewAddressModule.setPagination();
+        },100);
     })
 </script>

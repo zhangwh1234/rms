@@ -1,13 +1,3 @@
-<style>
-    .orderFormDetailview {
-        font-size: 16px;
-        float: left;
-        border: 0px solid red;
-        margin-left: 2px;
-        margin-right: 2px;
-        line-height: 24px;
-    }
-</style>
 <div class="moduleMenu">
     <ul>
         <li>{$Think.lang.$navName}</li>
@@ -46,8 +36,8 @@
         <li><a href="#" class="moduleName"
                onclick="OrderFormListviewModule.otherSearchInput();">综合查询<span>^9</span></a>
         </li>
-        <li style="float: right;margin-right: 10px;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
-        <li style="float:right;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();"><img
+        <li style="float: right;margin-right: 10px;"><a href="javascript:void(0);" onclick="OrderFormListviewModule.closeTab();">关闭</a></li>
+        <li style="float:right;"><a href="javascript:void(0);" onclick="OrderFormListviewModule.closeTab();"><img
                 src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
     </ul>
 </div>
@@ -66,6 +56,22 @@
             //设置div的高度
             $('#OrderFormListviewDiv').height(IndexIndexModule.operationHeight);
             this.quickKeyboardAction();
+        },
+
+        //重新设置page
+        setPagination:function(){
+            //定义订单分页表
+            var pager = $('#orderform_index_datagrid').datagrid().datagrid('getPager')
+            pager.pagination({
+                showRefresh: false,
+                pageSize : IndexIndexModule.gridRowsNumber,
+                layout: ['sep','first','prev','manual','links','next','last'],
+                buttons: [{
+                    id: 'orderformOtherMsg',
+                    text: '{$orderformOtherMsg}'
+
+                }]
+            });
         },
 
         //操作格式化
@@ -364,6 +370,9 @@
 
     $(function () {
         OrderFormListviewModule.init();
+        setTimeout(function(){
+            OrderFormListviewModule.setPagination();
+        },100);
     })
 
 </script>

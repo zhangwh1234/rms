@@ -63,9 +63,10 @@ class  TelcustomerAction extends ModuleAction
             }
             */
 
-            $listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
-            if (isset ( $listMaxRows )) {
-                $listMaxRows = 10;
+            if($_SESSION['listMaxRows']){
+                $listMaxRows = $_SESSION['listMaxRows'];
+            }else{
+                $listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
             }
 
             // 取得页数
@@ -79,7 +80,7 @@ class  TelcustomerAction extends ModuleAction
 
                 $query = $query . ' where ' . $where;
                 $query .= ' order by rms_telcustomer.telcustomerid desc ';
-                $query .= 'limit ' . $Page->firstRow . ',15 ';
+                $query .= 'limit ' . $Page->firstRow . ', ' .$Page->listRows ;
                 $listResult = $focus->query($query);
 
             }

@@ -1,22 +1,4 @@
-<style>
-    /*设置datagrid*/
-    .datagrid-cell {
-        font-size: 16px;
-    }
 
-    .datagrid-row {
-        height: 30px;
-    }
-
-    .orderFormDetailview {
-        font-size: 16px;
-        float: left;
-        border: 0px solid red;
-        margin-left: 2px;
-        margin-right: 2px;
-        line-height: 24px;
-    }
-</style>
 <div class="moduleMenu">
     <ul>
         <li>{$Think.lang.$navName}</li>
@@ -30,8 +12,8 @@
         <li><a href="javascript:void(0);" onclick="OrderFormSearchviewTelphoneModule.telphoneSearchInput();">电话查询<span>^6</span></a></li>
 
 
-        <li style="float: right;margin-right: 40px;"><a href="javascript:void(0);" onclick="closeTab();">关闭</a></li>
-        <li style="float:right;"><a href="javascript:void(0);" onclick="closeTab();"><img
+        <li style="float: right;margin-right: 40px;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
+        <li style="float:right;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();"><img
                 src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
     </ul>
 </div>
@@ -50,6 +32,18 @@
             $('.moduleOperatert').height(IndexIndexModule.operationHeight);
             this.quickKeyboardAction();
         },
+
+        //重新设置page
+        setPagination:function(){
+            //定义订单分页表
+            var pager = $('#orderform_searchviewtelphone_datagrid').datagrid().datagrid('getPager')
+            pager.pagination({
+                showRefresh: false,
+                pageSize : IndexIndexModule.gridRowsNumber,
+                layout: ['sep','first','prev','manual','links','next','last']
+            });
+        },
+
 
         //操作格式化
         operate: function (val, rowData, rowIndex) {
@@ -181,5 +175,8 @@
 
     $(function(){
         OrderFormSearchviewTelphoneModule.init();
+        setTimeout(function(){
+            OrderFormSearchviewTelphoneModule.setPagination();
+        },100);
     })
 </script>

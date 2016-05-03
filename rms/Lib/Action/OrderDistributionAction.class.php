@@ -48,7 +48,7 @@ class OrderDistributionAction extends ModuleAction {
 
 			// 导入分页类
 			import ( 'ORG.Util.Page' ); // 导入分页类
-			if(isset($_SESSION['listMaxRows'])){
+			if($_SESSION['listMaxRows']){
 				$listMaxRows = $_SESSION['listMaxRows'];
 			}else{
 				$listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
@@ -280,8 +280,8 @@ class OrderDistributionAction extends ModuleAction {
 				$pageNumber = 1;
 			}
 
-			if($_SESSION['maxRows']){
-				$listMaxRows = $_SESSION['maxRows'];
+			if($_SESSION['listMaxRows']){
+				$listMaxRows = $_SESSION['listMaxRows'];
 			}else{
 				$listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
 			}
@@ -408,8 +408,8 @@ class OrderDistributionAction extends ModuleAction {
 				$pageNumber = 1;
 			}
 
-			if($_SESSION['maxRows']){
-				$listMaxRows = $_SESSION['maxRows'];
+			if($_SESSION['listMaxRows']){
+				$listMaxRows = $_SESSION['listMaxRows'];
 			}else{
 				$listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
 			}
@@ -570,8 +570,8 @@ class OrderDistributionAction extends ModuleAction {
 				$pageNumber = 1;
 			}
 
-			if($_SESSION['maxRows']){
-				$listMaxRows = $_SESSION['maxRows'];
+			if($_SESSION['listMaxRows']){
+				$listMaxRows = $_SESSION['listMaxRows'];
 			}else{
 				$listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
 			}

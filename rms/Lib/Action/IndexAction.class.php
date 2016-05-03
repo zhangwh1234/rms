@@ -92,7 +92,7 @@
             $listMaxRows = $_REQUEST['maxRows'];
             //设置
             $_SESSION['listMaxRows'] = $listMaxRows;
-            Log::write('Index的SQL：'.$listMaxRows, Log::SQL);
+            $this->ajaxReturn(array($listMaxRows));
         }
     }
 ?>

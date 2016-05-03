@@ -237,5 +237,29 @@
             $this->ajaxReturn($invoiceResult);
         }
 
+        //放弃开票
+        public function cancelInvoice($invoiceid){
+            // 取得模块的名称
+            $moduleName = $this->getActionName();
+            $this->assign('moduleName', $moduleName); // 模块名称
+
+            // 启动当前模块
+            $focus = D($moduleName);
+
+            $where = array();
+            $where['invoiceid'] = $invoiceid;
+
+            $data = array();
+            $data['state'] = '已放弃';
+            $result = $focus->where($where)->save($data);
+
+            if($result){
+                $this->ajaxReturn(array('status'=>1));
+            }else{
+                $this->ajaxReturn(array());
+            }
+
+        }
+
     }
 ?>

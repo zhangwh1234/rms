@@ -6,8 +6,8 @@
         <li style="width: 50px;">&nbsp;</li>
 
 
-        <li style="float: right;margin-right: 40px;"><a href="javascript:void(0);" class="moduleName" onclick="closeTab();">关闭</a></li>
-        <li style="float:right;"><a href="javascript:;" onclick="closeTab();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
+        <li style="float: right;margin-right: 40px;"><a href="javascript:void(0);" class="moduleName" onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="IndexIndexModule.closeOperateTab();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
     </ul>
 </div>
 
@@ -59,6 +59,17 @@
             $('.ModuleListviewDiv').height(IndexIndexModule.operationHeight);
         },
 
+        //重新设置page
+        setPagination:function(){
+            //定义订单分页表
+            var pager = $('#orderhistory_index_datagrid').datagrid().datagrid('getPager')
+            pager.pagination({
+                showRefresh: false,
+                pageSize : IndexIndexModule.gridRowsNumber,
+                layout: ['sep','first', 'links', 'last']
+            });
+        },
+
         //操作格式化
         operate: function (val, rowData, rowIndex) {
             var btn = [];
@@ -105,6 +116,10 @@
 
     $(function(){
         OrderHistorySearchviewModule.init();
+        setTimeout(function(){
+            OrderHistorySearchviewModule.setPagination();
+        },100);
+
     })
 </script>
 

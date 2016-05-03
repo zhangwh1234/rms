@@ -36,8 +36,8 @@ class OrderFormAction extends ModuleAction
                 }
             }
 
-            if(isset($_SESSION['maxRows'])){
-                $listMaxRows = $_SESSION['maxRows'];
+            if($_SESSION['listMaxRows']){
+                $listMaxRows = $_SESSION['listMaxRows'];
             }else{
                 $listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
             }
@@ -127,6 +127,16 @@ class OrderFormAction extends ModuleAction
                 'formatter' => $moduleName . 'ListviewModule.operate'
             );
 
+            //计算接线员的接单量
+            // 接线员的姓名
+            $userInfo = $_SESSION ['userInfo'];
+            $name = $userInfo ['truename'];
+            $where =array();
+            $where['telname'] = $name;
+            $telOrderNumber = $focus->where($where)->count();
+            $telOrderNumber = '['.$name.']' . $telOrderNumber . '张订单';
+
+            $this->assign('orderformOtherMsg',$telOrderNumber);
             $this->assign('datagrid', $datagrid);
             $this->assign('moduleId', $moduleId);
 
@@ -203,11 +213,11 @@ class OrderFormAction extends ModuleAction
             if (isset ($_SESSION [$moduleName . 'firstRowSearchview'])) {
                 $Page->firstRow = $_SESSION [$moduleName . 'firstRowSearchview'];
             }
-            $listMaxRows = C('LIST_MAX_ROWS'); // 定义显示的列表函数
-            if (isset ($listMaxRows)) {
-                $Page->listRows = $listMaxRows;
-            } else {
-                $listMaxRows = 15;
+
+            if($_SESSION['listMaxRows']){
+                $listMaxRows = $_SESSION['listMaxRows'];
+            }else{
+                $listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
             }
 
             $Page = new NewPage ($total, $listMaxRows);
@@ -351,11 +361,11 @@ class OrderFormAction extends ModuleAction
             if (isset ($_SESSION [$moduleName . 'firstRowSearchview'])) {
                 $Page->firstRow = $_SESSION [$moduleName . 'firstRowSearchview'];
             }
-            $listMaxRows = C('LIST_MAX_ROWS'); // 定义显示的列表函数
-            if (isset ($listMaxRows)) {
-                $Page->listRows = $listMaxRows;
-            } else {
-                $listMaxRows = 15;
+
+            if($_SESSION['listMaxRows']){
+                $listMaxRows = $_SESSION['listMaxRows'];
+            }else{
+                $listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
             }
 
             $Page = new NewPage ($total, $listMaxRows);
@@ -496,12 +506,13 @@ class OrderFormAction extends ModuleAction
             if (isset ($_SESSION [$moduleName . 'firstRowSearchview'])) {
                 $Page->firstRow = $_SESSION [$moduleName . 'firstRowSearchview'];
             }
-            $listMaxRows = C('LIST_MAX_ROWS'); // 定义显示的列表函数
-            if (isset ($listMaxRows)) {
-                $Page->listRows = $listMaxRows;
-            } else {
-                $listMaxRows = 15;
+
+            if($_SESSION['listMaxRows']){
+                $listMaxRows = $_SESSION['listMaxRows'];
+            }else{
+                $listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
             }
+
 
             $Page = new NewPage ($total, $listMaxRows);
             $show = $Page->show();
@@ -652,11 +663,11 @@ class OrderFormAction extends ModuleAction
             if (isset ($_SESSION [$moduleName . 'firstRowSearchview'])) {
                 $Page->firstRow = $_SESSION [$moduleName . 'firstRowSearchview'];
             }
-            $listMaxRows = C('LIST_MAX_ROWS'); // 定义显示的列表函数
-            if (isset ($listMaxRows)) {
-                $Page->listRows = $listMaxRows;
-            } else {
-                $listMaxRows = 15;
+
+            if($_SESSION['listMaxRows']){
+                $listMaxRows = $_SESSION['listMaxRows'];
+            }else{
+                $listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
             }
 
             $Page = new NewPage ($total, $listMaxRows);

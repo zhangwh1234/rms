@@ -8,9 +8,18 @@
             //设置div的高度
             $('.ModuleListviewDiv').height(IndexIndexModule.operationHeight);
             this.quickKeyboardAction();
-            IndexIndexModule.calculateMaxRows();
         },
 
+        //重新设置page
+        setPagination:function(){
+            //定义订单分页表
+            var pager = $('#notice_index_datagrid').datagrid().datagrid('getPager')
+            pager.pagination({
+                showRefresh: false,
+                pageSize : IndexIndexModule.gridRowsNumber,
+                layout: ['sep','first', 'links', 'last']
+            });
+        },
 
         //操作格式化
         operate: function (val, rowData, rowIndex) {
@@ -107,9 +116,8 @@
     $(function(){
         NoticeListviewModule.init();
         setTimeout(function(){
-
+            NoticeListviewModule.setPagination();
         },200);
-
     })
 </script>
 

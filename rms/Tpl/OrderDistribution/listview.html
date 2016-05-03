@@ -63,8 +63,8 @@
                onclick="OrderDistributionListviewModule.otherSearchInput();">综合查询<span>⌃8</span></a>
         </li>
         <li style="float: right;margin-right: 40px;"><a href="javascript:;" class="moduleName"
-                                                        onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
-        <li style="float:right;"><a href="javascript:;" onclick="IndexIndexModule.closeOperateTab();"><img
+                                                        onclick="OrderDistributionListviewModule.closeTab();">关闭</a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="OrderDistributionListviewModule.closeTab();"><img
                 src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
     </ul>
 </div>
@@ -188,7 +188,8 @@
             var pager = $('#orderFormDistributionTable').datagrid().datagrid('getPager')
             pager.pagination({
                 showRefresh: false,
-                layout: ['first', 'links', 'last'],
+                pageSize : IndexIndexModule.gridRowsNumber,
+                layout: ['sep','first','prev','manual','links','next','last'],
                 buttons: [{
                     id: 'beizhuOrderDistribution',
                     text: '备注:'

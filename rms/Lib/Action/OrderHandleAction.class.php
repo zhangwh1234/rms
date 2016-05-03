@@ -42,11 +42,12 @@ class OrderHandleAction extends ModuleAction
                 $pageNumber = 1;
             }
 
-            if($_SESSION['maxRows']){
-                $listMaxRows = $_SESSION['maxRows'];
+            if($_SESSION['listMaxRows']){
+                $listMaxRows = $_SESSION['listMaxRows'];
             }else{
                 $listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
             }
+
             //订单配送还要显示两个统计数据
             $listMaxRows = $listMaxRows -2;
 
@@ -180,15 +181,7 @@ class OrderHandleAction extends ModuleAction
             if (isset ($_SESSION ['orderHandleSearchForAddressFirstRow'])) {
                 $Page->firstRow = $_SESSION ['orderHandleSearchForAddressFirstRow'];
             }
-            $listMaxRows = C('LIST_MAX_ROWS'); // 定义显示的列表函数
-            if (isset ($listMaxRows)) {
-                $Page->listRows = $listMaxRows;
-            } else {
-                $listMaxRows = 15;
-            }
-            // 取得页数
-            $_GET ['p'] = $pageNumber;
-            $Page = new Page ($total, $listMaxRows);
+
 
             // 取得显示页数
             $pageNumber = $_REQUEST ['page'];
@@ -196,11 +189,12 @@ class OrderHandleAction extends ModuleAction
                 $pageNumber = 1;
             }
 
-            if($_SESSION['maxRows']){
-                $listMaxRows = $_SESSION['maxRows'];
+            if($_SESSION['listMaxRows']){
+                $listMaxRows = $_SESSION['listMaxRows'];
             }else{
                 $listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
             }
+
             //订单配送还要显示两个统计数据
             $listMaxRows = $listMaxRows -2;
 
@@ -300,11 +294,13 @@ class OrderHandleAction extends ModuleAction
                 $pageNumber = 1;
             }
 
-            if($_SESSION['maxRows']){
-                $listMaxRows = $_SESSION['maxRows'];
+            if($_SESSION['listMaxRows']){
+                $listMaxRows = $_SESSION['listMaxRows'];
             }else{
                 $listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
             }
+
+
             //订单配送还要显示两个统计数据
             $listMaxRows = $listMaxRows -2;
 
@@ -427,11 +423,12 @@ class OrderHandleAction extends ModuleAction
                 $pageNumber = 1;
             }
 
-            if($_SESSION['maxRows']){
-                $listMaxRows = $_SESSION['maxRows'];
+            if($_SESSION['listMaxRows']){
+                $listMaxRows = $_SESSION['listMaxRows'];
             }else{
                 $listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
             }
+
             //订单配送还要显示两个统计数据
             $listMaxRows = $listMaxRows -2;
 
@@ -721,6 +718,37 @@ class OrderHandleAction extends ModuleAction
         $where = array();
         $where ['orderformid'] = $orderformid;
         $orderproductsResult = $orderproductsModel->where($where)->select();
+
+        // 获得订单号
+        $where = array();
+        $where ['orderformid'] = $orderformid;
+        $orderformResult = $focus->where($where)->find();
+
+        //通知客户的消息, 如果是微信或者推送
+        if(!empty($orderformResult['app_tk'])){
+            $data = array();
+            $data['ordersn'] = $ordersn;
+            $data['app_tk'] = $orderformResult['app_tk'];
+            $data['contenttype'] = 'sendname';
+            $data['origin'] = 'APP';
+            $data['domain'] = $_SERVER['HTTP_HOST'];
+            $notifyclientModel = D('NotifyClient');
+            $notifyclientModel->create();
+            $notifyclientModel->add($data);
+        }else{
+            //那么如果是手机号码
+            if(preg_match("/^1[34578]\d{9}$/", $orderformResult['telphone'])) {
+                $data = array();
+                $data['ordersn'] = $ordersn;
+                $data['telphone'] = $telphone;
+                $data['contenttype'] = 'sendname';
+                $data['origin'] = '电话';
+                $data['domain'] = $_SERVER['HTTP_HOST'];
+                $notifyclientModel = D('NotifyClient');
+                $notifyclientModel->create();
+                $notifyclientModel->add($data);
+            }
+        }
 
         // 是为了计算装箱送餐员的饭
         foreach ($orderproductsResult as $productsValue) {

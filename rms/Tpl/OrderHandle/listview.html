@@ -123,6 +123,11 @@
         taskOrderNumber: 0,   //处理后的订单数量
         fastKeyHelp : '',
 
+        //定义定时任务名称
+        firstGetOrderInterval:0,
+        slowGetOrderInterval:0,
+        orderMonitInterval:0,
+
         init: function () {
             this.orderFormHandleGrid = $('#OrderFormHandleTable');
             this.orderProductsHandleGrid = $('#OrderProductsHandleTable');
@@ -219,7 +224,8 @@
             var pager = $('#OrderFormHandleTable').datagrid('getPager')
             pager.pagination({
                 showRefresh: false,
-                layout: ['first', 'links', 'last'],
+                pageSize : IndexIndexModule.gridRowsNumber,
+                layout: ['sep','first','prev','manual','links','next','last'],
                 buttons: [{
                     id: 'beizhuOrderHandle',
                     text: '备注:'
@@ -461,7 +467,7 @@
          **/
         quickRefreshOrderForm: function () {
             var that = this;
-            setInterval(function () {
+            this.firstGetOrderInterval = setInterval(function () {
                 //判断前台是否处理订单
                 if (that.firstOrderNumber > 0 && that.taskOrderNumber >= 0 && that.firstOrderNumber > that.taskOrderNumber) {
                     if (that.refreshOrder == false) {
@@ -481,7 +487,7 @@
         //慢速定时更新订单
         slowRefreshOrderForm: function () {
             var that = this;
-            setInterval(function () {
+            this.slowGetOrderInterval = setInterval(function () {
 
                 if (that.refreshOrder == false) {
                     return false;
@@ -493,7 +499,7 @@
 
         //定时刷新显示订单情况
         refreshOrderHandleMonit: function () {
-            setInterval(function () {
+            this.orderMonitInterval = setInterval(function () {
                 var ordermonit = '';
                 $.ajax({
                     type: "GET",
@@ -1301,6 +1307,14 @@
           this.refreshOrder = true;
         },
 
+        //定义关不定时任务
+        closeInterval:function(){
+            //关闭定时任务
+            clearInterval(this.firstGetOrderInterval);
+            clearInterval(this.slowGetOrderInterval);
+            clearInterval(this.orderMonitInterval);
+        },
+
         /**
          * 关闭页面
          */
@@ -1310,6 +1324,7 @@
             var index = $('#operation').tabs('getTabIndex', tab);
             //关闭选项卡
             $('#operation').tabs('close', index);
+            this.closeInterval();
         }
 
 

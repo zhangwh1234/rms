@@ -197,7 +197,7 @@
             var that = this;
             $.ajax({
                 type: "POST",
-                url: "__URL__/listview",
+                url: "__URL__/searchviewOther",
                 data: data,
                 dataType: "json",
                 success: function (data) {
@@ -236,7 +236,7 @@
             setTimeout(function () {
                 $.ajax({
                     type: "POST",
-                    url: "__URL__/listview",
+                    url: "__URL__/searchviewOther",
                     dataType: "json",
                     success: function (data) {
                         if (data.rows.length > 0) {

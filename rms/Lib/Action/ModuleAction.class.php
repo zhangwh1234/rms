@@ -94,8 +94,8 @@ class ModuleAction extends Action {
 				}
 			}
 
-			if($_SESSION['maxRows']){
-				$listMaxRows = $_SESSION['maxRows'];
+			if($_SESSION['listMaxRows']){
+				$listMaxRows = $_SESSION['listMaxRows'];
 			}else{
 				$listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
 			}
@@ -167,8 +167,7 @@ class ModuleAction extends Action {
 			$datagrid = array (
 					'options' => array (
 							'url' => U ( $moduleName . '/listview' ,$searchArray ),
-							'pageNumber' => 1,
-							'pageSize' => 10
+							'pageNumber' => 1
 					) 
 			);
 			foreach ($listFields as $key => $value) {
@@ -253,7 +252,9 @@ class ModuleAction extends Action {
 		$datagrid = array (
 			'options' => array (
 				'url' => U ( $moduleName . '/listview' ),
-				'pageNumber' => 1
+				'pageNumber' => 1,
+				'pageSize' => 13,
+				'pageList' => array()
 			)
 		);
 		foreach ( $listHeader as $value ) {

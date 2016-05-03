@@ -337,7 +337,7 @@
             invoiceInfo.main.clientname = data.header;  //购货方名称,发票抬头
             var list = new Array();
             list[0] = {};
-            list[0]['listgoodsname'] = 1;  //发票内容
+            list[0]['listgoodsname'] = data.body;  //发票内容
             list[0]['listnumber'] = 1;
             list[0]['listprice'] = data.ordermoney;
             list[0]['listunit'] = '份';
