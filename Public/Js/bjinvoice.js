@@ -25,6 +25,7 @@
                 this.kpdriver.CertPassWord='88888888';
 
                 this.kpdriver.OpenCard();
+                window.console.info(this.kpdriver.RetCode);
                 if(this.kpdriver.RetCode=="1011"){
                     this.isOpen = true;
                     return true;
@@ -40,7 +41,7 @@
                 }
                 return false;
             }catch(e) {
-                alert("开票组件出错，错误信息为："+e.description);
+                alert("开票组件出错，错误信息为open："+e.description);
                 closeCard();
                 return false;
             }
@@ -55,7 +56,7 @@
                 if (e.description=="Automation 服务器不能创建对象"){
                     alert("您没有安装开票组件或组件被禁用，无法使用此功能。");
                 } else {
-                    alert("开票组件出错，错误信息为："+e.description);
+                    alert("开票组件出错，错误信息为setup："+e.description);
                 }
                 this.isSetup = false;
                 this.closeCard();
@@ -90,12 +91,11 @@
 
         invoice:function(invoiceInfo){
             try{
-
                 var main=invoiceInfo.main;
                 var cCustType=invoiceInfo.ccusttype;
                 this.kpdriver.InvInfoInit();
-                this.kpdriver.InfoKind=main.invtype;
-                if(main.invtype=='0' || main.invtype=='2'){
+                this.kpdriver.InfoKind = main.invtype;
+                if(main.invtype == 0 || main.invtype == 2){
                     //购方名称
                     this.kpdriver.InfoClientName = main.clientname;
                     //购方税号
@@ -156,9 +156,11 @@
                         {
                             this.kpdriver.ListGoodsName = list[i]['listgoodsname'];
                         }
+                        alert('ee1');
                         if (list[i]['listtaxitem']!=null){
                             this.kpdriver.ListTaxItem = list[i]['listtaxitem'];
                         }
+                        alert('ee2');
                         if (list[i]['liststandard']!=null){
                             this.kpdriver.ListStandard = list[i]['liststandard'];
                         }
@@ -176,10 +178,11 @@
                             this.kpdriver.ListAmount=list[i]['amount'];
 
                         }
+                        alert('ee3');
                         if(list[i]['tax']!=null){
                             this.kpdriver.ListTaxAmount=list[i]['tax'];
                         }
-
+                        alert('ee4');
                         this.kpdriver.ListPriceKind = 0;
                         if(list[i]['taxrate']!=null){
                             var rate = parseFloat(list[i]['taxrate']);
@@ -192,17 +195,17 @@
                                 this.kpdriver.InfoTaxRate=rate.toFixed(0);
                             }
                         }
-
+                        alert('ee5');
                         this.kpdriver.AddInvList();
-
+                        alert('ee6');
                     }
 
                     // V2.0
                     this.kpdriver.CheckEWM = 0;
-
+                    alert('error');
                     this.kpdriver.Invoice();
 
-                    //alert('发票代码：'+this.kpdriver.InfoTypeCode+";发票号码："+this.kpdriver.InfoNumber+";清单标志："+this.kpdriver.GoodsListFlag);
+                    alert('发票代码：'+this.kpdriver.InfoTypeCode+";发票号码："+this.kpdriver.InfoNumber+";清单标志："+this.kpdriver.GoodsListFlag);
                     var result = {};
                     /*这里必须将ActiveX对象里的值转成字符串才能正确的在参数中传递*/
                     result['infoAmount'] = this.kpdriver.InfoAmount+'';
@@ -219,7 +222,7 @@
                 }
 
             }catch(e){
-                alert('开票失败,错误信息:'+e.description);
+                alert('开票失败,错误信息invoice:'+e.description);
             }
         },
 
@@ -333,21 +336,25 @@
             //获取开发票的票号等信息
             var invoiceInfo = this.getInfo(2);
             invoiceInfo.main = {};
-            invoiceInfo.main.invtype = '2';  //增值税普通发票
+            invoiceInfo.main.invtype = 2;  //增值税普通发票
             invoiceInfo.main.clientname = data.header;  //购货方名称,发票抬头
+            invoiceInfo.sub = new Array();
             var list = new Array();
-            list[0] = {};
-            list[0]['listgoodsname'] = data.body;  //发票内容
-            list[0]['listnumber'] = 1;
-            list[0]['listprice'] = data.ordermoney;
-            list[0]['listunit'] = '份';
-            list[0]['amount'] = data.ordermoney;
-            list[0]['tax'] = '3%';
-            invoiceInfo.main.sub = list;
+            var sub = {};
+            sub['listgoodsname'] = data.body;  //发票内容
+            sub['listnumber'] = 1;
+            sub['listprice'] = data.ordermoney;
+            sub['listunit'] = '份';
+            sub['amount'] = data.ordermoney;
+            sub['tax'] = 17;
+            list.push(sub);
+            invoiceInfo.sub = list;
+            window.console.dir(invoiceInfo);
             //开启发票
             var invoiceResult = this.invoice(invoiceInfo);
+
             //打印发票
-            this.printInv('2','1100111650','08257515',0,1);
+            //this.printInv('2','1100111650','08257515',0,1);
         }
 
 
