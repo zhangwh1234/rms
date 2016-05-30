@@ -13,6 +13,7 @@
     <script type="text/javascript" src=".__PUBLIC__/Js/jquery.cookie.js"></script>
     <script type="text/javascript" src=".__PUBLIC__/Js/jquery.json.min.js"></script>
     <script type="text/javascript" src=".__PUBLIC__/Js/jquery.easyui.min.1.4.1.js"></script>
+
     <script type="text/javascript" src=".__PUBLIC__/Js/easyui/locale/easyui-lang-zh_CN.js"></script>
     <script type="text/javascript" src=".__PUBLIC__/Js/easyui/plugins/jquery.portal.js"></script>
     <script type="text/javascript" src=".__PUBLIC__/Js/jquery.app.js"></script>
@@ -28,6 +29,7 @@
     <include file="printer" />
 
     <load href=".__PUBLIC__/Js/general.js"/>
+
 </head>
 <body class="easyui-layout" id="main">
 
@@ -56,6 +58,7 @@
      style="top:1px;left:1000px;width:500px;height:130px;padding:0px;display: none;">
 
 </div>
+
 
 
 <script type="text/javascript">
@@ -99,13 +102,7 @@
             var operationHeight = this.getOperationHeight();
             var maxRows = parseInt(operationHeight / 33) ;
             this.gridRowsNumber = maxRows;  //保存在全局变量中
-            $.ajax({
-                type:'get',
-                url:'__URL__/setMaxRows/maxRows/'+maxRows,
-                success : function(data){
-
-                }
-            })
+            $.cookie('listMaxRows',maxRows);   //cooks缓存
         },
 
         // 开启一个操作tab页

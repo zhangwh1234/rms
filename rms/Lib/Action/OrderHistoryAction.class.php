@@ -282,7 +282,7 @@ class OrderHistoryAction extends ModuleAction
         // $blocks = $focus->detailBlocks();
 
         // 回调主程序需要的参数,比如下拉框的数据
-        $this->returnMainFnPara();
+        //$this->returnMainFnPara();
 
         // 取得记录ID
         $record = $_REQUEST ['ordersn'];
@@ -313,13 +313,14 @@ class OrderHistoryAction extends ModuleAction
         $result = $orderformModel->table("$dbNameTableName")->where("ordersn=$record")->find();
 
         // 返回区块
-        $blocks = $focus->detailBlocks($result);
+        $blocks = $focus->detailBlocks ( $result );
 
-        $this->assign('blocks', $blocks);
-        $this->assign('record', $record);
+        $this->assign ( 'info', $result );
+        $this->assign ( 'record', $record );
+        $this->assign ( 'blocks',$blocks);
 
         // 返回从表的内容
-        $this->get_slave_table($record);
+        $this->get_slave_table ( $record );
         $this->display('OrderHistory/detailview');
     }
 
@@ -350,10 +351,26 @@ class OrderHistoryAction extends ModuleAction
         $orderproductsModel = M("orderproducts", "rms_", $connectionDns);
 
         $orderproducts = $orderproductsModel->table($dbNameTableName)->field('orderformid,code,name,price,number,money')->where("ordersn=$record")->select();
-        // echo $orderproductsModel->getLastSql();
-        // dump($orderproducts);
+
         $this->assign('orderproducts', $orderproducts);
-        // return $teladdress;
+
+        //取得活动信息
+        $orderactivity_model =  M("orderactivity", "rms_", $connectionDns);
+        $dbNameTableName = 'rms_orderactivity';
+        $orderactivity = $orderactivity_model->table($dbNameTableName)->where("ordersn=$record")->select();
+        $this->assign('orderactivity',$orderactivity);
+
+        //取得订单支付信息
+        $orderpayment_model =  M("orderpayment", "rms_", $connectionDns);
+        $dbNameTableName = 'rms_orderpayment';
+        $orderpayment = $orderpayment_model->table($dbNameTableName)->where("ordersn=$record")->select();
+        $this->assign('orderpayment',$orderpayment);
+
+        // 取得订单的状态
+        $orderStateModel =  M("orderstate", "rms_", $connectionDns);
+        $dbNameTableName = 'rms_orderstate';
+        $orderStateResult = $orderStateModel->table($dbNameTableName)->where("ordersn=$record")->find();  //
+        $this->assign('orderstate', $orderStateResult);
 
         // 取得订单日志
         $orderactionModel = M("orderaction", "rms_", $connectionDns);

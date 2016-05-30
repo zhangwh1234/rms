@@ -10,7 +10,6 @@
         init: function () {
             //设置div的高度
             $('.ModuleListviewDiv').height(IndexIndexModule.operationHeight);
-            console.info(IndexIndexModule.operationHeight);
             this.quickKeyboardAction();
         },
 
@@ -31,7 +30,7 @@
             var btn = [];
             btn.push('<a href="javascript:void(0);" onclick="TelcustomerListviewModule.detailview(' + rowData.telcustomerid + ')">查看</a>');
             btn.push('<a href="javascript:void(0);" onclick="TelcustomerListviewModule.editview(' + rowData.telcustomerid + ')">编辑</a>');
-            btn.push('<a href="javascript:void(0);" onclick="TelcustomerListviewModule.delete(' + rowData.telcustomerid + ')">删除</a>');
+            btn.push('<a href="javascript:void(0);" onclick="TelcustomerListviewModule.deleteRecord(' + rowData.telcustomerid + ')">删除</a>');
             return btn.join(' | ');
         },
 
@@ -53,7 +52,7 @@
         },
 
         //删除用户记录
-        delete: function (id) {
+        deleteRecord : function (id) {
             var that = this;
             $.messager.confirm('提示信息', '确定要删除吗？', function (result) {
                 if (!result) return false;

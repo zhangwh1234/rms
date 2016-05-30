@@ -1,24 +1,23 @@
 <style type="text/css">
-    #wrap{
+    #editviewUserOrganizationwrap{
         width:96%;
-        height:auto;
-        overflow:hidden;
+        overflow:scroll;
         margin:5px auto;
         padding:4px 10px;
         border:1px solid #ccc;
         font-family: '黑体';
     }
 
-    #wrap  strong{
+    #editviewUserOrganizationwrap  strong{
         font-size:16px;
         color:#0b99d8;
     }
 
-    #wrap input{
+    #editviewUserOrganizationwrap input{
         float: left;
     }
 
-    #wrap dl{
+    #editviewUserOrganizationwrap dl{
         clear:both;
         margin:10px 0;
         border:1px solid #dcdcdc;
@@ -26,7 +25,7 @@
         overflow:hidden;
     }
 
-    #wrap  dl dt{
+    #editviewUserOrganizationwrap  dl dt{
         display:block;
         height:25px;
         line-height:25px;
@@ -34,19 +33,19 @@
         text-indent:10px;
     }
 
-    #wrap  dl dt strong{
+    #editviewUserOrganizationwrap  dl dt strong{
         font-size:14px;
         color:#61;
         float:left;
     }
 
-    #wrap dl dt input{
+    #editviewUserOrganizationwrap dl dt input{
         font-size: 16px;
         margin-top: 8px;
         margin-left: 5px;
     }
 
-    #wrap  dl dd{
+    #editviewUserOrganizationwrap  dl dd{
         padding:5px;
         float:left;
     }
@@ -91,7 +90,7 @@
     </ul>
 </div>
 
-<div id="wrap">
+<div id="editviewUserOrganizationwrap">
     <form id="editviewUserOrganizationForm" name="editviewUserOrganizationForm" method="post" >
         <input name="uid" type="hidden" value="{$uid}">
 
@@ -128,7 +127,12 @@
 </div>
 
 <script>
-    var UserEditviewOrganizationModule ={
+    var UserEditviewOrganizationModule = {
+
+        //初始化
+        init: function () {
+            $('#editviewUserOrganizationwrap').height(IndexIndexModule.operationHeight);
+        },
 
         //保存记录
         update: function () {
@@ -142,9 +146,9 @@
                 },
                 success: function (res) {
                     var data = eval('(' + res + ')');
-                    if(!data.status){
+                    if (!data.status) {
                         $.app.method.tip('提示信息', data.info, 'error');
-                    }else{
+                    } else {
                         $.app.method.tip('提示信息', data.info, 'info');
                         IndexIndexModule.updateOperateTab(data.url);
                     }
@@ -153,4 +157,10 @@
         }
 
     }
+
+        $(function () {
+            UserEditviewOrganizationModule.init();
+        })
+
+
 </script>

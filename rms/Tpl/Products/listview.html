@@ -29,7 +29,7 @@
             var btn = [];
             btn.push('<a href="javascript:void(0);" onclick="ProductsListviewModule.detailview(' + rowData.productsid + ')">查看</a>');
             btn.push('<a href="javascript:void(0);" onclick="ProductsListviewModule.editview(' + rowData.productsid + ')">编辑</a>');
-            btn.push('<a href="javascript:void(0);" onclick="ProductsListviewModule.delete(' + rowData.productsid + ')">删除</a>');
+            btn.push('<a href="javascript:void(0);" onclick="ProductsListviewModule.deleteRecord(' + rowData.productsid + ')">删除</a>');
             return btn.join(' | ');
         },
 
@@ -51,7 +51,7 @@
         },
 
         //删除角色
-        delete: function (id) {
+        deleteRecord : function (id) {
             var that = this;
             $.messager.confirm('提示信息', '确定要删除吗？', function (result) {
                 if (!result) return false;

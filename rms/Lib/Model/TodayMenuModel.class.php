@@ -16,7 +16,7 @@
       var $createFields= array(
             'LBL_TODAYMENU_INFORMATION' => array(
                 array(
-                    'name'=>'date','uitype'=>5,'readonly'=>55,'length'=>24
+                    'name'=>'date','uitype'=>55,'readonly'=>0,'length'=>24
                 )               
              ),
              'LBL_CONTENT_INFORMATION' => array(

@@ -657,6 +657,8 @@ class GeneralReportAction extends ModuleAction {
 			}
 		}
 
+		$where['domain'] = $_SERVER['HTTP_HOST'];
+
 		// 读取连接信息,根据用户访问的url来判断
 		// require APP_PATH.'Conf/datapath.php';
 		// $HTTP_POST = $_SERVER['HTTP_HOST'];

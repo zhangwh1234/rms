@@ -1,3 +1,10 @@
+<style>
+    .eedatagrid-row-selected {
+        background: yellow;
+        color: red;
+        cursor: default;
+    }
+</style>
 <div class="moduleMenu">
     <ul>
         <li>{$Think.lang.$navName}</li>
@@ -36,8 +43,8 @@
         <li><a href="#" class="moduleName"
                onclick="OrderFormListviewModule.otherSearchInput();">综合查询<span>^9</span></a>
         </li>
-        <li style="float: right;margin-right: 10px;"><a href="javascript:void(0);" onclick="OrderFormListviewModule.closeTab();">关闭</a></li>
-        <li style="float:right;"><a href="javascript:void(0);" onclick="OrderFormListviewModule.closeTab();"><img
+        <li style="float: right;margin-right: 10px;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
+        <li style="float:right;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();"><img
                 src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
     </ul>
 </div>
@@ -61,7 +68,7 @@
         //重新设置page
         setPagination:function(){
             //定义订单分页表
-            var pager = $('#orderform_index_datagrid').datagrid().datagrid('getPager')
+            var pager = $('#orderform_index_datagrid').datagrid().datagrid('getPager');
             pager.pagination({
                 showRefresh: false,
                 pageSize : IndexIndexModule.gridRowsNumber,
@@ -77,10 +84,15 @@
         //操作格式化
         operate: function (val, rowData, rowIndex) {
             var btn = [];
-            btn.push('<a href="javascript:void(0);" onclick="OrderFormListviewModule.detailview(' + rowData.orderformid + ')">查看</a>');
-            btn.push('<a href="javascript:void(0);" onclick="OrderFormListviewModule.editview(' + rowData.orderformid + ')">改单</a>');
-            btn.push('<a href="javascript:void(0);" onclick="OrderFormListviewModule.hurry(' + rowData.orderformid + ')">催送</a>');
+            btn.push('<a href="javascript:void(0);" onclick="OrderFormListviewModule.detailview(' + rowData.orderformid +','+ rowIndex+ ')">查看</a>');
+            btn.push('<a href="javascript:void(0);" onclick="OrderFormListviewModule.editview(' + rowData.orderformid +','+ rowIndex+  ')">改单</a>');
+            btn.push('<a href="javascript:void(0);" onclick="OrderFormListviewModule.hurry(' + rowData.orderformid +','+ rowIndex+ ')">催送</a>');
             return btn.join(' | ');
+        },
+
+        //初始返回,定位行操作,但是在翻页是,就不操作
+        setRowSelect :function(){
+            $('#orderform_index_datagrid').datagrid('selectRow', {$rowIndex});
         },
 
         //刷新
@@ -89,20 +101,21 @@
         },
 
         //查看记录
-        detailview: function (id) {
-            var url = '__URL__/detailview/returnAction/{$returnAction}/record/'+id;
+        detailview: function (id,rowIndex) {
+            var url = '__URL__/detailview/returnAction/{$returnAction}/record/'+id
+                    + '/rowIndex/' + rowIndex+'/pagetype/listview';
             IndexIndexModule.updateOperateTab(url);
         },
 
         //修改订单
-        editview: function (id) {
-            var url = '__URL__/editview/returnAction/{$returnAction}/record/'+id;
+        editview: function (id ,rowIndex) {
+            var url = '__URL__/editview/returnAction/{$returnAction}/record/'+id
+                    + '/rowIndex/' + rowIndex+'/pagetype/listview';
             IndexIndexModule.updateOperateTab(url);
         },
 
         //催送订单
-        hurry:function(id){
-
+        hurry:function(id ,rowIndex){
             var that = this;
             $.messager.confirm('提示信息', '确定要催送订单吗？', function(result){
                 if(!result) return false;
@@ -112,7 +125,9 @@
                     $.messager.progress('close');
                     $('#orderform_index_datagrid').datagrid('reload');
                     $.app.method.tip('提示信息', res.info, 'info');
-
+                    setTimeout(function(){
+                        $('#orderform_index_datagrid').datagrid('selectRow', rowIndex);  //显示行定位
+                    },200)
                 }, 'json');
             });
         },
@@ -373,6 +388,10 @@
         setTimeout(function(){
             OrderFormListviewModule.setPagination();
         },100);
+
+        setTimeout(function(){
+            OrderFormListviewModule.setRowSelect();  //显示行定位
+        },600)
     })
 
 </script>

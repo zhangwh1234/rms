@@ -10,7 +10,7 @@
         <li><a href="javascript:void(0);" onclick="OrderFormEditviewModule.update();">保存订单<span>^9</span></a></li>
 
         <li style="margin-left: 15px;"><a href="javascript:;" id="showSubMenu"  onMouseOver="" ><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
-        <li><a href="javascript:void(0);" class="moduleName" onclick="IndexIndexModule.updateOperateTab('__URL__/{$returnAction}');">返回列表</a><span>^4</span></li>
+        <li><a href="javascript:void(0);" class="moduleName" onclick="IndexIndexModule.updateOperateTab('__URL__/{$returnAction}/pagetype/{$pagetype}/rowIndex/{$rowIndex}');">返回列表</a><span>^4</span></li>
 
         <li style="margin-left: 30px;"><a href="javascript:;" onclick="OrderFormEditviewModule.showTodayMenuview();"><img
                 src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
@@ -45,7 +45,7 @@
                 return;
             }
             $('#OrderFormEditviewForm').form('submit', {
-                url: '__URL__/update/returnAction/{$returnAction}',
+                url: '__URL__/update/returnAction/{$returnAction}/pagetype/{$pagetype}/rowIndex/{$rowIndex}',
                 onSubmit: function () {
                     //进行表单验证
                     if ($('#OrderFormEditviewForm  input[name=address]').val() == '') {

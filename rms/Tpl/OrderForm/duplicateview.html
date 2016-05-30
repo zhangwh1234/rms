@@ -10,7 +10,7 @@
         <li><a href="javascript:void(0);" onclick="OrderFormDuplicateviewModule.insert();">保存订单<span>^9</span></a></li>
 
         <li style="margin-left: 15px;"><a href="javascript:;" id="showSubMenu"  onMouseOver="" ><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
-        <li><a href="javascript:void(0);" class="moduleName" onclick="IndexIndexModule.updateOperateTab('__URL__/{$returnAction}');">返回列表</a><span>^4</span></li>
+        <li><a href="javascript:void(0);" class="moduleName" onclick="IndexIndexModule.updateOperateTab('__URL__/{$returnAction}/pagetype/{$pagetype}/rowIndex/{$rowIndex}');">返回列表</a><span>^4</span></li>
 
         <li style="margin-left: 30px;"><a href="javascript:;" onclick="OrderFormDuplicateviewModule.showTodayMenuview();"><img
                 src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
@@ -46,7 +46,7 @@
                 return;
             }
             $('#OrderFormDuplicateviewForm').form('submit', {
-                url: '__URL__/insert/returnAction/{$returnAction}',
+                url: '__URL__/insert/returnAction/{$returnAction}/pagenumber/{$pagenumber}/rowIndex/{$rowIndex}',
                 onSubmit: function () {
                     //如果返回false阻止提交
                     if ($('#OrderFormDuplicateviewForm input[name=address]').val() == '') {

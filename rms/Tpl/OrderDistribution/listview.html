@@ -169,8 +169,8 @@
                         formatter: function (value, rowData, rowIndex) {
                             var operation;
                             operation = "<input class='distributionOrder' id='orderTask" + rowIndex + "' name='orderTask" + rowIndex + "' type='text'  size='8' maxlength='1' onkeyup='OrderDistributionListviewModule.distributionOrder(event,this," + rowData.orderformid + "," + rowIndex + ");' onClick='OrderDistributionListviewModule.distributionClick(" + rowData.orderformid + ");' onfocus='OrderDistributionListviewModule.distributionFocus(" + rowData.orderformid + ");' tabindex='" + rowIndex + "'  >" + "";
-                            operation += "<a href='javascript:void(0);' class='distributionDetailview' onclick='OrderDistributionListviewModule.detailview("+rowData.orderformid+");' style='margin-left:5px;' >查看</a>";
-                            operation += "<a href='javascript:void(0);' class='distributionDetailview' onclick='OrderDistributionListviewModule.cancelview("+rowData.orderformid+");' style='margin-left:5px;' >作废</a>";
+                            operation += "<a href='javascript:void(0);' class='distributionDetailview' onclick='OrderDistributionListviewModule.detailview("+rowData.orderformid + ','+ rowIndex+");' style='margin-left:5px;' >查看</a>";
+                            operation += "<a href='javascript:void(0);' class='distributionDetailview' onclick='OrderDistributionListviewModule.cancelview("+rowData.orderformid + ','+ rowIndex+ ");' style='margin-left:5px;' >作废</a>";
                             return operation;
                         }
                     },
@@ -188,7 +188,7 @@
             var pager = $('#orderFormDistributionTable').datagrid().datagrid('getPager')
             pager.pagination({
                 showRefresh: false,
-                pageSize : IndexIndexModule.gridRowsNumber,
+                pageSize : (IndexIndexModule.gridRowsNumber - 2),
                 layout: ['sep','first','prev','manual','links','next','last'],
                 buttons: [{
                     id: 'beizhuOrderDistribution',
@@ -357,19 +357,26 @@
          * 第一次启动
          */
         firstGetOrderForm: function () {
+            //获取分页参数
+            var pageNumber = {$pagenumber};
+            var data = {'page':pageNumber};
+            //获取行定位
+            var rowIndex = {$rowIndex};
             var that = this;
             setTimeout(function () {
                 $.ajax({
                     type: "POST",
                     url: "__URL__/listview",
                     dataType: "json",
+                    data:data,
                     success: function (data) {
                         if (data.total > 0) {
                             //选择第一行焦点
                             that.orderFormDistributionGrid.datagrid('loadData', data);
-                            that.focusNumberOD = 0;  //初始定位
+                            that.orderFormDistributionGrid.datagrid('getPager').pagination({'pageNumber':pageNumber});
+                            that.focusNumberOD = rowIndex;  //初始定位
                             //缓存订单号
-                            that.focusOrderformidOD = data.rows[0].orderformid;
+                            that.focusOrderformidOD = data.rows[rowIndex].orderformid;
                             //显示焦点
                             $('#orderTask' + that.focusNumberOD).focus();
                             //行选中
@@ -574,18 +581,20 @@
         /**
          * 查看订单
          */
-        detailview:function(orderformid){
+        detailview:function(orderformid,rowIndex){
             this.closeInterval();
-            var url = "__URL__/detailview/record/" + orderformid + "/returnAction/listview";
+            var url = "__URL__/detailview/record/" + orderformid + "/returnAction/listview"
+                    + '/rowIndex/' + rowIndex+'/pagetype/listview';
             IndexIndexModule.updateOperateTab(url);
         },
 
         /**
          * 作废订单
          */
-        cancelview:function(orderformid){
+        cancelview:function(orderformid,rowIndex){
             this.closeInterval();
-            var url = "__URL__/cancelview/record/" + orderformid + "/returnAction/listview";
+            var url = "__URL__/cancelview/record/" + orderformid + "/returnAction/listview"
+                    + '/rowIndex/' + rowIndex+'/pagetype/listview';
             IndexIndexModule.updateOperateTab(url);
         },
 

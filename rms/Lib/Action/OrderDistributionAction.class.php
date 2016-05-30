@@ -32,13 +32,6 @@ class OrderDistributionAction extends ModuleAction {
 			$listHeader = $listFields;
 			$this->assign ( "listHeader", $listHeader ); // 列表头
 
-			// 取得显示页数
-			$pageNumber = $_REQUEST ['page'];
-			if (empty ( $pageNumber )) {
-				$pageNumber = 1;
-			}
-
-
 			$where = array ();
 			$where [] = ' length(trim(company)) = 0 ';
 			$where [] = " not (state like '已%')";
@@ -46,24 +39,26 @@ class OrderDistributionAction extends ModuleAction {
 			$where ['domain'] = $_SERVER['HTTP_HOST'];
 			$total = $focus->where ( $where )->count (); // 查询满足要求的总记录数
 
-			// 导入分页类
-			import ( 'ORG.Util.Page' ); // 导入分页类
-			if($_SESSION['listMaxRows']){
-				$listMaxRows = $_SESSION['listMaxRows'];
+			//使用cookie读取rows
+			$listMaxRows = $_COOKIE['listMaxRows'];
+			if(!empty($listMaxRows)){
+
 			}else{
 				$listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
 			}
+
 			//应该订单分配还要显示两个统计数据，所以listrow还要减
 			$listMaxRows = $listMaxRows - 2;
 
+			// 导入分页类
+			import ( 'ORG.Util.Page' ); // 导入分页类
+			$pageNumber = $_REQUEST ['page'];
 			// 取得页数
 			$_GET ['p'] = $pageNumber;
 			$Page = new Page ( $total, $listMaxRows );
 
-			// 查session取得page的firstRos和listRows
-			if (isset ( $_SESSION [$moduleName . 'firstRowlistview'] )) {
-				$Page->firstRow = $_SESSION [$moduleName . 'firstRowlistview'];
-			}
+			//保存页数
+			$_SESSION [$moduleName . 'listview' . 'page'] = $pageNumber;
 
 
 			// 分公司的名称
@@ -111,6 +106,21 @@ class OrderDistributionAction extends ModuleAction {
 			$listHeader = $listFields;
 			$this->assign ( "listHeader", $listHeader ); // 列表头
 			$this->assign ( 'returnAction', 'listview' ); // 定义返回的方法
+
+			//如果存在页数,获取
+			if(isset($_REQUEST['pagetype'])){
+				$pageNumber = $_SESSION[$moduleName . $_REQUEST['pagetype'] . 'page'];
+			}else{
+				$pageNumber = 1;
+			}
+			$this->assign( 'pagenumber',$pageNumber);
+			//是否存在选中的行号
+			if(isset($_REQUEST['rowIndex'])){
+				$this->assign ( 'rowIndex',$_REQUEST['rowIndex']);
+			}else{
+				$this->assign ( 'rowIndex',0);
+			}
+
 			$this->display ( 'OrderDistribution/listview' );
 		}
 
@@ -237,12 +247,6 @@ class OrderDistributionAction extends ModuleAction {
 			// 模块的ID
 			$moduleId = strtolower($moduleName) . 'id';
 
-			// 取得显示页数
-			$pageNumber = $_REQUEST ['page'];
-			if (empty ( $pageNumber )) {
-				$pageNumber = 1;
-			}
-
 			// 建立查询条件
 			$where = array();
 			$searchText = urldecode($_REQUEST ['searchTextAddress']); // 查询内容
@@ -270,27 +274,30 @@ class OrderDistributionAction extends ModuleAction {
 
 			$where ['domain'] = $_SERVER ['HTTP_HOST'];
 
-			// 导入分页类
-			import('ORG.Util.Page'); // 导入分页类
+
 			$total = $focus->where($where)->count(); // 查询满足要求的总记录数
 
-			// 取得显示页数
-			$pageNumber = $_REQUEST ['page'];
-			if (empty ($pageNumber)) {
-				$pageNumber = 1;
-			}
+			//使用cookie读取rows
+			$listMaxRows = $_COOKIE['listMaxRows'];
+			if(!empty($listMaxRows)){
 
-			if($_SESSION['listMaxRows']){
-				$listMaxRows = $_SESSION['listMaxRows'];
 			}else{
 				$listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
 			}
-			//订单配送还要显示两个统计数据
-			$listMaxRows = $listMaxRows -2;
 
+			//订单配送还要显示两个统计数据
+			$listMaxRows = $listMaxRows - 1;
+
+			// 导入分页类
+			import('ORG.Util.Page'); // 导入分页类
+			// 取得显示页数
+			$pageNumber = $_REQUEST ['page'];
 			// 取得页数
 			$_GET ['p'] = $pageNumber;
 			$Page = new Page ($total, $listMaxRows);
+
+			//保存页数
+			$_SESSION [$moduleName . 'searchviewaddress' . 'page'] = $pageNumber;
 
 			// 查询模块的数据
 			foreach($listFields as $key => $value) {
@@ -343,6 +350,20 @@ class OrderDistributionAction extends ModuleAction {
 			$listHeader = $listFields;
 			$this->assign("listHeader", $listHeader); // 列表头
 			$this->assign('returnAction', 'searchviewAddress'); // 定义返回的方法
+
+			//如果存在页数,获取
+			if(isset($_REQUEST['pagetype'])){
+				$pageNumber = $_SESSION[$moduleName . $_REQUEST['pagetype'] . 'page'];
+			}else{
+				$pageNumber = 1;
+			}
+			$this->assign( 'pagenumber',$pageNumber);
+			//是否存在选中的行号
+			if(isset($_REQUEST['rowIndex'])){
+				$this->assign ( 'rowIndex',$_REQUEST['rowIndex']);
+			}else{
+				$this->assign ( 'rowIndex',0);
+			}
 
 			$this->display('OrderDistribution/searchviewaddress'); // 查询的结果显示
 		}
@@ -398,28 +419,28 @@ class OrderDistributionAction extends ModuleAction {
 
 			$where ['domain'] = $_SERVER ['HTTP_HOST'];
 
-			// 导入分页类
-			import('ORG.Util.Page'); // 导入分页类
 			$total = $focus->where($where)->count(); // 查询满足要求的总记录数
 
-			// 取得显示页数
-			$pageNumber = $_REQUEST ['page'];
-			if (empty ($pageNumber)) {
-				$pageNumber = 1;
-			}
+			//使用cookie读取rows
+			$listMaxRows = $_COOKIE['listMaxRows'];
+			if(!empty($listMaxRows)){
 
-			if($_SESSION['listMaxRows']){
-				$listMaxRows = $_SESSION['listMaxRows'];
 			}else{
 				$listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
 			}
-			$listMaxRows = 15;
-			//订单配送还要显示两个统计数据
-			$listMaxRows = $listMaxRows -2;
 
+			//订单配送还要显示两个统计数据
+			$listMaxRows = $listMaxRows - 1;
+
+			// 导入分页类
+			import('ORG.Util.Page'); // 导入分页类
+			$pageNumber = $_REQUEST ['page'];  	// 取得显示页数
 			// 取得页数
 			$_GET ['p'] = $pageNumber;
 			$Page = new Page ($total, $listMaxRows);
+
+			//保存页数
+			$_SESSION [$moduleName . 'searchviewcompany' . 'page'] = $pageNumber;
 
 			// 查询模块的数据
 			foreach($listFields as $key => $value) {
@@ -471,6 +492,20 @@ class OrderDistributionAction extends ModuleAction {
 			$listHeader = $listFields;
 			$this->assign("listHeader", $listHeader); // 列表头
 			$this->assign('returnAction', 'searchviewCompany'); // 定义返回的方法
+
+			//如果存在页数,获取
+			if(isset($_REQUEST['pagetype'])){
+				$pageNumber = $_SESSION[$moduleName . $_REQUEST['pagetype'] . 'page'];
+			}else{
+				$pageNumber = 1;
+			}
+			$this->assign( 'pagenumber',$pageNumber);
+			//是否存在选中的行号
+			if(isset($_REQUEST['rowIndex'])){
+				$this->assign ( 'rowIndex',$_REQUEST['rowIndex']);
+			}else{
+				$this->assign ( 'rowIndex',0);
+			}
 
 			$this->display('OrderDistribution/searchviewcompany'); // 查询的结果显示
 		}
@@ -557,30 +592,31 @@ class OrderDistributionAction extends ModuleAction {
 				$where ['_logic'] = 'OR';
 				$map['_complex'] = $where;
 			}
-
 			$map['domain'] = $_SERVER['HTTP_HOST'];
 
-			// 导入分页类
-			import('ORG.Util.Page'); // 导入分页类
 			$total = $focus->where($where)->count(); // 查询满足要求的总记录数
 
-			// 取得显示页数
-			$pageNumber = $_REQUEST ['page'];
-			if (empty ($pageNumber)) {
-				$pageNumber = 1;
-			}
+			//使用cookie读取rows
+			$listMaxRows = $_COOKIE['listMaxRows'];
+			if(!empty($listMaxRows)){
 
-			if($_SESSION['listMaxRows']){
-				$listMaxRows = $_SESSION['listMaxRows'];
 			}else{
 				$listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
 			}
-			//订单配送还要显示两个统计数据
-			$listMaxRows = $listMaxRows -2;
 
+			//订单配送还要显示两个统计数据
+			$listMaxRows = $listMaxRows - 1;
+
+			// 导入分页类
+			import('ORG.Util.Page'); // 导入分页类
+			// 取得显示页数
+			$pageNumber = $_REQUEST ['page'];
 			// 取得页数
 			$_GET ['p'] = $pageNumber;
 			$Page = new Page ($total, $listMaxRows);
+
+			//保存页数
+			$_SESSION [ 'OrderDistributionsearchviewother' . 'page'] = 3; // $pageNumber;
 
 			// 查询模块的数据
 			foreach($listFields as $key => $value) {
@@ -595,7 +631,7 @@ class OrderDistributionAction extends ModuleAction {
 			} else {
 				$orderHandleArray  = array();
 			}
-			$data = array('total' => $total, 'rows' => $orderHandleArray);
+			$data = array('total' => $total, 'rows' => $orderHandleArray,'pagenumber'=>$pageNumber);
 			$this->ajaxReturn($data);
 		}else{
 			// 取得模块的名称
@@ -640,6 +676,20 @@ class OrderDistributionAction extends ModuleAction {
 			$searchOption = $focus->searchFields;
 			$this->assign ( 'searchOption', $searchOption );
 			$this->assign ( 'returnAction', 'searchviewOther' ); // 定义返回的方法
+
+			//如果存在页数,获取
+			if(isset($_REQUEST['pagetype'])){
+				$pageNumber =  $_SESSION['OrderDistributionsearchviewother' . 'page'];
+			}else{
+				$pageNumber = 1;
+			}
+			$this->assign( 'pagenumber',$pageNumber);
+			//是否存在选中的行号
+			if(isset($_REQUEST['rowIndex'])){
+				$this->assign ( 'rowIndex',$_REQUEST['rowIndex']);
+			}else{
+				$this->assign ( 'rowIndex',0);
+			}
 
 			$this->display ( 'OrderDistribution/searchviewother' ); // 查询的结果显示
 		}
@@ -809,6 +859,9 @@ class OrderDistributionAction extends ModuleAction {
 		
 		$this->assign ( 'blocks', $blocks );
 		$this->assign ( 'record', $record );
+		$this->assign ( 'pagenumber',$_SESSION[$moduleName . $_REQUEST['pagetype'] . 'page']);
+		$this->assign ( 'rowIndex', $_REQUEST['rowIndex']);  //选中的行号
+		$this->assign ( 'pagetype', $_REQUEST['pagetype']);
 		
 		// 返回从表的内容
 		$this->get_slave_table ( $record );
@@ -874,11 +927,13 @@ class OrderDistributionAction extends ModuleAction {
 			// 同时写入日志中
 			// 记入操作到action中
 			$orderactionModel = D ( 'Orderaction' );
+			$orderactionData ['orderformid'] = $orderformid; // 订单号
 			$orderactionData ['ordersn'] = $ordersn; // 订单号
 			$company = $data ['company'];
 			$orderactionData ['action'] = "订单从".$orderformResult['company']."重新分配给" . $companyName . "配送点";
 			$orderactionData ['logtime'] = date ( 'H:i:s' );
-			$orderactionModel->create ();
+			$orderactionData ['domain'] = $_SERVER['HTTP_HOST'];
+ 			$orderactionModel->create ();
 			$result = $orderactionModel->add ( $orderactionData );
 
 		}else{
@@ -891,10 +946,12 @@ class OrderDistributionAction extends ModuleAction {
 			// 同时写入日志中
 			// 记入操作到action中
 			$orderactionModel = D ( 'Orderaction' );
+			$orderactionData ['orderformid'] = $orderformid; // 订单号
 			$orderactionData ['ordersn'] = $ordersn; // 订单号
 			$company = $data ['company'];
 			$orderactionData ['action'] = "订单分配给" . $companyName . "配送点";
 			$orderactionData ['logtime'] = date ( 'H:i:s' );
+			$orderactionData ['domain'] = $_SERVER['HTTP_HOST'];
 			$orderactionModel->create ();
 			$result = $orderactionModel->add ( $orderactionData );
 		}
@@ -1008,9 +1065,11 @@ class OrderDistributionAction extends ModuleAction {
 		$where ['orderformid'] = $record;
 		$orderstateModel->where ( $where )->save ( $data );
 
-
+		$pagetype = $_REQUEST['pagetype'];
 		// 生成查看的url
 		$detailviewUrl = U ( "OrderDistribution/" . $returnAction, array (
+			'record' => $record,'returnAction'=>$returnAction,
+			'rowIndex' => $_REQUEST['rowIndex'],'pagetype' =>$pagetype
 		) );
 		$return = $detailviewUrl;
 		$info['status'] = 'success';

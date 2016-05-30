@@ -24,14 +24,25 @@
 
 
                 // 配送店（分公司）的信息
-                // 分公司的名称
-                $company = $this->userInfo ['department'];
+
                 $where = array();
                 $where ['state'] = array(
                     'notlike',
                     '已%'
                 );
-                //$where ['company'] = $company;
+
+                //用户信息
+                $userInfo = $_SESSION['userInfo'];
+                //如果是超级管理员，显示系统管理导航
+                if((C('RBAC_SUPERADMIN') == $userInfo['name'])){
+
+                }else{
+                    // 分公司的名称
+                    $company = $userInfo ['department'];
+                    $where ['company'] = $company;
+                }
+                //需要显示普通发票
+                $where['type'] = array('NEQ','1');
                 //$where ['_string'] = "length(trim(company)) > 0";
                 $where ['domain'] = $_SERVER ['HTTP_HOST'];
 
@@ -45,11 +56,14 @@
                     $pageNumber = 1;
                 }
 
-                if($_SESSION['maxRows']){
-                    $listMaxRows = $_SESSION['maxRows'];
+                //使用cookie读取rows
+                $listMaxRows = $_COOKIE['listMaxRows'];
+                if(!empty($listMaxRows)){
+
                 }else{
                     $listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
                 }
+
                 //订单配送还要显示两个统计数据
                 $listMaxRows = $listMaxRows -2;
 
@@ -228,13 +242,44 @@
 
             $where = array();
             $where['invoiceid'] = $invoiceid;
+            $where['ordermoney'] = array('gt',0);
 
             $fields = array(
               'invoiceid','header','body','ordermoney'
             );
             $invoiceResult = $focus->field($fields)->where($where)->find();
+            if(empty($invoiceResult['body'])){
+                $invoiceResult['body'] = '工作餐';
+            }
+
+            // 接线员的姓名
+            $userInfo = $_SESSION ['userInfo'];
+            $name = $userInfo ['truename'];
+            $invoiceResult['name'] = $name;  //开票人
 
             $this->ajaxReturn($invoiceResult);
+        }
+
+        //开票成功,设置标志
+        public function setInvoiceOpened($invoiceid){
+            $moduleName = $this->getActionName();
+            $this->assign('moduleName', $moduleName); // 模块名称
+
+            // 启动当前模块
+            $focus = D($moduleName);
+
+            $where = array();
+            $where['invoiceid'] = $invoiceid;
+
+            $data = array();
+            $data['state'] = '已开票';
+            $result = $focus->where($where)->save($data);
+
+            if($result){
+                $this->ajaxReturn(array('status'=>1));
+            }else{
+                $this->ajaxReturn(array());
+            }
         }
 
         //放弃开票
@@ -254,11 +299,10 @@
             $result = $focus->where($where)->save($data);
 
             if($result){
-                $this->ajaxReturn(array('status'=>1));
+                $this->ajaxReturn(array('status'=>1,'info'=>'成功!'));
             }else{
-                $this->ajaxReturn(array());
+                $this->ajaxReturn(array('info'=>'失败!'));
             }
-
         }
 
     }

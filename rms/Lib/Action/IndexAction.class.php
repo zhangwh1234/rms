@@ -1,8 +1,6 @@
 <?php
     class IndexAction extends Action{
         public function index() {
-        	      	
-            define('IN_RMS','rms_dxd2');
             $userid = $_SESSION['userid'];
 
             //用户如果没有登陆，跳转到登陆页面
@@ -87,12 +85,5 @@
             $this->display("Public:404"); 
         }
 
-        //设置列表长度
-        public function setMaxRows(){
-            $listMaxRows = $_REQUEST['maxRows'];
-            //设置
-            $_SESSION['listMaxRows'] = $listMaxRows;
-            $this->ajaxReturn(array($listMaxRows));
-        }
     }
 ?>

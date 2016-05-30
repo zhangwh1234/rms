@@ -18,7 +18,7 @@
             var btn = [];
             btn.push('<a href="javascript:void(0);" onclick="SendnameMgrListviewModule.detailview(' + rowData.sendnamemgrid + ')">查看</a>');
             btn.push('<a href="javascript:void(0);" onclick="SendnameMgrListviewModule.editview(' + rowData.sendnamemgrid + ')">编辑</a>');
-            btn.push('<a href="javascript:void(0);" onclick="SendnameMgrListviewModule.delete(' + rowData.sendnamemgrid + ')">删除</a>');
+            btn.push('<a href="javascript:void(0);" onclick="SendnameMgrListviewModule.deleteRecord(' + rowData.sendnamemgrid + ')">删除</a>');
             return btn.join(' | ');
         },
 
@@ -40,13 +40,13 @@
         },
 
         //删除用户记录
-        delete: function (id) {
+        deleteRecord : function (id) {
             var that = this;
             $.messager.confirm('提示信息', '确定要删除吗？', function (result) {
                 if (!result) return false;
 
                 $.messager.progress({text: '处理中，请稍候...'});
-                $.get('{:U('SendnameMgr/delete')}', {record: id}, function (res) {
+                $.get("{:U('SendnameMgr/delete')}", {record: id}, function (res) {
                     $.messager.progress('close');
 
                     if (!res.status) {

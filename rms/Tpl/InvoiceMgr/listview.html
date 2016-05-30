@@ -98,7 +98,7 @@
             this.quickKeyboardAction();
             //启动分页事件
             this.dataPage();
-           // this.quickRefreshInvoice();
+            this.quickRefreshInvoice();
             //显示订单情况
            // this.refreshOrderHandleMonit();
 
@@ -134,7 +134,7 @@
                             var operation;
                             operation = '';
                             operation += "<a href='javascript:void(0);' onclick='InvoiceMgrListviewModule.cancelOpenInvoice(" + rowData.invoiceid + ",\""+rowData.header + rowData.body+ " </br> " +rowData.orderformtxt+"</br>" +"\")' class='invoiceMgrListviewCancelOper'  style='margin-right:8px;'>放弃开票</a>";
-                            operation += "<a href='javascript:void(0);' onclick='InvoiceMgrListviewModule.openInvoice(" + rowData.invoiceid  + ")' class='invoiceMgrListviewOpenOper' style='margin-left:4px;' >开票</a>";
+                            operation += "<a href='javascript:void(0);' id='InvoiceMgrListviewOper" + rowIndex +"' onclick='InvoiceMgrListviewModule.openInvoice(" + rowData.invoiceid  + "," + rowIndex + ")' class='invoiceMgrListviewOpenOper' style='margin-left:4px;' >开票</a>";
                             return operation;
                         }
                     }
@@ -337,37 +337,48 @@
         /**
          * 发票开具
          */
-        openInvoice: function (invoiceid) {
+        openInvoice: function (invoiceid,rowIndex ) {
+            alert('open');
+            this.refreshOrder = false;
+            //$('#InvoiceMgrListviewOper'+rowIndex).removeAttr('onclick');
+            $.messager.progress({text: '处理中，请稍候...'});
+            var that = this;
             //获取发票所需要的信息
             $.ajax({
                 type: "GET",
                 url: "__URL__/getInvoiceInfo/invoiceid/"+invoiceid,
                 dataType: "json",
                 success: function (data) {
-                    InvoiceOper.openInvoice(data);
+                    var invoiceOperState = InvoiceOper.openInvoice(data);
+                    if(invoiceOperState){
+                        $.messager.progress('close');
+                        //更新打印状态
+                        that.invoiceMgrHandleGrid.datagrid('updateRow', {
+                            index: rowIndex,    //定位行
+                            row: {
+                                state: '已开票'
+                            }
+                        });
+                        // 设定订单状态为已打印
+                        $.ajax({
+                            type: "GET",
+                            url: "__URL__/setInvoiceOpened/invoiceid/"+invoiceid,
+                            dataType: "json",
+                            success: function (data) {
+                            }
+                        })
+
+                        that.invoiceMgrHandleGrid.datagrid('selectRow', rowIndex);
+                        that.taskOrderNumber = this.taskOrderNumber - 1;  //为了启动快速刷新，减1
+                        that.refreshOrder = true;
+
+                    }else{
+                        alert('最后开票失败 !');
+                        $.messager.progress('close');
+                    }
                 }
             })
             return false;
-
-            // 设定订单状态为已打印
-            $.ajax({
-                type: "GET",
-                url: "__URL__/setOrderPrinted/orderformid/"+orderformid,
-                dataType: "json",
-                success: function (data) {
-                }
-            })
-            //更新打印状态
-            this.invoiceMgrHandleGrid.datagrid('updateRow', {
-                index: rowIndex,    //定位行
-                row: {
-                    state: '已打印'
-                }
-            });
-            rowIndex = rowIndex + 1;
-            $('#orderHandle' + rowIndex).focus();  //下移动一行
-            this.invoiceMgrHandleGrid.datagrid('selectRow', rowIndex);
-            this.taskOrderNumber = this.taskOrderNumber - 1;  //为了启动快速刷新，减1
         },
 
         /**

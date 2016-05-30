@@ -1,0 +1,50 @@
+<div id="popupviewproducts_div" class="easyui-layout" data-options="fit:true" style="overflow: hidden;">
+    <div data-options="region:'center'">
+        <tagLib name="easyui"/>
+        <easyui:datagrid options="datagrid.options" fields="datagrid.fields"/>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    var OrderPrintHandlePopupSendnameviewModule = {
+
+        init: function () {
+        },
+
+        //重新设置page
+        setPagination: function () {
+            //定义订单分页表
+            var pager = $('#orderprinthandle_popupsendnameview_datagrid').datagrid().datagrid('getPager');
+            pager.pagination({
+                showRefresh: false,
+                pageSize: IndexIndexModule.gridRowsNumber,
+                layout: ['sep', 'first', 'links', 'last']
+            });
+        },
+
+        //操作格式化
+        operate: function (val, rowData, rowIndex) {
+            var btn = [];
+            btn.push('<a href="javascript:void(0);" onclick="OrderPrintHandlePopupSendnameviewModule.selectSendname(' +rowData.code+',\''
+            + rowData.name +'\')">选择</a>');
+            return btn.join(' | ');
+        },
+
+        //单选产品
+        selectSendname:function (code,name){
+            $("#OrderPrintHandleCreateviewForm input[name=code]").val(code);
+            $("#OrderPrintHandleCreateviewForm input[name=name]").val(name);
+            $('#globel-dialog-div').dialog('close');
+
+        }
+    }
+
+    $(function () {
+        OrderPrintHandlePopupSendnameviewModule.init();
+        setTimeout(function(){
+            OrderPrintHandlePopupSendnameviewModule.setPagination();
+        },200);
+    })
+
+</script>

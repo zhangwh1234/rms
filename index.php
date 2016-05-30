@@ -9,7 +9,7 @@
     require APP_PATH.'Conf/datapath.php';
     $HTTP_POST = $_SERVER['HTTP_HOST'];
     if(!isset($rmsDataPath[$HTTP_POST])){
-                        print_r('route error!');
+        print_r('route error!');
         exit;  
     } 
 

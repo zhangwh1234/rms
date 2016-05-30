@@ -222,7 +222,7 @@
 			//定义订单分页表
 			this.datagrid.datagrid('getPager').pagination({
 				showRefresh: false,
-				pageSize : IndexIndexModule.gridRowsNumber,
+				pageSize : (IndexIndexModule.gridRowsNumber -2),
 				layout: ['sep','first','prev','manual','links','next','last'],
 				buttons: [{
 					id: 'orderHandleSearchviewOtherTb',
@@ -459,6 +459,7 @@
 		 * 将订单转分配给其他分公司
 		 */
 		distributeOrderOtherCompany: function (orderformid, rowIndex) {
+			return false;
 			var that = this;
 			$(that.dialog).dialog({
 				title: '转其他分公司',

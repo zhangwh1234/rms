@@ -141,7 +141,7 @@
             //电话
             telphone = '电话:' + '';
             //客户
-            clientname = '客户:' + data['zhuangxiangform'].name;
+            clientname = '客户:' + data['zhuangxiangform'].sendname;
             //要餐时间
             custtime = '要餐时间:' + '';
             row = row + 1;
@@ -234,7 +234,7 @@
             //电话
             telphone = '电话:' + '';
             //客户
-            clientname = '客户:' + data['zhuangxiangform'].name;
+            clientname = '客户:' + data['zhuangxiangform'].sendname;
             //要餐时间
             custtime = '要餐时间:' + '';
             row = row + 1;
@@ -320,7 +320,7 @@
             row = row + 1;
             LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, zhuangxiangid);
             //地址
-            address = '装箱:' + data['zhuangxiangform'].name;
+            address = '装箱:' + data['zhuangxiangform'].sendname;
             if (address.length > 0) {
                 row = row + 1;
                 LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, address);
@@ -374,7 +374,7 @@
             row = row + 1;
             LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, zhuangxiangid);
             //地址
-            address = '装箱:' + data['zhuangxiangform'].name;
+            address = '装箱:' + data['zhuangxiangform'].sendname;
 
             row = row + 1;
             LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, address);
@@ -426,7 +426,7 @@
             row = row + 1;
             LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, zhuangxiangid);
             //地址
-            address = '装箱:' + data['zhuangxiangform'].name;
+            address = '装箱:' + data['zhuangxiangform'].sendname;
 
             row = row + 1;
             LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, address);
@@ -490,7 +490,7 @@
             orderformid = data['zhuangxiangform'].recdate + '-' + data['zhuangxiangform'].orderformid;
             LODOP.ADD_PRINT_TEXT(6, 29, 187, 24, orderformid);
             //地址
-            address = '装箱:' + data['zhuangxiangform'].name;
+            address = '装箱:' + data['zhuangxiangform'].sendname;
             address1 = address.subCHStr(0, 22);
             //第一格
             LODOP.ADD_PRINT_TEXT(35, 27, 301, 40, address);

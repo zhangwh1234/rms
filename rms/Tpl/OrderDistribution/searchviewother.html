@@ -118,8 +118,8 @@
                         formatter: function (value, rowData, rowIndex) {
                             var operation;
                             operation = "<input class='distributionOrder' id='orderDistributionOtherTask" + rowIndex + "' name='orderDistributionOtherTask" + rowIndex + "' type='text'  size='8' onkeyup='OrderDistributionSearchviewOtherModule.distributionOrder(event,this," + rowData.orderformid + "," + rowIndex + ");' onclick='OrderDistributionSearchviewOtherModule.distributionClick(" + rowData.orderformid + ");' tabindex='" + rowIndex + "'  >" + "";
-                            operation += "<a href='javascript:void(0);' class='distributionDetailview' onclick='IndexIndexModule.updateOperateTab(&apos;__URL__/detailview/record/" + rowData.orderformid + "/returnAction/searchviewCompany&apos;)' style='margin-left:5px;' > 查看 </a>";
-                            operation += "<a href='javascript:void(0);' class='distributionDetailview' onclick='IndexIndexModule.updateOperateTab(&apos;__URL__/cancelview/record/" + rowData.orderformid + "/returnAction/searchviewCompany&apos;)' style='margin-left:5px;' >作废</a>";
+                            operation += "<a href='javascript:void(0);' class='distributionDetailview' onclick='OrderDistributionSearchviewOtherModule.detailview(" + rowData.orderformid + ','+rowIndex+ ")' style='margin-left:5px;' >查看</a>";
+                            operation += "<a href='javascript:void(0);' class='distributionDetailview' onclick='OrderDistributionSearchviewOtherModule.cancelview(" + rowData.orderformid +  ','+rowIndex+ ")' style='margin-left:5px;' >作废</a>";
                             return operation;
                         }
                     }
@@ -133,6 +133,7 @@
             var pager = $(this.datagrid).datagrid().datagrid('getPager')
             pager.pagination({
                 showRefresh: false,
+                pageSize : (IndexIndexModule.gridRowsNumber - 1),
                 layout: ['sep','first','prev','manual','links','next','last'],
                 buttons: [{
                     id: 'beizhuOrderDistributionOther',
@@ -246,6 +247,11 @@
          * 第一次启动
          */
         firstGetOrderForm: function () {
+            //获取分页参数
+            var pageNumber = {$pagenumber};
+            var data = {'page':pageNumber};
+            //获取行定位
+            var rowIndex = {$rowIndex};
             var that = this;
             setTimeout(function () {
                 $.ajax({
@@ -256,10 +262,11 @@
                         if (data.rows.length > 0) {
                             //选择第一行焦点
                             $(that.datagrid).datagrid('loadData', data);
-                            that.focusNumberOtherOD = 0;  //初始定位
+                            that.focusNumberOtherOD = rowIndex;  //初始定位
 
                             //显示焦点
                             $('#orderDistributionOtherTask' + that.focusNumberOtherOD).focus();
+                            $(that.datagrid).datagrid('getPager').pagination({'pageNumber':pageNumber});  //页定位
                             //行选中
                             $(that.datagrid).datagrid('selectRow', that.focusNumberOtherOD);
                         }
@@ -353,6 +360,25 @@
                 }
             })
         },
+
+        /**
+         * 查看订单
+         */
+        detailview:function(orderformid,rowIndex){
+            var url = "__URL__/detailview/record/" + orderformid + "/returnAction/searchviewOther"
+                    + '/rowIndex/' + rowIndex+'/pagetype/searchviewother';
+            IndexIndexModule.updateOperateTab(url);
+        },
+
+        /**
+         * 作废订单
+         */
+        cancelview:function(orderformid,rowIndex){
+            var url = "__URL__/cancelview/record/" + orderformid + "/returnAction/searchviewOther"
+                    + '/rowIndex/' + rowIndex+'/pagetype/searchviewother';
+            IndexIndexModule.updateOperateTab(url);
+        },
+
 
         /**
          * 综合查询

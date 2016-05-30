@@ -404,6 +404,21 @@
 <td width="100%" class="dvtCellLabel" align="left" colspan="2"> 
 <label style="float:left;font-size: 14px;line-height: 30px;margin-left: 100px;">按F10快捷键</label><input id="todaymenu" type="button" value="今日菜单" style="" />
 </td>
+
+    {// --63-- 文本输入框}
+    <elseif condition="$uitype eq 63" />
+    <td width=15% class="dvtCellLabel" align=right>
+        <font color="red">{$mandatory_field}*</font>{$label}
+    </td>
+    <td width=35% align=left class="dvtCellInfo">
+        <input type="text"  name="{$name}"  value="{$value}"  {$readonly} size="{$length}" class="detailedViewTextBox"  AUTOCOMPLETE="off">
+        <img id="{$moduleName}{$Think.ACTION_NAME|ucfirst}searchIcon1" title="产品选择" src="./__PUBLIC__/Images/products.gif" style="cursor: pointer;"
+             align="absmiddle"
+             onclick="OrderPrintHandleViewModule.sendnamePickList('__URL__/popupSendnameview');"/><a
+            href="javascript:OrderPrintHandleViewModule.sendnamePickList('__URL__/popupSendnameview');">选择</a>
+
+    </td>
+
  
 
 </if>

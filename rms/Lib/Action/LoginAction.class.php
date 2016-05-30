@@ -3,6 +3,9 @@
     class LoginAction extends Action{
         public function index(){
             if(!isset($_SESSION['userid'])) {
+                require APP_PATH.'Conf/datapath.php';
+                $HTTP_POST = $_SERVER['HTTP_HOST'];
+                $this->assign('city',$rmsDataPath[$HTTP_POST]['CITY']);
                 $this->display();
             }else{
                 $currentModule = $_SESSION['currentModule'];  //当前的模块

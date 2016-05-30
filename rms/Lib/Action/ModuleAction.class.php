@@ -94,8 +94,10 @@ class ModuleAction extends Action {
 				}
 			}
 
-			if($_SESSION['listMaxRows']){
-				$listMaxRows = $_SESSION['listMaxRows'];
+			//使用cookie读取rows
+			$listMaxRows = $_COOKIE['listMaxRows'];
+			if(!empty($listMaxRows)){
+
 			}else{
 				$listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
 			}
@@ -123,7 +125,7 @@ class ModuleAction extends Action {
 				$orderHandleArray  = array ();
 			}	
 			$data = array('total'=>$total, 'rows'=>$orderHandleArray);
-			$this->ajaxReturn(json_encode($data),'EVAL');
+			$this->ajaxReturn($data);
 		} else {
 			// 取得模块的名称
 			$moduleName = $this->getActionName ();
@@ -166,8 +168,9 @@ class ModuleAction extends Action {
 
 			$datagrid = array (
 					'options' => array (
-							'url' => U ( $moduleName . '/listview' ,$searchArray ),
-							'pageNumber' => 1
+						'url' => U ( $moduleName . '/listview' ,$searchArray ),
+						'pageNumber' => 1,
+						'pageSize' => 10
 					) 
 			);
 			foreach ($listFields as $key => $value) {
@@ -364,7 +367,10 @@ class ModuleAction extends Action {
 		$this->assign ( 'info', $result );
 		$this->assign ( 'fieldsFocus', $focus->fieldsFocus ); // 指定字段获得焦点
 		$this->assign ( 'record', $record ); // 订单记录号
+		$this->assign ( 'pagenumber',$_SESSION[$moduleName . $_REQUEST['pagetype'] . 'page']);
 		$this->assign ( 'blocks', $blocks);
+		$this->assign ( 'rowIndex', $_REQUEST['rowIndex']);  //选中的行号
+		$this->assign ( 'pagetype', $_REQUEST['pagetype']);
 		                                     
 		// 回调主程序需要的参数,比如下拉框的数据
 		$this->returnMainFnPara ();
@@ -413,8 +419,10 @@ class ModuleAction extends Action {
 		$this->assign ( 'info', $result );
 		$this->assign ( 'blocks', $blocks );
 		$this->assign ( 'fieldsFocus', $focus->fieldsFocus ); // 指定字段获得焦点
-		
+		$this->assign ( 'pagenumber',$_SESSION[$moduleName . $_REQUEST['pagetype'] . 'page']);
 		$this->assign ( 'record', $record ); // 订单记录号
+		$this->assign ( 'rowIndex', $_REQUEST['rowIndex']);  //选中的行号
+		$this->assign ( 'pagetype', $_REQUEST['pagetype']);
 		                                     
 		// 回调主程序需要的参数,比如下拉框的数据
 		$this->returnMainFnPara ();
@@ -459,6 +467,9 @@ class ModuleAction extends Action {
 		$this->assign ( 'info', $result );
 		$this->assign ( 'record', $record );
 		$this->assign ( 'blocks',$blocks);
+		$this->assign ( 'pagenumber',$_SESSION[$moduleName . $_REQUEST['pagetype'] . 'page']);
+		$this->assign ( 'rowIndex', $_REQUEST['rowIndex']);  //选中的行号
+		$this->assign ( 'pagetype' , $_REQUEST['pagetype']);
 		
 		// 返回从表的内容
 		$this->get_slave_table ( $record );
@@ -766,10 +777,11 @@ class ModuleAction extends Action {
 		$slaveResult = $this->update_slave_table ( $record );
 		
 		$return ['record'] = $record;
-
+		$pagetype = $_REQUEST['pagetype'];
 		// 生成查看的url
 		$detailviewUrl = U ( "$moduleName/detailview", array (
-			'record' => $record,'returnAction'=>$returnAction
+			'record' => $record,'returnAction'=>$returnAction,
+			'rowIndex' => $_REQUEST['rowIndex'],'pagetype' =>$pagetype
 		) );
 		$return = $detailviewUrl;
 		$info['status'] = 1;
@@ -922,7 +934,6 @@ class ModuleAction extends Action {
 	 */
 	public function returnWhere(&$where) {
 		$where ['domain'] = $_SERVER ['HTTP_HOST'];
-		return $where;
 	}
 }
 

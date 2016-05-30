@@ -5,8 +5,8 @@
         <li>&nbsp;&gt;查看操作</li>
         <li style="width: 50px;">&nbsp;</li>
 
-        <li style="margin-left: 10px;"><a href="javascript:;" onclick="IndexIndexModule.updateOperateTab('__URL__/{$returnAction}');" ><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
-        <li><a href="javascript:void(0);"  onclick="IndexIndexModule.updateOperateTab('__URL__/{$returnAction}');">返回列表<span>^4</span></a></li>
+        <li style="margin-left: 10px;"><a href="javascript:;" onclick="IndexIndexModule.updateOperateTab('__URL__/{$returnAction}/pagetype/{$pagetype}/rowIndex/{$rowIndex}');" ><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);"  onclick="IndexIndexModule.updateOperateTab('__URL__/{$returnAction}/pagetype/{$pagetype}/rowIndex/{$rowIndex}');">返回列表<span>^4</span></a></li>
 
 
         <li style="float: right;margin-right: 60px;"><a href="javascript:void(0);"   onclick="IndexIndexModule.closeOperateTab();" >关闭</a></li>
@@ -35,7 +35,7 @@
                 var tab = $('#operation').tabs('getSelected');
                 var tabOptions = tab.panel('options');
                 //if (tabOptions.title == '订餐单' ) {
-                IndexIndexModule.updateOperateTab("__URL__/{$returnAction}");
+                IndexIndexModule.updateOperateTab("__URL__/{$returnAction}/pagetype/{$pagetype}/rowIndex/{$rowIndex}");
                 //};
             });
         }

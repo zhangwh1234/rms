@@ -82,7 +82,7 @@
                 $data['number'] = $number;
                 $data['money'] = $money;
                 $data['zhuangxiangid'] = $record;
-                $data['sendname'] = trim($_REQUEST['name']);
+                $data['sendname'] = trim($_REQUEST['sendname']);
                 $data['company'] = $company;
                 $data['domain'] = $_SERVER['HTTP_HOST'];
                 if( !empty($name) and  !empty($number)){
@@ -100,7 +100,7 @@
             //记入操作到action中
             $orderactionModel = D('Zhuangxiangaction');
             $action['zhuangxiangid'] = $record;  //订单号
-            $action['action'] = $name . ' 新建 装箱单 '.$zhuangxiangTxt;
+            $action['action'] = $name . ' 新建 装箱单给:'.trim($_REQUEST['sendname']).' '.$zhuangxiangTxt;
             $action['logtime'] = date('H:i:s');
             $orderactionModel->create();
             $result = $orderactionModel->add($action);
@@ -134,7 +134,7 @@
                 $data['type'] = '装箱';
                 $data['number'] = $number;
                 $data['extid'] = $record;
-                $data['sendname'] = trim($_REQUEST['name']); //送餐员
+                $data['sendname'] = trim($_REQUEST['sendname']); //送餐员
                 $data['company'] = $company;
                 $data['date'] = date('Y-m-d');
                 $data['ap'] = $this->getAp();

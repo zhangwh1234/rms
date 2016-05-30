@@ -4,7 +4,7 @@
   */
   return array(
     'code' => '代码',
-    'name' => '送餐员姓名',
+    'sendname' => '送餐员姓名',
     'totalmoney' => '总金额',
     'state' => '状态',
     'ap' => '午别',

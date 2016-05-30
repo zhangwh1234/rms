@@ -22,10 +22,10 @@
                 CollectGarbage();
 
                 // V2.0
-                this.kpdriver.CertPassWord='88888888';
+                //this.kpdriver.CertPassWord='124.205.14.131:8001';
 
                 this.kpdriver.OpenCard();
-                window.console.info(this.kpdriver.RetCode);
+                alert(this.kpdriver.RetCode);
                 if(this.kpdriver.RetCode=="1011"){
                     this.isOpen = true;
                     return true;
@@ -38,11 +38,12 @@
                     this.checkSetup();
                 }else {
                     alert("金税卡开启失败，错误代码："+this.kpdriver.RetCode);
+                    this.closeCard();
                 }
                 return false;
             }catch(e) {
                 alert("开票组件出错，错误信息为open："+e.description);
-                closeCard();
+                this.closeCard();
                 return false;
             }
         },
@@ -62,6 +63,7 @@
                 this.closeCard();
                 return false;
             }
+            alert('setup');
             return true;
         },
 
@@ -80,7 +82,7 @@
 
         getInfo:function(infoKind){
             this.kpdriver.InfoKind = infoKind;
-            this.kpdriver.GetInfo();
+            var rect =  this.kpdriver.GetInfo();
             var result = {};
             result.infoTypeCode = this.kpdriver.InfoTypeCode;
             result.infoNumber = this.kpdriver.InfoNumber;
@@ -156,11 +158,11 @@
                         {
                             this.kpdriver.ListGoodsName = list[i]['listgoodsname'];
                         }
-                        alert('ee1');
+
                         if (list[i]['listtaxitem']!=null){
                             this.kpdriver.ListTaxItem = list[i]['listtaxitem'];
                         }
-                        alert('ee2');
+
                         if (list[i]['liststandard']!=null){
                             this.kpdriver.ListStandard = list[i]['liststandard'];
                         }
@@ -178,11 +180,11 @@
                             this.kpdriver.ListAmount=list[i]['amount'];
 
                         }
-                        alert('ee3');
+
                         if(list[i]['tax']!=null){
                             this.kpdriver.ListTaxAmount=list[i]['tax'];
                         }
-                        alert('ee4');
+
                         this.kpdriver.ListPriceKind = 0;
                         if(list[i]['taxrate']!=null){
                             var rate = parseFloat(list[i]['taxrate']);
@@ -195,17 +197,19 @@
                                 this.kpdriver.InfoTaxRate=rate.toFixed(0);
                             }
                         }
-                        alert('ee5');
+
+                        //含税标志
+                        this.kpdriver.ListPriceKind = 1;
+
                         this.kpdriver.AddInvList();
-                        alert('ee6');
+
                     }
 
                     // V2.0
                     this.kpdriver.CheckEWM = 0;
-                    alert('error');
                     this.kpdriver.Invoice();
 
-                    alert('发票代码：'+this.kpdriver.InfoTypeCode+";发票号码："+this.kpdriver.InfoNumber+";清单标志："+this.kpdriver.GoodsListFlag);
+                    //alert('发票代码：'+this.kpdriver.InfoTypeCode+";发票号码："+this.kpdriver.InfoNumber+";清单标志："+this.kpdriver.GoodsListFlag);
                     var result = {};
                     /*这里必须将ActiveX对象里的值转成字符串才能正确的在参数中传递*/
                     result['infoAmount'] = this.kpdriver.InfoAmount+'';
@@ -223,6 +227,7 @@
 
             }catch(e){
                 alert('开票失败,错误信息invoice:'+e.description);
+                return false;
             }
         },
 
@@ -234,8 +239,8 @@
                 this.kpdriver.GoodsListFlag = goodsListFlag;
                 this.kpdriver.InfoShowPrtDlg = infoShowPrtDlg;
 
-                this.kpdriver.PrintInv();
-                return this.kpdriver.RetCode;
+                //this.kpdriver.PrintInv();
+               // return this.kpdriver.RetCode;
             }catch(e){
                 alert('打印失败');
             }
@@ -330,31 +335,65 @@
         openInvoice:function(data){
             //检查金税设备
             this.checkSetup();
+            alert('setup');
+
             //开启金税盘
             this.openCard();
+
+            //打印发票
+            this.printInv('2','1100153320','41257002',0,1);
+            alert('print');
+            //this.closeCard();
+            return false;
 
             //获取开发票的票号等信息
             var invoiceInfo = this.getInfo(2);
             invoiceInfo.main = {};
             invoiceInfo.main.invtype = 2;  //增值税普通发票
             invoiceInfo.main.clientname = data.header;  //购货方名称,发票抬头
+            invoiceInfo.main.invoicer = '张文惠';
+            invoiceInfo.main.cashier = '张文惠';
+
             invoiceInfo.sub = new Array();
             var list = new Array();
             var sub = {};
             sub['listgoodsname'] = data.body;  //发票内容
             sub['listnumber'] = 1;
             sub['listprice'] = data.ordermoney;
-            sub['listunit'] = '份';
-            sub['amount'] = data.ordermoney;
-            sub['tax'] = 17;
+            sub['listunit'] = ' ';
+            //sub['amount'] = data.ordermoney;
+            //sub['tax'] = 3;
+            sub['taxrate'] = 3;
             list.push(sub);
             invoiceInfo.sub = list;
-            window.console.dir(invoiceInfo);
+
             //开启发票
             var invoiceResult = this.invoice(invoiceInfo);
+            if(this.kpdriver.RetCode == '4011'){
+                alert('发票代码：'+this.kpdriver.InfoTypeCode+";\r发票号码："+
+                this.kpdriver.InfoNumber + ";\r发票抬头: "+data.header + "\r发票导入成功");
+            }else{
+                this.returnError(this.kpdriver.RetCode);
+                this.closeCard();
+                return false;
+            }
 
             //打印发票
-            //this.printInv('2','1100111650','08257515',0,1);
+            this.printInv('2',invoiceResult.infoTypeCode,invoiceResult.infoNumber,0,1);
+            this.closeCard();
+           // return false;
+            return true;
+        },
+
+        //返回错误信息
+        returnError : function(retCode){
+            switch (retCode){
+                case 4001:
+                    alert('4001:发票数据内容不全,不能开票!')
+                    break;
+                default:
+                    alert(retCode);
+            }
         }
 
 

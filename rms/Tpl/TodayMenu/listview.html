@@ -30,7 +30,7 @@
             var btn = [];
             btn.push('<a href="javascript:void(0);" onclick="TodayMenuListviewModule.detailview(' + rowData.todaymenuid + ')">查看</a>');
             btn.push('<a href="javascript:void(0);" onclick="TodayMenuListviewModule.editview(' + rowData.todaymenuid + ')">编辑</a>');
-            btn.push('<a href="javascript:void(0);" onclick="TodayMenuListviewModule.delete(' + rowData.todaymenuid + ')">删除</a>');
+            btn.push('<a href="javascript:void(0);" onclick="TodayMenuListviewModule.deleteRecord(' + rowData.todaymenuid + ')">删除</a>');
             return btn.join(' | ');
         },
 
@@ -52,13 +52,13 @@
         },
 
         //删除用户记录
-        delete: function (id) {
+        deleteRecord : function (id) {
             var that = this;
             $.messager.confirm('提示信息', '确定要删除吗？', function (result) {
                 if (!result) return false;
 
                 $.messager.progress({text: '处理中，请稍候...'});
-                $.get('__URL__/delete/record/'+id, function (res) {
+                $.get("__URL__/delete/record/" +id, function (res) {
                     $.messager.progress('close');
 
                     if (!res.status) {

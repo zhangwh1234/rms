@@ -150,7 +150,6 @@
             this.slowRefreshOrderForm();
             //显示订单情况
             this.refreshOrderHandleMonit();
-            IndexIndexModule.calculateMaxRows();
         },
 
         //设置订单处理表格
@@ -224,7 +223,7 @@
             var pager = $('#OrderFormHandleTable').datagrid('getPager')
             pager.pagination({
                 showRefresh: false,
-                pageSize : IndexIndexModule.gridRowsNumber,
+                pageSize : (IndexIndexModule.gridRowsNumber - 2),
                 layout: ['sep','first','prev','manual','links','next','last'],
                 buttons: [{
                     id: 'beizhuOrderHandle',
@@ -713,6 +712,7 @@
          * 将订单转分配给其他分公司
          */
         distributeOrderOtherCompany: function (orderformid, rowIndex) {
+            return false;  //功能停止
             //停止刷新订单页面
             this.refreshOrder = false;
             var that = this;
@@ -1094,6 +1094,7 @@
                     state: '已打印'
                 }
             });
+
             rowIndex = rowIndex + 1;
             $('#orderHandle' + rowIndex).focus();  //下移动一行
             this.orderFormHandleGrid.datagrid('selectRow', rowIndex);
@@ -1314,6 +1315,7 @@
             clearInterval(this.slowGetOrderInterval);
             clearInterval(this.orderMonitInterval);
         },
+
 
         /**
          * 关闭页面

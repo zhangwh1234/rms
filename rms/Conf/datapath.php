@@ -14,7 +14,7 @@
                 'DB_PWD'=>'',
                 'DB_PORT'=>'3306',
                 'DB_PREFIX'=>'rms_',   
-                'CITY' => '上海市', 
+                'CITY' => '常州',
         ),
         //localhost历史库的数据库路径
         'localhostHistory' => array(

@@ -16,11 +16,11 @@
                 url: '__URL__/insert',
                 onSubmit: function () {
                     //进行表单验证
-                    if($('#code').val() == ''){
+                    if($("#OrderPrintHandleCreateviewForm input[name=code]").val() == ''){
                         alert('送餐员代码不能为空!');
                         return false;
                     }
-                    if($('#name').val() == ''){
+                    if($("#OrderPrintHandleCreateviewForm input[name=name]").val() == ''){
                         alert('送餐员姓名不能为空!');
                         return false;
                     }

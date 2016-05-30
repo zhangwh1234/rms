@@ -51,13 +51,20 @@
         //操作格式化
         operate: function (val, rowData, rowIndex) {
             var btn = [];
-            btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewAddressModule.detailview(' + rowData.orderformid + ')">查看</a>');
-            btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewAddressModule.editview(' + rowData.orderformid + ')">改单</a>');
-            btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewAddressModule.hurry(' + rowData.orderformid + ')">催送</a>');
-            btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewAddressModule.duplicateview(' + rowData.orderformid + ')">复制</a>');
-            btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewAddressModule.returnorderformview(' + rowData.orderformid + ')">退餐</a>');
+            btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewAddressModule.detailview(' + rowData.orderformid + ','+ rowIndex+ ')">查看</a>');
+            btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewAddressModule.editview(' + rowData.orderformid + ','+ rowIndex+')">改单</a>');
+            btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewAddressModule.hurry(' + rowData.orderformid + ','+ rowIndex+')">催送</a>');
+            btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewAddressModule.duplicateview(' + rowData.orderformid + ','+ rowIndex+')">复制</a>');
+            btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewAddressModule.returnorderformview(' + rowData.orderformid + ','+ rowIndex+')">退餐</a>');
             return btn.join(' | ');
         },
+
+
+        //初始返回,定位行操作,但是在翻页是,就不操作
+        setRowSelect :function(){
+            $('#orderform_searchviewaddress_datagrid').datagrid('selectRow', {$rowIndex});
+        },
+
 
         //订单地址输入
         addressSearchInput: function () {
@@ -105,20 +112,23 @@
         },
 
         //查看订单
-        detailview:function(orderformid){
-            url = '__URL__/detailview/record/'+orderformid+'/returnAction/{$returnAction}';
+        detailview:function(orderformid,rowIndex){
+            url = '__URL__/detailview/record/'+orderformid+'/returnAction/{$returnAction}'
+                    + '/rowIndex/' + rowIndex+'/pagetype/searchviewaddress';
             IndexIndexModule.updateOperateTab(url);
         },
 
         //改单
-        editview:function(orderformid){
-            url = '__URL__/editview/record/'+orderformid+'/returnAction/{$returnAction}';
+        editview:function(orderformid,rowIndex){
+            url = '__URL__/editview/record/'+orderformid+'/returnAction/{$returnAction}'
+                    + '/rowIndex/' + rowIndex+'/pagetype/searchviewaddress';
             IndexIndexModule.updateOperateTab(url);
         },
 
         //催送订单
-        hurry:function(orderformid){
-            var url = '__URL__/hurry/record/' + orderformid + '/returnAction/{$returnAction}';
+        hurry:function(orderformid ,rowIndex){
+            var url = '__URL__/hurry/record/' + orderformid + '/returnAction/{$returnAction}'
+                    + '/rowIndex/' + rowIndex+'/pagetype/searchviewaddress';
             var that = this;
             $.messager.confirm('提示信息', '确定要催送订单吗？', function(result){
                 if(!result) return false;
@@ -128,21 +138,25 @@
                     $.messager.progress('close');
                     $('#orderform_searchviewaddress_datagrid').datagrid('reload');
                     $.app.method.tip('提示信息', res.info, 'info');
-
+                    setTimeout(function(){
+                        $('#orderform_searchviewaddress_datagrid').datagrid('selectRow', rowIndex);  //显示行定位
+                    },200)
                 }, 'json');
             });
 
         },
 
         //复制订单
-        duplicateview:function(orderformid){
-            url = '__URL__/duplicateview/record/'+orderformid+'/returnAction/{$returnAction}';
+        duplicateview:function(orderformid ,rowIndex){
+            url = '__URL__/duplicateview/record/'+orderformid+'/returnAction/{$returnAction}'
+                    + '/rowIndex/' + rowIndex+'/pagetype/searchviewaddress';
             IndexIndexModule.updateOperateTab(url);
         },
 
         //退餐
-        returnorderformview:function(orderformid){
-            url = '__URL__/returnorderformview/record/'+orderformid+'/returnAction/{$returnAction}';
+        returnorderformview:function(orderformid ,rowIndex){
+            url = '__URL__/returnorderformview/record/'+orderformid+'/returnAction/{$returnAction}'
+                    + '/rowIndex/' + rowIndex+'/pagetype/searchviewaddress';
             IndexIndexModule.updateOperateTab(url);
         },
 
@@ -184,5 +198,9 @@
         setTimeout(function(){
             OrderFormSearchviewAddressModule.setPagination();
         },100);
+
+        setTimeout(function(){
+            OrderFormSearchviewAddressModule.setRowSelect();  //显示行定位
+        },600)
     })
 </script>

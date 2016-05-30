@@ -10,8 +10,8 @@
         <li><a href="javascript:void(0);" onclick="OrderDistributionCancelviewModule.cancel();">作废订单<span>^9</span></a></li>
 
         <li style="width: 50px;">&nbsp;</li>
-        <li style="margin-left: 10px;"><a href="javascript:;" onclick="IndexIndexModule.updateOperateTab('__URL__/{$returnAction}');" ><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
-        <li><a href="javascript:void(0);"  onclick="IndexIndexModule.updateOperateTab('__URL__/{$returnAction}');">放弃;返回列表</a></li>
+        <li style="margin-left: 10px;"><a href="javascript:;" onclick="IndexIndexModule.updateOperateTab('__URL__/{$returnAction}/pagetype/{$pagetype}/rowIndex/{$rowIndex}');" ><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);"  onclick="IndexIndexModule.updateOperateTab('__URL__/{$returnAction}/pagetype/{$pagetype}/rowIndex/{$rowIndex}');">放弃;返回列表</a></li>
 
         <li style="float: right;margin-right: 40px;"><a href="javascript:;" class="moduleName" onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
         <li style="float:right;"><a href="javascript:;" onclick="IndexIndexModule.closeOperateTab();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
@@ -91,7 +91,7 @@
                 if (r) {
                     $.ajax({
                         type: "GET",
-                        url: "__URL__/cancel/returnAction/{$returnAction}/record/{$record}",
+                        url: "__URL__/cancel/returnAction/{$returnAction}/record/{$record}/pagetype/{$pagetype}/rowIndex/{$rowIndex}",
                         dataType: "json",
                         success: function (returnData) {
                             if (returnData.status == 'success') {
@@ -115,7 +115,7 @@
                 var tab = $('#operation').tabs('getSelected');
                 var tabOptions = tab.panel('options');
                 //if (tabOptions.title == '订餐单' ) {
-                IndexIndexModule.updateOperateTab("__URL__/{$returnAction}");
+                IndexIndexModule.updateOperateTab("__URL__/{$returnAction}/{$pagetype}/rowIndex/{$rowIndex}");
                 //};
             });
         }

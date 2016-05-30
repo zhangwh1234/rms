@@ -9,7 +9,7 @@
             'ordertxt'=>array('width' => 20,'align'=>'left' ),
             'telphone'=>array('width' => 10,'align'=>'left'),
             'totalmoney'=>array('width' => 10,'align'=>'center'),
-            'custdate' =>array('width' => 10,'align'=>'center'),
+            'custdate' =>array('width' => 15,'align'=>'center'),
             'custtime'=>array('width' => 10,'align'=>'center'),
             'sendname' => array('width' => 10,'align'=>'center'),
             'company' => array('width' => 10,'align'=>'center'),

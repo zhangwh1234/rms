@@ -106,8 +106,8 @@
                         formatter: function (value, rowData, rowIndex) {
                             var operation;
                             operation = "<input class='distributionOrder' id='orderDistributionAddressTask" + rowIndex + "' name='orderDistributionAddressTask" + rowIndex + "' type='text'  size='8' maxlength='1' onkeyup='OrderDistributionSearchviewAddressModule.distributionOrder(event,this," + rowData.orderformid + "," + rowIndex + ");' onclick='OrderDistributionSearchviewAddressModule.distributionClick(" + rowData.orderformid + ");' tabindex='" + rowIndex + "'  >" + "";
-                            operation += "<a href='javascript:void(0);' class='distributionDetailview' onclick='OrderDistributionSearchviewAddressModule.detailview(" + rowData.orderformid + ")' style='margin-left:5px;' >查看</a>";
-                            operation += "<a href='javascript:void(0);' class='distributionDetailview' onclick='OrderDistributionSearchviewAddressModule.cancelview(" + rowData.orderformid + ")' style='margin-left:5px;' >作废</a>";
+                            operation += "<a href='javascript:void(0);' class='distributionDetailview' onclick='OrderDistributionSearchviewAddressModule.detailview(" + rowData.orderformid + ','+rowIndex+ ")' style='margin-left:5px;' >查看</a>";
+                            operation += "<a href='javascript:void(0);' class='distributionDetailview' onclick='OrderDistributionSearchviewAddressModule.cancelview(" + rowData.orderformid +  ','+rowIndex+ ")' style='margin-left:5px;' >作废</a>";
                             return operation;
                         }
                     }
@@ -120,6 +120,7 @@
             //定义订单分页表
             var pager = $(this.datagrid).datagrid().datagrid('getPager')
             pager.pagination({
+                pageSize : (IndexIndexModule.gridRowsNumber -1),
                 showRefresh: false,
                 layout: ['sep','first','prev','manual','links','next','last'],
                 buttons: [{
@@ -234,22 +235,30 @@
          * 第一次启动
          */
         firstGetOrderForm: function () {
+            //获取分页参数
+            var pageNumber = {$pagenumber};
+            var data = {'page':pageNumber};
+            //获取行定位
+            var rowIndex = {$rowIndex};
             var that = this;
             setTimeout(function () {
                 $.ajax({
                     type: "POST",
                     url:  "{$url}",
                     dataType: "json",
+                    data:data,
                     success: function (data) {
                         if (data.rows.length > 0) {
                             //选择第一行焦点
                             $(that.datagrid).datagrid('loadData', data);
-                            that.focusNumberAddressOD = 0;  //初始定位
+                            that.focusNumberAddressOD = rowIndex;  //初始定位
 
                             //显示焦点
                             $('#orderDistributionAddressTask' + that.focusNumberAddressOD).focus();
+                            $(that.datagrid).datagrid('getPager').pagination({'pageNumber':pageNumber});  //页定位
                             //行选中
                             $(that.datagrid).datagrid('selectRow', that.focusNumberAddressOD);
+
                         }
                     }
                 })
@@ -335,16 +344,18 @@
         /**
          * 查看订单
          */
-        detailview:function(orderformid){
-            var url = "__URL__/detailview/record/" + orderformid + "/returnAction/searchviewAddress";
+        detailview:function(orderformid,rowIndex){
+            var url = "__URL__/detailview/record/" + orderformid + "/returnAction/searchviewAddress"
+                    + '/rowIndex/' + rowIndex+'/pagetype/searchviewaddress';
             IndexIndexModule.updateOperateTab(url);
         },
 
         /**
          * 作废订单
          */
-        cancelview:function(orderformid){
-            var url = "__URL__/cancelview/record/" + orderformid + "/returnAction/searchviewAddress";
+        cancelview:function(orderformid,rowIndex){
+            var url = "__URL__/cancelview/record/" + orderformid + "/returnAction/searchviewAddress"
+                    + '/rowIndex/' + rowIndex+'/pagetype/searchviewaddress';
             IndexIndexModule.updateOperateTab(url);
         },
 

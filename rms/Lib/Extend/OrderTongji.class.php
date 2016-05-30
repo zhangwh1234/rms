@@ -220,6 +220,7 @@ class OrderTongji  {
         $where = array ();
         $where ['date'] = date ( 'Y-m-d' );
         $where ['ap'] = $this->getAp ();
+        $where ['domain'] = $domain;
         $tongjiorderModel->where ( $where )->delete ();
 
         Log::write ( '订单量统计，保存统计结果。', Log::INFO, Log::FILE, $this->LogFile );

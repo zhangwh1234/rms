@@ -1,8 +1,7 @@
 <style type="text/css">
     #OrganizationListviewOperationDiv{
         width:96%;
-        height:auto;
-        overflow:hidden;
+        overflow:scroll;
         margin:5px auto;
         padding:4px 10px;
         border:1px solid #ccc;
@@ -140,5 +139,9 @@
             IndexIndexModule.updateOperateTab('__URL__/listview');
         }
     }
+
+    $(function(){
+        OrganizationListviewModule.init();
+    })
 </script>
 

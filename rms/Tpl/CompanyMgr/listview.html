@@ -13,13 +13,23 @@
 
         },
 
+        //重新设置page
+        setPagination:function(){
+            //定义订单分页表
+            var pager = $('#companymgr_index_datagrid').datagrid().datagrid('getPager')
+            pager.pagination({
+                showRefresh: false,
+                pageSize : IndexIndexModule.gridRowsNumber,
+                layout: ['sep','first','prev','manual','links','next','last']
+            });
+        },
 
         //操作格式化
         operate: function (val, rowData, rowIndex) {
             var btn = [];
             btn.push('<a href="javascript:void(0);" onclick="CompanyMgrListviewModule.detailview(' + rowData.companymgrid + ')">查看</a>');
             btn.push('<a href="javascript:void(0);" onclick="CompanyMgrListviewModule.editview(' + rowData.companymgrid + ')">编辑</a>');
-            btn.push('<a href="javascript:void(0);" onclick="CompanyMgrListviewModule.delete(' + rowData.companymgrid + ')">删除</a>');
+            btn.push('<a href="javascript:void(0);" onclick="CompanyMgrListviewModule.deleteRecord(' + rowData.companymgrid + ')">删除</a>');
             return btn.join(' | ');
         },
 
@@ -41,7 +51,7 @@
         },
 
         //删除用户记录
-        delete: function (id) {
+        deleteRecord: function (id) {
             var that = this;
             $.messager.confirm('提示信息', '确定要删除吗？', function (result) {
                 if (!result) return false;
@@ -65,6 +75,10 @@
 
     $(function(){
         CompanyMgrListviewModule.init();
+        setTimeout(function(){
+            CompanyMgrListviewModule.setPagination();
+        },100);
+
     })
 </script>
 

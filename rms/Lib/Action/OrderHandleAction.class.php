@@ -42,8 +42,10 @@ class OrderHandleAction extends ModuleAction
                 $pageNumber = 1;
             }
 
-            if($_SESSION['listMaxRows']){
-                $listMaxRows = $_SESSION['listMaxRows'];
+            //使用cookie读取rows
+            $listMaxRows = $_COOKIE['listMaxRows'];
+            if(!empty($listMaxRows)){
+
             }else{
                 $listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
             }
@@ -69,15 +71,16 @@ class OrderHandleAction extends ModuleAction
             array_unshift($selectFields, $moduleId);
 
             $listResult = $focus->where($where)->field($selectFields)->limit($Page->firstRow . ',' . $Page->listRows)->select();
-            //var_dump($focus->getLastSql());
-            $orderHandleArray ['total'] = $total;
+            // 从数据中列出列表的数据
             if (count($listResult) > 0) {
-                $orderHandleArray ['rows'] = $listResult;
+                $listData ['rows'] = $listResult;
+                $listData ['total'] = $total;
             } else {
-                $orderHandleArray ['rows'] = array();
+                $listData ['rows'] = array();
+                $listData ['total'] = 0;
             }
+            $this->ajaxReturn($listData, 'JSON');
 
-            $this->ajaxReturn($orderHandleArray, 'JSON');
         } else {
             // 取得模块的名称
             $moduleName = $this->getActionName();
@@ -195,6 +198,14 @@ class OrderHandleAction extends ModuleAction
                 $listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
             }
 
+            //使用cookie读取rows
+            $listMaxRows = $_COOKIE['listMaxRows'];
+            if(!empty($listMaxRows)){
+
+            }else{
+                $listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
+            }
+
             //订单配送还要显示两个统计数据
             $listMaxRows = $listMaxRows -2;
 
@@ -212,7 +223,7 @@ class OrderHandleAction extends ModuleAction
                 $listData ['rows'] = $listResult;
                 $listData ['total'] = $total;
             } else {
-                $listDate ['rows'] = array();
+                $listData ['rows'] = array();
                 $listData ['total'] = 0;
             }
             $this->ajaxReturn($listData, 'JSON');
@@ -300,9 +311,16 @@ class OrderHandleAction extends ModuleAction
                 $listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
             }
 
+            //使用cookie读取rows
+            $listMaxRows = $_COOKIE['listMaxRows'];
+            if(!empty($listMaxRows)){
+
+            }else{
+                $listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
+            }
 
             //订单配送还要显示两个统计数据
-            $listMaxRows = $listMaxRows -2;
+            $listMaxRows = $listMaxRows - 4;
 
             // 取得页数
             $_GET ['p'] = $pageNumber;
@@ -313,12 +331,14 @@ class OrderHandleAction extends ModuleAction
             array_unshift($selectFields, $moduleId);
             $listResult = $focus->field($selectFields)->where($where)->limit($Page->firstRow . ',' . $Page->listRows)->order("$moduleId desc")->select();
 
+            $listData  = array();
+
             // 从数据中列出列表的数据
             if (count($listResult) > 0) {
                 $listData ['rows'] = $listResult;
                 $listData ['total'] = $total;
             } else {
-                $listDate ['rows'] = array();
+                $listData ['rows'] = array();
                 $listData ['total'] = 0;
             }
             $this->ajaxReturn($listData, 'JSON');
@@ -429,6 +449,14 @@ class OrderHandleAction extends ModuleAction
                 $listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
             }
 
+            //使用cookie读取rows
+            $listMaxRows = $_COOKIE['listMaxRows'];
+            if(!empty($listMaxRows)){
+
+            }else{
+                $listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
+            }
+
             //订单配送还要显示两个统计数据
             $listMaxRows = $listMaxRows -2;
 
@@ -443,14 +471,15 @@ class OrderHandleAction extends ModuleAction
             array_unshift ( $selectFields, $moduleId );
             $listResult = $focus->where($map)->field($selectFields)->limit($Page->firstRow . ',' . $Page->listRows)->select();
 
-            $orderHandleArray ['total'] = $total;
+            // 从数据中列出列表的数据
             if (count($listResult) > 0) {
-                $orderHandleArray ['rows'] = $listResult;
+                $listData ['rows'] = $listResult;
+                $listData ['total'] = $total;
             } else {
-                $orderHandleArray ['rows'] = array();
+                $listData ['rows'] = array();
+                $listData ['total'] = 0;
             }
-            $data = array('total' => $total, 'rows' => $listResult);
-            $this->ajaxReturn($data);
+            $this->ajaxReturn($listData, 'JSON');
         } else {
             // 取得模块的名称
             $moduleName = $this->getActionName();
@@ -958,9 +987,11 @@ class OrderHandleAction extends ModuleAction
         // 记入操作到action中
         $orderactionModel = D('Orderaction');
         $action ['orderformid'] = $record; // 订单号
+        $action ['ordersn'] = $orderformResult['ordersn'];
         $company = $this->userInfo ['department'];
         $action ['action'] = $company . "打印订单";
         $action ['logtime'] = date('H:i:s');
+        $action ['domain'] = $_SERVER['HTTP_HOST'];
         $orderactionModel->create();
         $result = $orderactionModel->add($action);
 
@@ -1631,6 +1662,7 @@ class OrderHandleAction extends ModuleAction
         $orderaction = $orderaction_model->where("orderformid=$record")->select(); //
         $this->assign('orderaction', $orderaction);
     }
+
 
 }
 

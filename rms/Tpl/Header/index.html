@@ -6,7 +6,7 @@
 {//系统头部}
 <div id="top">
     <div id="logo"><span>system logo 系统图标</span></div>
-    <div id="subject" align="center"><span>送 餐 管 理 系 统</span><span style="margin-left: 20px;color: red;font-size: 14px;line-height: 30px;word-spacing: 6px;display: none;">{$Think.session.userInfo.rolename}</span></div>
+    <div id="subject" align="center"><span>{$city} 送 餐 管 理 系 统</span><span style="margin-left: 20px;color: red;font-size: 14px;line-height: 30px;word-spacing: 6px;display: none;">{$Think.session.userInfo.rolename}</span></div>
     <div id="topnav">
         <ul>   
             <if condition="Think.config.RBAC_SUPERADMIN eq 'admin'">

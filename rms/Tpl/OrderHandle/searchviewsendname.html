@@ -110,13 +110,12 @@
 
 	var OrderHandleSearchviewSendnameModule = {
 		dialog: '#globel-dialog-div',
-		datagrid: '',   //订单处理表
+		datagrid: $('#OrderHandleSearchviewSendnameTable'),   //订单处理表
 
 		focusNumberSendnameOH: 0,  //定义光标，OH是OrderHandle的缩写
 		sendnameMgr: new Array(), //定义处理的送餐员的数组
 
 		init: function () {
-			this.datagrid = $('#OrderHandleSearchviewSendnameTable');
 			//设置div的高度
 			$('#orderHandleSearchviewSendnameDiv').height(IndexIndexModule.operationHeight);
 
@@ -264,7 +263,7 @@
 			//定义订单分页表
 			this.datagrid.datagrid('getPager').pagination({
 				showRefresh: false,
-				pageSize : IndexIndexModule.gridRowsNumber,
+				pageSize :(IndexIndexModule.gridRowsNumber - 4),
 				layout: ['sep','first','prev','manual','links','next','last'],
 				buttons: [{
 					id: 'orderHandleSearchviewSendnameTb',
@@ -500,6 +499,7 @@
 		 * 将订单转分配给其他分公司
 		 */
 		distributeOrderOtherCompany: function () {
+			return false;
 			var that = this;
 			$(that.dialog).dialog({
 				title: '转其他分公司',

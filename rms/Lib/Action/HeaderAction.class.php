@@ -2,6 +2,12 @@
 
     class HeaderAction extends Action{
         public function index(){
+
+            //为了显示城市
+            require APP_PATH.'Conf/datapath.php';
+            $HTTP_POST = $_SERVER['HTTP_HOST'];
+            $this->assign('city',$rmsDataPath[$HTTP_POST]['CITY']);
+
             $this->display(); 
             $this->nav();
         }

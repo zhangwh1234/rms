@@ -29,7 +29,7 @@
 </div>
 
 
-<div id="invoiceMgrListviewDiv" class="easyui-layout" style="width:100%;height:400px;">
+<div id="invoiceMgrSearchviewOtherDiv" class="easyui-layout" style="width:100%;height:400px;">
     <div data-options="region:'center',border:false"
          style="padding: 0px; background: #eee;">
         <table id="InvoiceMgrSearchviewTable" fit="true"></table>
@@ -53,13 +53,11 @@
         init: function () {
             this.invoiceMgrSearchviewGrid = $('#InvoiceMgrSearchviewTable');
             //设置div的高度
-            $('#invoiceMgrListviewDiv').height(IndexIndexModule.operationHeight);
+            $('#invoiceMgrSearchviewOtherDiv').height(IndexIndexModule.operationHeight);
             //订单处理表格
             this.setDatagrid();
             //初始化订单数据
             this.firstGetInvoice();
-            //载入快捷键
-            this.quickKeyboardAction();
             //启动分页事件
             this.dataPage();
         },
@@ -352,25 +350,38 @@
          */
         openInvoice: function (invoiceid) {
 
-            // 设定订单状态为已打印
+            //获取发票所需要的信息
             $.ajax({
                 type: "GET",
-                url: "__URL__/setOrderPrinted/orderformid/"+orderformid,
+                url: "__URL__/getInvoiceInfo/invoiceid/"+invoiceid,
                 dataType: "json",
                 success: function (data) {
+                    var invoiceOperState = InvoiceOper.openInvoice(data);
+                    if(invoiceOperState){
+                        $.messager.progress('close');
+                        //更新打印状态
+                        that.invoiceMgrHandleGrid.datagrid('updateRow', {
+                            index: rowIndex,    //定位行
+                            row: {
+                                state: '已开票'
+                            }
+                        });
+                        // 设定订单状态为已打印
+                        $.ajax({
+                            type: "GET",
+                            url: "__URL__/setInvoiceOpened/invoiceid/"+invoiceid,
+                            dataType: "json",
+                            success: function (data) {
+                            }
+                        })
+
+                    }else{
+                        alert('最后开票失败 !')
+                        $.messager.progress('close');
+                    }
                 }
             })
-            //更新打印状态
-            this.invoiceMgrSearchviewGrid.datagrid('updateRow', {
-                index: rowIndex,    //定位行
-                row: {
-                    state: '已打印'
-                }
-            });
-            rowIndex = rowIndex + 1;
-            $('#orderHandle' + rowIndex).focus();  //下移动一行
-            this.invoiceMgrSearchviewGrid.datagrid('selectRow', rowIndex);
-            this.taskOrderNumber = this.taskOrderNumber - 1;  //为了启动快速刷新，减1
+            return false;
         },
 
         /**

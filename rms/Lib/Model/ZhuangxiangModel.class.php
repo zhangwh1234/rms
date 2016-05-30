@@ -10,7 +10,7 @@ class ZhuangxiangModel extends CRMEntityModel{
         //定义列表
         var $listFields = array(
             'code' => array('width' => 10, 'align' => 'left', 'halign' => 'center'),
-            'name' => array('width' => 30, 'align' => 'left', 'halign' => 'center'),
+            'sendname' => array('width' => 30, 'align' => 'left', 'halign' => 'center'),
             'zhuangxiangtxt' => array('width' => 60, 'align' => 'left', 'halign' => 'center'),
             'totalmoney' =>array('width' => 20, 'align' => 'left', 'halign' => 'center'),
             'rectime' =>array('width' => 20, 'align' => 'left', 'halign' => 'center'),
@@ -37,7 +37,7 @@ class ZhuangxiangModel extends CRMEntityModel{
                     'name'=>'code','uitype' => 1,'readonly' => 1,'length' => 24
                 ),
                 array(
-                    'name'=>'name','uitype'=>1,'readonly'=>0,'length'=>24
+                    'name'=>'sendname','uitype'=>1,'readonly'=>0,'length'=>24
                 ),                
              ),
              'LBL_PRODUCTS_INFORMATION' => array(
@@ -56,7 +56,7 @@ class ZhuangxiangModel extends CRMEntityModel{
                     'name'=>'code','uitype' => 1,'readonly' => 1,'length' => 24
                 ),
                 array(
-                    'name'=>'name','uitype'=>1,'readonly'=>0,'length'=>24
+                    'name'=>'sendname','uitype'=>1,'readonly'=>0,'length'=>24
                 ),
              ),
              'LBL_PRODUCTS_INFORMATION' => array(
@@ -78,7 +78,7 @@ class ZhuangxiangModel extends CRMEntityModel{
                     'name'=>'code','uitype' => 2,'readonly' => 1,'length' => 24
                 ),
                 array(
-                    'name'=>'name','uitype'=>1,'readonley'=>1,'length'=>24
+                    'name'=>'sendname','uitype'=>1,'readonley'=>1,'length'=>24
                 ),
              ),
              'LBL_PRODUCTS_INFORMATION' => array(
