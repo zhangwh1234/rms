@@ -1,0 +1,106 @@
+<include file="Module/editview" />
+<script>
+    var MealticketMgrEditviewModule = {
+
+        //初始化
+        init :function(){
+            this.quickKeyboardAction();
+        },
+
+        //保存记录
+        update: function () {
+            $('#MealticketMgrEditviewForm').form('submit', {
+                url: '__URL__/update',
+                onSubmit: function () {
+                    var isValid = $(this).form('validate');
+                    if (!isValid) {
+                        return false;
+                    }
+                },
+                success: function (res) {
+                    var data = eval('(' + res + ')');
+                    if(!data.status){
+                        $.app.method.tip('提示信息', data.info, 'error');
+                    }else{
+                        $.app.method.tip('提示信息', data.info, 'info');
+                        IndexIndexModule.updateOperateTab(data.url);
+                    }
+                }
+            });
+        },
+
+        //新建的快捷操作
+        quickKeyboardAction: function () {
+            // ctrl+9快捷键,新建公告
+            Mousetrap.bind(['ctrl+9','ctrl+f9','f9'], function(e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '产品' && ($('#MealticketMgrAction').val() == 'Editview')) {
+                    MealticketMgrEditviewModule.update();
+                };
+            });
+
+            // ctrl+4快捷键,放弃
+            Mousetrap.bind(['ctrl+4', 'ctrl+f4', 'f4'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '产品' && ($('#MealticketMgrAction').val() == 'Editview')) {
+                    IndexIndexModule.updateOperateTab('__URL__/listview');
+                };
+            });
+
+            //定制键盘移动方案
+            $('#code').bind('keydown',function(event){ //联系人
+                if((event.which == 13) || (event.which == 40)){
+                    $('#name').focus();
+                }
+                if(event.which == 38){
+
+                }
+            })
+
+            //定制键盘移动方案
+            $('#name').bind('keydown',function(event){ //联系人
+                if((event.which == 13) || (event.which == 40)){
+                    $('#shortname').focus();
+                }
+                if(event.which == 38){
+                    $('#code').focus();
+                }
+            })
+
+            //定制键盘移动方案
+            $('#shortname').bind('keydown',function(event){ //联系人
+                if((event.which == 13) || (event.which == 40)){
+                    $('#price').focus();
+                }
+                if(event.which == 38){
+                    $('#name').focus();
+                }
+            })
+
+            //定制键盘移动方案
+            $('#price').bind('keydown',function(event){ //联系人
+                if((event.which == 13) || (event.which == 40)){
+                    $('#brief').focus();
+                }
+                if(event.which == 38){
+                    $('#shortname').focus();
+                }
+            })
+
+        }
+    }
+
+    $(function () {
+
+        MealticketMgrEditviewModule.init();
+        setTimeout(function(){
+            $('#MealticketMgrEditviewForm input[name=code]').focus();
+        },100);
+
+    })
+</script>
+

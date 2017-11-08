@@ -1,0 +1,18 @@
+<?php if (!defined('THINK_PATH')) exit();?>
+<div class="moduleMenu" >
+    <ul>
+        <li><?php echo (L("$tabName")); ?></li>
+        <li><a href="javascript:void(0);"  onclick="updateTab('__URL__/listview');">&nbsp;&gt;<?php echo (L("$moduleName")); ?></a></li>
+        <li>&nbsp;&gt;列表操作</li>
+        <li style="width: 50px;">&nbsp;</li>
+
+        <li style="margin-left: 10px;"><a href="javascript:void(0);" onclick="updateTab('__APP__/<?php echo ($moduleName); ?>/createview');"><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a id="create<?php echo ($moduelName); ?>" href="javascript:void(0);"  onclick="updateTab('__APP__/<?php echo ($moduleName); ?>/createview');">新建<span>^1</span></a></li>
+        <li style="margin-left: 10px;"><a href="javascript:void(0);" onclick="updateTab('__APP__/<?php echo ($moduleName); ?>/searchview/delsession/1')"><img src=".__PUBLIC__/Images/searchBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);"  onclick="updateTab('__APP__/<?php echo ($moduleName); ?>/searchview/delsession/1');">查询<span>^2</span></a></li>
+
+        <li style="float: right;margin-right: 60px;"><a href="javascript:void(0);"   onclick="closeTab();" >关闭</a></li>
+        <li style="float:right;"><a href="javascript:void(0);" onclick="closeTab();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
+
+    </ul>
+</div>

@@ -30,6 +30,8 @@
             'openname',
             'ordermoney',
             'state',
+            'type',
+            'gmf_nsrsbh'
         );
 
 

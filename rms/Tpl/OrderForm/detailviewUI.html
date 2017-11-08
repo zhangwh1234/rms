@@ -1,5 +1,5 @@
 <style>
-    .moduleOperatert {
+    .moduleOperater {
         clear: both;
         margin: 0px;
         padding: 0px;
@@ -87,12 +87,11 @@
     .detailviewInputSpan {
         font-size: 16px;
         margin-left: 4px;
-    "
     }
 
 
 </style>
-<div class="moduleOperatert">
+<div class="moduleOperater">
     <form id="OrderFormCreateviewForm" method="post">
         <table border="0" cellspacing="0" cellpadding="0" width="99%" align="center">
             <tr>
@@ -120,17 +119,17 @@
                             </thead>
                             <tr>
                                 <td width="15%" align="right">
-                                    <span class="detailviewLableSpan">客户姓名:</span>
-                                </td>
-                                <td width="50%" align="left" style="background: #F5F5F5;">
-                                    <span class="detailviewInputSpan">{$info.clientname}</span>
-                                </td>
-                                <td width="15%" align="right">
                                     <span class="detailviewLableSpan">电话:</span>
                                 </td>
-                                <td width="20%" align="left" style="background: #F5F5F5;">
+                                <td width="50%" align="left" style="background: #F5F5F5;">
                                     <!-- 电话 -->
                                     <span class="detailviewInputSpan">{$info.telphone}</span>
+                                </td>
+                                <td width="15%" align="right">
+                                    <span class="detailviewLableSpan">客户姓名:</span>
+                                </td>
+                                <td width="20%" align="left" style="background: #F5F5F5;">
+                                    <span class="detailviewInputSpan">{$info.clientname}</span>
                                 </td>
                             </tr>
                             <tr style="background: #FFFFFF;">
@@ -240,17 +239,17 @@
                             </table>
                         </notempty>
 
-                        <notempty name="orderpayment">
+                        <notempty name="orderaccountpayment">
                             <table border="0" cellspacing="0" cellpadding="0" width="100%"
                                    style="margin-top:2px; border: 1px solid #e0dddd; ">
                                 <tr>
                                     <td colspan="4" class="tabBlockViewHeader">
-                                        支付方式
+                                        客户支付
                                     </td>
                                 </tr>
                                 <tr style="background: #FFFFFF;">
                                     <td colspan="4">
-                                        <include file='ModuleUI:paymentdetailview'/>
+                                        <include file='accountpaymentdetailview'/>
                                     </td>
                                 </tr>
                             </table>

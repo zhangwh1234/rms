@@ -1,0 +1,535 @@
+<?php if (!defined('THINK_PATH')) exit();?><script type="text/javascript">
+
+//调度打印程序
+function zhuangxiangPrint(zhuangxiangid){
+    // alert( url+"/getPrintOrder?&orderformid="+orderformid);
+    //取得打印的内容
+    $.ajax({
+        type : "POST",
+        url :  "__URL__/getPrintOrder/zhuangxiangid/"+zhuangxiangid,
+        dataType : "json",
+        success : function(data){
+            printZhuangxiang(data);
+            //将订单状态改成已经打印
+            gridData = $('#handleTable').datagrid('getData');
+            $.each(gridData.rows,function(key,value){
+                if(value.orderformid == orderformid){
+                    value.state = '已打印';
+                    $('#handleTable').datagrid('updateRow',{index : key,row : value})
+                }
+            })
+        }
+
+    })
+}
+
+//实际打印
+function printZhuangxiang(data){
+    var printPage = localStorage['printPage'];  //取得打印纸张类型
+    if(printPage == ''){
+        alert('请设置打印纸张类型');
+    }else if(printPage ==  '60hot') {
+        print_zx_60(data);
+    }else if(printPage ==  '80hot'){
+            print_zx_80(data);
+    }else if(printPage ==  '30lian'){
+        print_zx_ht(data);
+    }else{
+        alert('没有这样的打印纸张类型');
+    }
+
+}
+
+
+//60宽热敏的打印代码
+function print_zx_60(data){
+    if(localStorage['printIndex'] >= 0){
+        var print_index = localStorage.printIndex;
+    }else{
+        alert('请设置打印机');
+    }
+    //定义行号
+    var linespacing = 14;
+    var row = 0;  //循环变量
+    //重新设置打印机的设备
+    LODOP.SET_PRINTER_INDEX(print_index);
+    LODOP.SET_PRINT_PAGESIZE(3,"58mm","10mm",'ORDER');
+    LODOP.PRINT_INIT("打印订单");
+    //送餐单标题
+    LODOP.SET_PRINT_STYLEA(0,"FontSize",20);
+    row = row +1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,40,644,62,'装箱单');
+
+    //订单号
+    orderformid = data['zhuangxiangform'].recdate+'-' + data['zhuangxiangform'].orderformid;
+    LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+    row = row+1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,orderformid);
+    //地址
+    address = '地址:'+data['zhuangxiangform'].address;
+    address1 = address.subCHStr(0,30);
+    address2 = address.subCHStr(30,30);
+    address3 = address.subCHStr(60,30);
+
+
+    if(address1.length > 0){
+        row = row +1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,address1);
+    }
+    if(address2.length > 0){
+        row = row +1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,address2);
+    }
+    if(address3.length > 0){
+        row = row +1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,address3);
+    }
+
+
+    LODOP.SET_PRINT_STYLEA(0,"FontSize",10);
+    //电话
+    telphone = '电话:'+data['orderform'].telphone;
+    //客户
+    clientname = '客户:'+data['orderform'].clientname;
+    //要餐时间
+    custtime = '要餐时间:'+data['orderform'].custtime;
+    row = row +1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,telphone+'  '+clientname);
+    row = row +1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,custtime);
+    //备注
+    beizhu = '备注:'+data['orderform'].beizhu;
+    beizhu1 = beizhu.subCHStr(0,30);
+    beizhu2 = beizhu.subCHStr(30,30);
+    beizhu3 = beizhu.subCHStr(60,30);
+    if(beizhu1.length > 0){
+        row = row +1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,beizhu1);
+    }
+    if(beizhu2.length > 0){
+        row = row +1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,beizhu2);
+    }
+    if(beizhu3.length > 0){
+        row = row +1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,beizhu3);
+    }
+    //商品打印
+    productsTitle = '名称      数量   单价    金额';
+    row = row +1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,productsTitle);
+    if(data['orderproducts']){
+        $.each(data['orderproducts'],function(key,value){
+            row = row +1;
+            //产品名称
+            LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,value.name);
+            //产品数量
+            LODOP.ADD_PRINT_TEXT(linespacing * row,70,644,62,value.number);
+            //单价
+            LODOP.ADD_PRINT_TEXT(linespacing * row,100,644,62,value.price);
+            //金额
+            LODOP.ADD_PRINT_TEXT(linespacing * row,145,644,62,value.money);
+        })
+    }
+    //总金额
+    LODOP.SET_PRINT_STYLEA(0,"FontSize",10);
+    totalmoney = '总金额:'+data['orderform'].totalmoney;
+    row = row +1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,totalmoney);
+
+    //空白
+    row = row +1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,'');
+
+    //空白
+    row = row +1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,'');
+    //空白
+    row = row +1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,'');
+
+    //送餐单标题
+    LODOP.SET_PRINT_STYLEA(0,"FontSize",20);
+    row = row +1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,40,644,62,'领餐单');
+
+    //订单号
+    orderformid = data['orderform'].recdate+'-' + data['orderform'].orderformid;
+    LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+    row = row+1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,orderformid);
+    //地址
+    address = '地址:'+data['orderform'].address;
+    address1 = address.subCHStr(0,30);
+    address2 = address.subCHStr(30,30);
+    address3 = address.subCHStr(60,30);
+
+    // alert(cutstr("新加文本1桑德菲杰来撒机房的阿萨德房间爱塑料袋件发生的房间里圣诞节来看阿萨德乐尽哀生",26))
+    if(address1.length > 0){
+        row = row +1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,address1);
+    }
+    if(address2.length > 0){
+        row = row +1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,address2);
+    }
+    if(address3.length > 0){
+        row = row +1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,address3);
+    }
+
+
+    LODOP.SET_PRINT_STYLEA(0,"FontSize",10);
+    //电话
+    telphone = '电话:'+data['orderform'].telphone;
+    //客户
+    clientname = '客户:'+data['orderform'].clientname;
+    //要餐时间
+    custtime = '要餐时间:'+data['orderform'].custtime;
+    row = row +1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,telphone+'  '+clientname);
+    row = row +1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,custtime);
+    //备注
+    beizhu = '备注:'+data['orderform'].beizhu;
+    beizhu1 = beizhu.subCHStr(0,30);
+    beizhu2 = beizhu.subCHStr(30,30);
+    beizhu3 = beizhu.subCHStr(60,30);
+    if(beizhu1.length > 0){
+        row = row +1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,beizhu1);
+    }
+    if(beizhu2.length > 0){
+        row = row +1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,beizhu2);
+    }
+    if(beizhu3.length > 0){
+        row = row +1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,beizhu3);
+    }
+    //商品打印
+    productsTitle = '名称      数量   单价    金额';
+    row = row +1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,productsTitle);
+    if(data['orderproducts']){
+        $.each(data['orderproducts'],function(key,value){
+            row = row +1;
+            //产品名称
+            LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,value.name);
+            //产品数量
+            LODOP.ADD_PRINT_TEXT(linespacing * row,70,644,62,value.number);
+            //单价
+            LODOP.ADD_PRINT_TEXT(linespacing * row,100,644,62,value.price);
+            //金额
+            LODOP.ADD_PRINT_TEXT(linespacing * row,145,644,62,value.money);
+        })
+    }
+    //总金额
+    totalmoney = '总金额:'+data['orderform'].totalmoney;
+    row = row +1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,totalmoney);
+
+
+    //LODOP.PREVIEW();
+    LODOP.PRINT();
+
+    //设定订单状态为已打印
+    $.ajax({
+        type : "GET",
+        url : APP+"/OrderHandle/setOrderPrinted/orderformid/"+data['orderform'].orderformid,
+        dataType : "json",
+        success : function(data){
+
+        }
+    })
+
+
+}
+
+//80宽热敏的打印代码
+function print_zx_80(data){
+    if(localStorage['printIndex'] >= 0){
+        var print_index = localStorage.printIndex;
+    }else{
+        alert('请设置打印机');
+    }
+    //定义行号
+    var linespacing = 14;
+    var row = 0;  //循环变量
+    //重新设置打印机的设备
+    LODOP.SET_PRINTER_INDEX(print_index);
+    LODOP.PRINT_INIT("printOrder");
+    //送餐单标题
+    LODOP.SET_PRINT_STYLEA(0,"FontSize",20);
+    row = row +1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,40,644,62,'装箱单');
+
+    //订单号
+    zhuangxiangid = data['zhuangxiangform'].recdate+'-' + data['zhuangxiangform'].zhuangxiangid;
+    LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+    row = row+1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,zhuangxiangid);
+    //地址
+    address = '装箱:'+data['zhuangxiangform'].name;
+    if(address.length > 0){
+        row = row +1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,address);
+    }
+
+    //下单时间
+    rectime = '下单时间:'+data['zhuangxiangform'].recdate + ' ' +data['zhuangxiangform'].rectime;
+    row = row +1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,rectime);
+
+    LODOP.SET_PRINT_STYLEA(0,"FontSize",10);
+
+    //商品打印
+    productsTitle = '名称      数量   单价    金额';
+    row = row +1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,productsTitle);
+    if(data['zhuangxiangproducts']){
+        $.each(data['zhuangxiangproducts'],function(key,value){
+            row = row +1;
+            //产品名称
+            LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,value.shortname);
+            //产品数量
+            LODOP.ADD_PRINT_TEXT(linespacing * row,70,644,62,value.number);
+            //单价
+            LODOP.ADD_PRINT_TEXT(linespacing * row,100,644,62,value.price);
+            //金额
+            LODOP.ADD_PRINT_TEXT(linespacing * row,145,644,62,value.money);
+        })
+    }
+    //总金额
+    LODOP.SET_PRINT_STYLEA(0,"FontSize",10);
+    totalmoney = '总金额:'+data['zhuangxiangform'].totalmoney;
+    row = row +1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,totalmoney);
+
+    //空白
+    row = row +1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,'.');
+
+    LODOP.PRINT();
+
+
+    //送餐单标题
+    LODOP.SET_PRINT_STYLEA(0,"FontSize",20);
+    row = 0;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,40,644,62,'领餐单');
+
+    //订单号
+    zhuangxiangid = data['zhuangxiangform'].recdate+'-' + data['zhuangxiangform'].zhuangxiangid;
+    LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+    row = row+1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,zhuangxiangid);
+    //地址
+    address = '装箱:'+data['zhuangxiangform'].name;
+
+    row = row +1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,address);
+
+
+
+    LODOP.SET_PRINT_STYLEA(0,"FontSize",10);
+    //下单时间
+    rectime = '下单时间:'+data['zhuangxiangform'].recdate + ' ' +data['zhuangxiangform'].rectime;
+
+    row = row +1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,rectime);
+
+    //商品打印
+    productsTitle = '名称      数量   单价    金额';
+    row = row +1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,productsTitle);
+    if(data['zhuangxiangproducts']){
+        $.each(data['zhuangxiangproducts'],function(key,value){
+            row = row +1;
+            //产品名称
+            LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,value.shortname);
+            //产品数量
+            LODOP.ADD_PRINT_TEXT(linespacing * row,70,644,62,value.number);
+            //单价
+            LODOP.ADD_PRINT_TEXT(linespacing * row,100,644,62,value.price);
+            //金额
+            LODOP.ADD_PRINT_TEXT(linespacing * row,145,644,62,value.money);
+        })
+    }
+    //总金额
+    totalmoney = '总金额:'+data['zhuangxiangform'].totalmoney;
+    row = row +1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,totalmoney);
+
+    //空白
+    row = row +1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,'.');
+
+    LODOP.PRINT();
+
+    //送餐单标题
+    LODOP.SET_PRINT_STYLEA(0,"FontSize",20);
+    row = 0;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,40,644,62,'调度单');
+
+    //订单号
+    zhuangxiangid = data['zhuangxiangform'].recdate+'-' + data['zhuangxiangform'].zhuangxiangid;
+    LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+    row = row+1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,zhuangxiangid);
+    //地址
+    address = '装箱:'+data['zhuangxiangform'].name;
+
+    row = row +1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,address);
+
+    LODOP.SET_PRINT_STYLEA(0,"FontSize",10);
+    //下单时间
+    rectime = '下单时间:'+data['zhuangxiangform'].recdate + ' ' +data['zhuangxiangform'].rectime;
+    row = row +1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,rectime);
+    //商品打印
+    productsTitle = '名称      数量   单价    金额';
+    row = row +1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,productsTitle);
+    if(data['zhuangxiangproducts']){
+        $.each(data['zhuangxiangproducts'],function(key,value){
+            row = row +1;
+            //产品名称
+            LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,value.shortname);
+            //产品数量
+            LODOP.ADD_PRINT_TEXT(linespacing * row,70,644,62,value.number);
+            //单价
+            LODOP.ADD_PRINT_TEXT(linespacing * row,100,644,62,value.price);
+            //金额
+            LODOP.ADD_PRINT_TEXT(linespacing * row,145,644,62,value.money);
+        })
+    }
+    //总金额
+    totalmoney = '总金额:'+data['zhuangxiangform'].totalmoney;
+    row = row +1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,totalmoney);
+
+    //空白
+    row = row +1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,'.');
+
+    LODOP.PRINT();
+
+    //设定订单状态为已打印
+    $.ajax({
+        type : "GET",
+        url : APP+"/Zhuangxiang/setOrderPrinted/zhuangxiangid/"+data['zhuangxiangform'].zhuangxiangid,
+        dataType : "json",
+        success : function(data){
+        }
+    })
+
+
+}
+
+
+//横式针打订单
+function print_zx_ht(data){
+    if(localStorage['printIndex'] >= 0){
+        var print_index = localStorage.printIndex;
+    }else{
+        alert('请设置打印机');
+    }
+    LODOP.PRINT_INITA(2,2,1522,382,"打印控件功能演示_Lodop功能_空白练习");
+    LODOP.SET_PRINT_PAGESIZE(1,2400,700,"lihua");
+    //订单号
+    orderformid = data['zhuangxiangform'].recdate+'-' + data['zhuangxiangform'].orderformid;
+    LODOP.ADD_PRINT_TEXT(6,29,187,24,orderformid);
+    //地址
+    address = '装箱:'+ data['zhuangxiangform'].name;
+    address1 = address.subCHStr(0,22);
+    //第一格
+    LODOP.ADD_PRINT_TEXT(35,27,301,40,address);
+    LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+    //第二格
+    LODOP.SET_PRINT_STYLEA(0,"FontSize",11);
+    LODOP.ADD_PRINT_TEXT(34,390,182,36,address1);
+    //第三格
+    LODOP.SET_PRINT_STYLEA(0,"FontSize",11);
+    LODOP.ADD_PRINT_TEXT(35,612,206,37,address);
+
+
+    //数量规格
+    zhuangxiangtxt = data['zhuangxiangform'].zhuangxiangtxt;
+    LODOP.ADD_PRINT_TEXT(79,393,180,48,zhuangxiangtxt);
+    LODOP.SET_PRINT_STYLEA(0,"FontSize",10);
+    LODOP.ADD_PRINT_TEXT(77,611,213,30,zhuangxiangtxt);
+    //要餐时间
+    custtime = ' ';
+    LODOP.ADD_PRINT_TEXT(113,56,121,19,custtime);
+    //来电时间
+    teltime = data['zhuangxiangform'].rectime;
+    LODOP.ADD_PRINT_TEXT(113,210,113,19,teltime);
+    //电话号码
+    telphone = ' ';
+    LODOP.ADD_PRINT_TEXT(137,54,125,22,telphone);
+    //接线员
+    inputname = data['zhuangxiangform'].inputname;
+    LODOP.ADD_PRINT_TEXT(136,210,115,22,inputname);
+    //总金额
+    totalmoney = data['zhuangxiangform'].totalmoney;
+    //备注
+    beizhu = '';
+    //加入金额
+    beizhu = '共'+totalmoney+' '+beizhu;
+    LODOP.ADD_PRINT_TEXT(136,393,182,74,beizhu);
+    LODOP.ADD_PRINT_TEXT(119,613,219,79,beizhu);
+    LODOP.ADD_PRINT_TEXT(165,34,296,37,beizhu);
+
+    LODOP.ADD_PRINT_TEXT(81,55,271,28,zhuangxiangtxt);
+
+    //打印
+    LODOP.PRINT();
+
+    //设定订单状态为已打印
+    $.ajax({
+        type : "GET",
+        url : "__URL__/setOrderPrinted/zhuangxiangid/"+data['zhuangxiangform'].zhuangxiangid,
+        dataType : "json",
+        success : function(data){
+
+        }
+    })
+
+}
+
+//计算字符串长度
+String.prototype.strLen = function() {
+    var len = 0;
+    for (var i = 0; i < this.length; i++) {
+        if (this.charCodeAt(i) > 255 || this.charCodeAt(i) < 0) len += 2; else len ++;
+    }
+    return len;
+}
+
+</script>
+<div class="pages"><?php echo ($page); ?></div>
+<div class="list" id="list<?php echo ($moduleName); ?>"  >
+    <input id="<?php echo ($moduleName); ?>Action" type="hidden" value="listview" />
+    <table  border="0" cellspacing="1" cellpadding="3" width="100%" class="lvt"   align="center">
+        <tr class="listHeader">
+            <td class=""><input class="listColCheck" type="checkbox"  name="selectall" ></td>
+            <?php if(is_array($listHeader)): foreach($listHeader as $key=>$header): ?><td class="listHeader"><?php echo (L("$header")); ?></td><?php endforeach; endif; ?>
+            <td class="listHeader" >操作</td>
+        </tr>
+        <?php if(is_array($listEntries)): $ad = 0; $__LIST__ = $listEntries;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$entity): $mod = ($ad % 2 );++$ad; $record = $key; ?>
+            <tr bgcolor="white" onMouseOver="this.className='lvtColDataHover'" onMouseOut="this.className='lvtColData'" ondblclick="updateTab(&apos;<?php echo U('OrderForm/detailview',array('record'=> $record,'returnAction' => $returnAction));?>&apos;);" id="row_<?php echo ($entity_id); ?>">
+
+                <?php if(is_array($entity)): $i = 0; $__LIST__ = $entity;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$id): $mod = ($i % 2 );++$i; if($key == $moduleId): ?><td class="listColCheck" width="2%"><input  type="checkbox" name="selected_id" id="<?php echo ($record); ?>" value= '<?php echo ($record); ?>'></td>
+                        <?php elseif($key == $list_link_field): ?>
+                        <td><a class="small" href="#" onclick="updateTab('__URL__/detailview/record/<?php echo ($record); ?>/returnAction/listview');"><?php echo ($id); ?></a></td>
+                        <?php else: ?>
+                        <td class="listColData"><?php echo ($id); ?></td><?php endif; endforeach; endif; else: echo "" ;endif; ?>
+                <td><center><a href="#" onclick="updateTab('__URL__/detailview/record/<?php echo ($record); ?>/returnAction/<?php echo ($returnAction); ?>');">查看</a><span >&nbsp&nbsp|&nbsp&nbsp</span>
+                    <a href="#" onclick="updateTab('__URL__/editview/record/<?php echo ($record); ?>/returnAction/<?php echo ($returnAction); ?>');">修改</a>&nbsp&nbsp|&nbsp&nbsp</span>
+                    <a href="#" onclick="zhuangxiangPrint('<?php echo ($record); ?>');">打印</a></center></td>
+            </tr><?php endforeach; endif; else: echo "" ;endif; ?>
+    </table>
+</div>
+
+<div class="pages"><?php echo ($page); ?></div>

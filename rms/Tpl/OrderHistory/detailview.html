@@ -1,3 +1,15 @@
-
 <include file="OrderHistory/detailviewUI" />
 <input id="OrderFormAction" type="hidden" value="Detailview"/>
+<script>
+    var OrderHistoryDetailviewModule = {
+        //初始化
+        init:function(){
+            $('.moduleOperater').height(IndexIndexModule.operationHeight);
+        }
+
+    }
+
+    $(function(){
+        OrderHistoryDetailviewModule.init();
+    })
+</script>

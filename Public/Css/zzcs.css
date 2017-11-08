@@ -1,0 +1,173 @@
+/* test page styling */
+
+* {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    background: #033649;
+    font-family: Georgia, Times, "Times New Roman", serif;
+    color: #fff;
+
+}
+
+h1 {
+    color: black;
+    display: block;
+    margin: 0 0 1em 0;
+    font-weight: normal;
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+h2 {
+    color: #ddd;
+    display: block;
+    margin: 0 0 1em 0;
+    font-weight: normal;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+p, ul li {
+    margin: 0 0 1em 0;
+    color: #bebebe;
+    font-size: 12px;
+}
+
+ul {
+    list-style: square;
+}
+
+.nav {
+    margin: 0 0 2em 0;
+    font-size: 16px;
+}
+
+a, a:link, a:visited, a:active, a:hover {
+    color: #ccc;
+    text-decoration: none;
+    border-bottom: 1px solid #555;
+    padding: 0 0 2px 0;
+}
+
+.container {
+    width: 95%;
+    margin: 0 auto;
+    padding: 1px 1px;
+}
+
+
+
+/* test items */
+
+.items-container,
+.data-test-items {
+    overflow: hidden;
+    margin: 0 -1%;
+}
+
+.item {
+    display: block;
+    float: left;
+    width: 10%;
+    background: #00A0B0;
+}
+
+.item p {
+    color: rgba(255,255,255,0.6);
+    line-height: 1.5;
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+}
+
+.item h2,
+.item h3,
+.item h4 {
+    color: #fff;
+    margin: 0 0 1em 0;
+    font-weight: normal;
+}
+
+.item h2 {
+    font-size: 24px;
+}
+
+.item h3 {
+    font-size: 20px;
+}
+
+.item h4 {
+    font-size: 16px;
+}
+
+.item img {
+    display: block;
+    max-width: 100%;
+}
+
+.item p:last-child {
+    margin-bottom: 0;
+}
+
+.items-container.big-items .item {
+    width: 20%;
+}
+
+/* test margins */
+
+.test-margin .item {
+    margin: 3px;
+}
+
+/* test a mix of padding amounts */
+
+.test-padding .item {
+    padding: 1px;
+}
+
+
+
+/* test border-box */
+
+.test-border-box .item {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+/* test fixed height items */
+
+.items-container.fixed-items .item-0 {
+    height: 150px;
+}
+
+.items-container.fixed-items .item-1 {
+    height: 190px;
+}
+
+.items-container.fixed-items .item-2 {
+    height: 230px;
+}
+
+.items-container.fixed-items .item-3 {
+    height: 250px;
+}
+
+/* test responsive */
+
+@media only screen and (max-width: 1024px) {
+    .item,
+    .items-container.big-items .item {
+        width: 48%;
+    }
+}
+
+@media only screen and (max-width: 640px) {
+    .test-margin .item,
+    .test-margin .items-container.big-items .item {
+        width: 40%;
+        margin-left: 0;
+        margin-right: 0;
+    }
+}

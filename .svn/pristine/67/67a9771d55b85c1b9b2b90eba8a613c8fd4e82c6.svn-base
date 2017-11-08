@@ -1,0 +1,12 @@
+<?php if (!defined('THINK_PATH')) exit();?><!-- 百度外卖管理主面板 -->
+<div id="baiduwaimaiMainviewLayout" class="easyui-layout" data-options="fit:true,border:false">
+	<div data-options="region:'north',href:'__URL__/mainviewmenu'
+	" style="height:35px;">
+	</div>
+	<div data-options="region:'west',split:true,
+		title:'导航菜单',
+		href:'__URL__/westviewmenu'"
+		style="width: 180px"></div>
+	<div data-options="region:'center',href:'__URL__/centerviewPlatformIntroduce'">
+	</div>
+</div>

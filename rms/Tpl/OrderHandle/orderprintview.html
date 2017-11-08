@@ -1,0 +1,543 @@
+<div class="moduleoperator">
+    <form id="OrderPrintViewCreateviewForm" name="OrderPrintViewCreateViewForm" method="post"
+        style="border:1px solid white;margin-top: 0px;">
+        <input id="OrderPrintViewAction" type="hidden" value="Createview" />
+        <table border="0" cellspacing="0" cellpadding="0" width="99%" align="center" bgcolor="">
+            <tr>
+                <td valign="top" align="center">
+                    <div id="basicTab" style="border: 1px solid #e0dddd; background: white;">
+                        <table class="small" style="padding-top: 10px;" width="98%" cellspacing="0" cellpadding="0"
+                            border="0">
+                            <tbody>
+                                <tr>
+                                    <td colspan="4" class="tabBlockViewHeader">
+                                        送餐员信息输入 </td>
+                                </tr>
+                                <!-- Here we should include the uitype handlings-->
+                                <tr style="border: 1px solid black;background: #F0F0F0;">
+                                    <td class="dvtCellLabel" width="15%" align="right">
+                                        <font color="red">*</font>代码
+                                    </td>
+                                    <td class="dvtCellInfo" width="35%" align="left">
+                                        <input type="text" name="code" value="" size="24" class="detailedViewTextBox"
+                                            autocomplete="off" onkeydown="">
+                                    
+                                    </td>
+                                    <td class="dvtCellLabel" width="15%" align="right">
+                                        <font color="red">*</font>姓名
+                                    </td>
+                                    <td class="dvtCellInfo" width="35%" align="left">
+                                        <input type="text" name="name" id="name" value="" readonly="" size="24"
+                                            class="detailedViewTextBox" onfocus="this.className='detailedViewTextBoxOn'"
+                                            onblur="this.className='detailedViewTextBox'" autocomplete="off">
+                                    </td>
+                                </tr>
+                                <tr style="line-height: 5px;">
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="tabBlockViewHeader">
+                                        打印派送订单信息输入 </td>
+                                </tr>
+
+                                <!-- Here we should include the uitype handlings-->
+                                <tr style="border: 1px solid black;background: #F0F0F0;">
+
+                                    <td class="dvtCellLabel" colspan="4" width="100%" align="center">
+                                        <style>
+                                            #orderPrintHandleTable {
+                                                background-color: transparent;
+                                            }
+
+                                            #orderPrintHandleTable td {
+                                                height: 25px;
+                                            }
+
+                                            #productsTable span {
+                                                font-size: 16px;
+                                            }
+
+                                            #orderPrintHandleTable input {
+                                                font-size: 16px;
+                                            }
+                                        </style>
+                                        <table id="orderPrintHandleTable" style="BORDER-COLLAPSE: collapse" width="100%"
+                                            cellspacing="0" bordercolor="#CCCCCC" border="1" align="center">
+                                            <tbody>
+                                                <tr class="orderPrintHandleTableHead">
+                                                    <td width="5%" align="center">序号</td>
+                                                    <td width="10%" align="center">打印编号</td>
+                                                    <td width="75%" align="center">打印订单内容</td>
+                                                    <td width="10%" align="center">操作</td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="5%" align="center">1</td>
+                                                    <td width="10%" align="center"><input id="orderPrintViewid_1"
+                                                            name="orderPrintViewid_1" type="text" size="10" value=""
+                                                            autocomplete="off"
+                                                            onkeyup="OrderPrintViewCreateviewModule.getOrderTxtByid(1,event,this);">
+                                                    </td>
+                                                    <td width="75%" align="center"><input
+                                                            id="orderPrintVAddressOrdertxt_1"
+                                                            name="orderPrintVAddressOrdertxt_1" type="text"
+                                                            style="width:98%;" value="" autocomplete="off"
+                                                            readonly="readonly">
+                                                        <input type="hidden" id="orderPrintOrdersn_1"
+                                                            name="orderPrintOrdersn_1" value=""></td>
+                                                    <td width="10%" align="center"><a href="#"
+                                                            onclick="OrderPrintViewCreateviewModule.clearAddressOrdertxt(1);">清空内容</a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="5%" align="center">2</td>
+                                                    <td width="10%" align="center"><input id="orderPrintViewid_2"
+                                                            name="orderPrintViewid_2" type="text" size="10" value=""
+                                                            autocomplete="off"
+                                                            onkeyup="OrderPrintViewCreateviewModule.getOrderTxtByid(2,event,this);">
+                                                    </td>
+                                                    <td width="75%" align="center"><input
+                                                            id="orderPrintVAddressOrdertxt_2"
+                                                            name="orderPrintVAddressOrdertxt_2" type="text"
+                                                            style="width:98%;" value="" autocomplete="off"
+                                                            readonly="readonly">
+                                                        <input type="hidden" id="orderPrintOrdersn_2"
+                                                            name="orderPrintOrdersn_2" value=""></td>
+                                                    <td width="10%" align="center"><a href="#"
+                                                            onclick="OrderPrintViewCreateviewModule.clearAddressOrdertxt(2);">清空内容</a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="5%" align="center">3</td>
+                                                    <td width="10%" align="center"><input id="orderPrintViewid_3"
+                                                            name="orderPrintViewid_3" type="text" size="10" value=""
+                                                            autocomplete="off"
+                                                            onkeyup="OrderPrintViewCreateviewModule.getOrderTxtByid(3,event,this);">
+                                                    </td>
+                                                    <td width="75%" align="center"><input
+                                                            id="orderPrintVAddressOrdertxt_3"
+                                                            name="orderPrintVAddressOrdertxt_3" type="text"
+                                                            style="width:98%;" value="" autocomplete="off"
+                                                            readonly="readonly">
+                                                        <input type="hidden" id="orderPrintOrdersn_3"
+                                                            name="orderPrintOrdersn_3" value=""></td>
+                                                    <td width="10%" align="center"><a href="#"
+                                                            onclick="OrderPrintViewCreateviewModule.clearAddressOrdertxt(3);">清空内容</a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="5%" align="center">4</td>
+                                                    <td width="10%" align="center"><input id="orderPrintViewid_4"
+                                                            name="orderPrintViewid_4" type="text" size="10" value=""
+                                                            autocomplete="off"
+                                                            onkeyup="OrderPrintViewCreateviewModule.getOrderTxtByid(4,event,this);">
+                                                    </td>
+                                                    <td width="75%" align="center"><input
+                                                            id="orderPrintVAddressOrdertxt_4"
+                                                            name="orderPrintVAddressOrdertxt_4" type="text"
+                                                            style="width:98%;" value="" autocomplete="off"
+                                                            readonly="readonly">
+                                                        <input type="hidden" id="orderPrintOrdersn_4"
+                                                            name="orderPrintOrdersn_4" value=""></td>
+                                                    <td width="10%" align="center"><a href="#"
+                                                            onclick="OrderPrintViewCreateviewModule.clearAddressOrdertxt(4);">清空内容</a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="5%" align="center">5</td>
+                                                    <td width="10%" align="center"><input id="orderPrintViewid_5"
+                                                            name="orderPrintViewid_5" type="text" size="10" value=""
+                                                            autocomplete="off"
+                                                            onkeyup="OrderPrintViewCreateviewModule.getOrderTxtByid(5,event,this);">
+                                                    </td>
+                                                    <td width="75%" align="center"><input
+                                                            id="orderPrintVAddressOrdertxt_5"
+                                                            name="orderPrintVAddressOrdertxt_5" type="text"
+                                                            style="width:98%;" value="" autocomplete="off"
+                                                            readonly="readonly">
+                                                        <input type="hidden" id="orderPrintOrdersn_5"
+                                                            name="orderPrintOrdersn_5" value=""></td>
+                                                    <td width="10%" align="center"><a href="#"
+                                                            onclick="OrderPrintViewCreateviewModule.clearAddressOrdertxt(5);">清空内容</a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="5%" align="center">6</td>
+                                                    <td width="10%" align="center"><input id="orderPrintViewid_6"
+                                                            name="orderPrintViewid_6" type="text" size="10" value=""
+                                                            autocomplete="off"
+                                                            onkeyup="OrderPrintViewCreateviewModule.getOrderTxtByid(6,event,this);">
+                                                    </td>
+                                                    <td width="75%" align="center"><input
+                                                            id="orderPrintVAddressOrdertxt_6"
+                                                            name="orderPrintVAddressOrdertxt_6" type="text"
+                                                            style="width:98%;" value="" autocomplete="off"
+                                                            readonly="readonly">
+                                                        <input type="hidden" id="orderPrintOrdersn_6"
+                                                            name="orderPrintOrdersn_6" value=""></td>
+                                                    <td width="10%" align="center"><a href="#"
+                                                            onclick="OrderPrintViewCreateviewModule.clearAddressOrdertxt(6);">清空内容</a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="5%" align="center">7</td>
+                                                    <td width="10%" align="center"><input id="orderPrintViewid_7"
+                                                            name="orderPrintViewid_7" type="text" size="10" value=""
+                                                            autocomplete="off"
+                                                            onkeyup="OrderPrintViewCreateviewModule.getOrderTxtByid(7,event,this);">
+                                                    </td>
+                                                    <td width="75%" align="center"><input
+                                                            id="orderPrintVAddressOrdertxt_7"
+                                                            name="orderPrintVAddressOrdertxt_7" type="text"
+                                                            style="width:98%;" value="" autocomplete="off"
+                                                            readonly="readonly">
+                                                        <input type="hidden" id="orderPrintOrdersn_7"
+                                                            name="orderPrintOrdersn_7" value=""></td>
+                                                    <td width="10%" align="center"><a href="#"
+                                                            onclick="OrderPrintViewCreateviewModule.clearAddressOrdertxt(7);">清空内容</a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="5%" align="center">8</td>
+                                                    <td width="10%" align="center"><input id="orderPrintViewid_8"
+                                                            name="orderPrintViewid_8" type="text" size="10" value=""
+                                                            autocomplete="off"
+                                                            onkeyup="OrderPrintViewCreateviewModule.getOrderTxtByid(8,event,this);">
+                                                    </td>
+                                                    <td width="75%" align="center"><input
+                                                            id="orderPrintVAddressOrdertxt_8"
+                                                            name="orderPrintVAddressOrdertxt_8" type="text"
+                                                            style="width:98%;" value="" autocomplete="off"
+                                                            readonly="readonly">
+                                                        <input type="hidden" id="orderPrintOrdersn_8"
+                                                            name="orderPrintOrdersn_8" value=""></td>
+                                                    <td width="10%" align="center"><a href="#"
+                                                            onclick="OrderPrintViewCreateviewModule.clearAddressOrdertxt(8);">清空内容</a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="5%" align="center">9</td>
+                                                    <td width="10%" align="center"><input id="orderPrintViewid_9"
+                                                            name="orderPrintViewid_9" type="text" size="10" value=""
+                                                            autocomplete="off"
+                                                            onkeyup="OrderPrintViewCreateviewModul.getOrderTxtByid(9,event,this);">
+                                                    </td>
+                                                    <td width="75%" align="center"><input
+                                                            id="orderPrintVAddressOrdertxt_9"
+                                                            name="orderPrintVAddressOrdertxt_9" type="text"
+                                                            style="width:98%;" value="" autocomplete="off"
+                                                            readonly="readonly">
+                                                        <input type="hidden" id="orderPrintOrdersn_9"
+                                                            name="orderPrintOrdersn_9" value=""></td>
+                                                    <td width="10%" align="center"><a href="#"
+                                                            onclick="OrderPrintViewCreateviewModule.clearAddressOrdertxt(9);">清空内容</a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="5%" align="center">10</td>
+                                                    <td width="10%" align="center"><input id="orderPrintViewid_10"
+                                                            name="orderPrintViewid_10" type="text" size="10" value=""
+                                                            autocomplete="off"
+                                                            onkeyup="OrderPrintViewCreateviewModul.getOrderTxtByid(10,event,this);">
+                                                    </td>
+                                                    <td width="75%" align="center"><input
+                                                            id="orderPrintVAddressOrdertxt_10"
+                                                            name="orderPrintVAddressOrdertxt_10" type="text"
+                                                            style="width:98%;" value="" autocomplete="off"
+                                                            readonly="readonly">
+                                                        <input type="hidden" id="orderPrintOrdersn_10"
+                                                            name="orderPrintOrdersn_10" value=""></td>
+                                                    <td width="10%" align="center"><a href="#"
+                                                            onclick="OrderPrintViewCreateviewModule.clearAddressOrdertxt(10);">清空内容</a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="5%" align="center">11</td>
+                                                    <td width="10%" align="center"><input id="orderPrintViewid_11"
+                                                            name="orderPrintViewid_11" type="text" size="10" value=""
+                                                            autocomplete="off"
+                                                            onkeyup="OrderPrintViewCreateviewModule.getOrderTxtByid(11,event,this);">
+                                                    </td>
+                                                    <td width="75%" align="center"><input
+                                                            id="orderPrintVAddressOrdertxt_11"
+                                                            name="orderPrintVAddressOrdertxt_11" type="text"
+                                                            style="width:98%;" value="" autocomplete="off"
+                                                            readonly="readonly">
+                                                        <input type="hidden" id="orderPrintOrdersn_11"
+                                                            name="orderPrintOrdersn_11" value=""></td>
+                                                    <td width="10%" align="center"><a href="#"
+                                                            onclick="OrderPrintViewCreateviewModule.clearAddressOrdertxt(11);">清空内容</a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="5%" align="center">12</td>
+                                                    <td width="10%" align="center"><input id="orderPrintViewid_12"
+                                                            name="orderPrintViewid_12" type="text" size="10" value=""
+                                                            autocomplete="off"
+                                                            onkeyup="OrderPrintViewCreateviewModule.getOrderTxtByid(12,event,this);">
+                                                    </td>
+                                                    <td width="75%" align="center"><input
+                                                            id="orderPrintVAddressOrdertxt_12"
+                                                            name="orderPrintVAddressOrdertxt_12" type="text"
+                                                            style="width:98%;" value="" autocomplete="off"
+                                                            readonly="readonly">
+                                                        <input type="hidden" id="orderPrintOrdersn_12"
+                                                            name="orderPrintOrdersn_12" value=""></td>
+                                                    <td width="10%" align="center"><a href="#"
+                                                            onclick="OrderPrintViewCreateviewModule.clearAddressOrdertxt(12);">清空内容</a>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+
+<script type="text/javascript">
+
+    var OrderPrintViewCreateviewModule = {
+
+         //初始化
+         init: function () {
+            $('.moduleoperator').height(IndexIndexModule.operationHeight);
+            this.quickKeyboardAction();
+            this.getSendname();
+        },
+
+        //保存记录
+        insert: function () {
+            $('#OrderPrintHandleCreateviewForm').form('submit', {
+                url: '__URL__/insert',
+                onSubmit: function () {
+                    //进行表单验证
+                    if ($("#OrderPrintHandleCreateviewForm input[name=code]").val() == '') {
+                        alert('送餐员代码不能为空!');
+                        return false;
+                    }
+                    if ($("#OrderPrintHandleCreateviewForm input[name=name]").val() == '') {
+                        alert('送餐员姓名不能为空!');
+                        return false;
+                    }
+                    var isValid = $(this).form('validate');
+                    if (!isValid) {
+                        alert('数据不能为空！或者输入错误，请检查！');
+                        return false;
+                    }
+                },
+                success: function (res) {
+                    var data = eval('(' + res + ')');
+                    if (!data.status) {
+                        $.app.method.tip('提示信息', data.info, 'error');
+                    } else {
+                        $.app.method.tip('提示信息', data.info, 'info');
+                        IndexIndexModule.updateOperateTab(data.url);
+                    }
+                }
+            });
+        },
+
+        //根据送餐员代码获取姓名
+        getSendname: function () {
+            //按回车不自动提交
+            $('#OrderPrintViewCreateviewForm input[name=code]').keyup(function (event) {
+                if (event.which == 13) {
+                    var inputCode = $(this).val();
+                    $.ajax({
+                        type: "GET",
+                        url: "__URL__/OrerPrintGetSendnameByCode/code/" + inputCode,
+                        dataType: "json",
+                        success: function (returnData) {
+                            if (returnData['error'] == 'error') {
+                                $.messager.show({
+                                    title: '提示',
+                                    msg: '输入代码输入有误!',
+                                    height: 70,
+                                    timeout: 5000,
+                                    showType: 'slide',
+                                    style: {
+                                        left: 0, right: '', top: '',
+                                        bottom: -document.body.scrollTop - document.documentElement.scrollTop
+                                    }
+                                });
+                                return false;
+                            }
+                            if (returnData['success'] == 'success') {
+                                handleData = returnData['data'];
+                                $('#OrderPrintViewCreateviewForm input[name=name]').val(handleData.sendname);
+                                $('#orderPrintViewid_1').focus();  //
+                            }
+                        }
+
+                    });
+                    return false;
+                }
+            })
+        },
+
+        //新建的快捷操作
+        quickKeyboardAction: function () {
+            // ctrl+9快捷键,保存公告
+            Mousetrap.bind(['ctrl+9', 'ctrl+f9', 'f9'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '打印派单' && ($('#OrderPrintHandleAction').val() == 'Createview')) {
+                    NoticeCreateviewModule.insert();
+                };
+            });
+
+            // ctrl+4快捷键,放弃
+            Mousetrap.bind(['ctrl+4', 'ctrl+f4', 'f4'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '打印派单' && ($('#OrderPrintHandleAction').val() == 'Createview')) {
+                    IndexIndexModule.updateOperateTab('__URL__/listview');
+                };
+            });
+        },
+    
+        //根据输入的订单号，显示订单内容
+        getOrderTxtByid: function (rowNum, evt, obj) {
+            evt = evt ? evt : ((window.event) ? window.event : null);
+            var key = evt.keyCode ? evt.keyCode : evt.which;
+            var printNumber = $(obj).val();
+            if (key == 13) {
+                //先判断送餐员是否输入
+                sendname = $('#OrderPrintViewCreateviewForm input[name=name]').val();
+                if(typeof sendname == "undefined" || sendname == null || sendname == ""){
+                    $.messager.show({
+                                    title: '提示',
+                                    msg: '请先完成输入送餐员!',
+                                    height: 70,
+                                    timeout: 5000,
+                                    showType: 'slide',
+                                    style: {
+                                        left: 0, right: '', top: '',
+                                        bottom: -document.body.scrollTop - document.documentElement.scrollTop
+                                    }
+                                });
+                                return false;
+                }
+                $.ajax({
+                    url: "__URL__/getOrderTxtByid/printNumber/" + printNumber+'/sendname/'+sendname,
+                    async: true,
+                    beforeSend: function () {
+                    },
+                    complete: function () {
+                    },
+                    success: function (mydata) {
+                        if (mydata.error == 'error') {
+                            $.messager.show({
+                                title: '提示',
+                                msg: '输入号码有误!',
+                                height: 70,
+                                timeout: 5000,
+                                showType: 'slide',
+                                style: {
+                                    left: 0, right: '', top: '',
+                                    bottom: -document.body.scrollTop - document.documentElement.scrollTop
+                                }
+                            });
+                            $('#orderPrintVAddressOrdertxt_' + rowNum).val('');
+                            $('#orderPrintOrdersn_' + rowNum).val('');  //订单号
+                            $('#orderPrintVAddressOrdertxt_' + rowNum).css("color", "black");
+                            return false;
+                        }
+                        if (mydata.success == 'success') {
+                            $('#orderPrintVAddressOrdertxt_' + rowNum).css("color", "black");
+                            $('#orderPrintVAddressOrdertxt_' + rowNum).val(mydata.addressOrdertxt);
+                            $('#orderPrintOrdersn_' + rowNum).val(mydata.ordersn);
+                            rowNum = rowNum + 1;
+                            $('#orderPrintViewid_' + rowNum).focus();
+                        }
+                        if (mydata.success == 'repeat') {
+                            $('#orderPrintVAddressOrdertxt_' + rowNum).val(mydata.addressOrdertxt);
+                            $('#orderPrintOrdersn_' + rowNum).val(mydata.ordersn);
+                            $('#orderPrintVAddressOrdertxt_' + rowNum).css("color", "red");
+                            rowNum = rowNum + 1;
+                            $('#orderPrintViewid_' + rowNum).focus();
+                        }
+                    }
+                })
+            }
+        },
+
+
+        //删除内容
+        clearAddressOrdertxt: function (rowNum) {
+            $('#orderPrintViewid_' + rowNum).val('');
+            $('#orderPrintVAddressOrdertxt_' + rowNum).val('');
+            $('#orderPrintOrdersn_' + rowNum).val('');
+            $('#orderPrintViewid_' + rowNum).focus();
+        }
+
+    }
+
+    $(function () {
+        OrderPrintViewCreateviewModule.init();
+        setTimeout(function () {
+            $('#OrderPrintViewCreateviewForm input[name=code]').focus();
+        }, 200);
+
+        //清除定时返回listview的任务
+        if (typeof (OrderPrintHandleListviewModule) != 'undefined') {
+            clearInterval(OrderPrintHandleListviewModule.orderprinttime);
+        }
+
+    })
+</script>
+
+<style type="text/css">
+    .dvtCellLabel,
+    .cellLabel {
+        background: #F7F7F7 url(.//Public/Images/testsidebar.jpg) repeat-y scroll right center;
+        border-bottom: 1px solid #DEDEDE;
+        border-left: 1px solid #DEDEDE;
+        border-right: 1px solid #DEDEDE;
+        color: #545454;
+        padding-left: 10px;
+        padding-right: 10px;
+        white-space: nowrap;
+        font-size: 14px;
+    }
+
+    .dvtCellInfo,
+    .cellInfo {
+        background: #FFFFFF;
+        padding-left: 10px;
+        padding-right: 10px;
+        border-bottom: 1px solid #dedede;
+        border-right: 1px solid #dedede;
+        border-left: 1px solid #dedede;
+    }
+
+    .detailedViewTextBox {
+        font-size: 16px;
+    }
+
+    .detailedViewTextBoxOn {
+        font-size: 16px;
+    }
+
+    lable {
+        font-size: 16px;
+    }
+
+    /*对RBAC节点状态的设置*/
+    .nodestatus {
+        float: left;
+        font-size: 16px;
+        line-height: 28px;
+    }
+</style>

@@ -36,7 +36,7 @@ class OrderDistributionAction extends ModuleAction {
 			$where [] = ' length(trim(company)) = 0 ';
 			$where [] = " not (state like '已%')";
 			$where ['ap'] = $this->getAp ();
-			$where ['domain'] = $_SERVER['HTTP_HOST'];
+			$where ['domain'] = $this->getDomain();
 			$total = $focus->where ( $where )->count (); // 查询满足要求的总记录数
 
 			//使用cookie读取rows
@@ -62,7 +62,7 @@ class OrderDistributionAction extends ModuleAction {
 
 			// 分公司的名称
 			$userInfo = $_SESSION ['userInfo'];
-			$company = $userInfo ['company'];
+			$company = $this->userInfo ['department'];
 
 			// 进行分页数据查询 注意limit方法的参数要使用Page类的属性
 			// 查询模块的数据
@@ -73,7 +73,7 @@ class OrderDistributionAction extends ModuleAction {
 			$where [] = ' length(trim(company)) = 0 ';
 			$where [] = " not (state like '已%')";
 			$where ['ap'] = $this->getAp ();
-			$where ['domain'] = $_SERVER['HTTP_HOST'];
+			$where ['domain'] = $this->getDomain();
 			$listResult = $focus->where ( $where )->field ( $select_fields )->limit ( $Page->firstRow . ',' . $Page->listRows )->order ( "$moduleId asc" )->select ();
 
 			if (empty ( $listResult )) {
@@ -155,7 +155,7 @@ class OrderDistributionAction extends ModuleAction {
 		// 根据编码取得配送点名字
 		$companyMgrModel = D ( 'CompanyMgr' );
 		$where ['distributionCode'] = $code; // 配送点的编号
-		$where ['domain'] = $_SERVER['HTTP_HOST'];
+		$where ['domain'] = $this->getDomain();
 		$companymgrResult = $companyMgrModel->field ( 'name,distributioncode' )->where ( $where )->find ();
 		if ($companymgrResult) {
 			$companyName = $companymgrResult ['name'];
@@ -185,7 +185,7 @@ class OrderDistributionAction extends ModuleAction {
 		$orderactionData ['ordersn'] = $ordersn; // 订单号
 		$orderactionData ['action'] = "订单分配给" . $companyName . "配送点";
 		$orderactionData ['logtime'] = date ( 'H:i:s' );
-		$orderactionData ['domain'] = $_SERVER['HTTP_HOST'];
+		$orderactionData ['domain'] = $this->getDomain();
 		$orderactionModel->create ();
 		$result = $orderactionModel->add ( $orderactionData );
 
@@ -205,7 +205,7 @@ class OrderDistributionAction extends ModuleAction {
 		$data ['ordersn'] = $ordersn;
 		$data ['status'] = 0;
 		$data ['assisstatus'] = 0;
-		$data ['domain'] =  $_SERVER['HTTP_HOST'];
+		$data ['domain'] =  $this->getDomain();
 		$orderyingshouexchangeModel = D('Orderyingshouexchange');
 		$orderyingshouexchangeModel->create();
 		$orderyingshouexchangeModel->add($data);
@@ -217,7 +217,7 @@ class OrderDistributionAction extends ModuleAction {
 		$data['content'] = "订单分配给" . $companyName . "配送点";
 		$data['date'] = date('Y-m-d H:i:s');
 		$data['origin'] = $origin;
-		$data['domain'] = $_SERVER['HTTP_HOST'];
+		$data['domain'] = $this->getDomain();
 		$webstatusModel = D('Webstatus');
 		$webstatusModel->create();
 		$webstatusModel->add($data);
@@ -309,7 +309,7 @@ class OrderDistributionAction extends ModuleAction {
 					$where ['_logic'] = 'and';
 				}
 			}
-			$where ['domain'] = $_SERVER ['HTTP_HOST'];
+			$where ['domain'] = $this->getDomain();
 
 
 			$total = $focus->where($where)->count(); // 查询满足要求的总记录数
@@ -449,7 +449,7 @@ class OrderDistributionAction extends ModuleAction {
 				}
 			}
 
-			$where ['domain'] = $_SERVER ['HTTP_HOST'];
+			$where ['domain'] = $this->getDomain();
 
 			$total = $focus->where($where)->count(); // 查询满足要求的总记录数
 
@@ -619,7 +619,7 @@ class OrderDistributionAction extends ModuleAction {
 					$map['_complex'] = $where;
 				}
 			}
-			$map['domain'] = $_SERVER['HTTP_HOST'];
+			$map['domain'] = $this->getDomain();
 
 			$total = $focus->where($map)->count(); // 查询满足要求的总记录数
 
@@ -753,7 +753,7 @@ class OrderDistributionAction extends ModuleAction {
 				}
 			}
 
-			$where ['domain'] = $_SERVER ['HTTP_HOST'];
+			$where ['domain'] = $this->getDomain();
 
 			$total = $focus->where($where)->count(); // 查询满足要求的总记录数
 			//var_dump($focus->getLastSql());
@@ -955,7 +955,7 @@ class OrderDistributionAction extends ModuleAction {
 		$ordermonitModel = D ( 'Ordermonit' );
 		$where = array ();
 		$where ['name'] = '全部';
-		$where ['domain'] = $_SERVER['HTTP_HOST'];
+		$where ['domain'] = $this->getDomain();
 		$ordermonit = $ordermonitModel->where ( $where )->select ();
 		if (empty ( $ordermonit )) {
 			$ordermonit = array ();
@@ -967,7 +967,7 @@ class OrderDistributionAction extends ModuleAction {
 	function getCompanyMgr() {
 		$companymgr_model = D ( 'Companymgr' );
 		$where = array();
-		$where['domain'] = $_SERVER['HTTP_HOST'];
+		$where['domain'] = $this->getDomain();
 		$companyMgr = $companymgr_model->where($where)->field ( "name,distributionCode" )->select ();
 		$test = array();
 		foreach($companyMgr as $value){
@@ -1049,7 +1049,7 @@ class OrderDistributionAction extends ModuleAction {
 		// 根据编码取得配送点名字
 		$companyMgrModel = D ( 'CompanyMgr' );
 		$where ['distributionCode'] = $code; // 配送点的编号
-		$where ['domain'] = $_SERVER['HTTP_HOST'];
+		$where ['domain'] = $this->getDomain();
 		$companymgrResult = $companyMgrModel->field ( 'name,distributioncode' )->where ( $where )->find ();
 		if ($companymgrResult) {
 			$companyName = $companymgrResult ['name'];
@@ -1085,7 +1085,7 @@ class OrderDistributionAction extends ModuleAction {
 			$orderactionData ['ordersn'] = $ordersn; // 订单号
 			$orderactionData ['action'] = "订单从".$orderformResult['company']."重新分配给" . $companyName . "配送点";
 			$orderactionData ['logtime'] = date ( 'H:i:s' );
-			$orderactionData ['domain'] = $_SERVER['HTTP_HOST'];
+			$orderactionData ['domain'] = $this->getDomain();
  			$orderactionModel->create ();
 			$result = $orderactionModel->add ( $orderactionData );
 
@@ -1103,7 +1103,7 @@ class OrderDistributionAction extends ModuleAction {
 			$orderactionData ['ordersn'] = $ordersn; // 订单号
 			$orderactionData ['action'] = "订单分配给" . $companyName . "配送点";
 			$orderactionData ['logtime'] = date ( 'H:i:s' );
-			$orderactionData ['domain'] = $_SERVER['HTTP_HOST'];
+			$orderactionData ['domain'] = $this->getDomain();
 			$orderactionModel->create ();
 			$result = $orderactionModel->add ( $orderactionData );
 		}
@@ -1124,7 +1124,7 @@ class OrderDistributionAction extends ModuleAction {
 		$data ['ordersn'] = $ordersn;
 		$data ['status'] = 0;
 		$data ['assisstatus'] = 0;
-		$data ['domain'] =  $_SERVER['HTTP_HOST'];
+		$data ['domain'] =  $this->getDomain();
 		$orderyingshouexchangeModel = D('Orderyingshouexchange');
 		$orderyingshouexchangeModel->create();
 		$orderyingshouexchangeModel->add($data);
@@ -1136,7 +1136,7 @@ class OrderDistributionAction extends ModuleAction {
 		$data['content'] = "订单分配给" . $companyName . "配送点";
 		$data['date'] = date('Y-m-d H:i:s');
 		$data['origin'] = $origin;
-		$data['domain'] = $_SERVER['HTTP_HOST'];
+		$data['domain'] = $this->getDomain();
 		$webstatusModel = D('Webstatus');
 		$webstatusModel->create();
 		$webstatusModel->add($data);
@@ -1170,7 +1170,7 @@ class OrderDistributionAction extends ModuleAction {
 		// 根据编码取得配送点名字
 		$companyMgrModel = D ( 'CompanyMgr' );
 		$where ['distributionCode'] = $code; // 配送点的编号
-		$where ['domain'] = $_SERVER ['HTTP_HOST'];
+		$where ['domain'] = $this->getDomain();
 		$companymgrResult = $companyMgrModel->field ( 'name,distributioncode' )->where ( $where )->find ();
 
 		$companyName = array ();
@@ -1252,10 +1252,32 @@ class OrderDistributionAction extends ModuleAction {
 		$data ['ordersn'] = $ordersn;
 		$data ['status'] = 0;
 		$data ['assisstatus'] = 0;
-		$data ['domain'] =  $_SERVER['HTTP_HOST'];
+		$data ['domain'] =  $this->getDomain();
 		$orderyingshouexchangeModel = D('Orderyingshouexchange');
 		$orderyingshouexchangeModel->create();
 		$orderyingshouexchangeModel->add($data);
+
+        //查询电子发票，将电子发票设置为退票状态
+        //启动退票
+        $where = array();
+        $where['ordersn'] = $ordersn;
+        //$where['cancel_state'] = 0;
+        $where['state'] = 2;
+        $where['domain'] = $this->getDomain();
+        $data = array();
+        $data['cancel_state'] = 1;
+        $invoicewebModel = D('invoiceweb');
+        $invoicewebModel->where($where)->save($data);
+
+        //写入到日志中
+        $data = array();
+        $data['ordersn'] = $ordersn;
+        $data['log'] = "联络员作废电子票";
+        $data['date'] = date('Y-m-d H:i:s');
+        $data['domain'] = $this->getDomain();
+        $invoiceweblogModel = D('invoiceweblog');
+        $invoiceweblogModel->create();
+        $invoiceweblogModel->add($data);
 
 
 		$pagetype = $_REQUEST['pagetype'];
@@ -1317,7 +1339,7 @@ class OrderDistributionAction extends ModuleAction {
 		$orderform_model = D('Orderform');
 		$where = array();
 		$where['ap'] = '下午';
-		$where['domain'] = $_SERVER['HTTP_HOST'];
+		$where['domain'] = $this->getDomain();
 		$ordernumber = $orderform_model->where($where)->count();
 
 		//取得订单金额

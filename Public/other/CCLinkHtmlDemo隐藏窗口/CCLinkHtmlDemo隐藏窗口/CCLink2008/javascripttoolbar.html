@@ -1,0 +1,818 @@
+﻿
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+  <title></title>
+  <script language="javascript" charset="UTF-8" src="javascript\CCLink2008.js"></script>
+</head>
+
+<script language="javascript" type="text/javascript">
+    var $GetRequest = (function () {
+        var url = window.document.location.href.toString();
+        var u = url.split("?");
+        if (typeof (u[1]) == "string") {
+            u = u[1].split("&");
+            var get = {};
+            for (var i in u) {
+                var j = u[i].split("=");
+                get[j[0]] = decodeURIComponent(j[1]);
+            }
+            return get;
+        } else {
+            return {};
+        }
+    })();
+
+    var LinkHost = $GetRequest["ServerIP"];
+    var LinkPort = 3008;
+    var LinkExtCode = $GetRequest["ExtCode"];
+    var LinkExtName = $GetRequest["ExtName"];
+    var LinkExtWorkNo = $GetRequest["ExtWorkNo"];
+    var LinkExtDoNotDisturb = 0;
+    var LinkConnected = 0;
+    var LinkCheckIn = 1;
+    if (LinkHost.lastIndexOf(":") > 0) {
+        LinkPort = parseInt(LinkHost.substring(LinkHost.lastIndexOf(":") + 1));
+        LinkHost = LinkHost.substring(0, LinkHost.lastIndexOf(":"));
+    }
+    
+    //设置按钮是否可用
+    function setCTIButtonEnabled(buttonName, enabled) {
+        if (buttonName == "btnCheckIn") {
+            if (enabled == 1) {
+                document.getElementById("btnCheckIn").src = "images/CheckIn_enable.png";
+                document.getElementById("btnCheckIn").style.cursor = "pointer";
+                document.getElementById("btnCheckIn").onclick = function () { btnCheckIn_onclick(); }
+            }
+            else {
+                document.getElementById("btnCheckIn").src = "images/CheckIn_disable.png";
+                document.getElementById("btnCheckIn").style.cursor = "";
+                document.getElementById("btnCheckIn").onclick = function () { }
+            }
+        }
+        if (buttonName == "btnCheckOut") {
+            if (enabled == 1) {
+                document.getElementById("btnCheckOut").src = "images/CheckOut_enable.png";
+                document.getElementById("btnCheckOut").style.cursor = "pointer";
+                document.getElementById("btnCheckOut").onclick = function () { btnCheckOut_onclick(); }
+            }
+            else {
+                document.getElementById("btnCheckOut").src = "images/CheckOut_disable.png";
+                document.getElementById("btnCheckOut").style.cursor = "";
+                document.getElementById("btnCheckOut").onclick = function () { }
+            }
+        }
+        if (buttonName == "btnSetIdle") {
+            if (enabled == 1) {
+                document.getElementById("btnSetIdle").src = "images/SetIdle_enable.png";
+                document.getElementById("btnSetIdle").style.cursor = "pointer";
+                document.getElementById("btnSetIdle").onclick = function () { btnSetIdle_onclick(); }
+            }
+            else {
+                document.getElementById("btnSetIdle").src = "images/SetIdle_disable.png";
+                document.getElementById("btnSetIdle").style.cursor = "";
+                document.getElementById("btnSetIdle").onclick = function () { }
+            }
+        }
+        if (buttonName == "btnSetBusy") {
+            if (enabled == 1) {
+                document.getElementById("btnSetBusy").src = "images/SetBusy_enable.png";
+                document.getElementById("btnSetBusy").style.cursor = "pointer";
+                document.getElementById("btnSetBusy").onclick = function () { btnSetBusy_onclick(); }
+            }
+            else {
+                document.getElementById("btnSetBusy").src = "images/SetBusy_disable.png";
+                document.getElementById("btnSetBusy").style.cursor = "";
+                document.getElementById("btnSetBusy").onclick = function () { }
+            }
+        }
+        if (buttonName == "btnMakeCall") {
+            if (enabled == 1) {
+                document.getElementById("btnMakeCall").src = "images/MakeCall_enable.png";
+                document.getElementById("btnMakeCall").style.cursor = "pointer";
+                document.getElementById("btnMakeCall").onclick = function () { btnMakeCall_onclick(); }
+            }
+            else {
+                document.getElementById("btnMakeCall").src = "images/MakeCall_disable.png";
+                document.getElementById("btnMakeCall").style.cursor = "";
+                document.getElementById("btnMakeCall").onclick = function () { }
+            }
+        }
+        if (buttonName == "btnAnswerCall") {
+            if (enabled == 1) {
+                document.getElementById("btnAnswerCall").src = "images/AnswerCall_enable.png";
+                document.getElementById("btnAnswerCall").style.cursor = "pointer";
+                document.getElementById("btnAnswerCall").onclick = function () { btnAnswerCall_onclick(); }
+            }
+            else {
+                document.getElementById("btnAnswerCall").src = "images/AnswerCall_disable.png";
+                document.getElementById("btnAnswerCall").style.cursor = "";
+                document.getElementById("btnAnswerCall").onclick = function () { }
+            }
+        }
+        if (buttonName == "btnTransferCall") {
+            if (enabled == 1) {
+                document.getElementById("btnTransferCall").src = "images/TransferCall_enable.png";
+                document.getElementById("btnTransferCall").style.cursor = "pointer";
+                document.getElementById("btnTransferCall").onclick = function () { btnTransferCall_onclick(); }
+            }
+            else {
+                document.getElementById("btnTransferCall").src = "images/TransferCall_disable.png";
+                document.getElementById("btnTransferCall").style.cursor = "";
+                document.getElementById("btnTransferCall").onclick = function () { }
+            }
+        }
+        if (buttonName == "btnRetriveCall") {
+            if (enabled == 1) {
+                document.getElementById("btnRetriveCall").src = "images/RetriveCall_enable.png";
+                document.getElementById("btnRetriveCall").style.cursor = "pointer";
+                document.getElementById("btnRetriveCall").onclick = function () { btnRetriveCall_onclick(); }
+            }
+            else {
+                document.getElementById("btnRetriveCall").src = "images/RetriveCall_disable.png";
+                document.getElementById("btnRetriveCall").style.cursor = "";
+                document.getElementById("btnRetriveCall").onclick = function () { }
+            }
+        }
+        if (buttonName == "btnThreeParty") {
+            if (enabled == 1) {
+                document.getElementById("btnThreeParty").src = "images/ThreeParty_enable.png";
+                document.getElementById("btnThreeParty").style.cursor = "pointer";
+                document.getElementById("btnThreeParty").onclick = function () { btnThreeParty_onclick(); }
+            }
+            else {
+                document.getElementById("btnThreeParty").src = "images/ThreeParty_disable.png";
+                document.getElementById("btnThreeParty").style.cursor = "";
+                document.getElementById("btnThreeParty").onclick = function () { }
+            }
+        }
+        if (buttonName == "btnDropCall") {
+            if (enabled == 1) {
+                document.getElementById("btnDropCall").src = "images/DropCall_enable.png";
+                document.getElementById("btnDropCall").style.cursor = "pointer";
+                document.getElementById("btnDropCall").onclick = function () { btnDropCall_onclick(); }
+            }
+            else {
+                document.getElementById("btnDropCall").src = "images/DropCall_disable.png";
+                document.getElementById("btnDropCall").style.cursor = "";
+                document.getElementById("btnDropCall").onclick = function () { }
+            }
+        }
+    }
+
+    //设置显示
+    function setCTIDisplay() {
+        if (CCLink.Link_GetState() == 0) {
+            document.getElementById("labelPhoneState").innerText = "未连接";
+            document.getElementById("labelOtherCode").innerText = "";
+            setCTIButtonEnabled("btnCheckIn", 0);
+            setCTIButtonEnabled("btnCheckOut", 0);
+            setCTIButtonEnabled("btnSetIdle", 0);
+            setCTIButtonEnabled("btnSetBusy", 0);
+            setCTIButtonEnabled("btnMakeCall", 0);
+            setCTIButtonEnabled("btnAnswerCall", 0);
+            setCTIButtonEnabled("btnTransferCall", 0);
+            setCTIButtonEnabled("btnRetriveCall", 0);
+            setCTIButtonEnabled("btnThreeParty", 0);
+            setCTIButtonEnabled("btnDropCall", 0);
+        }
+        else {
+            switch (CCLink.Ext_GetCallState(LinkExtCode)) {
+                case -1:
+                    document.getElementById("labelPhoneState").innerText = "未登录";
+                    document.getElementById("labelOtherCode").innerText = "";
+                    setCTIButtonEnabled("btnCheckIn", 0);
+                    setCTIButtonEnabled("btnCheckOut", 0);
+                    setCTIButtonEnabled("btnSetIdle", 0);
+                    setCTIButtonEnabled("btnSetBusy", 0);
+                    setCTIButtonEnabled("btnMakeCall", 0);
+                    setCTIButtonEnabled("btnAnswerCall", 0);
+                    setCTIButtonEnabled("btnTransferCall", 0);
+                    setCTIButtonEnabled("btnRetriveCall", 0);
+                    setCTIButtonEnabled("btnThreeParty", 0);
+                    setCTIButtonEnabled("btnDropCall", 0);
+                    break;
+                case 0:
+                    if (CCLink.Ext_GetExtDoNotDisturb(LinkExtCode) == 0) {
+                        document.getElementById("labelPhoneState").innerText = "空闲";
+                    }
+                    else {
+                        document.getElementById("labelPhoneState").innerText = "忙碌";
+                    }
+                    document.getElementById("labelOtherCode").innerText = CCLink.Ext_GetCallInfo_OtherCode(LinkExtCode);
+                    if (CCLink.Ext_GetQueueState(LinkExtCode) == 0) {
+                        setCTIButtonEnabled("btnCheckIn", 1);
+                        setCTIButtonEnabled("btnCheckOut", 0);
+                    }
+                    else {
+                        setCTIButtonEnabled("btnCheckIn", 0);
+                        setCTIButtonEnabled("btnCheckOut", 1);
+                    }
+                    if (CCLink.Ext_GetExtDoNotDisturb(LinkExtCode) == 0) {
+                        setCTIButtonEnabled("btnSetIdle", 0);
+                        setCTIButtonEnabled("btnSetBusy", 1);
+                    }
+                    else {
+                        setCTIButtonEnabled("btnSetIdle", 1);
+                        setCTIButtonEnabled("btnSetBusy", 0);
+                    }
+                    setCTIButtonEnabled("btnMakeCall", 1);
+                    setCTIButtonEnabled("btnAnswerCall", 0);
+                    setCTIButtonEnabled("btnTransferCall", 0);
+                    setCTIButtonEnabled("btnRetriveCall", 0);
+                    setCTIButtonEnabled("btnThreeParty", 0);
+                    setCTIButtonEnabled("btnDropCall", 0);
+                    break;
+                case 1:
+                    document.getElementById("labelPhoneState").innerText = "监听";
+                    document.getElementById("labelOtherCode").innerText = CCLink.Ext_GetCallInfo_OtherCode(LinkExtCode);
+                    if (CCLink.Ext_GetQueueState(LinkExtCode) == 0) {
+                        setCTIButtonEnabled("btnCheckIn", 1);
+                        setCTIButtonEnabled("btnCheckOut", 0);
+                    }
+                    else {
+                        setCTIButtonEnabled("btnCheckIn", 0);
+                        setCTIButtonEnabled("btnCheckOut", 1);
+                    }
+                    if (CCLink.Ext_GetExtDoNotDisturb(LinkExtCode) == 0) {
+                        setCTIButtonEnabled("btnSetIdle", 0);
+                        setCTIButtonEnabled("btnSetBusy", 1);
+                    }
+                    else {
+                        setCTIButtonEnabled("btnSetIdle", 1);
+                        setCTIButtonEnabled("btnSetBusy", 0);
+                    }
+                    setCTIButtonEnabled("btnMakeCall", 0);
+                    setCTIButtonEnabled("btnAnswerCall", 0);
+                    setCTIButtonEnabled("btnTransferCall", 0);
+                    setCTIButtonEnabled("btnRetriveCall", 0);
+                    setCTIButtonEnabled("btnThreeParty", 0);
+                    setCTIButtonEnabled("btnDropCall", 1);
+                    break;
+                case 2:
+                    document.getElementById("labelPhoneState").innerText = "拨号";
+                    document.getElementById("labelOtherCode").innerText = CCLink.Ext_GetCallInfo_OtherCode(LinkExtCode);
+                    if (CCLink.Ext_GetQueueState(LinkExtCode) == 0) {
+                        setCTIButtonEnabled("btnCheckIn", 1);
+                        setCTIButtonEnabled("btnCheckOut", 0);
+                    }
+                    else {
+                        setCTIButtonEnabled("btnCheckIn", 0);
+                        setCTIButtonEnabled("btnCheckOut", 1);
+                    }
+                    if (CCLink.Ext_GetExtDoNotDisturb(LinkExtCode) == 0) {
+                        setCTIButtonEnabled("btnSetIdle", 0);
+                        setCTIButtonEnabled("btnSetBusy", 1);
+                    }
+                    else {
+                        setCTIButtonEnabled("btnSetIdle", 1);
+                        setCTIButtonEnabled("btnSetBusy", 0);
+                    }
+                    setCTIButtonEnabled("btnMakeCall", 1);
+                    setCTIButtonEnabled("btnAnswerCall", 0);
+                    setCTIButtonEnabled("btnTransferCall", 0);
+                    setCTIButtonEnabled("btnRetriveCall", 0);
+                    setCTIButtonEnabled("btnThreeParty", 0);
+                    setCTIButtonEnabled("btnDropCall", 1);
+                    break;
+                case 3:
+                    document.getElementById("labelPhoneState").innerText = "来电";
+                    document.getElementById("labelOtherCode").innerText = CCLink.Ext_GetCallInfo_OtherCode(LinkExtCode);
+                    if (CCLink.Ext_GetQueueState(LinkExtCode) == 0) {
+                        setCTIButtonEnabled("btnCheckIn", 1);
+                        setCTIButtonEnabled("btnCheckOut", 0);
+                    }
+                    else {
+                        setCTIButtonEnabled("btnCheckIn", 0);
+                        setCTIButtonEnabled("btnCheckOut", 1);
+                    }
+                    if (CCLink.Ext_GetExtDoNotDisturb(LinkExtCode) == 0) {
+                        setCTIButtonEnabled("btnSetIdle", 0);
+                        setCTIButtonEnabled("btnSetBusy", 1);
+                    }
+                    else {
+                        setCTIButtonEnabled("btnSetIdle", 1);
+                        setCTIButtonEnabled("btnSetBusy", 0);
+                    }
+                    setCTIButtonEnabled("btnMakeCall", 0);
+                    setCTIButtonEnabled("btnAnswerCall", 1);
+                    setCTIButtonEnabled("btnTransferCall", 0);
+                    setCTIButtonEnabled("btnRetriveCall", 0);
+                    setCTIButtonEnabled("btnThreeParty", 0);
+                    setCTIButtonEnabled("btnDropCall", 1);
+                    break;
+                case 4:
+                    document.getElementById("labelPhoneState").innerText = "呼叫";
+                    document.getElementById("labelOtherCode").innerText = CCLink.Ext_GetCallInfo_OtherCode(LinkExtCode);
+                    if (CCLink.Ext_GetQueueState(LinkExtCode) == 0) {
+                        setCTIButtonEnabled("btnCheckIn", 1);
+                        setCTIButtonEnabled("btnCheckOut", 0);
+                    }
+                    else {
+                        setCTIButtonEnabled("btnCheckIn", 0);
+                        setCTIButtonEnabled("btnCheckOut", 1);
+                    }
+                    if (CCLink.Ext_GetExtDoNotDisturb(LinkExtCode) == 0) {
+                        setCTIButtonEnabled("btnSetIdle", 0);
+                        setCTIButtonEnabled("btnSetBusy", 1);
+                    }
+                    else {
+                        setCTIButtonEnabled("btnSetIdle", 1);
+                        setCTIButtonEnabled("btnSetBusy", 0);
+                    }
+                    setCTIButtonEnabled("btnMakeCall", 0);
+                    setCTIButtonEnabled("btnAnswerCall", 0);
+                    setCTIButtonEnabled("btnTransferCall", 0);
+                    setCTIButtonEnabled("btnRetriveCall", 0);
+                    setCTIButtonEnabled("btnThreeParty", 0);
+                    setCTIButtonEnabled("btnDropCall", 1);
+                    break;
+                case 5:
+                    document.getElementById("labelPhoneState").innerText = "通话";
+                    document.getElementById("labelOtherCode").innerText = CCLink.Ext_GetCallInfo_OtherCode(LinkExtCode);
+                    if (CCLink.Ext_GetQueueState(LinkExtCode) == 0) {
+                        setCTIButtonEnabled("btnCheckIn", 1);
+                        setCTIButtonEnabled("btnCheckOut", 0);
+                    }
+                    else {
+                        setCTIButtonEnabled("btnCheckIn", 0);
+                        setCTIButtonEnabled("btnCheckOut", 1);
+                    }
+                    if (CCLink.Ext_GetExtDoNotDisturb(LinkExtCode) == 0) {
+                        setCTIButtonEnabled("btnSetIdle", 0);
+                        setCTIButtonEnabled("btnSetBusy", 1);
+                    }
+                    else {
+                        setCTIButtonEnabled("btnSetIdle", 1);
+                        setCTIButtonEnabled("btnSetBusy", 0);
+                    }
+                    setCTIButtonEnabled("btnMakeCall", 0);
+                    setCTIButtonEnabled("btnAnswerCall", 0);
+                    setCTIButtonEnabled("btnTransferCall", 1);
+                    setCTIButtonEnabled("btnRetriveCall", 0);
+                    setCTIButtonEnabled("btnThreeParty", 0);
+                    setCTIButtonEnabled("btnDropCall", 1);
+                    break;
+                case 6:
+                    document.getElementById("labelPhoneState").innerText = "答询";
+                    document.getElementById("labelOtherCode").innerText = CCLink.Ext_GetCallInfo_OtherCode(LinkExtCode);
+                    if (CCLink.Ext_GetQueueState(LinkExtCode) == 0) {
+                        setCTIButtonEnabled("btnCheckIn", 1);
+                        setCTIButtonEnabled("btnCheckOut", 0);
+                    }
+                    else {
+                        setCTIButtonEnabled("btnCheckIn", 0);
+                        setCTIButtonEnabled("btnCheckOut", 1);
+                    }
+                    if (CCLink.Ext_GetExtDoNotDisturb(LinkExtCode) == 0) {
+                        setCTIButtonEnabled("btnSetIdle", 0);
+                        setCTIButtonEnabled("btnSetBusy", 1);
+                    }
+                    else {
+                        setCTIButtonEnabled("btnSetIdle", 1);
+                        setCTIButtonEnabled("btnSetBusy", 0);
+                    }
+                    setCTIButtonEnabled("btnMakeCall", 0);
+                    setCTIButtonEnabled("btnAnswerCall", 0);
+                    setCTIButtonEnabled("btnTransferCall", 0);
+                    setCTIButtonEnabled("btnRetriveCall", 0);
+                    setCTIButtonEnabled("btnThreeParty", 0);
+                    setCTIButtonEnabled("btnDropCall", 1);
+                    break;
+                case 7:
+                    document.getElementById("labelPhoneState").innerText = "保持";
+                    document.getElementById("labelOtherCode").innerText = CCLink.Ext_GetCallInfo_OtherCode(LinkExtCode);
+                    if (CCLink.Ext_GetQueueState(LinkExtCode) == 0) {
+                        setCTIButtonEnabled("btnCheckIn", 1);
+                        setCTIButtonEnabled("btnCheckOut", 0);
+                    }
+                    else {
+                        setCTIButtonEnabled("btnCheckIn", 0);
+                        setCTIButtonEnabled("btnCheckOut", 1);
+                    }
+                    if (CCLink.Ext_GetExtDoNotDisturb(LinkExtCode) == 0) {
+                        setCTIButtonEnabled("btnSetIdle", 0);
+                        setCTIButtonEnabled("btnSetBusy", 1);
+                    }
+                    else {
+                        setCTIButtonEnabled("btnSetIdle", 1);
+                        setCTIButtonEnabled("btnSetBusy", 0);
+                    }
+                    setCTIButtonEnabled("btnMakeCall", 0);
+                    setCTIButtonEnabled("btnAnswerCall", 0);
+                    setCTIButtonEnabled("btnTransferCall", 1);
+                    setCTIButtonEnabled("btnRetriveCall", 1);
+                    setCTIButtonEnabled("btnThreeParty", 0);
+                    setCTIButtonEnabled("btnDropCall", 1);
+                    break;
+                case 8:
+                    document.getElementById("labelPhoneState").innerText = "保持";
+                    document.getElementById("labelOtherCode").innerText = CCLink.Ext_GetCallInfo_OtherCode(LinkExtCode);
+                    if (CCLink.Ext_GetQueueState(LinkExtCode) == 0) {
+                        setCTIButtonEnabled("btnCheckIn", 1);
+                        setCTIButtonEnabled("btnCheckOut", 0);
+                    }
+                    else {
+                        setCTIButtonEnabled("btnCheckIn", 0);
+                        setCTIButtonEnabled("btnCheckOut", 1);
+                    }
+                    if (CCLink.Ext_GetExtDoNotDisturb(LinkExtCode) == 0) {
+                        setCTIButtonEnabled("btnSetIdle", 0);
+                        setCTIButtonEnabled("btnSetBusy", 1);
+                    }
+                    else {
+                        setCTIButtonEnabled("btnSetIdle", 1);
+                        setCTIButtonEnabled("btnSetBusy", 0);
+                    }
+                    setCTIButtonEnabled("btnMakeCall", 0);
+                    setCTIButtonEnabled("btnAnswerCall", 0);
+                    setCTIButtonEnabled("btnTransferCall", 0);
+                    setCTIButtonEnabled("btnRetriveCall", 1);
+                    setCTIButtonEnabled("btnThreeParty", 0);
+                    setCTIButtonEnabled("btnDropCall", 1);
+                    break;
+                case 9:
+                    document.getElementById("labelPhoneState").innerText = "问询";
+                    document.getElementById("labelOtherCode").innerText = CCLink.Ext_GetCallInfo_OtherCode(LinkExtCode);
+                    if (CCLink.Ext_GetQueueState(LinkExtCode) == 0) {
+                        setCTIButtonEnabled("btnCheckIn", 1);
+                        setCTIButtonEnabled("btnCheckOut", 0);
+                    }
+                    else {
+                        setCTIButtonEnabled("btnCheckIn", 0);
+                        setCTIButtonEnabled("btnCheckOut", 1);
+                    }
+                    if (CCLink.Ext_GetExtDoNotDisturb(LinkExtCode) == 0) {
+                        setCTIButtonEnabled("btnSetIdle", 0);
+                        setCTIButtonEnabled("btnSetBusy", 1);
+                    }
+                    else {
+                        setCTIButtonEnabled("btnSetIdle", 1);
+                        setCTIButtonEnabled("btnSetBusy", 0);
+                    }
+                    setCTIButtonEnabled("btnMakeCall", 0);
+                    setCTIButtonEnabled("btnAnswerCall", 0);
+                    setCTIButtonEnabled("btnTransferCall", 0);
+                    setCTIButtonEnabled("btnRetriveCall", 1);
+                    setCTIButtonEnabled("btnThreeParty", 0);
+                    setCTIButtonEnabled("btnDropCall", 1);
+                    break;
+                case 10:
+                    document.getElementById("labelPhoneState").innerText = "问询";
+                    document.getElementById("labelOtherCode").innerText = CCLink.Ext_GetCallInfo_OtherCode(LinkExtCode);
+                    if (CCLink.Ext_GetQueueState(LinkExtCode) == 0) {
+                        setCTIButtonEnabled("btnCheckIn", 1);
+                        setCTIButtonEnabled("btnCheckOut", 0);
+                    }
+                    else {
+                        setCTIButtonEnabled("btnCheckIn", 0);
+                        setCTIButtonEnabled("btnCheckOut", 1);
+                    }
+                    if (CCLink.Ext_GetExtDoNotDisturb(LinkExtCode) == 0) {
+                        setCTIButtonEnabled("btnSetIdle", 0);
+                        setCTIButtonEnabled("btnSetBusy", 1);
+                    }
+                    else {
+                        setCTIButtonEnabled("btnSetIdle", 1);
+                        setCTIButtonEnabled("btnSetBusy", 0);
+                    }
+                    setCTIButtonEnabled("btnMakeCall", 0);
+                    setCTIButtonEnabled("btnAnswerCall", 0);
+                    setCTIButtonEnabled("btnTransferCall", 0);
+                    setCTIButtonEnabled("btnRetriveCall", 1);
+                    setCTIButtonEnabled("btnThreeParty", 1);
+                    setCTIButtonEnabled("btnDropCall", 1);
+                    break;
+                case 11:
+                    document.getElementById("labelPhoneState").innerText = "会议";
+                    document.getElementById("labelOtherCode").innerText = CCLink.Ext_GetCallInfo_OtherCode(LinkExtCode);
+                    if (CCLink.Ext_GetQueueState(LinkExtCode) == 0) {
+                        setCTIButtonEnabled("btnCheckIn", 1);
+                        setCTIButtonEnabled("btnCheckOut", 0);
+                    }
+                    else {
+                        setCTIButtonEnabled("btnCheckIn", 0);
+                        setCTIButtonEnabled("btnCheckOut", 1);
+                    }
+                    if (CCLink.Ext_GetExtDoNotDisturb(LinkExtCode) == 0) {
+                        setCTIButtonEnabled("btnSetIdle", 0);
+                        setCTIButtonEnabled("btnSetBusy", 1);
+                    }
+                    else {
+                        setCTIButtonEnabled("btnSetIdle", 1);
+                        setCTIButtonEnabled("btnSetBusy", 0);
+                    }
+                    setCTIButtonEnabled("btnMakeCall", 0);
+                    setCTIButtonEnabled("btnAnswerCall", 0);
+                    setCTIButtonEnabled("btnTransferCall", 0);
+                    setCTIButtonEnabled("btnRetriveCall", 0);
+                    setCTIButtonEnabled("btnThreeParty", 0);
+                    setCTIButtonEnabled("btnDropCall", 1);
+                    break;
+                case 12:
+                    document.getElementById("labelPhoneState").innerText = "挂起";
+                    document.getElementById("labelOtherCode").innerText = CCLink.Ext_GetCallInfo_OtherCode(LinkExtCode);
+                    if (CCLink.Ext_GetQueueState(LinkExtCode) == 0) {
+                        setCTIButtonEnabled("btnCheckIn", 1);
+                        setCTIButtonEnabled("btnCheckOut", 0);
+                    }
+                    else {
+                        setCTIButtonEnabled("btnCheckIn", 0);
+                        setCTIButtonEnabled("btnCheckOut", 1);
+                    }
+                    if (CCLink.Ext_GetExtDoNotDisturb(LinkExtCode) == 0) {
+                        setCTIButtonEnabled("btnSetIdle", 0);
+                        setCTIButtonEnabled("btnSetBusy", 1);
+                    }
+                    else {
+                        setCTIButtonEnabled("btnSetIdle", 1);
+                        setCTIButtonEnabled("btnSetBusy", 0);
+                    }
+                    setCTIButtonEnabled("btnMakeCall", 0);
+                    setCTIButtonEnabled("btnAnswerCall", 0);
+                    setCTIButtonEnabled("btnTransferCall", 0);
+                    setCTIButtonEnabled("btnRetriveCall", 0);
+                    setCTIButtonEnabled("btnThreeParty", 0);
+                    setCTIButtonEnabled("btnDropCall", 1);
+                    break;
+            }
+        }
+    }
+
+    //CCLink网络连接事件
+    function LinkEvent_OnConnected() {
+        var Err = CCLink.Ext_Assign(LinkExtCode, LinkExtCode); //绑定到分机设备
+        if (Err != "") {
+            CCLink.Link_DisconnectServer();
+            alert("绑定分机失败," + Err);
+            return;
+        }
+        if (LinkCheckIn == 1) {
+            CCLink.Ext_CheckInQueue(LinkExtCode);
+            CCLink.Ext_SetExtName(LinkExtCode, LinkExtName);
+            CCLink.Ext_SetExtDoNotDisturb(LinkExtCode, 0);
+            if (LinkExtWorkNo != "") {
+                CCLink.Ext_SetExtWorkNo(LinkExtCode, LinkExtWorkNo);
+            }
+        }
+        LinkConnected = 1;
+        setTimeout("setCTIDisplay();", 100);
+    }
+
+    //CCLink网络断开事件
+    function LinkEvent_OnDisconnected() {
+        if (LinkConnected == 1) {
+            setTimeout("Link_Reconnect()", 10000);
+        }
+        else {
+            alert("连接呼叫中心服务器失败!");
+        }
+        setTimeout("setCTIDisplay();", 100);
+    }
+
+    //CCLink重连
+    function Link_Reconnect() {
+        if (LinkConnected == 1) {
+            CCLink.Link_ConnectServer(LinkHost, LinkPort, 1); //建立客户端和服务器端连接
+        }
+    }
+
+    //分机呼入事件
+    function ExtEvent_OnCallIn(ExtCode, OtherCode, OtherRole, TransferCode, TransferRole, CallData) {
+        alert("来电弹屏：" + OtherCode);
+    }
+
+    //分机通话事件
+    function ExtEvent_OnConnected(ExtCode, OtherCode, OtherRole, TransferCode, TransferRole, CallData) {
+
+    }
+
+    //分机挂机事件
+    function ExtEvent_OnDisconnected(ExtCode) {
+
+    }
+
+    //分机状态改变事件
+    function ExtEvent_OnCallStateChange(ExtCode, CallState) {
+        setTimeout("setCTIDisplay();", 100);
+    }
+
+    //分机免打扰改变事件
+    function ExtEvent_OnDoNotDisturbChange(ExtCode, DoNotDisturb) {
+        LinkExtDoNotDisturb = DoNotDisturb;
+        setTimeout("setCTIDisplay();", 100);
+    }
+
+    //分机签入签出队列事件
+    function ExtEvent_OnQueueStateChange(ExtCode, QueueState) {
+        setTimeout("setCTIDisplay();", 100);
+    }
+
+    function btnCheckIn_onclick() {
+        CCLink.Ext_CheckInQueue(LinkExtCode);
+        CCLink.Ext_SetExtName(LinkExtCode, LinkExtName);
+        CCLink.Ext_SetExtDoNotDisturb(LinkExtCode, 0);
+        if (LinkExtWorkNo != "") {
+            CCLink.Ext_SetExtWorkNo(LinkExtCode, LinkExtWorkNo);
+        }
+        LinkCheckIn = 1;
+    }
+
+    function btnCheckOut_onclick() {
+        CCLink.Ext_CheckOutQueue(LinkExtCode);
+        LinkCheckIn = 0;
+    }
+
+    function btnSetIdle_onclick() {
+        CCLink.Ext_SetExtDoNotDisturb(LinkExtCode, 0);
+    }
+
+    function btnSetBusy_onclick() {
+        CCLink.Ext_SetExtDoNotDisturb(LinkExtCode, 1);
+    }
+
+    function btnMakeCall_onclick() {
+        cclinkInputNumber("MakeCall");
+    }
+
+    function btnAnswerCall_onclick() {
+        CCLink.Ext_AnswerCall(LinkExtCode);
+    }
+
+    function btnTransferCall_onclick() {
+        cclinkInputNumber("TransferCall");
+    }
+
+    function btnRetriveCall_onclick() {
+        CCLink.Ext_CancelTransfer(LinkExtCode);
+    }
+
+    function btnThreeParty_onclick() {
+        CCLink.Ext_ThreeParty(LinkExtCode);
+    }
+
+    function btnDropCall_onclick() {
+        CCLink.Ext_DropCall(LinkExtCode);
+    }
+
+    function cclinkReadClientCookie(cookieKey) {
+        var cookieValue = document.cookie;
+        var cookieStartAt = cookieValue.indexOf("" + cookieKey + "=");
+        if (cookieStartAt == -1) {
+            cookieStartAt = cookieValue.indexOf(cookieKey + "=");
+        }
+        if (cookieStartAt == -1) {
+            cookieValue = null;
+        }
+        else {
+            cookieStartAt = cookieValue.indexOf("=", cookieStartAt) + 1;
+            cookieEndAt = cookieValue.indexOf(";", cookieStartAt);
+            if (cookieEndAt == -1) {
+                cookieEndAt = cookieValue.length;
+            }
+            cookieValue = unescape(cookieValue.substring(cookieStartAt, cookieEndAt)); //解码latin-1  
+        }
+        return cookieValue;
+    }
+
+    function cclinkWriteClientCookie(cookieKey, cookieValue) {
+        cookieValue = escape(cookieValue); //编码latin-1  
+        if (cookieExpires == "") {
+            var nowDate = new Date();
+            nowDate.setMonth(nowDate.getMonth() + 120);
+            cookieExpires = nowDate.toGMTString();
+        }
+        document.cookie = cookieKey + "=" + cookieValue + ";expires=" + cookieExpires;
+    }
+
+    function cclinkInputNumber(actionname) {
+        var openUrl = "InputNumber.html?actionname=" + actionname; //弹出窗口的url
+        var iWidth = 240; //弹出窗口的宽度;
+        var iHeight = 240; //弹出窗口的高度;
+        var iTop = (window.screen.availHeight - 30 - iHeight) / 2; //获得窗口的垂直位置;
+        var iLeft = (window.screen.availWidth - 10 - iWidth) / 2; //获得窗口的水平位置;
+        var form = window.open(openUrl, "_blank", "height=" + iHeight + ", width=" + iWidth + ", top=" + iTop + ", left=" + iLeft + ",alwaysRaised=yes,toolbar=no,menubar=no,titlebar=no,scrollbars=no,resizable=no,location=no,status=no,alwaysRaised=yes");
+        form.location = openUrl;
+    }
+
+    function cclinkMakeCall(DestCode) {
+        switch (CCLink.Ext_GetCallState(LinkExtCode))
+        {
+            case 0:
+                CCLink.Ext_MakeCall(LinkExtCode, DestCode);
+                break;
+            case 2:
+                CCLink.Ext_MakeCall(LinkExtCode, DestCode);
+                break;
+            case 5:
+                CCLink.Ext_TransferCall(LinkExtCode, DestCode, "", "");
+                break;
+            default:
+                alert("您目前状态不支持该操作！");
+                break;
+        }
+    }
+
+    window.onload = function () {
+        LinkConnected = 0;
+        if ((LinkHost != null) && (LinkHost != "") && (LinkExtCode != null) && (LinkExtCode != "")) {
+            CCLink.Link_ConnectServer(LinkHost, LinkPort, 1); //建立客户端和服务器端连接
+        }
+        setTimeout("setCTIDisplay();", 100);
+    }
+
+    CCLink.LinkEvent_OnConnected = function () {
+        LinkEvent_OnConnected();
+    }
+    CCLink.LinkEvent_OnDisconnected = function () {
+        LinkEvent_OnDisconnected();
+    }
+    CCLink.ExtEvent_OnCallIn = function (ExtCode, OtherCode, OtherRole, TransferCode, TransferRole, CallData) {
+        ExtEvent_OnCallIn(ExtCode, OtherCode, OtherRole, TransferCode, TransferRole, CallData);
+    }
+    CCLink.ExtEvent_OnConnected = function (ExtCode, OtherCode, OtherRole, TransferCode, TransferRole, CallData) {
+        ExtEvent_OnConnected(ExtCode, OtherCode, OtherRole, TransferCode, TransferRole, CallData);
+    }
+    CCLink.ExtEvent_OnDisconnected = function (ExtCode) {
+        ExtEvent_OnDisconnected(ExtCode);
+    }
+    CCLink.ExtEvent_OnCallStateChange = function (ExtCode, CallState) {
+        ExtEvent_OnCallStateChange(ExtCode, CallState);
+    }
+    CCLink.ExtEvent_OnDoNotDisturbChange = function (ExtCode, DoNotDisturb) {
+        ExtEvent_OnDoNotDisturbChange(ExtCode, DoNotDisturb);
+    }
+    CCLink.ExtEvent_OnQueueStateChange = function (ExtCode, QueueState) {
+        ExtEvent_OnQueueStateChange(ExtCode, QueueState);
+    }
+</script>
+
+<body>
+    <form id="form1" runat="server">
+        <table style="width: 100%; height:55px;" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td width="290px" background="images/background.jpg" >
+                    
+                </td>
+                <td background="images/banner.jpg" >
+                    <table border="0" cellspacing="0" cellpadding="0" width="100%">
+                        <tr>
+                            <td>
+                                &nbsp;
+                            </td>
+                            <td style="width: 180px;">
+                                <table border="0" cellspacing="0" cellpadding="0" style="color:White; width: 99%; padding-top:5px;">
+                                    <tr>
+                                        <td height="20" style="width: 70px; text-align:left; padding: 1px; font-size: small;">电话状态：</td>
+                                        <td style="text-align:left; font-size: small;"><span id="labelPhoneState">未连接</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td height="20" style="width: 70px; text-align:left; padding: 1px; font-size: small">对方号码：</td>
+                                        <td style="text-align:left; font-size: small;"><span id="labelOtherCode"></span></td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td style="width: 50px;">
+                                <img id="btnCheckIn" src="images/checkin_disable.png" 
+                                    style="cursor:hand;" width="45px" height="47px" alt="签入"/></td>
+                            <td style="width: 50px;">
+                                <img id="btnCheckOut" src="images/checkout_disable.png" 
+                                    style="cursor:hand;" width="45px" height="47px" alt="签出"/></td>
+                            <td style="width:5px;"></td>
+                            <td style="width: 50px;">
+                                <img id="btnSetIdle" src="images/setidle_disable.png" 
+                                    style="cursor:hand;" width="45px" height="47px" alt="示闲"/></td>
+                            <td style="width: 50px;">
+                                <img id="btnSetBusy" src="images/setbusy_disable.png" 
+                                    style="cursor:hand;" width="45px" height="47px" alt="示忙" /></td>
+                            <td style="width:5px;"></td>
+                            <td style="width: 50px;">
+                                <img id="btnMakeCall" src="images/makecall_disable.png" 
+                                    style="cursor:hand;" width="45px" height="47px" alt="外呼"/></td>
+                            <td style="width: 50px; display: none;">
+                                <img id="btnAnswerCall" src="images/answercall_disable.png" 
+                                    style="cursor:hand;" width="45px" height="47px" alt="应答"/></td>
+                            <td style="width: 50px;">
+                                <img id="btnTransferCall" src="images/transfercall_disable.png" 
+                                    style="cursor:hand;" width="45px" height="47px" alt="转移"/></td>
+                            <td style="width: 50px;">
+                                <img id="btnRetriveCall" src="images/retrivecall_disable.png" 
+                                    style="cursor:hand;" width="45px" height="47px" alt="收回" /></td>
+                            <td style="width: 50px;">
+                                <img id="btnThreeParty" src="images/threeparty_disable.png" 
+                                    style="cursor:hand;" width="45px" height="47px" alt="三方"/></td>
+                            <td style="width:5px;"></td>
+                            <td style="width: 50px;">
+                                <img id="btnDropCall" src="images/dropcall_disable.png" 
+                                    style="cursor:hand;" width="45px" height="47px" alt="挂机"/>
+                            </td>
+                            <td style="width:10px;"></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>

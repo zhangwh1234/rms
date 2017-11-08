@@ -24,7 +24,7 @@
 
         // 建立查询条件
         $where = array();
-        $where ['domain'] = $_SERVER ['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
 
         // 导入分页类
         import('ORG.Util.Page'); // 导入分页类

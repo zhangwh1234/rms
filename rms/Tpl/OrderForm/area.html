@@ -1,0 +1,323 @@
+
+<style type="text/css">
+    #selectbaidumap {width: 100%;height: 100%;overflow: hidden;margin:0;font-family:"微软雅黑"};
+</style>
+<div id="selectbaidumap" ></div>
+<script type="text/javascript">
+    //建立地图模型
+    var areamap = new BMap.Map("selectbaidumap");
+    areamap.centerAndZoom(new BMap.Point(116.404, 39.915), 11);  // 初始化地图,设置中心点坐标和地图级别
+    areamap.addControl(new BMap.MapTypeControl());   //添加地图类型控件
+    areamap.setCurrentCity("北京");          // 设置地图显示的城市 此项是必须设置的
+    areamap.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+
+    //显示分公司的图，和坐标位置
+   // var companyIcon = new BMap.Icon("statics/images/icon/company_white.png", new BMap.Size(38, 38))
+
+    var areaCompany = new Array();
+
+    var areaSelectPoint;  //返回选择的坐标
+    var areaSelectAddress; //返回选择的地址
+    var areageoc = new BMap.Geocoder();
+    var label;
+
+    $(function () {
+
+        areamap.centerAndZoom("{$city}",12);
+
+        getAreaCompany();
+
+        //定义选择
+        areamap.addEventListener("click", function(e){
+            var pt = e.point;
+            areageoc.getLocation(pt, function(rs){
+                var addComp = rs.addressComponents;
+                $("#selectAddressShow").linkbutton({text: '备注:' + addComp.city + addComp.district +  addComp.street +  addComp.streetNumber });
+                areaSelectPoint = pt;
+                areaSelectAddress = addComp.city + addComp.district +  addComp.street +  addComp.streetNumber;
+            });
+        });
+    })
+
+    //返回地区分公司的坐标和情况
+    function getAreaCompany() {
+        $.ajax({
+            type: "GET",
+            url: "__URL__/getCompanyArea",
+            dataType: "json",
+            success: function (data) {
+                $.each(data.data, function (key, company) {
+                    //动态显示送餐员的情况
+                    if (typeof(areaCompany[company.id]) == 'object') {
+                        //获取label
+                        label = areaCompany[company.id].getLabel();
+
+                        //设置lable
+                        label.setContent( company.name );
+
+                    } else {
+                        var point = new BMap.Point(company.longitude, company.latitude);
+                        areaCompany[company.id] = new BMap.Marker(point);
+                        areamap.addOverlay(areaCompany[company.id]);
+
+                        //设置位置
+                        areaCompany[company.id].setPosition(point);
+
+                        //设置分公司的配送范围
+                        var region = company.region;
+                        //拆成数组
+                        var regionArray = region.split(',');
+
+                        var reg = new Array();
+                        for (i = 0; i < regionArray.length; i++) {
+                            reg.push(new BMap.Point(regionArray[i], regionArray[i + 1]));
+                            i = i + 1;
+                        }
+                        reg.push(new BMap.Point(regionArray[0], regionArray[1]));
+
+                        color = getColor(key);
+                        //画出送餐范围
+                        var polygon = new BMap.Polygon([],
+                                {strokeColor: color, strokeWeight: 1, strokeOpacity: 1, FillOpacity: 0.5}
+                        );
+                        polygon.setPath(reg);
+                        polygon.setFillColor(color);  //填充的颜色
+                        polygon.setFillOpacity(0.3);   //填充的透明度
+                        areamap.addOverlay(polygon);
+
+                        //显示分公司的图，和坐标位置
+                        companyIcon = new BMap.Icon("./__PUBLIC__/Images/company_white.png", new BMap.Size(38, 38))
+                        //更新图示信息
+                        areaCompany[company.id].setIcon(companyIcon);
+
+                        //获取label
+                        label = areaCompany[company.id].getLabel();
+
+                        var label = new BMap.Label(company.name, {offset: new BMap.Size(20, -16)});
+
+                        areaCompany[company.id].setLabel(label);
+                    }
+
+
+                });
+            }
+        });
+    }
+
+
+
+    //获取配送城市的视野，方便查看
+    function getBoundary() {
+        $.ajax({
+            type: "GET",
+            url: "__URL__/getAreaSeaRegion",
+            dataType: "json",
+            success: function (data) {
+                //设置城市的视野范围
+                var region = data.sea_region;
+                //拆成数组
+                var regionArray = region.split(',');
+
+                var reg = new Array();
+                for (i = 0; i < regionArray.length; i++) {
+                    reg.push(new BMap.Point(regionArray[i], regionArray[i + 1]));
+                    i = i + 1;
+                }
+                reg.push(new BMap.Point(regionArray[0], regionArray[1]));
+                color = 'red';
+                //画出送餐范围
+                var polygon = new BMap.Polygon([],
+                        {strokeColor: color, strokeWeight: 1, strokeOpacity: 1, FillOpacity: 0.5}
+                );
+                polygon.setPath(reg);
+                polygon.setFillColor(color);  //填充的颜色
+                polygon.setFillOpacity(0.3);   //填充的透明度
+                areamap.addOverlay(polygon);
+                areamap.setViewport(reg);    //调整视野
+
+            }
+        });
+
+    }
+
+    function getBoundary_demo() {
+        var bdary = new BMap.Boundary();
+        bdary.get("常州市天宁区", function (rs) {       //获取行政区域
+            map.clearOverlays();        //清除地图覆盖物
+            var count = rs.boundaries.length; //行政区域的点有多少个
+            if (count === 0) {
+                alert('未能获取当前输入行政区域');
+                return;
+            }
+            var pointArray = [];
+            for (var i = 0; i < count; i++) {
+                var ply = new BMap.Polygon(rs.boundaries[i], {strokeWeight: 2, strokeColor: "#ff0000"}); //建立多边形覆盖物
+                map.addOverlay(ply);  //添加覆盖物
+                pointArray = pointArray.concat(ply.getPath());
+            }
+            map.setViewport(pointArray);    //调整视野
+        });
+    }
+
+
+
+    //定义颜色，100个
+    function getColor(num) {
+        switch (num) {
+            case 0:
+                return 'red';
+                break;
+            case 1:
+                return 'green';
+                break;
+            case 2:
+                return 'blue';
+                break;
+            case 3:
+                return 'magenta';
+                break;
+            case 4:
+                return 'yellow';
+                break;
+            case 5:
+                return 'chocolate';
+                break;
+            case 6:
+                return 'black';
+                break;
+            case 7:
+                return 'aquamarine';
+                break;
+            case 8:
+                return 'lime';
+                break;
+            case 9:
+                return 'brass';
+                break;
+            case 10:
+                return 'brown';
+                break;
+            case 11:
+                return 'deeppink';
+                break;
+            case 12:
+                return 'aliceblue';
+                break;
+            case 13:
+                return 'gray';
+                break;
+            case 14:
+                return 'copper';
+                break;
+            case 15:
+                return 'fuchsia';
+                break;
+            case 16:
+                return 'coral';
+                break;
+            case 17:
+                return 'feldspar';
+                break;
+            case 18:
+                return 'orange';
+                break;
+            case 19:
+                return 'orchid';
+                break;
+            case 20:
+                return 'pink';
+                break;
+            case 21:
+                return 'plum';
+                break;
+            case 22:
+                return 'quartz';
+                break;
+            case 23:
+                return 'purple';
+                break;
+            case 24:
+                return 'antiquewith';
+                break;
+            case 25:
+                return 'blanchedalmond';
+                break;
+            case 26:
+                return 'blueviolet';
+                break;
+            case 27:
+                return 'beige';
+                break;
+            case 28:
+                return 'burlywood';
+                break;
+            case 29:
+                return 'bisque';
+                break;
+            case 30:
+                return 'cadetblue';
+                break;
+            case 31:
+                return 'pink';
+                break;
+            case 32:
+                return 'saddlebrown';
+                break;
+            case 33:
+                return 'royalblue';
+                break;
+            case 34:
+                return 'rosybrown';
+                break;
+            case 35:
+                return 'purple';
+                break;
+            case 36:
+                return 'orengered';
+                break;
+            case 37:
+                return 'olivedrab';
+                break;
+            case 38:
+                return 'powderblue';
+                break;
+            case 39:
+                return 'peachpuff';
+                break;
+            case 40:
+                return 'papayawhip';
+                break;
+            case 41:
+                return 'paleturquoise';
+                break;
+            case 42:
+                return 'palevioletred';
+                break;
+            case 43:
+                return 'palegreen';
+                break;
+            case 44:
+                return 'navyblue';
+                break;
+            case 45:
+                return 'navajowhite';
+                break;
+            case 46:
+                return 'palegodenrod';
+                break;
+            case 47:
+                return 'violetred';
+                break;
+            case 48:
+                return 'yellowgreen';
+                break;
+            case 49:
+                return 'tomato';
+                break;
+            case 50:
+                return 'turquoise';
+                break;
+        }
+    }
+
+</script>

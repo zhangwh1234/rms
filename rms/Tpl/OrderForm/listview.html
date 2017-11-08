@@ -14,7 +14,7 @@
         <li style="width: 30px;">&nbsp;</li>
 
         <li style="margin-left: 10px;"><a href="javascript:void(0);"
-                                          onclick="IndexIndexModule.openOperateTab('__URL__/createview/returnAction/{$returnAction}');"><img
+                                          onclick="IndexIndexModule.updateOperateTab('__URL__/createview/returnAction/{$returnAction}');"><img
                 src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
         <li><a href="javascript:void(0);"
                onclick="IndexIndexModule.updateOperateTab('__URL__/createview/returnAction/{$returnAction}');">新建订单<span>^1</span></a></li>
@@ -58,11 +58,16 @@
     var OrderFormListviewModule = {
         dialog: '#globel-dialog-div',
         datagrid: '#orderform_index_datagrid',
+        screenWidth:0,  //屏幕宽度
 
         init: function () {
             //设置div的高度
             $('#OrderFormListviewDiv').height(IndexIndexModule.operationHeight);
             this.quickKeyboardAction();
+            this.screenWidth = window.screen.availWidth;
+            $("#orderform_index_datagrid").datagrid({
+                nowrap: false
+            });
         },
 
         //重新设置page
@@ -83,11 +88,39 @@
 
         //操作格式化
         operate: function (val, rowData, rowIndex) {
-            var btn = [];
-            btn.push('<a href="javascript:void(0);" onclick="OrderFormListviewModule.detailview(' + rowData.orderformid +','+ rowIndex+ ')">查看</a>');
-            btn.push('<a href="javascript:void(0);" onclick="OrderFormListviewModule.editview(' + rowData.orderformid +','+ rowIndex+  ')">改单</a>');
-            btn.push('<a href="javascript:void(0);" onclick="OrderFormListviewModule.hurry(' + rowData.orderformid +','+ rowIndex+ ')">催送</a>');
-            return btn.join(' | ');
+            if(window.screen.availWidth < 1280){
+                var btn = [];
+                btn.push('<a href="javascript:void(0);" onclick="OrderFormListviewModule.detailview(' + rowData.orderformid +','+ rowIndex+ ')">查看</a>');
+                btn.push('<a href="javascript:void(0);" onclick="OrderFormListviewModule.editview(' + rowData.orderformid +','+ rowIndex+  ')">改单</a>');
+                btn.push('<a href="javascript:void(0);" onclick="OrderFormListviewModule.hurry(' + rowData.orderformid +','+ rowIndex+ ')">催送</a>');
+                return btn.join(' ');
+            }else{
+                var btn = [];
+                btn.push('<a href="javascript:void(0);" onclick="OrderFormListviewModule.detailview(' + rowData.orderformid +','+ rowIndex+ ')">查看</a>');
+                btn.push('<a href="javascript:void(0);" onclick="OrderFormListviewModule.editview(' + rowData.orderformid +','+ rowIndex+  ')">改单</a>');
+                btn.push('<a href="javascript:void(0);" onclick="OrderFormListviewModule.hurry(' + rowData.orderformid +','+ rowIndex+ ')">催送</a>');
+                return btn.join(' | ');
+            }
+        },
+
+        //送餐员的格式化操作
+        sendname:function(val,rowData,rowIndex){
+            if((rowData.longitude) && (rowData.latitude) && (!rowData.sendlongitude)){
+                var btn = [];
+                btn.push( val +
+                '<a href="javascript:void(0);" onclick="OrderFormListviewModule.mapshowview(' + rowData.orderformid +','+ rowIndex+ ')" ><img src=".__PUBLIC__/Images/lhkc/location.png" style="height: 20px;" /></a>');
+                return btn.join('');
+            }else if((rowData.sendlongitude) && (rowData.sendlatitude)){
+                var btn = [];
+                btn.push( val +
+                '<a href="javascript:void(0);" onclick="OrderFormListviewModule.sendmapshowview(' + rowData.orderformid +','+ rowIndex+ ')" ><img src=".__PUBLIC__/Images/lhkc/sendlocation.png" style="height: 20px;" /></a>');
+                return btn.join('');
+            }else{
+                var btn = [];
+                btn.push(val);
+                return btn.join(' | ');
+            }
+
         },
 
         //初始返回,定位行操作,但是在翻页是,就不操作
@@ -147,7 +180,8 @@
                 minimizable: false,
                 resizable: false,
                 maximizable: false,
-                buttons: [{
+                buttons: [
+                    {
                     text: '确定',
                     iconCls: 'icons-other-tick',
                     handler: function () {
@@ -159,6 +193,9 @@
                                 var formArray = $(this).serializeArray();
                                 var url = '__URL__/searchviewAddress/';
                                 $.each(formArray, function (key, value) {
+                                    if((value.name == 'searchTextAddress') && (value.value == '')){
+                                        value.value = '全部';
+                                    }
                                     url = url + value.name + '/' + value.value;
                                 })
                                 IndexIndexModule.openOperateTab(url, '订餐地址查询');
@@ -192,7 +229,8 @@
                 minimizable: false,
                 resizable: false,
                 maximizable: false,
-                buttons: [{
+                buttons: [
+                    {
                     text: '确定',
                     iconCls: 'icons-other-tick',
                     handler: function () {
@@ -204,6 +242,9 @@
                                 var formArray = $(this).serializeArray();
                                 var url = '__URL__/searchviewTelphone/';
                                 $.each(formArray, function (key, value) {
+                                    if((value.name == 'searchTextTelphone') && (value.value == '')){
+                                        value.value = '全部';
+                                    }
                                     url = url + value.name + '/' + value.value;
                                 })
                                 IndexIndexModule.openOperateTab(url, '订餐电话查询');
@@ -296,6 +337,9 @@
                                 var formArray = $(this).serializeArray();
                                 var url = '__URL__/searchviewOther/';
                                 $.each(formArray, function (key, value) {
+                                    if((value.name == 'searchTextOther') && (value.value == '')){
+                                        value.value = '全部';
+                                    }
                                     url = url + value.name + '/' + value.value;
                                 })
                                 IndexIndexModule.openOperateTab(url, '订餐综合查询');
@@ -314,6 +358,58 @@
             });
         },
 
+
+        //订单坐标地址显示
+        mapshowview: function (id) {
+            var url = '__URL__/mapshowview/record/'+id;
+            var that = this;
+            $(that.dialog).dialog({
+                title: '显示',
+                iconCls: 'icons-application-application_add',
+                width: 800,
+                height: 540,
+                cache: false,
+                href: url,
+                modal: true,
+                collapsible: false,
+                minimizable: false,
+                resizable: false,
+                maximizable: false,
+                buttons: [{
+                    text: '取消',
+                    iconCls: 'icons-arrow-cross',
+                    handler: function () {
+                        $(that.dialog).dialog('close');
+                    }
+                }]
+            });
+        },
+
+        //送餐员坐标地址显示
+        sendmapshowview: function (id) {
+            var url = '__URL__/sendmapshowview/record/'+id;
+            var that = this;
+            $(that.dialog).dialog({
+                title: '显示',
+                iconCls: 'icons-application-application_add',
+                width: 800,
+                height: 540,
+                cache: false,
+                href: url,
+                modal: true,
+                collapsible: false,
+                minimizable: false,
+                resizable: false,
+                maximizable: false,
+                buttons: [{
+                    text: '取消',
+                    iconCls: 'icons-arrow-cross',
+                    handler: function () {
+                        $(that.dialog).dialog('close');
+                    }
+                }]
+            });
+        },
 
 
         //新建的快捷操作

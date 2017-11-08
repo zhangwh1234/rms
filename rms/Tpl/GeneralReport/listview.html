@@ -5,9 +5,8 @@
         <li>&nbsp;&gt;<span style="background-color: #FF9797;font-size: 16px;">{$operName}</span></li>
         <li style="width: 50px;">&nbsp;</li>
 
-        <li style="float: right;margin-right: 60px;"><a href="#"   onclick="closeTab();" >关闭</a></li>
-        <li style="float:right;"><a href="javascript:;" onclick="closeTab();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
-
+        <li style="float: right;margin-right: 60px;"><a href="#"   onclick="IndexIndexModule.closeOperateTab();" >关闭</a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="IndexIndexModule.closeOperateTab();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
     </ul>
 </div>
 
@@ -27,6 +26,8 @@
                     <li>催餐统计</li>
                     <li>大客户统计</li>
                     <li>退餐废单统计</li>
+                    <li>送达率统计</li>
+                    <li>财务订单金额统计</li>
                 </ul>
             </li>
         </ul>
@@ -133,6 +134,27 @@
                 $.ajax({
                     type : "POST",
                     url :  "__APP__/GeneralReport/getReport/reporttype/Tongjiorderbackcancel",
+                    dataType : "html",
+                    success : function(data){
+                        $("#generalreportcenter").html(data);
+                    }
+                });
+            }
+
+            if(node.text  == '送达率统计'){
+                $.ajax({
+                    type : "POST",
+                    url :  "__APP__/GeneralReport/getReport/reporttype/Tongjiordersendtime",
+                    dataType : "html",
+                    success : function(data){
+                        $("#generalreportcenter").html(data);
+                    }
+                });
+            }
+            if(node.text == '财务订单金额统计'){
+                $.ajax({
+                    type : "POST",
+                    url :  "__APP__/GeneralReport/getReport/reporttype/Tongjiordersendtime",
                     dataType : "html",
                     success : function(data){
                         $("#generalreportcenter").html(data);

@@ -1,0 +1,50 @@
+/**
+* 通用查询接口
+* 用户点击查询按钮，启动查询，查询的内容从模块中读取
+* var generalSearch = {
+message: null,
+init: function () {
+$('.searchu').click(function (e) {
+e.preventDefault();
+//alert("127.0.0.1"+APP+"/"+MODULE_NAME+"/search");
+// load the contact form using ajax
+$.get("http://127.0.0.1"+APP+"/"+MODULE_NAME+"/search", function(data){
+// create a modal dialog with the data
+alert(data);
+$(data).modal({
+closeHTML: "<a href='#' title='关闭' class='modal-close'>x</a>",
+position: ["25%","25%"],
+overlayId: 'contact-overlay',
+containerId: 'contact-container'
+});
+
+
+});
+});
+},
+};
+
+generalSearch.init();
+* 
+* 
+* 
+* 
+* 
+* 
+*/
+
+
+
+$(document).ready(function() { 
+    $('.searchu').click(function(e){
+        $('#searchAcc').modal({
+            closeHTML: "<a href='#' title='关闭' class='modal-close'>x</a>",
+            position: ["25%","25%"]
+           // overlayId: 'contact-overlay',
+           // containerId: 'searchAcc'
+        });
+
+        return false;
+    });
+
+});

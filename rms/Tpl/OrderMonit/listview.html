@@ -41,23 +41,12 @@
             type : "POST",
             url : "__URL__/getOrderMonit",
             dataType : "json",
-            success : function(data){ 
-            	if(!data){
-            		orderMonitTable.datagrid('loadData', data);  
-            	}
+            success : function(data){
+                orderMonitTable.datagrid('loadData', data);
             }
         });
     },10000);
 
-    //修改选项卡，加上关闭按钮
-    /**
-    var tab =  $('#operation').tabs('getSelected'); 
-    $('#operation').tabs('update', {
-    tab: tab,
-    options: {
-    closable:true
-    }
-    });        **/
 </script>
 <div id="orderMonitDiv" style="border: 1px solid blue;height:500px;background-color: #FFFAF0;">
     <table id="orderMonitTable"></table>

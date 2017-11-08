@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>ThinkPHP示例：Hello,ThinkPHP</title>
+        <link rel='stylesheet' type='text/css' href='__PUBLIC__/Css/common.css'>
+    </head>
+    <body>
+        <div class="main">
+            <h2>demo is product</h2>
+            最简单的示例。
+            <p>测试：{$maindata[0][0]}</p>
+            <input  value={$maindata[0][0]} alt="dd" />
+            <assign name="uitype" value="$maindata[0][0]" />
+            
+            <table  cellpadding=3 cellspacing=3>
+                <tr>
+                    <td>特事特办： {$uitype}dd</td>
+                </tr>
+                <tr>
+                    <td><hr> 示例源码<br/>控制器IndexAction类<br/><php>highlight_file(LIB_PATH.'Action/IndexAction.class.php');</php>
+                </td>
+                </tr>
+            </table>
+        </div>
+    </body>
+</html>

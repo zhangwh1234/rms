@@ -20,8 +20,14 @@
 	/*定义备注字段大小*/
 	#orderHandleSearchviewOtherTb .l-btn-text {
 		font-size: 16px;
-		color: #33338c;
+		color: red;
 		margin-top: 2px;
+	}
+
+	#otherInfoOrderHandleOtherHelp {
+		padding-left: 28px;
+		font-size: 16px;
+		border-bottom: 1px solid black;
 	}
 </style>
 <div class="moduleMenu">
@@ -36,7 +42,7 @@
 		<li><a href="javascript:;" id="showSubMenu" onMouseOver=""><img src=".__PUBLIC__/Images/addressBtn.jpg" alt=""
 																		title="" border="0"></a></li>
 		<li><a href="javascript:void(0);" class="moduleName"
-			   id="orderHandleSearchviewmenuOtherSearchAClick" onclick="OrderHandleSearchviewOtherModule.searchOtherView();">综合查询<span>^8</span></a></li>
+			   id="orderHandleSearchviewmenuOtherSearchAClick" onclick="OrderHandleSearchviewOtherModule.searchOtherView();">综合查询<span>^7</span></a></li>
 		<li style="width: 20px;">&nbsp;</li>
 		<li style="margin-left: 20px;font-size:14px;font-family:'宋体';line-height: 30px;">{$searchIntroduce}</li>
 		<li style="float: right;margin-right: 60px;"><a href="javascript:void(0);"
@@ -55,7 +61,7 @@
 	<div data-options="region:'south',split:false,border:false"
 		 style="height: 46px;">
 		<div class="pagestop">
-			<div id="otherInfoOrderHandle" style="height: 22px;" align="center">
+			<div id="otherInfoOrderHandleOtherHelp" style="height: 22px;" align="center">
 			</div>
 			<div id="orderHandleSearchviewOtherHelp" align="center"></div>
 		</div>
@@ -83,6 +89,7 @@
 			//启动分页事件
 			//this.dataPage();
 			this.datagridKeyMove();
+			this.firstGetOrderForm();
 			//启动快键键
 			this.quickKeyboardAction();
 		},
@@ -92,15 +99,14 @@
 			//定义查询操作表格
 			this.datagrid.datagrid(
 					{
-						nowrap: "true",
-						fitColumns: "true",
-						singleSelect: "true",
-						autoRowHeight: "true",
-						url: "__URL__/searchviewOther/searchOther/" + encodeURIComponent(searchOther),
-						striped: "true",
-						border: "false",
-						rownumbers: "false", //显示行号
-						showFooter: 'true',
+						nowrap: false,
+						fitColumns: true,
+						singleSelect: true,
+						autoRowHeight: true,
+						striped: true,
+						border: false,
+						rownumbers: true, //显示行号
+						showFooter: true,
 						pagination: true,
 						pagePosition: 'bottom',
 						toolbar: '#orderHandleSearchviewOtherTb',
@@ -120,7 +126,7 @@
 							{
 								field: 'address',
 								title: '地址',
-								width: 110,
+								width: 150,
 								align: 'left'
 							},
 							{
@@ -136,13 +142,13 @@
 							},
 							{
 								field: "telphone",
-								width: 20,
+								width: 38,
 								title: '电话',
 								align: 'center'
 							},
 							{
 								field: "custtime",
-								width: 30,
+								width: 25,
 								title: '要餐时间'
 							},
 							{
@@ -153,7 +159,13 @@
 									if (value.indexOf('改单') >= 0) {
 										return 'background-color:#ffee00;color:	#02C874;';
 									}
+									if (value.indexOf('打印改') >= 0) {
+										return 'background-color:#ffee00;color:	#02C874;';
+									}
 									if (value.indexOf('催送') >= 0) {
+										return 'background-color:#ffee00;color:#FF0000;';
+									}
+									if (value.indexOf('打印催') >= 0) {
 										return 'background-color:#ffee00;color:#FF0000;';
 									}
 									if (value.indexOf('退餐') >= 0) {
@@ -180,19 +192,17 @@
 											+ rowIndex
 											+ "' type='text'  size='6' onkeyup='OrderHandleSearchviewOtherModule.orderHandle(event,this," + rowData.orderformid + "," + rowIndex + ")'  onfocus='OrderHandleSearchviewOtherModule.orderHandleFocus(" + rowData.orderformid + ");' >";
 
-									operation += "<a href='javascript:void(0);' onclick='OrderHandleSearchviewOtherModule.detailview(" + rowData.orderformid + ")'" +
+									operation += "<a href='javascript:void(0);' onclick='OrderHandleSearchviewOtherModule.detailview(" + rowData.orderformid + ',' + rowIndex + ")'" +
 											" class='orderHandleDetailview'  style='margin-left:4px;'>查看</a>";
 
 									operation += "<a href='javascript:void(0);' onclick='OrderHandleSearchviewOtherModule.orderPrintHandle("
 											+ rowData.orderformid
 											+ ","
 											+ rowIndex
-											+ ")' class='orderHandleDetailview' style='margin-left:4px;' >打印</a>";
-									if (rowData.invoiceHeader) {
-										operation += "<a href='javascript:void(0);' onclick='openNewTab(&apos;发票管理&apos;,&apos;__APP__/InvoiceMgr/editview/record/"
-												+ rowData.orderformid
-												+ "/returnAction/listview&apos;)' class='orderHandleDetailview' style='margin-left:4px' >票</a>";
-									}
+											+ ",2)' class='orderHandleDetailview' style='margin-left:4px;' >打印</a>";
+                                    if (rowData.invoicetype == '电子票') {
+                                        operation += "<a href='javascript:void(0);' onclick='OrderHandleListviewModule.printEticketQRcode(" + rowData.orderformid + ")'  class='orderHandleDetailview' style='margin-left:4px' >票</a>";
+                                    };
 									return operation;
 								}
 							},
@@ -200,18 +210,6 @@
 								field: "telname",
 								width: 30,
 								title: '接线员',
-								align: 'center'
-							},
-							{
-								field: "rectime",
-								width: 30,
-								title: '下单时间',
-								align: 'center'
-							},
-							{
-								field: "invoiceheader",
-								width: 30,
-								title: '发票抬头',
 								align: 'center'
 							}
 						]],
@@ -264,6 +262,9 @@
 					text: '备注:' + rowData.beizhu
 				});
 				OrderHandleSearchviewOtherModule.focusNumberOtherOH = rowIndex;
+				var orderformOtherInfo = '录入员:' + rowData.telname + ' 录入时间:' + rowData.rectime
+						+ ' 催送次数: 催送时间: 更改人: 更改时间:';
+				$('#otherInfoOrderHandleOtherHelp').html(' ' + orderformOtherInfo);
 			}
 		},
 
@@ -322,8 +323,9 @@
 		},
 
 		//查看记录
-		detailview: function (id) {
-			var url = '__URL__/detailview/returnAction/{$returnAction}/record/'+id;
+		detailview: function (id,rowIndex) {
+			var url = '__URL__/detailview/returnAction/{$returnAction}/record/'+id
+					+ '/rowIndex/' + rowIndex+'/pagetype/searchviewaddress';
 			IndexIndexModule.updateOperateTab(url);
 		},
 
@@ -342,6 +344,46 @@
 			})
 
 		},
+
+		/**
+		 * 第一次启动
+		 */
+		firstGetOrderForm: function () {
+			//获取分页参数
+			var pageNumber = {$pagenumber};
+			var data = {'page':pageNumber};
+			//获取行定位
+			var rowIndex = {$rowIndex};
+			var that = this;
+			setTimeout(function () {
+				$.ajax({
+					type: "POST",
+					url:  "{$url}",
+					dataType: "json",
+					data:data,
+					success: function (data) {
+						if (data.rows.length > 0) {
+							that.datagrid.datagrid('loadData', data);
+							that.datagrid.datagrid('getPager').pagination({'pageNumber':pageNumber});
+							//行选中
+							that.datagrid.datagrid('selectRow', rowIndex);
+							return false;
+							//选择第一行焦点
+							that.datagrid.datagrid('loadData', data);
+							that.focusNumberAddressOD = rowIndex;  //初始定位
+
+							//显示焦点
+							$('#orderDistributionAddressTask' + that.focusNumberAddressOD).focus();
+							$(that.datagrid).datagrid('getPager').pagination({'pageNumber':pageNumber});  //页定位
+							//行选中
+							$(that.datagrid).datagrid('selectRow', that.focusNumberAddressOD);
+
+						}
+					}
+				})
+			}, 100);
+		},
+
 
 		//处理订单 ,根据送餐员编码
 		orderHandle: function (event, obj, orderformid, rowIndex) {
@@ -387,7 +429,7 @@
 			}
 			//F8订单打印
 			if (keyCode == 119) {
-				orderPrintHandle(orderformid, rowIndex);
+				this.orderPrintHandle(orderformid, rowIndex);
 			}
 
 			//预处理显示送餐员的产品规格信息
@@ -396,6 +438,18 @@
 			}
 		},
 
+		//预处理显示装箱送餐员的产品规格信息
+		preproSendnameProduct: function (inputCode) {
+			$.ajax({
+				type: "GET",
+				url: "__URL__/getProperSendnameproductsByCode/code/" + inputCode,
+				dataType: "json",
+				success: function (returnData) {
+					$('#orderHandleSearchviewOtherHelp').html(returnData.content);
+				}
+
+			});
+		},
 
 		//对退餐，催单，改单的处理
 		cancelchangehurryOrder: function (orderformid, rowIndex) {
@@ -704,9 +758,9 @@
 		/**
 		 * 订单打印
 		 */
-		orderPrintHandle: function (orderformid, rowIndex) {
+		orderPrintHandle: function (orderformid, rowIndex, accounttype) {
 			//orderPrintData的程序在general.js中
-			orderPrintData(orderformid, rowIndex);
+			orderPrintData(orderformid, rowIndex,accounttype);
 			//更新打印状态
 			this.datagrid.datagrid('updateRow', {
 				index: rowIndex,    //定位行
@@ -716,7 +770,30 @@
 			});
 			rowIndex = rowIndex + 1;
 			$('#orderHandleSearchviewAddressOperation' + rowIndex).focus();  //下移动一行
-		},
+
+            //写入备餐数据
+            $.ajax({
+                type: "POST",
+                url: '__URL__/writeProductsPrepare/orderformid/'+orderformid,
+                dataType: "json",
+                success: function (data) {
+                }
+            });
+
+            //电子发票的处理  *********************
+            $.ajax({
+                type: "GET",
+                url: "__URL__/getInvoiceInfo/orderformid/" + orderformid,
+                dataType: "json",
+                success: function (data) {
+                    if(data){  //判断是否有电子发票
+                        //打印电子发票
+                        var invoiceOperState = printEticketInvoice(data);  //打印电子发票
+                    }
+                }
+            })
+
+        },
 
 		/**
 		 * 将订单转给分送店
@@ -802,8 +879,8 @@
 		 */
 		quickKeyboardAction: function () {
 			var that = this;
-			// ctrl+8快捷键 f8是不能用的
-			Mousetrap.bind(['ctrl+8', 'ctrl+f8'], function (e) {
+			// ctrl+7快捷键 f7是不能用的
+			Mousetrap.bind(['ctrl+7', 'ctrl+f7','f7'], function (e) {
 				// 返回选项卡
 				var tab = $('#operation').tabs('getSelected');
 				var tabOptions = tab.panel('options');
@@ -853,6 +930,7 @@
 			$('#OrderHandleSearchviewOtherTable').datagrid('selectRow', 0);//初始选择第一行
 			$('#orderHandleSearchviewOtherOperation0').focus();
 		}, 500);
+
 	})
 
 

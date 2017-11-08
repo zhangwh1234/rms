@@ -1,0 +1,97 @@
+
+<div class="moduleMenu">
+    <ul>
+        <li>{$Think.lang.$tabName}</li>
+        <li><a href="#" class="moduleName" onclick="updateTab('__URL__/listview');">&nbsp;&gt;{$Think.lang.$moduleName}</a></li>
+        <li>&nbsp;&gt;新建操作</li>
+        <li style="width: 50px;">&nbsp;</li>
+
+        <li style="margin-left: 10px;"><a href="javascript:;" onclick="updateTab('__URL__/listview');" ><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:;" onclick="updateTab('__URL__/listview');" >放弃新建,返回列表<span>^4</span></a></li>
+
+        <li style="margin-left: 10px;"><a href="javascript:;" onclick="openNewTab('订单地址查询',&apos;{:U('OrderForm/searchviewForAddress')}&apos;);" ><img src=".__PUBLIC__/Images/addressBtn.jpg" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:;"  onclick="openNewTab('订单地址查询',&apos;{:U('OrderForm/searchviewForAddress')}&apos;);">地址查询<span>^6</span></a></li>
+
+        <li style="margin-left: 10px;"><a href="javascript:;"  onclick="openNewTab('订单电话查询',&apos;{:U('OrderForm/searchviewForTelphone')}&apos;);"><img src=".__PUBLIC__/Images/phone.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:;"  onclick="openNewTab('订单电话查询',&apos;{:U('OrderForm/searchviewForTelphone')}&apos;);">电话号码查询<span>^7</span></a></li>
+
+		<li style="margin-left: 10px;"><a href="javascript:;"  onclick="openNewTab('来电记录查询',&apos;{:U('OrderForm/searchviewForTelphone')}&apos;);"><img src=".__PUBLIC__/Images/phone.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:;"  onclick="openNewTab('订单电话查询',&apos;{:U('OrderForm/searchviewForTelphone')}&apos;);">来电记录查询<span>^8</span></a></li>
+		
+        <li style="float: right;margin-right: 60px;"><a href="#"   onclick="closeTab();" >关闭</a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="closeTab();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
+    </ul>
+</div>
+<div id="l-map" style="display: none;"></div>
+<div id="todaymenuWin" class="easyui-window" data-options="modal:true,closed:true,iconCls:'icon-save',title:'今日菜单',collapsible:false,minimizable:false,maximizable:false" style="width:800px;height:580px;padding:10px;">
+    <div class="moduleMenu">
+        <ul>
+            <li><input id="todaymenuAfterDate" type="button" value="上一个日期"></li>
+            <li><input id="todaymenuSelectDate" class="easyui-datebox" value="{$todayDate}"></li>
+            <li><input id="todaymenuBeforeDate" type="button" value="下一个日期"></li>
+            <li style="float: right;">按ESC键退出</li>
+            <li style="float: right;"><input id="todaymenuCloseBtn" type="button" value="关闭窗口"></li>
+        </ul>
+    </div> 
+    <div style="height: 500px;">
+        <textarea id="todaymenuContent" class="detailedViewTextBox" style="border:1px solid blcak;width: 99%;height: 500px;"  readonly="readonly"  rows="20">{$todaymenuContent}</textarea>
+    </div>
+</div>
+<script type="text/javascript">
+
+    // 百度地图API功能
+    function G(id) {
+        return document.getElementById(id);
+    }
+
+    var map = new BMap.Map("l-map");
+    map.centerAndZoom("北京",12);                   // 初始化地图,设置城市和地图级别。
+
+    var ac = new BMap.Autocomplete(    //建立一个自动完成的对象
+    {   "input" : "address",
+        "location" : "{$CITY}"
+    });
+
+    ac.addEventListener("onhighlight", function(e) {  //鼠标放在下拉列表上的事件
+        var str = "";
+        var _value = e.fromitem.value;
+        var value = "";
+        if (e.fromitem.index > -1) {
+            value = _value.province +  _value.city +  _value.district +  _value.street +  _value.business;
+        }    
+        str = "FromItem<br />index = " + e.fromitem.index + "<br />value = " + value;
+
+        value = "";
+        if (e.toitem.index > -1) {
+            _value = e.toitem.value;
+            value = _value.province +  _value.city +  _value.district +  _value.street +  _value.business;
+        }    
+        str += "<br />ToItem<br />index = " + e.toitem.index + "<br />value = " + value;
+        G("searchResultPanel").innerHTML = str;
+    });
+
+    var myValue;
+    ac.addEventListener("onconfirm", function(e) {    //鼠标点击下拉列表后的事件
+        var _value = e.item.value;
+        myValue = _value.province +  _value.city +  _value.district +  _value.street +  _value.business;
+        G("searchResultPanel").innerHTML ="onconfirm<br />index = " + e.item.index + "<br />myValue = " + myValue;
+
+        //setPlace();
+    });
+
+    function setPlace(){
+        map.clearOverlays();    //清除地图上所有覆盖物
+        function myFun(){
+            var pp = local.getResults().getPoi(0).point;    //获取第一个智能搜索的结果
+            map.centerAndZoom(pp, 18);
+            map.addOverlay(new BMap.Marker(pp));    //添加标注
+        }
+        var local = new BMap.LocalSearch(map, { //智能搜索
+            onSearchComplete: myFun
+        });
+        local.search(myValue);
+    }
+
+</script>
+
+

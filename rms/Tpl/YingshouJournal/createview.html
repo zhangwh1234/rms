@@ -1,0 +1,98 @@
+<div class="moduleMenu">
+    <ul>
+        <li>{$Think.lang.$navName}</li>
+        <li><a href="javascript:void(0);" class="moduleName"
+               onclick="IndexIndexModule.updateOperateTab('__URL__/listview');">&nbsp;&gt;{$Think.lang.$moduleName}</a>
+        </li>
+        <li>&nbsp;&gt;新建操作</li>
+        <li style="width: 50px;">&nbsp;</li>
+        <li style="margin-left: 10px;"><a href="javascript:;" onclick="NoticeCreateviewModule.insert();"><img
+                src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);" onclick="NoticeCreateviewModule.insert();">保存<span>^9</span></a></li>
+        <li style="width: 50px;">&nbsp;</li>
+        <li style="margin-left: 10px;"><a href="javascript:;"
+                                          onclick="IndexIndexModule.updateOperateTab('__URL__/listview');"><img
+                src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);"
+               onclick="IndexIndexModule.updateOperateTab('__URL__/listview');">放弃新建,返回列表<span>^4</span></a></li>
+        <li style="float: right;margin-right: 60px;"><a href="javascript:void(0);"
+                                                        onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="IndexIndexModule.closeOperateTab();"><img
+                src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
+    </ul>
+</div>
+<include file="Module/createview" />
+<input id="NoticeAction" type="hidden" value="Createview"/>
+
+<script>
+    var YingshouAccountsCreateviewModule = {
+
+        //初始化
+        init: function () {
+            $('.moduleoperator').height(IndexIndexModule.operationHeight);
+            this.quickKeyboardAction();
+        },
+
+        //保存记录
+        insert: function () {
+            $('#NoticeCreateviewForm').form('submit', {
+                url: '__URL__/insert',
+                onSubmit: function () {
+                    //进行表单验证
+                    if($('#code').val() == ''){
+                        alert('产品编码不能为空!');
+                        return false;
+                    }
+                    if($('#name').val() == ''){
+                        alert('产品名称不能为空!');
+                        return false;
+                    }
+                    var isValid = $(this).form('validate');
+                    if (!isValid) {
+                        alert('数据不能为空！或者输入错误，请检查！');
+                        return false;
+                    }
+                },
+                success: function (res) {
+                    var data = eval('(' + res + ')');
+                    if (!data.status) {
+                        $.app.method.tip('提示信息', data.info, 'error');
+                    } else {
+                        $.app.method.tip('提示信息', data.info, 'info');
+                        IndexIndexModule.updateOperateTab(data.url);
+                    }
+                }
+            });
+        },
+
+        //新建的快捷操作
+        quickKeyboardAction: function () {
+            // ctrl+9快捷键,保存公告
+            Mousetrap.bind(['ctrl+9', 'ctrl+f9', 'f9'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '公告' && ($('#NoticeAction').val() == 'Createview')) {
+                    NoticeCreateviewModule.insert();
+                };
+            });
+
+            // ctrl+4快捷键,放弃
+            Mousetrap.bind(['ctrl+4', 'ctrl+f4', 'f4'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '公告' && ($('#NoticeAction').val() == 'Createview')) {
+                    IndexIndexModule.updateOperateTab('__URL__/listview');
+                };
+            });
+        }
+    }
+
+    $(function () {
+
+        YingshouAccountsCreateviewModule.init();
+        $('#YingshouAccountsCreateviewForm textarea[name=content]').focus();
+    })
+</script>
+

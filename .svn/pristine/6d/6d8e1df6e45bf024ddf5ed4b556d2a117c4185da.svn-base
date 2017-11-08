@@ -1,0 +1,15 @@
+<?php if (!defined('THINK_PATH')) exit();?><div>
+<table  id="sendnameTable<?php echo ($actionName); ?>" border="0" cellspacing="1" cellpadding="3" width="100%" class="lvt"   align="center" style="margin-top: 0px;padding-top: -10px;clear: both;">
+        <tr class="listHeader" style="height: 10px;">
+            <td class="" width="8%"></td>
+            <?php if(is_array($sendnameProductsListHeader)): foreach($sendnameProductsListHeader as $key=>$header): ?><td class="listHeader" width="5%"><?php echo (L("$header")); ?></td><?php endforeach; endif; ?>
+            <td></td>
+        </tr>
+        <?php if(is_array($sendnameProductsTongji)): foreach($sendnameProductsTongji as $key=>$entity): $record = $key; ?>
+        <tr bgcolor="white" onMouseOver="this.className='lvtColDataHover'" onMouseOut="this.className='lvtColData'" ondblclick="" id="row_<?php echo ($entity_id); ?>" style="height: 1px;">
+            <td class="listColData" width="8%"><?php echo ($key); ?></td>
+            <?php if(is_array($entity)): foreach($entity as $key=>$id): ?><td class="listColData" width="5%" align="center"><?php echo ($id); ?></td><?php endforeach; endif; ?>   
+            <td></td>            
+        </tr><?php endforeach; endif; ?>
+</table>
+</div>

@@ -1,0 +1,354 @@
+<?php if (!defined('THINK_PATH')) exit();?><div class="pages"><?php echo ($page); ?></div>
+<div class="list" id="list<?php echo ($moduleName); ?>">
+	<table id="table<?php echo ($actionName); ?>" border="0" cellspacing="1"
+		cellpadding="3" width="100%" class="lvt" align="center">
+		<tr class="listHeader">
+			<td class=""><input class="listColCheck" type="checkbox"
+				name="selectall"></td>
+			<?php if(is_array($listHeader)): foreach($listHeader as $key=>$header): ?><td class="listHeader"><?php echo (L("$header")); ?></td><?php endforeach; endif; ?>
+			<td class="listHeader">操作</td>
+		</tr>
+		<?php if(is_array($listEntries)): $row = 0; $__LIST__ = $listEntries;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$entity): $mod = ($row % 2 );++$row; $record = $key; ?>
+		<tr bgcolor="white" onMouseOver="this.className='lvtColDataHover'"
+			onMouseOut="this.className='lvtColData'" ondblclick=""
+			id="row_<?php echo ($entity_id); ?>">
+
+			<?php if(is_array($entity)): $i = 0; $__LIST__ = $entity;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$id): $mod = ($i % 2 );++$i; if($key == $moduleId): ?><td class="listColCheck" width="2%"><input type="checkbox"
+				name="selected_id" id="<?php echo ($record); ?>" value='<?php echo ($record); ?>'></td>
+			<?php elseif($key == $list_link_field): ?>
+			<td><a class="small" href="#"
+				onclick="updateTab('__URL__/detailview/record/<?php echo ($record); ?>/returnAction/<?php echo ($returnAction); ?>');"><?php echo ($id); ?></a></td>
+			<?php else: ?>
+			<td class="listColData"><?php echo ($id); ?></td><?php endif; endforeach; endif; else: echo "" ;endif; ?>
+			<td><center>
+					<input id="<?php echo ($actionName); ?>OrderHandle<?php echo ($row); ?>" class="easyui-numberbox"
+						value="" size="6" maxlength="6" style="font-size: 16px;"
+						onkeydown="<?php echo ($actionName); ?>OrderHandle(event,this,'<?php echo ($record); ?>','<?php echo ($row); ?>');" />
+					<a href="javascript:void(0);"
+						onclick="updateTab('__URL__/detailview/record/<?php echo ($record); ?>/returnAction/<?php echo ($returnAction); ?>');">查看</a>
+					<a href="javascript:void(0);"
+						onclick="searchOrderPrintData('<?php echo ($record); ?>','<?php echo ($row); ?>')">打印</a>
+				</center></td>
+		</tr><?php endforeach; endif; else: echo "" ;endif; ?>
+	</table>
+</div>
+<div class="pages"><?php echo ($page); ?></div>
+
+<input id="<?php echo ($functionName); echo ($moduleName); ?>Action" type="hidden" value="searchviewlist" />
+
+<div id="<?php echo ($actionName); ?>beizhuOrderhandleWin" class="easyui-window"
+	data-options="
+	minimizable:false,
+	maximizable:false,
+	collapsible:false,
+	title:'备注输入',
+	modal:true,
+	onClose:beizhuOrderhandleWinClose,
+	closed:true
+"
+	style="width: 500px; height: 400px;">
+	<input id="<?php echo ($actionName); ?>BeizhuOrderformid" value="" type="hidden" /> <input
+		id="<?php echo ($actionName); ?>BeizhuRowIndex" value="" type="hidden" />
+	<table id="<?php echo ($actionName); ?>beizhuOrderhandleTable" class="easyui-datagrid"
+		data-options="fitColumns:true,
+		singleSelect:true,
+		rownumbers:true,
+		singleSelect : true,
+		onDblClickRow:searchBeizhuOrderAction
+	">
+		<thead>
+			<tr>
+				<th data-options="field:'name',width:300,align:'center'"
+					align="center">备注名称</th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php if(is_array($beizhuOrderhandle)): foreach($beizhuOrderhandle as $key=>$vo): ?><tr>
+				<td><?php echo ($vo["name"]); ?></td>
+			</tr><?php endforeach; endif; ?>
+		</tbody>
+	</table>
+</div>
+
+
+<script type="text/javascript">
+	$(function(){
+		$("#<?php echo ($actionName); ?>OrderHandle1").focus();
+	})
+	var <?php echo ($actionName); ?>beizhuOrderhandleTable = $("#<?php echo ($actionName); ?>beizhuOrderhandleTable").datagrid();
+	
+	var actionName = '<?php echo ($actionName); ?>';
+    //处理订单 ,根据送餐员编码
+    function <?php echo ($actionName); ?>OrderHandle(event,obj,orderformid,rowIndex){
+    	var focusRowIndex = parseInt(rowIndex);
+        //定义根据输入值，处理订单
+        var inputCode = $(obj).val();
+        //输入的键值 
+        var event = event || window.event;
+        var keyCode = event.which ? event.which : event.keyCode;    
+        if(keyCode == 13){   //订单处理  
+            var objValue = $(obj).val();
+            switch(objValue){
+                case '0':  //对退餐的处理
+                    searchCancelOrder(objValue,orderformid,rowIndex);
+                    break;
+                case '2':  //备注订单
+                	//beizhuOrderView(objValue,orderformid,rowIndex);
+                    searchBeizhuOrderView(orderformid,rowIndex);
+                	break;
+                case '7' :  //返回订单
+                    searchBackOrder(objValue,orderformid,rowIndex);
+                    break;
+                case '8' : //订单打印
+                    searchOrderPrintData(orderformid,rowIndex);
+                    break;
+                default:  //对订单处理到送餐员身上    
+                	if(inputCode.length < 2) break;
+                    $.ajax({
+                        type : "GET",
+                        url : "__URL__/orderHandleByCode/orderformid/"+orderformid+"/code/"+inputCode,
+                        dataType : "json",
+                        success : function(returnData){                 
+                            if(returnData['error'] == 'error'){
+                                $.messager.show({
+                                    title:'提示',
+                                    msg:'输入代码输入有误!',
+                                    height:70,
+                                    timeout:5000,
+                                    showType:'slide',
+                                    style:{
+                                        left:0,right:'',top:'',
+                                        bottom:-document.body.scrollTop-document.documentElement.scrollTop
+                                    }
+                                });
+                                return false;
+                            }
+
+                            if(returnData['success'] == 'success'){ 
+                                handleData = returnData['data'];
+                                rowIndex = rowIndex - 1;
+                                $("#table<?php echo ($actionName); ?> tr:gt(0):eq("+rowIndex+") td:eq(7)").html(handleData.sendname);
+                            }
+                        }
+
+                    });  
+            }
+        }  
+        //F8订单打印
+        if(keyCode == 119){
+            searchOrderPrintData(orderformid,rowIndex);  
+        }   
+        
+        if(keyCode == 38){ //上移动
+        	if(focusRowIndex == 1) return;
+           focusRowIndex = focusRowIndex - 1;
+          $("#<?php echo ($actionName); ?>OrderHandle"+focusRowIndex).focus();
+        }
+        if(keyCode == 40){  //下移动
+        	var tableRowLength = $("#table<?php echo ($actionName); ?> tr").length;
+        	if(focusRowIndex == tableRowLength) return;
+        	focusRowIndex = focusRowIndex + 1;
+            $("#<?php echo ($actionName); ?>OrderHandle"+focusRowIndex).focus();
+        }
+    }
+    
+    function searchBackOrder(objValue,orderformid,rowIndex) {
+    	$.messager.confirm('确认', '是否真的需要返回订单?', function(r){
+        if (r){
+            $.ajax({
+                type : "GET",
+                url : "__URL__/backOrderHandle/orderformid/"+orderformid,
+                dataType : "json",
+                success : function(returnData){                 
+                    if(returnData['error'] == 'error'){
+                        $.messager.show({
+                            title:'提示',
+                            msg:returnData['msg'],
+                            height:70,
+                            timeout:5000,
+                            showType:'slide',
+                            style:{
+                                left:0,right:'',top:'',
+                                bottom:-document.body.scrollTop-document.documentElement.scrollTop
+                            }
+                        });
+                        return false;
+                    }
+
+                    if(returnData['success'] == 'success'){ 
+                    	 $("#<?php echo ($actionName); ?>OrderHandle"+rowIndex).val('');	
+                    	 rowIndex = rowIndex -1 ;//两者相差1
+                    	 $("#table<?php echo ($actionName); ?> tr:gt(0):eq("+rowIndex+") td:eq(6)").html('已返回');              
+                    }
+                }
+        	    });
+     	   }else{
+ 				$("#<?php echo ($actionName); ?>OrderHandle"+rowIndex).val('');	
+        	}
+    	});
+	}
+    
+    //打印订单
+    function searchOrderPrintData(orderformid,rowIndex){
+    	orderPrintData(orderformid,rowIndex); 
+    	rowIndex = rowIndex -1;
+    	 $("#table<?php echo ($actionName); ?> tr:gt(0):eq("+rowIndex+") td:eq(6)").html('已打印');        
+    }
+    
+    //对订单备注，比如没有人要等等信息
+    function searchBeizhuOrderView(orderformid,rowIndex){
+    	<?php echo ($actionName); ?>beizhuOrderhandleTable.datagrid("reload",{});
+    	//保存订单号
+    	$("#<?php echo ($actionName); ?>BeizhuOrderformid").val(orderformid);
+    	//保存行号
+    	$("#<?php echo ($actionName); ?>BeizhuRowIndex").val(rowIndex);
+ 	   	//开始备注窗口
+    	$('#<?php echo ($actionName); ?>beizhuOrderhandleWin').window('open');	
+ 	   	//备注字段获得焦点
+ 	   	<?php echo ($actionName); ?>beizhuOrderhandleTable.datagrid('selectRow', 0);  //设置焦点
+ 	    <?php echo ($actionName); ?>beizhuOrderhandleTable.datagrid('getPanel').panel('panel').attr('tabindex', 1).focus();
+    	  	
+    }
+    
+  //定义备注栏的移动
+    <?php echo ($actionName); ?>beizhuOrderhandleTable.datagrid('getPanel').panel('panel').attr('tabindex', 1).bind('keydown', function (e) {
+    	//当前选择的行
+        var selectedRowObj = <?php echo ($actionName); ?>beizhuOrderhandleTable.datagrid('getSelected');
+        //当前选择行的number
+        var selectedRowIndex = <?php echo ($actionName); ?>beizhuOrderhandleTable.datagrid('getRowIndex', selectedRowObj);
+      
+        switch (e.keyCode) {
+            case 38: // up  上移动         
+                if(selectedRowIndex == 0) return false;//为0，就是到顶了，不用再移动了
+                selectedRowIndex -= 1;
+                <?php echo ($actionName); ?>beizhuOrderhandleTable.datagrid('selectRow', selectedRowIndex);
+                break;
+            case 40: // down 下移动
+                var rowsObj = <?php echo ($actionName); ?>beizhuOrderhandleTable.datagrid('getRows');  //返回当前页的记录
+                var rowLength = rowsObj.length - 1;
+                if(selectedRowIndex == rowLength) return;  //到表格尾部了，就不用再移动了
+                selectedRowIndex += 1;
+                <?php echo ($actionName); ?>beizhuOrderhandleTable.datagrid('selectRow', selectedRowIndex);
+                break;
+            case 13:  //回车，处理备注
+            	var focusRowIndex;
+            	console.info(selectedRowObj);
+            	var beizhuName = selectedRowObj.name;
+            	//获取订单号
+         		orderformid = $("#<?php echo ($actionName); ?>BeizhuOrderformid").val();
+            	//获取行号
+            	focusRowIndex = $("#<?php echo ($actionName); ?>BeizhuRowIndex").val();
+            	focusRowIndex = parseInt(focusRowIndex);
+                //备注写入数据库      
+            	$.ajax({
+                	type : "GET",
+                	url : APP+"/OrderHandle/setBeizhuOrder/orderformid/"+orderformid+
+                			'/beizhu/' + beizhuName ,
+                	dataType : "json",
+                	success : function(data){      	
+            		}
+            	 })
+            	focusRowIndex =focusRowIndex -1;   
+                
+            	$("#table<?php echo ($actionName); ?> tr:gt(0):eq("+focusRowIndex+") td:eq(6)").html('已备注'); 
+            	$("#table<?php echo ($actionName); ?> tr:gt(0):eq("+focusRowIndex+") td:eq(8)").html(beizhuName); 
+            	$("#table<?php echo ($actionName); ?> tr:gt(0):eq("+focusRowIndex+")").css("background-color","red");  //改变颜色  	
+        		$('#<?php echo ($actionName); ?>beizhuOrderhandleWin').window('close');	//关闭备注输入
+        		focusRowIndex = focusRowIndex + 1;
+        		$("#<?php echo ($actionName); ?>OrderHandle"+focusRowIndex).val(''); //输入框置空
+        		$("#<?php echo ($actionName); ?>OrderHandle"+focusRowIndex).focus();
+            	break;
+        }
+    });
+
+    
+    /**
+    * 订单备注操作
+    */
+    function searchBeizhuOrderAction(index,row){
+    	var focusRowIndex;
+    	//当前选择的行
+        var selectedRowObj = <?php echo ($actionName); ?>beizhuOrderhandleTable.datagrid('getSelected');
+    	var beizhuName = selectedRowObj.name;
+    	//获取订单号
+ 		orderformid = $("#<?php echo ($actionName); ?>BeizhuOrderformid").val();
+    	//获取行号
+    	focusRowIndex = $("#<?php echo ($actionName); ?>BeizhuRowIndex").val();
+    	focusRowIndex = parseInt(focusRowIndex);
+        //备注写入数据库      
+    	$.ajax({
+        	type : "GET",
+        	url : APP+"/OrderHandle/setBeizhuOrder/orderformid/"+orderformid+
+        			'/beizhu/' + beizhuName ,
+        	dataType : "json",
+        	success : function(data){      	
+    		}
+    	 })
+    	focusRowIndex =focusRowIndex -1;           
+    	$("#table<?php echo ($actionName); ?> tr:gt(0):eq("+focusRowIndex+") td:eq(6)").html('已备注'); 
+    	$("#table<?php echo ($actionName); ?> tr:gt(0):eq("+focusRowIndex+") td:eq(8)").html(beizhuName); 
+    	$("#table<?php echo ($actionName); ?> tr:gt(0):eq("+focusRowIndex+")").css("background-color","red");  //改变颜色  	
+		$('#<?php echo ($actionName); ?>beizhuOrderhandleWin').window('close');	//关闭备注输入
+		focusRowIndex = focusRowIndex + 1;
+		$("#<?php echo ($actionName); ?>OrderHandle"+focusRowIndex).val(''); //输入框置空
+		$("#<?php echo ($actionName); ?>OrderHandle"+focusRowIndex).focus();
+		
+    }
+    
+    //关闭备注窗口，触发的事件
+    function beizhuOrderhandleWinClose(){
+    	var focusRowIndex;
+    	//获取行号
+    	focusRowIndex = $("#<?php echo ($actionName); ?>BeizhuRowIndex").val();
+    	focusRowIndex = parseInt(focusRowIndex);
+    	$("#<?php echo ($actionName); ?>OrderHandle"+focusRowIndex).val(''); //输入框置空
+		$("#<?php echo ($actionName); ?>OrderHandle"+focusRowIndex).focus();
+    
+    }
+    
+    //键盘备注操作
+    function <?php echo ($actionName); ?>BeizhuOrderKey(event,obj,rowIndex){
+    	var beizhuFocusRowIndex = parseInt(rowIndex); //备注字段的焦点
+    	//输入的键值 
+        var event = event || window.event;
+        var keyCode = event.which ? event.which : event.keyCode;  
+      	//上移动
+        if(keyCode == 38){
+        	beizhuFocusRowIndex = beizhuFocusRowIndex - 1;
+        	$("#<?php echo ($actionName); ?>beizhuOrderhandleInput"+beizhuFocusRowIndex).focus();
+        	$("#<?php echo ($actionName); ?>beizhuOrderhandleTable").datagrid('selectRow', beizhuFocusRowIndex);
+        }
+        if(keyCode == 40) {  //下移动
+        	//if(beizhuFocusRowIndex == 1) return;
+        	$("#<?php echo ($actionName); ?>beizhuOrderhandleTable").datagrid('selectRow', beizhuFocusRowIndex);
+        	beizhuFocusRowIndex = beizhuFocusRowIndex + 1;
+        	$("#<?php echo ($actionName); ?>beizhuOrderhandleInput"+beizhuFocusRowIndex).focus();
+        }
+        if(keyCode == 13){   //订单处理
+   	    	beizhu = $(obj).val();
+   	
+    		//获取订单号
+ 			orderformid = $("#<?php echo ($actionName); ?>BeizhuOrderformid").val();
+    		//获取行号
+    		focusRowIndex = $("#<?php echo ($actionName); ?>BeizhuRowIndex").val();
+    		focusRowIndex = parseInt(focusRowIndex);
+        	//备注写入数据库      
+    		$.ajax({
+        		type : "GET",
+        		url : APP+"/OrderHandle/setBeizhuOrder/orderformid/"+orderformid+
+        				'/beizhu/' + beizhu ,
+        		dataType : "json",
+        		success : function(data){      	
+    			}
+    		 })
+    		focusRowIndex =focusRowIndex -1;    	
+    		$("#table<?php echo ($actionName); ?> tr:gt(0):eq("+focusRowIndex+") td:eq(6)").html('已备注'); 
+    		$("#table<?php echo ($actionName); ?> tr:gt(0):eq("+focusRowIndex+") td:eq(8)").html(beizhu); 
+    		$("#table<?php echo ($actionName); ?> tr:gt(0):eq("+focusRowIndex+")").css("background-color","red");  //改变颜色  	
+			$('#<?php echo ($actionName); ?>beizhuOrderhandleWin').window('close');	//关闭备注输入
+			focusRowIndex = focusRowIndex + 1;
+			$("#<?php echo ($actionName); ?>OrderHandle"+focusRowIndex).val(''); //输入框置空
+			$("#<?php echo ($actionName); ?>OrderHandle"+focusRowIndex).focus();
+        }
+    }
+</script>

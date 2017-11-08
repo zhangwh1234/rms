@@ -1,0 +1,41 @@
+<div id="popupviewworklunchDiv" class="easyui-layout" data-options="fit:true" style="overflow: hidden;">
+    <div data-options="region:'center'">
+        <tagLib name="easyui"/>
+        <easyui:datagrid options="datagrid.options" fields="datagrid.fields"/>
+    </div>
+</div>
+<input id="popupviewproductstable_row" name="popupviewproductstable_row"  hidden value="{$row}" />
+
+<script type="text/javascript">
+
+    var YingshouPopupWorklunchviewModule = {
+
+        init: function () {
+            //设置div的高度
+            $('#popupviewworklunchDiv').height(IndexIndexModule.operationHeight);
+        },
+
+        //操作格式化
+        operate: function (val, rowData, rowIndex) {
+            var btn = [];
+            btn.push('<a href="javascript:void(0);" onclick="YingshouPopupWorklunchviewModule.selectWorklunch(\'' +rowData.code+'\',\''
+                + rowData.name+'\')">选择</a>');
+            return btn.join(' | ');
+        },
+
+        //单选产品
+        selectWorklunch:function (code,name){
+            $('#YingshouWorklunchCreateviewForm input[name="worklunchcode"]').val(code);
+            $('#YingshouWorklunchCreateviewForm input[name="name"]').val(name);
+            $('#globel-dialog-div').dialog('close');
+        }
+    }
+
+    $(function(){
+        YingshouPopupWorklunchviewModule.init();
+    })
+
+</script>
+
+
+

@@ -22,18 +22,21 @@
                     if($role){
                         //启动的时候，启动的模块
                         $startModuleArr = explode(',',$role['first_start_module']);
-                        $firstStartModule = array();
-                        foreach($startModuleArr as $value){
-                            $firstStartModule[] = L("$value");
+                        if($startModuleArr[0] == ''){
+                            $startModuleArr = array('Notice');
+                        }else{
+                            $firstStartModule = array();
+                            foreach($startModuleArr as $value){
+                                $firstStartModule[] = L("$value");
+                            }
                         }
+
                     }else{
                         $startModuleArr =   array();
                     }
                 }else{
                     $startModuleArr =   array();
                 }
-
-
 
 
                 $firstStartModuleTitle = implode(',',$firstStartModule);
@@ -47,6 +50,7 @@
                 foreach($accessResult as $value){
                     $accessArr[] = $value['node_id']; 
                 }
+                
                 //节点表 
                 $nodeModel = D('node');
                 //来电
@@ -89,7 +93,7 @@
                     $_SESSION['PrintOn'] = '开启';
                 }
 
-                $this->display(); 
+               $this->display();
             }
         }
 

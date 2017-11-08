@@ -147,7 +147,7 @@ a:hover {
 
 #subnav ul li a{
     font-size: 14px;
-    padding: 0 16px;
+    padding: 0 8px;
     padding-top:2px;
     color:blue;
     line-height: 18px;
@@ -399,4 +399,10 @@ a:hover {
 
 .datagrid-row {
     height: 30px;
+}
+
+.mapselect{
+    background:#e6e6fa;
+    font-size: 20px;
+    border:0px solid #e6e6fa;
 }

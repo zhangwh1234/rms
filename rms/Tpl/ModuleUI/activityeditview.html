@@ -1,13 +1,28 @@
-<table>
-	<tr>
-		<td width="15%" class="dvtCellLabel" align=right><font
-			color="red">{$mandatory_field}</font>活动名称:</td>
-		<td width="35%" align=left class="dvtCellInfo"><input
-			value="第二份半价"></td>
-		<td><input name="{$name}" id="{$name}" type="text" value=""
-			size="35" style="margin-left: 10px;" /></td>
-		<td width="15%" class="dvtCellLabel" align=right><font
-			color="red"></font>备注</td>
-		<td width="35%" align=left class="dvtCellInfo"><input /></td>
-	</tr>
+<style>
+	#DetailOrderFormActivity td {
+		height: 25px;
+		border-style: solid none none solid;
+		border-width: 1px;
+		border-color: #CCCCCC;
+		font-size: 14px;
+	}
+</style>
+<table id="DetailOrderFormActivity" style="BORDER-COLLAPSE: collapse" borderColor="white" cellSpacing="0" width="100%"
+ align="center" border="1">
+	<foreach name="orderactivity" item="vo">
+		<tr>
+			<td width="10%" align=right>
+				<span style="margin-right:5px;">活动名称:</span></td>
+			<td width="45%" align=left class="dvtCellInfo">
+				<span style="background: #F5F5F5;">{$vo.name}</span>
+			</td>
+			<td width="10%" align=right>
+				<span style="margin-right:5px;">活动金额:</span></td>
+			<td width="45%" align=left>
+				<span style="background: #F5F5F5;">{$vo.money}</span>
+			</td>
+		</tr>
+	</foreach>
+	<input id="{$moduleName}{$Think.ACTION_NAME|ucfirst}activityTotalMoney" name="activityTotalMoney" type="text" size="10"
+	 readonly="readonly" style="border: 0px;font-size: 14px;" value="{$orderactivitymoney}" />
 </table>

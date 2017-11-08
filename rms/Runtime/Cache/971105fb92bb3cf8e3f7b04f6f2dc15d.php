@@ -1,0 +1,15 @@
+<?php if (!defined('THINK_PATH')) exit();?><style type="text/css">
+    .settingsSelectedUI {
+        height:20px;
+        padding-bottom: 1px;
+        background-color: #ffffff;
+        background: url(.__PUBLIC__/Images/settingsSelUIBg.gif) repeat-x;
+    }
+</style>
+
+<table width="100%" border="0" class="settingsSelectedUI">
+    <tr>
+        <td>丽华快餐订餐管理系统 1.0[201403]</td>
+        <td align="right"><a>lihuaerp.com</a></td>
+    </tr>
+</table>

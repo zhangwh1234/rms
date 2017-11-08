@@ -11,7 +11,10 @@
     'company' => '分公司',
     'state' => '订单状态',
     'telname' => '接线员',
+    'bookdate' => '预订日期',
+        'recdate' => '录入日期',
     'rectime' => '录入时间',
+    'bookdatetxt' => '最近预订日期',
     'ap' => '午别',
     'LBL_ORDERFORM_INFORMATION' => '订单基本信息',
     'LBL_PRODUCTS_INFORMATION' => '产品信息',
@@ -36,7 +39,7 @@
     'thumb' => '产品图',
     'LBL_RETURNORDERFORM_INFORMATION' =>'退餐信息',
     'cancelcontent' => '退餐原因',
-    'LBL_BOOKDATE_INFORMATION' => '日期简述',
+    'LBL_BOOKDATE_INFORMATION' => '预订日期信息',
     'datetxt' => '预订日期',   
     )
 ?>

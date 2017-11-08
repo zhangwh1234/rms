@@ -430,7 +430,7 @@ class OrderSecondPointAction extends ModuleAction
             $where ['_logic'] = 'OR';
 
             $map['_complex'] = $where;
-            $map['domain'] = $_SERVER['HTTP_HOST'];
+            $map['domain'] = $this->getDomain();
             // 获取分公司
             $company = $this->userInfo ['department'];
             $map ['company'] = $company;
@@ -526,7 +526,7 @@ class OrderSecondPointAction extends ModuleAction
         $where = array();
         $where ['sendname'] = $sendname;
         $where ['company'] = $company;
-        $where ['domain'] = $_SERVER['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
 
         //应该从装箱表中获得统计的产品名
         $zhuangxiangModel = D('Zhuangxiangform');
@@ -639,7 +639,7 @@ class OrderSecondPointAction extends ModuleAction
         $where = array();
         $where ['code'] = $code; // 送餐员的编号
         $where ['company'] = $company;
-        $where ['domain'] = $_SERVER['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
         $sendnameResult = $sendnameMgrModel->field('name,telphone,weixin')->where($where)->find();
 
         if ($sendnameResult) {
@@ -771,7 +771,7 @@ class OrderSecondPointAction extends ModuleAction
             $data['app_tk'] = $orderformResult['app_tk'];
             $data['contenttype'] = 'sendname';
             $data['origin'] = 'APP';
-            $data['domain'] = $_SERVER['HTTP_HOST'];
+            $data['domain'] = $this->getDomain();
             $notifyclientModel = D('NotifyClient');
             $notifyclientModel->create();
             $notifyclientModel->add($data);
@@ -783,7 +783,7 @@ class OrderSecondPointAction extends ModuleAction
                 $data['telphone'] = $telphone;
                 $data['contenttype'] = 'sendname';
                 $data['origin'] = '电话';
-                $data['domain'] = $_SERVER['HTTP_HOST'];
+                $data['domain'] = $this->getDomain();
                 $notifyclientModel = D('NotifyClient');
                 $notifyclientModel->create();
                 $notifyclientModel->add($data);
@@ -937,7 +937,7 @@ class OrderSecondPointAction extends ModuleAction
             $data ['orderformid'] = $record;
             $data ['ordersn'] = $orderform['ordersn'];
             $data ['company'] = $company;
-            $data ['domain'] = $_SERVER['HTTP_HOST'];
+            $data ['domain'] = $this->getDomain();
             $data ['date'] = date('Y-m-d H:i:s');
             $orderprinterModel->create();
             $orderprinterModel->add($data);
@@ -1001,7 +1001,7 @@ class OrderSecondPointAction extends ModuleAction
         $company = $this->userInfo ['department'];
         $action ['action'] = $company . "打印订单";
         $action ['logtime'] = date('H:i:s');
-        $action ['domain'] = $_SERVER['HTTP_HOST'];
+        $action ['domain'] = $this->getDomain();
         $orderactionModel->create();
         $result = $orderactionModel->add($action);
 
@@ -1085,7 +1085,7 @@ class OrderSecondPointAction extends ModuleAction
     {
         $companymgrModel = D('companymgr');
         $where = array();
-        $where['domain'] = $_SERVER['HTTP_HOST'];
+        $where['domain'] = $this->getDomain();
         $companyResult = $companymgrModel->where($where)->select();
 
         $this->assign('company', $companyResult);
@@ -1142,7 +1142,7 @@ class OrderSecondPointAction extends ModuleAction
             $secondpoindmgrModel = D('secondpointmgr');
             $where = array();
             $where['company'] = $company;
-            $where['domain'] = $_SERVER['HTTP_HOST'];
+            $where['domain'] = $this->getDomain();
             $secondpointmgrResult = $secondpoindmgrModel->where($where)->select();
             $this->ajaxReturn($secondpointmgrResult, 'JSON');
         } else {
@@ -1313,7 +1313,7 @@ class OrderSecondPointAction extends ModuleAction
         $sendnameMgrModel = D('Sendnamemgr');
         $where = array();
         $where ['company'] = $company;
-        $where ['domain'] = $_SERVER['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
         $sendnameMgrResult = $sendnameMgrModel->field("code,name,telphone,weixin")->where($where)->select();
         $this->ajaxReturn($sendnameMgrResult, 'JSON');
     }

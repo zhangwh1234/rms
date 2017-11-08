@@ -1,0 +1,69 @@
+<?php if (!defined('THINK_PATH')) exit();?><script type="text/javascript">
+    $(function(){     
+        //form提交程序
+        $('#searchViewForm<?php echo ($moduleName); ?> input[name=searchButton]').bind('click',function(){   
+            //返回选项卡
+            var tab = $('#operation').tabs('getSelected');
+            var queryString = $('#searchViewForm<?php echo ($moduleName); ?>').serialize();
+            //提交表单 
+            q = '__URL__/searchview&'+queryString;
+            $('#operation').tabs('update',{  
+                tab:tab,
+                options:{href:q}                                                
+            });    
+        }) 
+    })
+</script>
+
+<div class="searchDiv" style="display: yes;">
+    <form id="searchViewForm<?php echo ($moduleName); ?>" name="searchViewForm<?php echo ($moduleName); ?>"  method="post"  style="border: 1px solid white;">
+        <ul class="searchOption">
+            <li>查询选项</li>
+            <li><select name="searchOption" id="searchOption" class="txtBox" style="width:150px">
+                    <?php if($searchOptionValue): ?><option value="<?php echo ($searchOptionValue); ?>"><?php echo (L("$searchOptionValue")); ?></option>
+                        <?php else: ?>
+                        <option>全部</option><?php endif; ?>
+                    <?php if(is_array($searchOption)): foreach($searchOption as $key=>$value): ?><option value="<?php echo ($value); ?>"><?php echo (L("$value")); ?></option><?php endforeach; endif; ?>
+                </select>
+            </li>
+            <li>查询内容</li>
+            <li>   <input id="searchText" name="searchText"  type="text"   style="width:240px"  value="<?php echo ($searchTextValue); ?>"></li>
+            <li>开始日期:</li>
+            <li><input id="startDate" name="startDate" type="text" class="easyui-datebox" required="required" value="<?php echo ($startDate); ?>" style="width:100px"></li>
+            <li>结束日期:</li>
+            <li><input id="endDate" name="endDate" type="text" class="easyui-datebox" required="required" value="<?php echo ($endDate); ?>" style="width:100px"></li>
+            <li>午别：</li>
+            <li><select name="searchAp" id="searchAp" class="txtBox" style="width:150px">
+                    <?php if($searchAp): ?><option value="<?php echo ($searchAp); ?>"><?php echo ($searchAp); ?></option><?php endif; ?>
+                    <option value="全天">全天</option>
+                    <option value="上午">上午</option>
+                    <option value="下午">下午</option>
+                </select>
+            </li>
+            <li><input id="searchButton" name="searchButton" type="button" class="crmbutton small create"  value="确 定">&nbsp;</li>            
+            <li>&nbsp;</li>
+        </ul>  
+    </form>
+</div>
+
+<div class="pages" style="clear: both;"><?php echo ($page); ?></div>
+<div class="list"  >
+    <table  border="0" cellspacing="1" cellpadding="3" width="100%" class="lvt"   align="center">  
+        <tr class="lvtCol">
+            <td class="lvtCol"><input type="checkbox"  name="selectall" ></td>
+            <?php if(is_array($listHeader)): foreach($listHeader as $key=>$header): ?><td class="lvtCol1"><?php echo (L("$header")); ?></td><?php endforeach; endif; ?>
+            <td class="lvtCol1" >操作</td>
+        </tr>
+        <?php if(is_array($listEntries)): $ad = 0; $__LIST__ = $listEntries;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$entity): $mod = ($ad % 2 );++$ad; $record = $key; ?>
+            <tr bgcolor="white" onMouseOver="this.className='lvtColDataHover'" onMouseOut="this.className='lvtColData'" ondblclick="alert('row_<?php echo ($record); ?>');" id="row_<?php echo ($entity_id); ?>">
+
+                <?php if(is_array($entity)): $i = 0; $__LIST__ = $entity;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$id): $mod = ($i % 2 );++$i; if($key == $moduleId): ?><td class="lvtCol1" width="2%"><input  type="checkbox" name="selected_id" id="<?php echo ($record); ?>" value= '<?php echo ($record); ?>'></td> 
+                        <?php elseif($key == $list_link_field): ?>
+                        <td class="listColData" ><a href="javascript:void(0);" onclick="updateTab('__URL__/detailview/record/<?php echo ($record); ?>/startDate/<?php echo ($startDate); ?>/returnAction/<?php echo ($returnAction); ?>');"><?php echo ($id); ?></a></td>
+                        <?php else: ?>                  
+                        <td class="listColData" ><?php echo ($id); ?></td><?php endif; endforeach; endif; else: echo "" ;endif; ?>               
+                <td><center><a href="javascript:void(0);" onclick="updateTab('__URL__/detailview/record/<?php echo ($record); ?>/startDate/<?php echo ($startDate); ?>/returnAction/<?php echo ($returnAction); ?>')">查看</a></center></td>
+            </tr><?php endforeach; endif; else: echo "" ;endif; ?>
+    </table>
+    </div>
+    <div class="pages"><?php echo ($page); ?></div>

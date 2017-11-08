@@ -1,0 +1,18 @@
+<?php if (!defined('THINK_PATH')) exit();?><div class="moduleMenu">
+    <ul>
+        <li><?php echo (L("$tabName")); ?></li>
+        <li>&nbsp;&gt;查看操作</li>
+        <li style="width: 50px;">&nbsp;</li>
+        
+        <li style="margin-left: 10px;"><a href="javascript:void(0);" onclick="updateTab('__APP__/<?php echo ($moduleName); ?>/createview');"><img src=".__PUBLIC__/Images/newBtn.gif" alt="" title="" border="0"></a></li>
+        <li><a id="create<?php echo ($moduelName); ?>" href="javascript:void(0);"  onclick="updateTab('__APP__/<?php echo ($moduleName); ?>/createview');">新建<span>F1</span></a></li>
+        
+        <li style="margin-left: 10px;"><a href="javascript:;" onclick="updateTab('__URL__/listview');" ><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);"  onclick="updateTab('__URL__/listview');">返回列表</a></li>
+        
+
+        <li style="float: right;margin-right: 60px;"><a href="javascript:void(0);"   onclick="closeTab();" >关闭</a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="closeTab();"><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <div style="clear:both;"></div>
+    </ul>
+</div>

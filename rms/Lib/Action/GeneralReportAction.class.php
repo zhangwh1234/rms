@@ -88,7 +88,7 @@ class GeneralReportAction extends ModuleAction {
 				$this->assign ( 'searchApValue', $this->getAp () );
 			}
 		}
-		$where ['domain'] = $_SERVER['HTTP_HOST'];
+		$where ['domain'] = $this->getDomain();
 		$reporttype = $_REQUEST ['reporttype']; // 报表类型
 		if ($reporttype == 'Tongjiorderhurry') {
 			$this->tongjiOrderHurry ( $reporttype, $where );
@@ -223,7 +223,7 @@ class GeneralReportAction extends ModuleAction {
 				$this->assign ( 'searchApValue', $this->getAp () );
 			}
 		}
-		$where['domain'] = $_SERVER['HTTP_HOST'];
+		$where['domain'] = $this->getDomain();
 		$reporttype = $_REQUEST ['reporttype']; // 报表类型
 
 		if ($reporttype == 'Tongjiorderhurry') {
@@ -749,11 +749,11 @@ class GeneralReportAction extends ModuleAction {
 			}
 		}
 
-		$where['domain'] = $_SERVER['HTTP_HOST'];
+		$where['domain'] = $this->getDomain();
 
 		// 读取连接信息,根据用户访问的url来判断
 		// require APP_PATH.'Conf/datapath.php';
-		// $HTTP_POST = $_SERVER['HTTP_HOST'];
+		// $HTTP_POST = $this->getDomain();
 		// $HTTP_POST = $HTTP_POST.'History';
 		// $dbConfig = $rmsDataPath[$HTTP_POST];
 		// $connectionDns = $dbConfig['DB_TYPE'].'://'.$dbConfig['DB_USER'].':'.$dbConfig['DB_PWD'].'@'.$dbConfig['DB_HOST'].':'.$dbConfig['DB_PORT'].'/'.$dbConfig['DB_NAME'];
@@ -1351,6 +1351,43 @@ class GeneralReportAction extends ModuleAction {
 		$this->display ( 'GeneralReport/reportresultsendtime' );
 	}
 
+    /**
+     * 财务系统的统计报表
+     */
+    public function actionTongjiFinance(){
+
+        $dnsConnectionDB  =  'mysql://rootlihua:zhangwh0731@rdsq6jvauvez7rq.mysql.rds.aliyuncs.com:3306/bjrms_2018';
+        $dnsConnection =     'mysql://rootlihua:zhangwh0731@rdsq6jvauvez7rq.mysql.rds.aliyuncs.com:3306/bjrms';
+
+        $tongjiorderModel = M ( 'tongjifinance', 'rms_', $dnsConnection );
+
+        // 订单表
+        //$orderformModel = M ( 'orderform', 'rms_', $dnsConnectionDB );
+
+        $orderformModel_2018 = M ( 'orderform_04', 'rms_', $dnsConnectionDB );
+
+        $custdateResult = $orderformModel_2018->distinct(true)->field('custdate')->select();
+
+        foreach($custdateResult as $custdate){
+            $where = array();
+            $custdate = $custdate['custdate'];
+            $where[] = " (telname like  '微信' or telname like '%APP%'
+        or telname like '触屏%' or   telname like '网站%'  or  telname='网络')
+            		and ((state not like '%退餐') and (state not like '%作废')) and custdate='".$custdate."'";
+            $orderNumberResult = $orderformModel_2018->where($where)->count();
+            $moneyResult = $orderformModel_2018->where($where)->sum('totalmoney');
+
+            $data = array();
+            $data['day'] = $custdate;
+            $data['order'] = $orderNumberResult;
+            $data['money'] = $moneyResult;
+            $tongjiorderModel->create();
+            $tongjiorderModel->add($data);
+            var_dump($tongjiorderModel->getLastSql());
+        }
+
+    }
+
 
 	public function _empty() {
 	}
@@ -1363,7 +1400,7 @@ class GeneralReportAction extends ModuleAction {
 
 		fastcgi_finish_request();
 
-		$domain = $_SERVER['HTTP_HOST'];
+		$domain = $this->getDomain();
 		import('@.Extend.OrderTongji');
 		$tongji = new OrderTongji();
 		$tongji->actionTongji($domain);

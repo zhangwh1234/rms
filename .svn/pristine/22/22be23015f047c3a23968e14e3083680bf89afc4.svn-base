@@ -1,0 +1,107 @@
+<?php
+    /**
+    * 设置角色的类
+    */
+
+    class RoleAction extends ModuleAction{
+        //定义列表的路径
+        var $listviewPath = false;
+
+        /**
+        * 配置权限的页面
+        */
+        public function editviewAccess(){
+            //取得模块的名称
+            $moduleName = $this->getActionName();
+            $this->assign('moduleName',$moduleName);   //模块名称   
+
+            //启动当前模块的模型
+            $focus = D($moduleName);
+
+            //取得对应的导航名称
+            $tabName = $focus->getTabName($moduleName);
+            $this->assign('tabName',$tabName);         //导航名称
+
+            //启动列表菜单            
+            $this->display('Role/editviewAccessMenu');
+
+            //读取节点
+            $field = array('id','name','title','pid');
+            $node = D('Node')->field($field)->select();
+            //p($node);
+            //取得权限的ID
+            $rid = $_REQUEST['rid'];
+            $this->assign('rid',$rid);
+            
+            $field = array('node_id');
+            $access = D('Access')->where(array('role_id'=>$rid))->getField('node_id',true);
+
+            $this->node = node_merge($node,$access);
+
+            $this->display();
+        }
+
+        /**
+        * 保存权限
+        */
+        public function editAccess(){
+            //权限号
+            $rid = $_REQUEST['rid'];
+    
+            //删除以前的数据
+            $access = D('access');
+            $access->where(array('role_id' => $rid))->delete();
+ 
+            $data = array();
+            foreach ($_REQUEST['access'] as $v){
+                $tmp = explode('_',$v);
+                $data[] = array(
+                'role_id' => $rid,
+                'node_id' => $tmp[0],
+                'level' => $tmp[1]
+                );
+            }
+            if($access->addAll($data)){
+                $this->redirect('detailviewAccess',array('rid'=>$rid));
+            }else{
+                $this->error('修改失败!');
+            }
+           
+        }
+        
+        /**
+        * 返回权限的详情
+        */
+        public function detailviewAccess(){
+           //取得模块的名称
+            $moduleName = $this->getActionName();
+            $this->assign('moduleName',$moduleName);   //模块名称   
+
+            //启动当前模块的模型
+            $focus = D($moduleName);
+
+            //取得对应的导航名称
+            $tabName = $focus->getTabName($moduleName);
+            $this->assign('tabName',$tabName);         //导航名称
+
+            //启动列表菜单            
+            $this->display('Role/editviewAccessMenu');
+
+            //读取节点
+            $field = array('id','name','title','pid');
+            $node = D('node')->field($field)->select();
+            //p($node);
+            //取得权限的ID
+            $rid = $_REQUEST['rid'];
+            $this->assign('rid',$rid);
+            
+            $field = array('node_id');
+            $access = D('access')->where(array('role_id'=>$rid))->getField('node_id',true);
+ 
+            $this->node = node_merge($node,$access);
+            //p($this->node);
+            $this->display(); 
+        }
+
+    }
+?>

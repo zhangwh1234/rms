@@ -1,0 +1,510 @@
+
+
+<script type="text/javascript">
+
+    //定义订单数据库
+    var orderForm = new Array()   //订单
+    //var orderProducts = TAFFY();  //订货从表
+    var rowFocus = 0;            //定义订单处理的光标
+    //定义刷新是否启动或者停止
+    var refreshStartOrStop = false;  //刷新启动
+    
+    var o = new Array();
+
+    //*******************************************
+    //通讯服务器，取得订单数据
+    setTimeout(function(){
+        firstGetOrderFrom();
+    },500);
+
+
+    //启动启动，取得订单
+    function firstGetOrderFrom(){   
+        //orderForm = new Array();   
+        $.ajax({
+            type : "GET",
+            url : url+"/alllistjson",
+            dataType : "json",
+            success : function(data){   
+                             
+                $.each(data,function(key,value){
+                    //返回的订单数据，保存到订单数值中
+                   var arr = new Array();
+                    orderForm = new Array({
+                        orderformid : value.orderformid,
+                        address:value.address,
+                        ordertxt:value.ordertxt,
+                        totalmoney:value.totalmoney,
+                        telphone:value.telphone,
+                        custtime:value.custtime,
+                        state:value.state,
+                        //alert(orderTemp.address);
+                        operation:"<input id='orderTask"+key+"' name='orderTask"+key+"' type='text' onkeydown='orderMove(event,"+value.orderformid+");' onfocus='orderFocus("+key+");' onblur='orderClose("+key+")' value='F8打印' size=20>",
+                        isproducts:0
+                    });
+                    okey = key +1;
+                    value.operation = "<input id='orderTask"+okey+"' name='orderTask"+okey+"' type='text' onkeydown='orderMove(event,"+value.orderformid+");' onfocus='orderFocus("+okey+");' onblur='orderClose("+okey+")' value='F8打印' size=20>";
+                    //alert(value.operation);
+                    //value.push(operation);
+                    //})
+                    //orderForm.merge(orderTemp);
+                    //o.push(orderTemp);e
+                    //document.write(value);
+                //$('#dg').datagrid('appendRow',value);
+                 // $('#dg').datagrid('insertRow',{index:okey,row:value});
+                //  $('#dg').datagrid('detailFormatter');
+                })
+                //$('#dg').datagrid('appendRow',data);
+               // console.info(o);
+                $('#dg').datagrid('loadData', data);
+                
+            }
+        }) 
+    }  
+
+    //刷新取得订单
+    function refreshGetOrderFrom(){   
+        orderForm = new Array();
+        $.ajax({
+            type : "GET",
+            url : url+"/refreshlistjson",
+            dataType : "json",
+            success : function(data){                 
+                $.each(data,function(key,value){
+                    //返回的订单数据，保存到订单数值中
+                    var orderTemp = new Array();
+                    orderForm.push({
+                        orderformid : value.orderformid,
+                        address:value.address,
+                        ordertxt:value.ordertxt,
+                        totalmoney:value.totalmoney,
+                        telphone:value.telphone,
+                        custtime:value.custtime,
+                        state : value.state,
+                        //alert(orderTemp.address);
+                        
+                        operation:"<input id='orderTask"+key+"' name='orderTask"+key+"' type='text' onkeydown='orderMove(event,"+value.orderformid+");' onfocus='orderFocus("+key+");' onblur='orderClose("+key+")' value='F8打印' size=20>",
+                        isproducts:0
+                    });
+                    //})
+                    //orderForm.merge(orderTemp);
+                })
+
+                //console.info(orderForm().get());
+                //$('#dg').datagrid('loaded');
+                //alert('dd');
+                //$('#dg').datagrid('loadData', orderForm);
+            }
+        }) 
+    }  
+
+
+    //定时更新订单
+    setInterval(function(){
+        refreshGetOrderFrom();
+    },100000);
+
+
+    //刷新操作
+    function refreshOrder(){
+        return false;
+        if(refreshStartOrStop){
+            return;
+        }
+        //取得光标所在的位置
+        //alert('row');
+        $grid = $('#dg');
+        $grid.datagrid('loaded');
+        $grid.datagrid('loadData', orderForm);  
+        //重新定位光标
+        $grid.datagrid('selectRow',rowFocus);
+        $('#orderTask'+rowFocus).focus();
+        $grid.datagrid('expandRow', rowFocus );
+    }
+
+    //初始化启动刷新
+    setTimeout(function(){
+        refreshOrder();
+    },500);
+
+    //定时刷新
+    setInterval(function(){
+        refreshOrder();
+        //重新设置刷新时间
+        //refreshTime = 10000;
+    },2000000000);   
+
+
+    //处理订单
+    function updateOrder(){
+        $.ajax({
+            type : "GET",
+            url : "__URL__/updateorder?&order=11",
+            dataType : "json",
+            success : function(data){                 
+
+            }
+        });                       
+
+    }
+
+
+    //显示订单表中的从表订货表
+    $(function(){  
+        $('#dg').datagrid({  
+            view: detailview,  
+            detailFormatter:function(rowIndex,rowData){  
+                return '<div class="ddv">ddddd</div>';
+            },  
+            onExpandRow: function(index,row){
+                
+                //取得订单数组
+               
+                //var orderform_arr = orderForm().get();   
+                //var orderformid = orderForm[index]['orderformid']; 
+                var orderformid = row.orderformid;
+                // alert(orderformid);
+                var ddv = $(this).datagrid('getRowDetail',index).find('div.ddv');  
+                ddv.panel({  
+                    border:true,  
+                    cache:true,
+                    //height:100,  
+                    href: url+'/showproducts/?&orderformid='+orderformid,
+                    onLoad:function(){  
+                        $('#dg').datagrid('fixDetailRowHeight',index);  
+                        $('#dg').datagrid('selectRow',index);  
+                        // $('#dg').datagrid('getRowDetail',index).find('form').form('load',row);  
+                    } 
+
+                });  
+                $('#dg').datagrid('fixDetailRowHeight',index);  
+            }  
+
+        })  
+    })  
+
+
+//移动光标，显示订单
+    function orderMove(event,orderformid){
+        var event = event || window.event;
+        var grid = $("#dg");  //缓存
+
+        switch (event.keyCode) {
+            case 38: // up
+            var selected = grid.datagrid('getSelected');
+            if (selected) {
+                var index = grid.datagrid('getRowIndex', selected);
+                grid.datagrid('selectRow', index - 1);
+            } else {
+                var rows = grid.datagrid('getRows');
+                grid.datagrid('selectRow', rows.length - 1);
+            }
+            input_index = index - 1;
+            $('#orderTask'+input_index.toString()).focus(); //处理栏获得焦点
+            break;
+            case 40: // down
+            var selected = grid.datagrid('getSelected');
+            if (selected) {
+                var index = grid.datagrid('getRowIndex', selected);
+                grid.datagrid('selectRow', index + 1);
+            } else {
+                grid.datagrid('selectRow', 0);
+            }
+            input_index = index+1;
+            $('#orderTask'+input_index.toString()).focus(); //处理栏获得焦点
+            break;
+            case 13: //回车
+                alert(obj.value);
+                obj.value = 'ddd';
+                break;
+            case 119: //F8打印
+                //测试打印
+                getPrintData(orderformid);               
+                break;
+        }
+    }
+
+    //处理栏活动焦点，开启从表显示
+    function orderFocus(row){
+        //  alert(row);
+        rowFocus = row;
+        $('#dg').datagrid('expandRow', row);
+    }
+
+    //处理栏失去焦点，关闭从表显示
+    function orderClose(row){
+        $('#dg').datagrid('collapseRow', row );
+    }
+
+    $(function(){ 
+        //单击表格一行
+        $('#dg').datagrid({
+            onClickRow : function(rowIndex, rowData){
+                //显示从表
+                //$('#dg').datagrid('expandRow', rowIndex );  
+                //处理栏获得焦点
+                //$('#orderTask'+rowIndex).focus();
+
+            }
+
+        });
+    });
+
+    function gridClickRow(rowIndex, rowData){
+        alert(rowIndex);
+    }
+
+    function test(){
+        $('#searchTask').window('open');
+        refreshOrder();
+        exit;
+        $('#dg').datagrid('selectRow',2);
+        $('#2').focus();
+        $('#dg').datagrid('expandRow', 2 );
+
+    } 
+
+    //打印测试程序
+    function getPrintData(orderformid){
+        // alert( url+"/getPrintOrder?&orderformid="+orderformid);
+        //取得打印的内容
+        $.ajax({
+            type : "GET",
+            url : url+"/getPrintOrder?&orderformid="+orderformid,
+            dataType : "json",
+            success : function(data){  
+                printOrderForm(data);
+            }
+
+        })
+    }  
+
+    //实际打印
+    function printOrderForm(data){
+        
+        print_60(data);
+        
+        if(printtype == '60hot'){
+            print_60(data);
+        }
+    }
+
+
+    //60宽热敏的打印代码
+    function print_60(data){
+        //if(localStorage.printIndex){       
+        //   var print_index = localStorage.printIndex;
+//
+  //      }else{
+
+//            alert('请设置打印机');
+ //       }
+        //定义行号
+        var linespacing = 14;
+        var row = 0;  //循环变量
+        //重新设置打印机的设备  
+        LODOP.SET_PRINTER_INDEX(print_index);
+        LODOP.SET_PRINT_PAGESIZE(3,"58mm","10mm",'ORDER');
+        LODOP.PRINT_INIT("打印订单");
+        //送餐单标题
+        LODOP.SET_PRINT_STYLEA(0,"FontSize",20);
+        row = row +1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row,40,644,62,'送餐单');            
+
+        //订单号
+        orderformid = data['orderform'].recdate+'-' + data['orderform'].orderformid;
+        LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+        row = row+1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,orderformid);
+        //地址
+        address = '地址:'+data['orderform'].address;
+        address1 = address.subCHStr(0,30);
+        address2 = address.subCHStr(30,30);
+        address3 = address.subCHStr(60,30);
+
+        // alert(cutstr("新加文本1桑德菲杰来撒机房的阿萨德房间爱塑料袋件发生的房间里圣诞节来看阿萨德乐尽哀生",26))
+        if(address1.length > 0){
+            row = row +1;
+            LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,address1);            
+        }
+        if(address2.length > 0){
+            row = row +1;
+            LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,address2);
+        }
+        if(address3.length > 0){
+            row = row +1;
+            LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,address3);
+        }
+
+
+        LODOP.SET_PRINT_STYLEA(0,"FontSize",10);
+        //电话
+        telphone = '电话:'+data['orderform'].telphone;
+        //客户
+        clientname = '客户:'+data['orderform'].clientname;
+        //要餐时间
+        custtime = '要餐时间:'+data['orderform'].custtime;
+        row = row +1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,telphone+'  '+clientname);
+        row = row +1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,custtime);
+        //备注
+        beizhu = '备注:'+data['orderform'].beizhu;
+        beizhu1 = beizhu.subCHStr(0,30);
+        beizhu2 = beizhu.subCHStr(30,30);
+        beizhu3 = beizhu.subCHStr(60,30);
+        if(beizhu1.length > 0){
+            row = row +1;
+            LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,beizhu1);
+        }
+        if(beizhu2.length > 0){
+            row = row +1;
+            LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,beizhu2);
+        }
+        if(beizhu3.length > 0){
+            row = row +1;
+            LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,beizhu3);
+        }
+        //商品打印
+        productsTitle = '名称      数量   单价    金额';
+        row = row +1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,productsTitle);
+        if(data['orderproducts']){
+            $.each(data['orderproducts'],function(key,value){
+                row = row +1;
+                //产品名称
+                LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,value.name);
+                //产品数量
+                LODOP.ADD_PRINT_TEXT(linespacing * row,70,644,62,value.number);
+                //单价
+                LODOP.ADD_PRINT_TEXT(linespacing * row,100,644,62,value.price);
+                //金额
+                LODOP.ADD_PRINT_TEXT(linespacing * row,145,644,62,value.money);
+            })
+        }
+        //总金额
+        totalmoney = '总金额:'+data['orderform'].totalmoney;
+        row = row +1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,totalmoney);
+
+        //LODOP.PREVIEW();
+         LODOP.PRINT();
+
+        //设定订单状态为已打印
+        $.ajax({
+            type : "GET",
+            url : url+"/setOrderPrinted?&orderformid="+data['orderform'].orderformid,
+            dataType : "json",
+            success : function(data){  
+
+            }
+        })
+    }
+
+    //计算字符串长度
+    String.prototype.strLen = function() {
+        var len = 0;
+        for (var i = 0; i < this.length; i++) {
+            if (this.charCodeAt(i) > 255 || this.charCodeAt(i) < 0) len += 2; else len ++;
+        }
+        return len;
+    }
+
+    //将字符串拆成字符，并存到数组中
+    String.prototype.strToChars = function(){
+        var chars = new Array();
+        for (var i = 0; i < this.length; i++){
+            chars[i] = [this.substr(i, 1), this.isCHS(i)];
+        }
+        String.prototype.charsArray = chars;
+        return chars;
+    }
+
+    //判断某个字符是否是汉字
+    String.prototype.isCHS = function(i){
+        if (this.charCodeAt(i) > 255 || this.charCodeAt(i) < 0)
+            return true;
+        else
+            return false;
+    }
+
+    //截取字符串（从start字节到end字节）
+    String.prototype.subCHString = function(start, end){
+        var len = 0;
+        var str = "";
+        this.strToChars();
+        for (var i = 0; i < this.length; i++) {
+            if(this.charsArray[i][1])
+                len += 2;
+            else
+                len++;
+            if (end < len)
+                return str;
+            else if (start < len)
+                str += this.charsArray[i][0];
+        }
+        return str;
+    }
+
+    //截取字符串（从start字节截取length个字节）
+    String.prototype.subCHStr = function(start, length){
+        return this.subCHString(start, start + length);
+    }
+
+    
+</script>
+<style type="text/css">
+    .pagestop{
+        background-color: #F4F4F4;
+        text-align: center;
+    }
+    .pagesbot{
+        border:0px solid red;
+        margin-bottom: 1px ;
+        margin-top: 0px;
+        width:100%;
+        height: 25px;
+        background-color: #F4F4F4;
+        border-bottom: 1px solid #EAEAEA;
+        height: 27px;
+        line-height: 27px;
+        text-align: center;
+
+    }
+    .other{
+        border:1px solid red;
+        margin-bottom: 1px ;
+        margin-top: 0px;
+        width:100%;
+        height: 25px;
+        background-color: #F4F4F4;
+        border-top: 1px solid #EAEAEA;
+        height: 27px;
+        line-height: 27px;
+    }
+
+</style>
+
+<div class="pagestop">{$page}</div>
+
+<table id="dg"  style="height:450px;" fitColumns="true" rownumbers="true"
+    singleSelect="true"
+    autoRowHeight="false" >
+    <thead>
+        <tr>
+            <th field="orderformid" hidden="true">id</th> 
+            <th field="address" width="200" >地址</th>
+            <th field="ordertxt" width="100">数量规格</th>
+            <th field="totalmoney" width="40">金额</th>
+            <th field="telphone" width="80">电话</th>
+            <th field="custtime" width="40" align="right" >要餐时间</th>
+            <th field="state" width="40">状态</th>
+            <th field="operation" width="50" >操作</th>
+        </tr>
+    </thead>
+</table>
+
+
+<div class="pagestop">{$page}</div>
+
+

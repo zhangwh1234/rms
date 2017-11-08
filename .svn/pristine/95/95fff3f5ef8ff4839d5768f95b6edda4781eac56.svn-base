@@ -1,0 +1,49 @@
+<script type="text/javascript">
+    //催送订单
+    function hurryRecord(url){     
+        if(confirm("是否真的要催送订单？")){
+            updateTab(url);
+            //updateTab("__APP__/{$module_name}/hurry?&record="+record);
+        }  
+    }
+    
+    //恢复配送订单
+    //function 
+
+</script>
+<div class="pages">{$page}</div>
+<div class="list" id="list{$moduleName}"  >
+    <input id="{$moduleName}Action" type="hidden" value="listview" /> 
+    <table  border="0" cellspacing="1" cellpadding="3" width="100%" class="lvt"   align="center">
+        <tr class="listHeader">
+            <td class=""><input class="listColCheck" type="checkbox"  name="selectall" ></td>
+            <foreach name="listHeader" item="header">
+                <td class="listHeader">{$Think.lang.$header}</td>
+            </foreach>
+            <td class="listHeader" >操作</td>
+        </tr>
+        <volist id="entity"  name="listEntries" key='ad'>
+            <assign name='record' value="$key" />
+            <tr bgcolor="white" onMouseOver="this.className='lvtColDataHover'" onMouseOut="this.className='lvtColData'" ondblclick="updateTab(&apos;{:U('OrderForm/detailview',array('record'=> $record,'returnAction' => $returnAction))}&apos;);" id="row_{$entity_id}">
+
+                <volist name="entity" id="id" >
+                    <if condition="$key eq $moduleId">
+                        <td class="listColCheck" width="2%"><input  type="checkbox" name="selected_id" id="{$record}" value= '{$record}'></td> 
+                        <elseif condition="$key eq $list_link_field" />
+                        <td><a class="small" href="#" onclick="updateTab('__URL__/detailview/record/{$record}/returnAction/listview');">{$id}</a></td>
+                        <elseif condition="$key eq 'datetxt'" />
+                           <td class="listColData">{$id|substr=0,19}</td>                   
+                        <else />                  
+                        <td class="listColData">{$id}</td>                   
+                        </if>
+                </volist>               
+                <td><center>       
+                        <a href="#" onclick="updateTab('__URL__/detailview/record/{$record}/returnAction/{$returnAction}');">查看</a><span >&nbsp&nbsp|&nbsp&nbsp</span>
+                        <a href="#" onclick="updateTab('__URL__/editview/record/{$record}/returnAction/{$returnAction}');">改单</a>&nbsp&nbsp</span>
+                </center></td>
+            </tr>
+        </volist>
+    </table>
+</div>
+
+<div class="pages">{$page}</div>

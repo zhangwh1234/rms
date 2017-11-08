@@ -1,0 +1,70 @@
+<html>
+<head>
+    <link REL="SHORTCUT ICON" HREF=".__PUBLIC__/Images/lhkc/favicon.ico">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="keywords" content=""/>
+    <meta name="description" content=""/>
+    <title>丽华电子发票平台</title>
+    <link rel="stylesheet"
+          href=".__PUBLIC__/inv/css/showLoading.css"
+          type="text/css">
+    <!-- lee_solar modify 2016-07-06 修改样式 start  -->
+    <link rel="stylesheet"
+          href=".__PUBLIC__/inv/css/index.css?version=0.0.3"
+          type="text/css"/>
+
+    <link rel="stylesheet"
+          href=".__PUBLIC__/inv/css/jquery-ui.css"
+          type="text/css">
+    <!-- lee_solar modify 2016-07-06 修改样式 end  -->
+
+    <link rel="stylesheet" href=".__PUBLIC__/inv/css/xcConfirm.css" type="text/css">
+    <script
+            src=".__PUBLIC__/inv/js/jquery-1.9.1.min.js"></script>
+
+    <script
+            src=".__PUBLIC__/inv/js/jquery.qrcode.min.js"></script>
+
+    <script type="text/javascript"
+            src=".__PUBLIC__/inv/js/xcConfirm.js"></script>
+
+    <script type="text/javascript"
+            src=".__PUBLIC__/inv/js/alert.js"></script>
+
+    <script
+            src=".__PUBLIC__/inv/js/jquery.zclip.min.js"></script>
+    <script
+            src=".__PUBLIC__/inv/js/jquery.fileDownload.js"></script>
+    <script type="text/javascript"
+            src=".__PUBLIC__/inv/js/jquery.showLoading.js"></script>
+
+    <script type="text/javascript"
+            src=".__PUBLIC__/inv/js/jquery-ui.min.js"></script>
+    <style type="text/css">
+        @media screen and (max-width:600px){
+            body{
+                isplay:block; width:400px; height:520px; position:absolute; left:50%; top:50%; margin:-250px 0px 0px -200px; z-index:2; background-color:#Fff; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px; -webkit-box-shadow:0 0 5px #666; -moz-box-shadow:0 0 5px #666; box-shadow:0 0 5px #666; overflow:hidden;
+            }
+        }
+        @media screen and (min-width:600px){
+            body{
+                isplay:block; width:800px; height:520px; position:absolute; left:50%; top:50%; margin:-250px 0px 0px -400px; z-index:2; background-color:#Fff; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px; -webkit-box-shadow:0 0 5px #666; -moz-box-shadow:0 0 5px #666; box-shadow:0 0 5px #666; overflow:hidden;
+            }
+        }
+    </style>
+<body>
+<div class="login-left">
+    <h4 id="back01" style="color:black;">错误提示</h4>
+</div>
+<div id="divMsgId" style="margin: 10px 10px 10px 10px;">
+    <span>电子票号:{$invoicenumber}</span>
+    <foreach name="errorInfo" item="vo">
+        <span style="color:red;font-size:20px;text-align: left;line-height: 40px;text-indent: 25px;" >{$vo.log}</span>
+    </foreach>
+</div>
+<a id="applyInv" class="apply-b" onclick="javascript:location.href = '__URL__/verify/n/{$invoicenumber}'"  style="background-color: black;">返回</a>
+</body>
+</html>

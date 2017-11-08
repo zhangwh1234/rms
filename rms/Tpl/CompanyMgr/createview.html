@@ -18,6 +18,15 @@
                     if (!isValid) {
                         return false;
                     }
+                    //如果返回false阻止提交
+                    if ($('#CompanyMgrCreateviewForm input[name=name]').val() == '') {
+                        alert('配送店不能为空!');
+                        return false;
+                    };
+                    if ($('#CompanyMgrCreateviewForm input[name=distributionCode]').val() == '') {
+                        alert('分配代码不能为空!');
+                        return false;
+                    };
                 },
                 success: function (res) {
                     var data = eval('(' + res + ')');

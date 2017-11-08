@@ -45,9 +45,9 @@ class  TelcustomerAction extends ModuleAction
             }
 
             if ($where) {
-                $where .= $focus->trueTableName .".domain = '" . $_SERVER['HTTP_HOST'] . "'";
+                $where .= $focus->trueTableName .".domain = '" . $this->getDomain() . "'";
             } else {
-                $where = $focus->trueTableName .".domain = '" . $_SERVER['HTTP_HOST'] . "'";
+                $where = $focus->trueTableName .".domain = '" . $this->getDomain() . "'";
             }
 
             //导入分页类
@@ -190,7 +190,7 @@ class  TelcustomerAction extends ModuleAction
             $company = $_REQUEST['telCompany_' . $i];
             $data['address'] = $address;
             $data['company'] = $company;
-            $data['domain'] = $_SERVER['HTTP_HOST'];
+            $data['domain'] = $this->getDomain();
             $data['telcustomerid'] = $record;
             $teladdress_model->create();
             $teladdress_model->add($data);
@@ -217,7 +217,7 @@ class  TelcustomerAction extends ModuleAction
             $company = $_REQUEST['telCompany_' . $i];
             $data['address'] = $address;
             $data['company'] = $company;
-            $data['domain'] = $_SERVER['HTTP_HOST'];
+            $data['domain'] = $this->getDomain();
             $data['telcustomerid'] = $record;
             $teladdress_model->create();
             $teladdress_model->add($data);
@@ -272,7 +272,7 @@ class  TelcustomerAction extends ModuleAction
         $where = array();
         $where['telphone'] = $telphone;
         $where['teldate'] = date('Y-m-d');
-        $where['domain'] = $_SERVER['HTTP_HOST'];
+        $where['domain'] = $this->getDomain();
         $telhistoryResult = $telhistoryModel->where($where)->select();
 
         //是否要保存在来电历史表中
@@ -287,7 +287,7 @@ class  TelcustomerAction extends ModuleAction
             $data['teltime'] = date('H:i:s');
             $data['teldate'] = date('Y-m-d');
             $data['teltask'] = '客户来电';
-            $data['domain'] = $_SERVER['HTTP_HOST'];
+            $data['domain'] = $this->getDomain();
             $telhistoryModel->create();
             $telhistoryModel->add($data);
         }
@@ -297,14 +297,14 @@ class  TelcustomerAction extends ModuleAction
         $telcustomerModel = D('Telcustomer');
         $where = array();
         $where['telphone'] = $telphone;
-        $where['domain'] = $_SERVER['HTTP_HOST'];
+        $where['domain'] = $this->getDomain();
         $telcustomer = $telcustomerModel->field("telcustomerid,name,telphone")->where($where)->find();
 
         $telcustomerid = $telcustomer['telcustomerid'];
 
         //查询地址
         $teladdressModel = D('Teladdress');
-        $teladdress = $teladdressModel->field("teladdressid,address,longitude,latitude,company")->where("telcustomerid=$telcustomerid")->limit(5)->select();
+        $teladdress = $teladdressModel->field("teladdressid,address,longitude,latitude,company")->where("telcustomerid=$telcustomerid")->limit(5)->order('teladdressid desc')->select();
         if (empty($teladdress)) $teladdress = array();
 
         $returnData['teladdress'] = $teladdress;
@@ -348,7 +348,7 @@ class  TelcustomerAction extends ModuleAction
 
         //读取连接信息,根据用户访问的url来判断
         require APP_PATH . 'Conf/datapath.php';
-        $HTTP_POST = $_SERVER['HTTP_HOST'];
+        $HTTP_POST = $this->getDomain();
         $HTTP_POST = $HTTP_POST . 'History';
         $dbConfig = $rmsDataPath[$HTTP_POST];
         $connectionDns = $dbConfig['DB_TYPE'] . '://' . $dbConfig['DB_USER'] . ':' . $dbConfig['DB_PWD'] . '@' . $dbConfig['DB_HOST'] . ':' . $dbConfig['DB_PORT'] . '/' . $dbConfig['DB_NAME'];
@@ -437,7 +437,7 @@ class  TelcustomerAction extends ModuleAction
 
         //读取连接信息,根据用户访问的url来判断
         require APP_PATH . 'Conf/datapath.php';
-        $HTTP_POST = $_SERVER['HTTP_HOST'];
+        $HTTP_POST = $this->getDomain();
         $HTTP_POST = $HTTP_POST . 'History';
         $dbConfig = $rmsDataPath[$HTTP_POST];
         $connectionDns = $dbConfig['DB_TYPE'] . '://' . $dbConfig['DB_USER'] . ':' . $dbConfig['DB_PWD'] . '@' . $dbConfig['DB_HOST'] . ':' . $dbConfig['DB_PORT'] . '/' . $dbConfig['DB_NAME'];

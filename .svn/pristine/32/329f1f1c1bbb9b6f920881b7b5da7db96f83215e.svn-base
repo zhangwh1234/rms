@@ -1,0 +1,26 @@
+<style type="text/css">
+    .genHeaderSmall{
+        font-size: 16px;
+    }
+</style>
+<table border='0' cellpadding='5' cellspacing='0' width='100%' height='350px'>
+    <tr>
+        <td align='center'>
+            <div style='border: 1px solid rgb(153, 153, 153); background-color: rgb(255, 255, 255); width: 30%; position: relative; z-index: 10000000;height: 100px;'>
+                <table border='0' cellpadding='5' cellspacing='0' width='90%' style="height:96px;">
+                    <tbody>
+                        <tr>
+                            <td rowspan='2' width='11%'><img src='__PUBLIC__/images/empty.jpg' ></td>
+                            <td style='border-bottom: 1px solid rgb(204, 204, 204);' nowrap='nowrap' width='50%'><span class='genHeaderSmall'>提示</span></td>
+                        </tr>
+                        <tr>
+                            <td class='small' align='center' nowrap='nowrap'>               
+                                <a href='javascript:window.history.back();' class='genHeaderSmall'>重新登陆</a><br>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table> 
+            </div>
+        </td>
+    </tr>
+</table>

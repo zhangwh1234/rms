@@ -1,0 +1,306 @@
+
+<table id="productsTable" width="100%" border=0 style="border: 1px solid #e0dddd; margin-top: 2px;" class="small">
+    <tr class="detailedViewHeader" style="border: 1px solid red;">
+        <td width="5%" align="center">序号</td>
+        <td width="12%" align="center">数量</td>
+        <td width="15%" align="center">产品代码</td>
+        <td width="30%" align="center">产品名称</td>
+        <td width="12%" align="center">单价</td>
+        <td width="15%" align="center">金额</td>
+        <td width="10%" align="center">操作</td>           
+    </tr>
+    <empty name="orderproducts"> 
+        <for start="0" end="3" name="key">
+            <tr style="height:20px;border: 1px solid black;background: #F0F0F0;" class="CaseRow" >
+                <td width="5%" align="center" class="dvtCellLabel">{$key+1}</td>
+                <td width="15%" align="center" class="dvtCellLabel"> {//数量}
+                    <input id="productsNumber_{$key+1}" class="easyui-numberbox" name="productsNumber_{$key+1}" type="text" size="5"  tabindex="1" onkeydown="keydownSumProductsMoney({$key+1},event,this)" 
+                        onblur="blurkeydownSumProductsMoney({$key+1},this)" value="" AUTOCOMPLETE="off" />
+                </td>
+                <td width="10%" align="center" class="dvtCellLabel"> {//产品代码}
+                    <input id="productsCode_{$key+1}" name="productsCode_{$key+1}" type="text" class="easyui-numberbox" size="10" tabindex="1"   onkeydown="getProductsByCode({$key+1},event,this);"  AUTOCOMPLETE="off"  />
+
+                    <img id="searchIcon1" title="产品选择" src="./__PUBLIC__/Images/products.gif" style="cursor: pointer;" align="absmiddle" onclick="productsPickList(&apos;{:U('OrderForm/popupview',array('module'=>'Products','row'=>$key+1))}&apos;);" /><a href="javascript:productsPickList(&apos;{:U('OrderForm/popupview',array('module'=>'Products','row'=>$key+1))}&apos;)" >选择</a> 
+                </td>
+                <td width="30%" align="center" class="dvtCellLabel"> {//产品名称}
+                    <input id="productsName_{$key+1}" name="productsName_{$key+1}" type="text" size="30" readonly="readonly"  /> 
+                    <input id="productsShortName_{$key+1}" name="productsShortName_{$key+1}" size="30" type="hidden"  />                  
+                </td>               
+                <td width="15%" align="center" class="dvtCellLabel"> {//单价}
+                    <input id="productsPrice_{$key+1}" name="productsPrice_{$key+1}" type="text" size="10" readonly="readonly" tabindex="1" value="" />
+                </td>
+                <td width="15%" align="center" class="dvtCellLabel"> {//金额}
+                    <input id="productsMoney_{$key+1}" name="productsMoney_{$key+1}" type="text" size="10" readonly="readonly"  tabindex="1" value="" />
+                </td>
+                <td width="10%" align="center" class="dvtCellLabel"><a href="#" onclick="clearProducts({$key+1});" >清空产品</a></td>
+            </tr>
+        </for>
+    </empty>
+    <foreach name="orderproducts" item="vo">
+        <tr style="height:20px;border: 1px solid black;background: #F0F0F0;" class="CaseRow" >
+            <td width="5%" align="center" class="dvtCellLabel">{$key+1}</td>
+            <td width="15%" align="center" class="dvtCellLabel"> {//数量}
+                <input id="productsNumber_{$key+1}" name="productsNumber_{$key+1}" class="easyui-numberbox" type="text" size="5"  tabindex="1" value="{$vo.number}" onkeydown="keydownSumProductsMoney({$key+1})" onblur="sumProductsMoney({$key+1});" AUTOCOMPLETE="off" />
+            </td>
+            <td width="10%" align="center" class="dvtCellLabel"> {//产品代码}
+                <input id="productsCode_{$key+1}" name="productsCode_{$key+1}" class="easyui-numberbox" type="text" size="10" tabindex="1" value="{$vo.code}" onkeyup="getProductsByCode({$key+1},event,this);" AUTOCOMPLETE="off" />
+                <img id="searchIcon1" title="产品选择" src="./__PUBLIC__/Images/products.gif" style="cursor: pointer;" align="absmiddle" onclick="productsPickList(&apos;{:U('OrderForm/popupview',array('module'=>'Products','row'=>$key+1))}&apos;);" /><a href="javascript:productsPickList(&apos;{:U('OrderForm/popupview',array('module'=>'Products','row'=>$key+1))}&apos;)" >选择</a> 
+            </td>
+            <td width="30%" align="center" class="dvtCellLabel"> {//产品名称}
+                <input id="productsName_{$key+1}" name="productsName_{$key+1}" type="text" size="30" readonly="readonly" value="{$vo.name}" />
+                <input id="productsShortName_{$key+1}" name="productsShortName_{$key+1}" type="hidden"  value="{$vo.shortname}" />
+                <img id="searchIcon1" title="产品选择" src="./__PUBLIC__/Images/products.gif" style="cursor: pointer;" align="absmiddle" onclick="productsPickList('Products',{$key});" />
+            </td>           
+            <td width="15%" align="center" class="dvtCellLabel"> {//单价}
+                <input id="productsPrice_{$key+1}" name="productsPrice_{$key+1}" type="text" size="10" readonly="readonly" tabindex="1" value="{$vo.price}" />
+            </td>
+            <td width="15%" align="center" class="dvtCellLabel"> {//金额}
+                <input id="productsMoney_{$key+1}" name="productsMoney_{$key+1}" type="text" size="10" readonly="readonly"  tabindex="1" value="{$vo.money}" />
+            </td>
+            <td width="10%" align="center" class="dvtCellLabel"><a href="#" onclick="clearProducts('{$key+1}');" >清空产品</a></td>
+        </tr>
+    </foreach>
+
+</table> 
+<table  width="90%" >
+    <tr>
+        <td>    
+            <input type="button" value="添加产品行" class="crmbutton small save" style="width:100px" onclick="addProducts();" style="margin-right:20px;">  
+            <input type="button" value="删除产品最后一行"  class="crmbutton small save"  onclick="delProducts();">  
+            <input id="productsLength" name="productsLength" type="hidden" value="{$key+1}" />
+        </td>
+        <td width="" align="right">
+            小计:
+        </td>  
+        <td class="dvtCellLabel"> {// 金额小计}
+            <input id="productsTotalMoney" name="productsTotalMoney" type="text" size="10" readonly="readonly" style="border: 0px;" value="{$totalmoney}" />
+        </td> 
+    </tr>
+</table>     
+
+<script type="text/javascript">
+    /*产品的js计算程序*/
+    var productsAjax = false;  //判断是否查询过产品代码，防止在ajax中按回车，反复执行，有个alert的小bug
+    //添加产品
+    function addProducts(){
+        //取得表格行的长度
+        var rowNum = $("#productsTable tr").length;
+
+        var tableTrAppend =   "<tr style='height:20px;border: 1px solid black;background: #F0F0F0;' class='CaseRow' > ";
+        tableTrAppend +=  "<td width='5%' align='center' class='dvtCellLabel'>"+rowNum+"</td> ";
+        tableTrAppend +=  "<td width='10%' align='center' class='dvtCellLabel'>";        
+        tableTrAppend +=    "<input id='productsNumber_"+rowNum+"' name='productsNumber_"+rowNum+"' type='text' size='5' value='' tabindex='1' onkeydown='keydownSumProductsMoney("+rowNum+",event,this)' onblur='blurkeydownSumProductsMoney("+rowNum+"event,this)' value='' AUTOCOMPLETE=''off' />";
+        tableTrAppend +=    "</td>"; 
+        tableTrAppend +=    "<td width='15%' align='center' class='dvtCellLabel'>";
+        tableTrAppend +=  "<input class='easyui-numberbox' id='productsCode_"+rowNum+"' name='productsCode_"+rowNum+"'  type='text' size='10' tabindex='1' onkeyup='getProductsByCode("+rowNum+",event,this)'/>";
+        tableTrAppend +=   "<img id='searchIcon1' title='产品选择' src='"+PUBLIC+"/Images/products.gif' style='cursor: pointer;' align='absmiddle' onclick='productsPickList(\"__APP__/OrderForm/popupview/module/Products/row/"+rowNum+"\");' />";
+        tableTrAppend +=   "<a href='javascript:productsPickList(\"__APP__/OrderForm/popupview/module/Products/row/"+rowNum+"\");' >选择</a>"; 
+        tableTrAppend +=   "</td>";
+        tableTrAppend +=   "<td width='30%' align='center' class='dvtCellLabel'>";
+        tableTrAppend +=   "<input id='productsName_"+rowNum+"' name='productsName_"+rowNum+"' type='text' size='30' readonly='readonly'  />";
+        tableTrAppend +=   "<input id='productsShortName_"+rowNum+"' name='productsShortName_"+rowNum+"' type='hidden'  />";
+        tableTrAppend +=    "</td>";
+        tableTrAppend +=    "<td width='15%' align='center' class='dvtCellLabel'>";
+        tableTrAppend +=    "<input id='productsPrice_"+rowNum+"' name='productsPrice_"+rowNum+"' type='text' size='10' readonly='readonly' tabindex='1' value='' />";
+        tableTrAppend +=    "</td>";
+        tableTrAppend +=    "<td width='15%' align='center' class='dvtCellLabel'>";
+        tableTrAppend +=    "<input id='productsMoney_"+rowNum+"' name='productsMoney_"+rowNum+"' type='text' size='10' readonly='readonly'  tabindex='1' value='' />";
+        tableTrAppend +=    "</td>";
+        tableTrAppend +=    "<td width='10%' align='center' class='dvtCellLabel'><a href='#' onclick='clearProducts("+rowNum+");' >清空产品</a></td>";
+        tableTrAppend +=    "</tr>";
+        //alert(tableTrAppend);
+        $("#productsTable").append(tableTrAppend);  
+        $("#productsLength").attr("value",rowNum+1);  //表格行数保存
+        $('#productsNumber_'+rowNum).numberbox({      //定义输入类型为数字
+            min:0,
+            precision:0
+        });
+        $('#productsCode_'+rowNum).numberbox({      //定义输入类型为数字
+            min:0,
+            precision:0
+        });
+
+
+    } 
+
+    /*  删除产品最后一行 */
+    function delProducts(){
+        //取得表格行的长度
+        var rowNum = $("#productsTable tr").length;
+        if(rowNum == 2){
+            alert("最后一行不能删除");
+            return;
+        }
+        $("#productsTable tr:last").remove();
+        $("#productsLength").attr("value",rowNum-1);  //表格行数保存
+        sumProductsMoney(rowNum);
+
+    }
+
+    /* 清空产品上的内容 */
+    function clearProducts(rowNum){
+        var productsCode = $("#productsCode_"+rowNum).val();
+        var productsName = $("#productsName_"+rowNum).val();
+
+        if((productsCode == '') && (productsName == '')){
+            return;
+        } 
+        if(confirm("是否要清空内容")){
+            $("#productsNumber_"+rowNum).numberbox('setValue', '');
+            $("#productsCode_"+rowNum).numberbox('setValue', '');
+            $("#productsName_"+rowNum).attr('value',''),
+            $("#productsShortName_"+rowNum).attr('value',''),
+            $("#productsPrice_"+rowNum).attr('value',''),
+            $("#productsMoney_"+rowNum).attr('value',0),
+            sumProductsMoney(rowNum);
+        }         
+    }
+
+    /* 弹出窗口，选择产品 */
+    //moduleName:产品名称  rowNum:行号 moduleName,rowNum
+    function productsPickList(url){
+        window.open(url);
+    }
+
+
+    /* 通过产品代码取得产品 */    
+    // rowNum 是行号，evt是firefox下的event事件，obj是this指针
+    function getProductsByCode(rowNum,evt,obj){
+        evt = evt ? evt : ((window.event) ? window.event : null);     
+        var key = evt.keyCode ? evt.keyCode : evt.which; 
+        //var code = $(obj).numberbox('getValue');
+        var code = $(obj).val();
+
+        if((key == 13) && (code.length>0)){
+            getProducts(rowNum,code);
+        }
+        //向上移动
+        if(key == 38){
+            $("#productsNumber_"+rowNum).focus();
+        }
+        //向下移动
+        if(key == 40){
+            var focusNum = rowNum + 1;
+            $("#productsNumber_"+focusNum).focus();  
+        }
+
+    }
+
+
+    /*  */
+    function getProducts(rowNum,code){
+        $.ajax({
+            url:APP+'/Products'+"/getProductsByCode&code="+code,
+            async:true,
+            beforeSend:function(){
+                //$jq("#lihuastatus").show();
+                //alert('dd');
+            },
+            complete:function(){
+                //$jq("#lihuastatus").hide();
+                //alert('ee');
+            },                            
+            success:function(mydata){
+                if(mydata){
+                    //首先检查父窗口表格是否有存在输入的代码和产品
+                    var rowLength = $("#productsTable tr").length;
+                    for(i=1;i<rowLength;i++){
+                        var productsName = $("#productsName_"+i).attr('value');
+                        if((productsName == mydata.name) && (i != rowNum)){
+                            //$.messager.alert('Warning','The warning message');
+                            alert('产品已经存在,不能添加！');
+                            return;
+                        }
+                    } 
+                    $("#productsName_"+rowNum).val(mydata.name);
+                    $("#productsShortName_"+rowNum).val(mydata.shortname);
+                    $("#productsPrice_"+rowNum).val(mydata.price);
+                    //计算总的金额
+                    sumProductsMoney(rowNum);
+                    //跳转到下一行
+                    rowNum = parseInt(rowNum) + 1; 
+                    $("#productsNumber_"+rowNum).focus();
+                }else{
+                    alert("输入的产品代码有错误，请重新输入！");
+                    return;
+                }
+            }       
+
+        })
+    }
+
+
+    /* 计算产品金额 */
+    function sumProductsMoney(rowNum){
+        var productsNumber = $("#productsNumber_"+rowNum).val();  //数量
+        var productsPrice  = $("#productsPrice_"+rowNum).val();  //单价
+        var productsMoney = 0 ;
+        productsMoney = parseInt(productsNumber) * parseFloat(productsPrice);
+
+        //写入
+        $("#productsMoney_"+rowNum).val(productsMoney);
+        //计算全部的金额
+        var totalMoney = 0;
+        //取得表格行的长度
+        var rowLength = $("#productsTable tr").length;
+        for(i=1;i< rowLength;i++){
+            if($("#productsMoney_"+i).val() >  0 ){
+                totalMoney = totalMoney + parseFloat($("#productsMoney_"+i).val());
+            }
+        }
+
+        //写入总的金额
+        //totalMoney = totalMoney.toFixed(2);
+        $("#productsTotalMoney").val(totalMoney);
+        //下一个表格代码输入框显示焦点
+        rowNum = rowNum + 0;   
+        //加上送餐费
+        var shippingmoney =0;
+        var shippingmoneyVal = $('#shippingmoney').val();
+        if(shippingmoneyVal){
+            shippingmoney = parseFloat(shippingmoneyVal);
+        }
+        totalMoney = totalMoney + shippingmoney;
+        totalMoney = parseFloat(totalMoney).toFixed(2);  
+        $('#totalmoney').val(totalMoney);          
+    }
+
+    /* 键盘回车计算产品金额 */
+    function keydownSumProductsMoney(rowNum,evt,obj){
+        evt = evt ? evt : ((window.event) ? window.event : null);     
+        var key = evt.keyCode ? evt.keyCode : evt.which; 
+        if(key  == 13){
+            if($("#productsName_"+rowNum).val() != ''){    //如果不为空，才计算
+                sumProductsMoney(rowNum);
+            }
+            $("#productsCode_"+rowNum).focus();
+
+        }
+        //向上移动一个
+        if(key == 38){
+            var focusNum = rowNum - 1;
+            if(focusNum > 0){
+                $("#productsCode_"+focusNum).focus();  
+            }
+        }
+        //向下移动
+        if(key == 40){
+            $("#productsCode_"+rowNum).focus(); 
+        }
+
+    }
+
+    //产品代码失去焦点的计算金额
+    function blurSumProductsMoney(rowNum,obj){
+        if($("#productsName_"+rowNum).val() != ''){    //如果不为空，才计算
+            sumProductsMoney(rowNum);
+        }
+    }
+
+    function blurkeydownSumProductsMoney(rowNum,obj){
+
+    }
+
+
+
+</script>

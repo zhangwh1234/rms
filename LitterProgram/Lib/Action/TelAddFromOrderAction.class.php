@@ -1,28 +1,65 @@
 <?php
-    /**
-    * À´µçÌí¼ÓÏµÍ³
-    * ½«À´µçÌîÈëµØÖ·ÏµÍ³ÖĞ
-    * 2014-06-10
-    */
 
-    class TelAddFromOrderAction extends Action{
-        public function index(){
-            //¶©µ¥±í
-            $orderformModel = D('Orderform');
-            //À´µç¿Í»§±í
-            $telcustomerModel = D('Telcustomer');
-            //À´µçµØÖ·±í
-            $teladdressModel = D('Teladdress');
+/**
+ * æ¥ç”µæ·»åŠ ç³»ç»Ÿ
+ * å°†æ¥ç”µå¡«å…¥åœ°å€ç³»ç»Ÿä¸­
+ * 2014-06-10
+ * æµ‹è¯•å‘½ä»¤:
+ * ç”µè¯æµ‹è¯•:/Applications/XAMPP/xamppfiles/bin/php /Applications/XAMPP/htdocs/rms/litter.php TelAddFromOrder/testtel
+ */
+class TelAddFromOrderAction extends Action
+{
+    public function index()
+    {
 
-            //²é¶©µ¥
-            $where = array();
-            $orderformResult = $orderformModel->where($where)->select();
-            foreach($orderformResult as $value){
+        $dataConnectArr = array(
+            'bj.lihuaerp.com' => '',
+            'cz.lihuaerp.com' => '',
+            'nj.lihuaerp.com' => '',
+            'wx.lihuaerp.com' => '',
+            'sz.lihuaerp.com' => '',
+            'sh.lihuaerp.com' => '',
+            'gz.lihuaerp.com' => '',
+        );
+
+        $tableConnectArr = array(
+            'bj.lihuaerp.com' => '',
+            'cz.lihuaerp.com' => '',
+            'nj.lihuaerp.com' => '_nj',
+            'wx.lihuaerp.com' => '_wx',
+            'sz.lihuaerp.com' => '_sz',
+            'sh.lihuaerp.com' => '_sh',
+            'gz.lihuaerp.com' => '',
+        );
+
+        $domain = $_GET['domain'];
+        $connectDb = $dataConnectArr[$domain];
+
+        //è®¢å•è¡¨
+        $orderformModel = M('orderform', 'rms_', $connectDb);
+        //æ¥ç”µå®¢æˆ·è¡¨
+        $telcustomerModel = M('telcustomer'.$tableConnectArr[$domain], 'rms_', $connectDb);
+        //æ¥ç”µåœ°å€è¡¨
+        $teladdressModel = M('teladdress'.$tableConnectArr[$domain], 'rms_', $connectDb);
+        //å‘ç¥¨
+        $telinvoiceModel = M('telinvoice', 'rms_', $connectDb);
+
+        //æŸ¥è®¢å•
+        $where = array();
+        $where['domain'] = $domain;
+        $orderformResult = $orderformModel->where($where)->select();
+        foreach ($orderformResult as $value) {
+            $telphone = $value['telphone'];
+            //éªŒè¯æ˜¯å¦æ˜¯ç”µè¯å·ç 
+            if ( $this->isTel($telphone)) {
+                //æ˜¯ç”µè¯å·ç ,ç»§ç»­æ‰§è¡Œ
                 $where = array();
                 $where['telphone'] = $value['telphone'];
+                $where['domain'] = $domain;
                 $telcustomerResult = $telcustomerModel->where($where)->find();
-                if($telcustomerResult){
-                    //¸üĞÂÀ´µç¿Í»§±í
+                if ($telcustomerResult) {
+                    $telcustomerid = $telcustomerResult['telcustomerid'];
+                    //æ›´æ–°æ¥ç”µå®¢æˆ·è¡¨
                     $where = array();
                     $where['telphone'] = $value['telphone'];
                     $data = array();
@@ -32,17 +69,54 @@
                     var_dump($telcustomerModel->getLastSql());
                     $telcustomerResult = $telcustomerModel->where($where)->find();
                     var_dump($telcustomerResult);
-                    //¸üĞÂÀ´µçµØÖ·±í
+                    //æ›´æ–°æ¥ç”µåœ°å€è¡¨
                     $where = array();
+                    $where['telcustomerid'] = $$telcustomerid;
                     $data = array();
-                    $data['telcustomerid'] = $telcustomerResult['telcustomerid'];
-                    $data['address']  = $value['address'];
+                    $data['telcustomerid'] = $telcustomerid;
+                    $data['address'] = $value['address'];
                     $data['company'] = $value['company'];
+                    $data['domain'] = $domain;
                     $teladdressModel->create();
                     $teladdressModel->add($data);
                     var_dump($teladdressModel->getLastSql());
-                }else{
-                    //´æÈëÀ´µç¿Í»§±í
+
+                    //åˆ é™¤æœ€è¿œçš„å‡ ä¸ªåœ°å€
+                    $teladdressResule = $teladdressModel->where($where)->order('teladdressid asc')->select();
+                    if(count($teladdressResule)>5){
+                        $i  = count($teladdressResule);
+                        foreach($teladdressResule as $telValue){
+                            if($i <= 5 ){
+                                break;  //å·²ç»æ˜¯5ä¸ªåœ°å€,å¯ä»¥é€€å‡º
+                            }
+                            $teladdressid = $telValue['teladdressid'];
+                            $where = array();
+                            $where['teladdressid'] = $teladdressid;
+                            $teladdressModel->where($where)->delete();
+                        }
+                    }
+                    //è¿˜æœ‰å‘ç¥¨
+                    $invoiceHeader = $value['invoiceheader'];
+                    $where = array();
+                    $where['telcustomerid'] = $telcustomerid;
+                    $telinvoiceResult = $telinvoiceModel->where($where)->select();
+                    if($telinvoiceResult){
+                        $data= array();
+                        $data['telcustomerid'] = $telcustomerid;
+                        $data['header'] = $invoiceHeader;
+                        $data['domain'] = $domain;
+                        $telinvoiceModel->create();
+                        $telinvoiceModel->add($data);
+                    }else{
+                        $where = array();
+                        $where['telcustomerid'] = $telcustomerid;
+                        $data= array();
+                        $data['telcustomerid'] = $telcustomerid;
+                        $data['header'] = $invoiceHeader;
+                        $telinvoiceModel->where($where)->save($data);
+                    }
+                } else {
+                    //å­˜å…¥æ¥ç”µå®¢æˆ·è¡¨
                     $data = array();
                     $data['name'] = $value['clientname'];
                     $data['telphone'] = $value['telphone'];
@@ -50,18 +124,63 @@
                     $telcustomerModel->create();
                     $telcustomerModel->add($data);
                     var_dump($telcustomerModel->getLastSql());
-                    //´æÈëÀ´µçµØÖ·±í
+                    //å­˜å…¥æ¥ç”µåœ°å€è¡¨
                     $data = array();
                     $data['telcustomerid'] = $telcustomerModel->getLastInsID();
                     $data['telphone'] = $value['value'];
                     $data['address'] = $value['address'];
                     $data['company'] = $value['company'];
                     $teladdressModel->create();
-                    $teladdressModel->add($data);  
-                    var_dump($teladdressModel->getLastSql());                  
-                } 
+                    $teladdressModel->add($data);
+                    var_dump($teladdressModel->getLastSql());
+                    //ä¿å­˜å‘ç¥¨
+                    $data= array();
+                    $data['telcustomerid'] = $telcustomerModel->getLastInsID();
+                    $data['header'] = $invoiceHeader;
+                    $data['domain'] = $domain;
+                    $telinvoiceModel->create();
+                    $telinvoiceModel->add($data);
+
+                }
             }
         }
-
     }
+
+
+    //ç”µè¯æµ‹è¯•
+    public function testtel(){
+        var_dump($this->isTel('#87779899'));
+    }
+
+    /**
+     * @param $tel
+     * @param string $type
+     * @return bool
+     * éªŒè¯ç”µè¯å·ç 
+     */
+    function isTel($tel, $type = '')
+    {
+        //å¤„ç†ç”µè¯å‰é¢çš„0
+        if((strlen($tel) == 12) && (substr($tel,0,1) == '0') && (strpos($tel,'-') <= 0 )) {
+            $tel = substr($tel,1);
+        }
+        $regxArr = array(
+            'sj' => '/^(\+?86-?)?(18|15|13)[0-9]{9}$/',
+            'tel' => '/^(010|02\d{1}|0[3-9]\d{2})-\d{7,9}(-\d+)?$/',
+            'otel' => '/^\d{7,9}(-\d+)?$/',
+            '400' => '/^400(-\d{3,4}){2}$/',
+        );
+        if ($type && isset($regxArr[$type])) {
+            return preg_match($regxArr[$type], $tel) ? true : false;
+        }
+        foreach ($regxArr as $regx) {
+            if (preg_match($regx, $tel)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+}
+
 ?>

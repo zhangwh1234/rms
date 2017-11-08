@@ -17,7 +17,7 @@
             'telname' => array('width' => 10,'align'=>'left'),
             'rectime' => array('width' => 10,'align'=>'center'));
         //定义查询字段
-        var $searchFields = array('address','telphone','sendname','company');
+        var $searchFields = array('address','telphone','sendname','company','ordersn');
         //定义选择产品编码的字段
         var $popupProductsFields = array('code','name','price','brief');
         //定义焦点产品选择的字段

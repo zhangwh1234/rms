@@ -1,0 +1,81 @@
+<style type="text/css">
+    #wrap{
+        width:96%;
+        height:auto;
+        overflow:hidden;
+        margin:5px auto;
+        padding:4px 10px;
+        border:1px solid #ccc;
+        font-family: '黑体';
+    }
+
+    #wrap  strong{
+        font-size:16px;
+        color:#0b99d8;
+    }
+
+    #wrap dl{
+        margin:10px 0;
+        border:1px solid #dcdcdc;
+        height:auto;
+        overflow:hidden;
+    }
+
+    #wrap  dl dt{
+        display:block;
+        height:36px;
+        line-height:36px;
+        background:#e6e6fa;
+        text-indent:10px;
+    }
+
+    #wrap  dl dt strong{
+        font-size:14px;
+        color:#61
+    }
+
+    #wrap  dl dd{
+        padding:5px;
+        float:left;
+    }
+
+    #wrap dd span,a{
+        font-size: 14px;
+    }
+</style>
+<script type="text/javascript">
+    //判断是否是从index开始执行的
+    if(typeof indexFromGo === 'undefined'){
+        window.location.href = '__APP__/Index/index';
+    }
+
+    function deleteRecord(url){ 
+        if(confirm("是否真的要删除？")){
+            //console.info(url);
+
+            updateTab(url);
+            //updateTab("__APP__/{$module_name}/hurry?&record="+record);
+        }  
+    }
+</script>
+<div id="wrap">
+    <foreach name='organization' item='action'>
+        <dl>
+            <dt>
+                <span>部门名称:</span>
+                <strong>{$action.name}</strong>
+                [<a href="#" onclick="updateTab(&apos;{:U('Organization/createviewTeam',array('pid'=>$action['id'],'level'=>2))}&apos;)">添加班组</a>]
+                [<a href="#" onclick="updateTab(&apos;{:U('Organization/editviewDepartment',array('record'=>$action['id'],'level'=>2))}&apos;)">修改</a>]
+                [<a href="#" onclick="deleteRecord(&apos;{:U('Organization/deleteDepartment',array('record'=> $action['id'],'returnAction' => $returnAction))}&apos;);">删除</a>]
+            </dt>
+            <foreach name='action.child' item='method'>
+                <dd>
+                    <span>班组名称:</span>
+                    <strong>{$method.name}</strong>
+                    [<a href="#" onclick="updateTab(&apos;{:U('Organization/editviewTeam',array('record'=>$method['id'],'level'=>2))}&apos;)">修改</a>]
+                    [<a href="#" onclick="deleteRecord(&apos;{:U('Organization/deleteTeam',array('record'=> $method['id'],'returnAction' => $returnAction))}&apos;);">删除</a>]
+                </dd>
+            </foreach>
+        </dl>
+    </foreach>
+</div>

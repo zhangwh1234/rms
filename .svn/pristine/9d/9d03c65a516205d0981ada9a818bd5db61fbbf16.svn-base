@@ -1,0 +1,119 @@
+<?php if (!defined('THINK_PATH')) exit();?><script type="text/javascript">
+    /*关闭选项卡*/
+    function closeTabOrderHandle(){
+        //关闭定时显示订单状态的定时器
+        clearInterval(refreshOrderHandleMonit);
+        clearInterval(refreshOrderHandleOrder);
+        //返回选项卡
+        var tab = $('#operation').tabs('getSelected');
+        //返回选项卡的index
+        var index = $('#operation').tabs('getTabIndex',tab);
+        //关闭选项卡
+        $('#operation').tabs('close',index);
+
+    }
+</script>
+<?php if($_SESSION['PrintOn']== '开启'): ?><script type="text/javascript">
+    $(function(){
+        //取得打印机的名字
+        var printIndex = localStorage['printIndex'];
+        if(printIndex >= 0){
+            var printname = LODOP.GET_PRINTER_NAME(printIndex);
+            printname = '--('+printname+')';
+            $('#sayPrinterName').html(printname);
+        }else{
+            $('#sayPrinterName').html('--打印机没有设置');
+            $('#sayPrinterSet').css("color","#D8D8D8"); 
+        }
+        var printPage = localStorage['printPage'];
+        if(printPage == ''){
+            $('#sayPageName').html('--打印纸张没有设置') 
+        }else{
+            if(printPage == '30lian'){
+                $('#sayPageName').html('--(三联单)')
+            }
+            if(printPage == '60hot'){
+                $('#sayPageName').html('--(60宽热敏)')
+            }
+            if(printPage == '80hot'){
+                $('#sayPageName').html('--(80宽热敏)')
+            }
+        }
+    })
+
+    //打印机设置
+    function setupPrint(){
+        var tmp_index;
+        tmp_index = LODOP.SELECT_PRINTER();
+        if(tmp_index != -1){
+            print_index = tmp_index ;
+            printname = LODOP.GET_PRINTER_NAME(print_index);
+            printname = '--('+printname+')';
+            $('#sayPrinterName').html(printname);
+            //$jq("#print_name").attr("value",'所选打印机:'+printname);
+            //保存选择的设置
+            localStorage['printIndex'] = print_index;
+        }    
+    };
+
+    //打印纸张类型设置
+    function setupPrintPage(){
+         $('#winprintpage').window('open');
+    } 
+
+    //确定打印纸张类型，保存
+    function setPrintPageOK(){
+        var page = $('#selectprintpage').val();
+        if(page == ''){
+            localStorage['printPage'] = '';
+            $('#sayPageName').html('--(打印纸张没有设置)') 
+        }
+        if(page == '30lian'){
+            localStorage['printPage'] = page;
+            $('#sayPageName').html('--(三联单)')
+        }
+        if(page == '60hot'){
+            localStorage['printPage'] = page;
+            $('#sayPageName').html('--(60宽热敏)')
+        }
+        if(page == '80hot'){
+            localStorage['printPage'] = page;
+            $('#sayPageName').html('--(80宽热敏)')
+        }
+
+        $('#winprintpage').window('close');
+    }
+
+    //关闭打印设置窗口
+    function setPrintPageCancel(){
+        $('#winprintpage').window('close');
+    }  
+</script><?php endif; ?>
+
+<div class="moduleMenu">
+    <ul>
+        <li><?php echo (L("$tabName")); ?></li>
+        <li><a href="#" class="moduleName" onclick="updateTab('__URL__/listview');">&nbsp;&gt;<?php echo (L("$moduleName")); ?></a></li>
+        <li>&nbsp;&gt;列表操作</li>
+        <li style="width: 50px;">&nbsp;</li>
+        <li><a href="javascript:;" id="showSubMenu"  onMouseOver="" ><img src=".__PUBLIC__/Images/addressBtn.jpg" alt="" title="" border="0"></a></li>      
+        <li><a href="javascript:void(0);" class="moduleName" onclick="openNewTab('配送地址查询','__URL__/searchviewForAddress/delsession/1');">地址查询F10</a></li>
+        <li style="margin-left: 10px;"><a href="javascript:;" id="showSubMenu"  onMouseOver="" ><img src=".__PUBLIC__/Images/sendnameBtn.jpg" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);" class="moduleName" onclick="openNewTab('配送送餐员查询','__URL__/searchviewForSendname/delsession/1');">送餐员查询F9</a></li>
+        <li style="width: 20px;">&nbsp;</li> 
+        <li><input id="searchother" name="searchother" class="easyui-searchbox" data-options="prompt:'请输入查询内容',searcher:doSearchOtherHandle" style="width: 200px;" /></li>
+        <li style="margin-left: 10px;"><a href="javascript:;" id="showSubMenu"  onclick="setupPrint();" ><img src=".__PUBLIC__/Images/printerSetBtn.png" alt="" title="" border="0" id="sayPrinterImg"></a></li>
+        <li><a href="javascript:void(0);" class="moduleName" onclick="setupPrint();" id="sayPrinterSet">打印机设置</a></li>
+        <li><a href="javascript:void(0);"  id="sayPrinterName" style="font-size: 10px;line-height: 30px;color: black;" ></a></li>
+        <li style="margin-left: 10px;"><a href="javascript:;" id="showSubMenu"  onclick="setupPrintPage();" ><img src=".__PUBLIC__/Images/printPage.png" alt="" title="" border="0" id="sayPrinterImg"></a></li>
+        <li><a href="javascript:void(0);" class="moduleName" onclick="setupPrintPage();" id="sayPageSet">打印纸张设置</a></li>
+        <li><a href="javascript:void(0);"  id="sayPageName" style="font-size: 10px;line-height: 30px;color: black;" ></a></li>
+        <li style="float: right;margin-right: 40px;"><a href="javascript:void(0);" class="moduleName" onclick="closeTabOrderHandle();">关闭</a></li>
+        <li style="float:right;"><a href="javascript:void(0);" onclick="closeTabOrderHandle();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
+    </ul>
+</div>
+<script type="text/javascript">
+    function doSearchOtherHandle(value){
+           openNewTab('配送查询','__URL__/searchviewForOther/searchText/'+value);
+    }
+</script>

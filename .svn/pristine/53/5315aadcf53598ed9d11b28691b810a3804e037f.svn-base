@@ -1,0 +1,21 @@
+<?php if (!defined('THINK_PATH')) exit();?>
+<div class="moduleMenu">
+    <ul>
+        <li><?php echo (L("$tabName")); ?></li>
+        <li><a href="#" class="moduleName" onclick="updateTab('__URL__/listview');">&nbsp;&gt;<?php echo (L("$moduleName")); ?></a></li>
+        <li>&nbsp;&gt;新建操作</li>
+        <li style="width: 50px;">&nbsp;</li>
+        
+        <li style="margin-left: 10px;"><a href="javascript:;" onclick="updateTab('__URL__/listview');" ><img src="./__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:;" onclick="updateTab('__URL__/listview');" >放弃新建,返回列表<span>^4</span></a></li>
+        
+        <li style="margin-left: 10px;"><a href="javascript:;" onclick="openNewTab('订单地址查询',&apos;<?php echo U('OrderForm/searchviewForAddress');?>&apos;);" ><img src="./__PUBLIC__/Images/addressBtn.jpg" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:;"  onclick="openNewTab('订单地址查询',&apos;<?php echo U('OrderForm/searchviewForAddress');?>&apos;);">地址查询<span>^6</span></a></li>
+        
+        <li style="margin-left: 10px;"><a href="javascript:;"  onclick="openNewTab('订单电话查询',&apos;<?php echo U('OrderForm/searchviewForTelphone');?>&apos;);"><img src="./__PUBLIC__/Images/phone.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:;"  onclick="openNewTab('订单电话查询',&apos;<?php echo U('OrderForm/searchviewForTelphone');?>&apos;);">电话号码查询<span>^7</span></a></li>
+        
+        <li style="float: right;margin-right: 60px;"><a href="#"   onclick="closeTab();" >关闭</a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="closeTab();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
+    </ul>
+</div>

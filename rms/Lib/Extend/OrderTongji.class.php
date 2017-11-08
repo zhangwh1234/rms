@@ -23,6 +23,7 @@ class OrderTongji  {
 
     //
     public function index() {
+
     }
 
     // 查询队列，然后执行统计
@@ -107,7 +108,12 @@ class OrderTongji  {
     private function tongjiOrder($domain) {
 
         Log::write ( '开始执行订单量统计', Log::INFO, Log::FILE, $this->LogFile );
-        $this->dnsConnectionDB  =  'mysql://rdsvezmirevayff:zhangwh0731@rdsvezmirevayff.mysql.rds.aliyuncs.com:3306/czrms';
+        if($domain == 'bj.lihuaerp.com'){
+            $this->dnsConnectionDB  =  'mysql://rootlihua:zhangwh0731@rdsq6jvauvez7rq.mysql.rds.aliyuncs.com:3306/bjrms';
+        }else{
+            $this->dnsConnectionDB  =  'mysql://rootlihua:zhangwh0731@rdsq6jvauvez7rq.mysql.rds.aliyuncs.com:3306/czrms';
+        }
+
         //$this->dnsConnectionDB = 'mysql://root:@localhost:3306/rms';
         // 订单表
         $orderformModel = M ( 'orderform', 'rms_', $this->dnsConnectionDB );
@@ -220,7 +226,6 @@ class OrderTongji  {
         $where = array ();
         $where ['date'] = date ( 'Y-m-d' );
         $where ['ap'] = $this->getAp ();
-        $where ['domain'] = $domain;
         $tongjiorderModel->where ( $where )->delete ();
 
         Log::write ( '订单量统计，保存统计结果。', Log::INFO, Log::FILE, $this->LogFile );
@@ -260,6 +265,7 @@ class OrderTongji  {
             'GT',
             0
         );
+        $where ['domain'] = $domain;
         // 返回产品名称
         $productsResult = $orderproductsModel->Distinct ( true )->where ( $where )->field ( 'shortname' )->select ();
         // 定义要查询的分公司名称
@@ -363,6 +369,7 @@ class OrderTongji  {
             'GT',
             0
         );
+        $where ['domain'] = $domain;
         $productsResult = $orderproductsModel->Distinct ( true )->where ( $where )->field ( 'shortname' )->select ();
 
         // 定义要查询的分公司名称
@@ -468,7 +475,7 @@ class OrderTongji  {
         $orderproductsModel = M ( 'orderproducts', 'rms_', $this->dnsConnectionDB );
         // 返回产品名称
         $where = array ();
-        $where ['length(shortname)'] = array (
+        $where ['length(name)'] = array (
             'GT',
             0
         );
@@ -476,7 +483,8 @@ class OrderTongji  {
             'GT',
             0
         );
-        $productsResult = $orderproductsModel->Distinct ( true )->where ( $where )->field ( 'shortname' )->select ();
+        $where ['domain'] = $domain;
+        $productsResult = $orderproductsModel->Distinct ( true )->where ( $where )->field ( 'name' )->select ();
 
         // 定义要查询的分公司名称
         $where = array ();
@@ -489,7 +497,7 @@ class OrderTongji  {
         $tongji ['全部'] ['汇总'] = 0;
         foreach ( $companyResult as $value ) {
             foreach ( $productsResult as $productsValue ) {
-                $tongji [$value ['company']] [$productsValue ['shortname']] = 0;
+                $tongji [$value ['company']] [$productsValue ['name']] = 0;
                 $tongji [$value ['company']] ['汇总'] = 0;
             }
         }
@@ -520,7 +528,7 @@ class OrderTongji  {
         // var_dump($orderformResult);
         // 返回所有的订货
         $where = array ();
-        $where ['length(shortname)'] = array (
+        $where ['length(name)'] = array (
             'GT',
             0
         );
@@ -538,11 +546,11 @@ class OrderTongji  {
                     foreach ( $companyResult as $companyValue ) {
                         // $tongji ['全部'] [$productsValue ['shortname']] += $productsValue ['money'];
                         if ($companyValue ['company'] == $orderformValue ['company']) {
-                            $tongji [$orderformValue ['company']] [$productsValue ['shortname']] += $productsValue ['money'];
+                            $tongji [$orderformValue ['company']] [$productsValue ['name']] += $productsValue ['money'];
                             $tongji [$orderformValue ['company']] ['汇总'] += $productsValue ['money'];
                         }
                     }
-                    $tongji ['全部'] [$productsValue ['shortname']] += $productsValue ['money'];
+                    $tongji ['全部'] [$productsValue ['name']] += $productsValue ['money'];
                     $tongji ['全部'] ['汇总'] += $productsValue ['money'];
                 }
             }
@@ -607,6 +615,7 @@ class OrderTongji  {
             'GT',
             0
         );
+        $where ['domain'] = $domain;
         $productsResult = $orderproductsModel->Distinct ( true )->where ( $where )->field ( 'shortname' )->select ();
 
         foreach ( $productsResult as $value ) {
@@ -925,6 +934,7 @@ class OrderTongji  {
         $orderformResult = $orderformModel->where ( $where )->select ();
         foreach ( $orderformResult as $orderformValue ) {
             $data = array ();
+            $data ['ordersn'] = $orderformResult ['ordersn'];
             $data ['address'] = $orderformValue ['address'];
             $data ['ordertxt'] = $orderformValue ['ordertxt'];
             $data ['telname'] = $orderformValue ['telname'];
@@ -970,6 +980,7 @@ class OrderTongji  {
         $orderformResult = $orderformModel->where ( $where )->select ();
         foreach ( $orderformResult as $orderformValue ) {
             $data = array ();
+            $data ['ordersn'] = $orderformValue ['ordersn'];
             $data ['address'] = $orderformValue ['address'];
             $data ['ordertxt'] = $orderformValue ['ordertxt'];
             $data ['totalmoney'] = $orderformValue ['totalmoney'];
@@ -982,11 +993,115 @@ class OrderTongji  {
             $data ['date'] = date ( 'Y-m-d' );
             $data ['ap'] = $this->getAp ();
             $data ['domain'] = $domain;
+            $data ['lastlogtime'] = date('Y-m-d H:i:s');
             $tongjiallorderModel->create ();
             $tongjiallorderModel->add ( $data );
         }
         Log::write ( '导出订单任务执行完毕', Log::INFO, Log::FILE, $this->LogFile );
     }
+
+
+    /********
+     * 统计送达时间点数统计
+     * 保存在数据表中sp_sendtime_order
+     * php /Applications/XAMPP/htdocs/assisadmin.lihua.com/api.php Home/OrderTongji/sendtimeOrderTj
+     */
+    public function sendtimeOrderTj($domain){
+
+        //定义统计的数据组
+        $a0115 = array();
+        $a1630 = array();
+        $a3140 = array();
+        $a4150 = array();
+        $a5160 = array();
+        $a6100 = array();
+
+        // 导出订单表
+        $tongjisendtimeModel = M ( 'tongjisendtime', 'rms_', $this->dnsConnectionDB );
+        $where = array();
+        $where ['date'] = date ( 'Y-m-d' );
+        $where ['ap'] = $this->getAp ();
+        $where['domain'] = $domain;
+        $tongjisendtimeModel->where($where)->delete();
+
+        // 订单表
+        $orderformModel = M ( 'orderform', 'rms_', $this->dnsConnectionDB );
+
+        $where = array();
+        $where ['date'] = date ( 'Y-m-d' );
+        $where ['ap'] = $this->getAp ();
+        $where['domain'] = $domain;
+        //返回所有订单数据
+        $order = $orderformModel->field('teltime,custtime,donetime,company,domain as area')->where($where)->select();
+        foreach($order as $value){
+            //计算要求时间
+            if(!empty($value['custtime'])){
+                $custtime = strtotime($value['custtime']);
+            }else{
+                $custtime = strtotime($value['rectime']);
+            }
+            //计算到达时间
+            if(!empty($value['donetime'])){
+                $donetime = strtotime($value['donetime']);
+            }else{
+                $donetime = 'max';
+            }
+            //计算送达的时间
+            if($donetime == 'max'){
+                //还没有输入到达时间，所以无法计算
+                $sendtime = 80;
+            }else{
+                $sendtime = ($donetime - $custtime) / 60 ;
+            }
+
+            //在1-15之内
+            if(($sendtime > 1) and ($sendtime  <= 15)){
+                $a0115[$value['area']][$value['company']] =  +1;
+            }
+            //在16-30之内
+            if(($sendtime >= 16) and ($sendtime  <= 30)){
+                $a1630[$value['area']][$value['company']] =  +1;
+            }
+            //在31-40之内
+            if(($sendtime > 31) and ($sendtime  <= 40)){
+                $a3140[$value['area']][$value['company']] =  +1;
+            }
+            //在41-50之内
+            if(($sendtime > 41) and ($sendtime  <= 50)){
+                $a4150[$value['area']][$value['company']] =  +1;
+            }
+            //在51-60之内
+            if(($sendtime > 51) and ($sendtime  <= 60)){
+                $a5160[$value['area']][$value['company']] =  +1;
+            }
+            //在60以上
+            if($sendtime > 60){
+                $a6100[$value['area']][$value['company']] =  +1;
+            }
+        }
+
+        $companyResult = $orderformModel->distinct('company')->where($where)->select();
+        foreach($companyResult as $company_value) {
+            $area_value = $domain;
+            //保存
+            $data = array();
+            $data['domain'] = $domain;
+            $data['company'] = $company_value;
+            $data['date'] = date('Y-m-d');
+            $data['ap'] = $this->getAp();
+            $data['a0115'] = $a0115[$area_value][$company_value];
+            $data['a1630'] = $a1630[$area_value][$company_value];
+            $data['a3140'] = $a3140[$area_value][$company_value];
+            $data['a4150'] = $a4150[$area_value][$company_value];
+            $data['a5160'] = $a5160[$area_value][$company_value];
+            $data['a6100'] = $a6100[$area_value][$company_value];
+            $tongjisendtimeModel->create();
+            $tongjisendtimeModel->add($data);
+
+        }
+
+    }
+
 
     // 获取当前时间的午别
     private function getAp() {

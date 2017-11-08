@@ -1,0 +1,42 @@
+<script type="text/javascript">
+ 	$(function(){
+        //提交程序
+        $('#createViewMessages').form({  
+            url:"__URL__/insert",
+            onSubmit: function(){ 
+            	 if($("#createViewMessages #content").val() == ""){
+                 	alert('消息内容不能为空');
+                 	return false;
+                 }
+            },
+            success:function(data){ 
+            	updateTab(data);
+            }  
+        }); 
+
+        //form提交程序
+        $('#createViewMessages input[name=createsave]').bind('click',function(){
+            //提交表单  
+            $('#createView{$moduleName}').submit();
+
+        }) 
+
+        //编辑的提交
+        $('#editView{$moduleName}').form({  
+            url:'__URL__/update',
+            onSubmit: function(){  
+                //进行表单验证  
+                //如果返回false阻止提交  
+            },  
+            success:function(data){ 
+            	updateTab(data);
+            }  
+        }); 
+
+        //form提交程序
+        $('#editViewMessages input[name=editsave]').bind('click',function(){
+            //提交表单  
+            $('#editViewMessages').submit();
+        }) 
+    });   
+</script>

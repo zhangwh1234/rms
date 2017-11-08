@@ -1,0 +1,75 @@
+<?php if (!defined('THINK_PATH')) exit();?><script type="text/javascript">
+
+    //处理订单 ,根据编码
+    function <?php echo ($actionName); ?>OrderDistribution(event,obj,orderformid,rowIndex){
+    	//定义根据输入的键，获得的分公司名称
+        var event = event || window.event;
+        var inputCode = event.which ? event.which : event.keyCode; 
+        var inputValue = $(obj).val(); 
+        if((inputCode >= 48 && inputCode <= 57) || (inputCode >= 65 && inputCode <= 90) || (inputCode >= 96 && inputCode <= 105)){
+         $.ajax({
+                type : "GET",
+                url : "__URL__/orderDistributionByCode/orderformid/"+orderformid+"/code/"+inputValue,
+                dataType : "json",
+                success : function(returnData){                 
+                    if(returnData['error'] == 'error'){
+                        $.messager.show({
+                            title:'提示',
+                            msg:'输入代码输入有误!',
+                            height:70,
+                            timeout:5000,
+                            showType:'slide',
+                            style:{
+                                left:0,right:'',top:'',
+                                bottom:-document.body.scrollTop-document.documentElement.scrollTop
+                            }
+                        });
+                        return false;
+                    }
+
+                    if(returnData['success'] == 'success'){ 
+                        handleData = returnData['data'];
+                        rowIndex = rowIndex - 1;
+                        $(obj).val(handleData.company);
+                        $("#table<?php echo ($actionName); ?> tr:gt(0):eq("+rowIndex+") td:eq(7)").html(handleData.compay);
+
+                    }
+                }
+
+            });  
+   	 }
+    }
+</script>
+<div class="pages"><?php echo ($page); ?></div>
+<div class="list" id="list<?php echo ($moduleName); ?>">
+	<table id="table<?php echo ($actionName); ?>" border="0" cellspacing="1"
+		cellpadding="3" width="100%" class="lvt" align="center">
+		<tr class="listHeader">
+			<td class=""><input class="listColCheck" type="checkbox"
+				name="selectall"></td>
+			<?php if(is_array($listHeader)): foreach($listHeader as $key=>$header): ?><td class="listHeader"><?php echo (L("$header")); ?></td><?php endforeach; endif; ?>
+			<td class="listHeader">操作</td>
+		</tr>
+		<?php if(is_array($listEntries)): $row = 0; $__LIST__ = $listEntries;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$entity): $mod = ($row % 2 );++$row; $record = $key; ?>
+		<tr bgcolor="white" onMouseOver="this.className='lvtColDataHover'"
+			onMouseOut="this.className='lvtColData'"
+			ondblclick="alert('row_<?php echo ($record); ?>');" id="row_<?php echo ($entity_id); ?>">
+
+			<?php if(is_array($entity)): $i = 0; $__LIST__ = $entity;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$id): $mod = ($i % 2 );++$i; if($key == $moduleId): ?><td class="listColCheck" width="2%"><input type="checkbox"
+				name="selected_id" id="<?php echo ($record); ?>" value='<?php echo ($record); ?>'></td>
+			<?php elseif($key == $list_link_field): ?>
+			<td><a class="small" href="#"
+				onclick="updateTab(&apos;<?php echo U('OrderHandle/detailview',array('record'=> $record,'returnAction' => $returnAction ));?>&apos;);"><?php echo ($id); ?></a></td>
+			<?php else: ?>
+			<td class="listColData"><?php echo ($id); ?></td><?php endif; endforeach; endif; else: echo "" ;endif; ?>
+			<td><center>
+					<input class="easyui-numberbox" value="" size="6" maxlength="6"
+						style="font-size: 16px;"
+						onkeyup="<?php echo ($actionName); echo ($moduleName); ?>(event,this,'<?php echo ($record); ?>','<?php echo ($row); ?>');" />
+					<a href="#" onclick="updateTab('__URL__/detailview/record/<?php echo ($record); ?>/returnAction/<?php echo ($returnAction); ?>');">查看</a><span >&nbsp&nbsp</span>
+				</center></td>
+		</tr><?php endforeach; endif; else: echo "" ;endif; ?>
+	</table>
+</div>
+
+<div class="pages"><?php echo ($page); ?></div>

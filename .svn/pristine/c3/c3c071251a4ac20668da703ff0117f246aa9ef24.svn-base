@@ -1,0 +1,31 @@
+<style type="text/css">
+  .topCls{
+      font-size:14px ;
+  }
+</style>
+{//系统头部}
+<div id="top">
+    <div id="logo"><span>system logo 系统图标</span></div>
+    <div id="subject" align="center"><span>送 餐 管 理 系 统</span><span style="margin-left: 20px;color: red;font-size: 14px;line-height: 30px;word-spacing: 6px;display: none;">{$Think.session.userInfo.rolename}</span></div>
+    <div id="topnav">
+        <ul>   
+            <if condition="Think.config.RBAC_SUPERADMIN eq 'admin'">
+                <li class="topCls">超级用户管理员</li>
+            </if>
+            <notempty name="Think.session.userInfo.department">
+                <li class="topCls">部门:</li>
+                <li class="topCls">[{$Think.session.userInfo.department}]&nbsp;&nbsp;</li>
+            </notempty>
+            <notempty name="Think.session.userInfo.rolename">
+                <li class="topCls">职务:</li>
+                <li class="topCls" style="color:blue;">[{$Think.session.userInfo.rolename}]&nbsp;&nbsp;</li>
+            </notempty>
+            <li><a href="__APP__/Login/logout" />用户名({$Think.session.userInfo.truename}) <a href="__APP__/Login/logout">退出</a></li>            
+        </ul>
+    </div>
+</div>
+
+
+
+
+

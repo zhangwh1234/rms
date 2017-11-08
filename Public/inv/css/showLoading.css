@@ -1,0 +1,42 @@
+.loading-indicator {
+    /* 	height: 80px;
+        width: 80px; */
+    background: url( './images/ocloading.gif' );
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.loading-indicator-overlay {
+    background-color: #666666;
+    opacity: 0.6;
+    filter: alpha(opacity = 60);
+}
+.us {
+    display: none;
+    width: 100px;
+    height: 40px;
+    padding: -10px;
+    position: relative;
+    top: 10px;
+    left: 155px;;
+    background-color: #0099FF;
+}
+a {
+    color: blue;
+    cursor:pointer;
+//        text-decoration: underline;
+}
+div.instructions_container {
+    float: left;
+    width: 350px;
+    margin-right: 50px;
+
+}
+div.example_links
+.link_category {
+    margin-bottom: 15px;
+}
+.loading-indicator-bars {
+    background-image: url('./images/ocloading-bars.gif');
+    width: 150px;
+}

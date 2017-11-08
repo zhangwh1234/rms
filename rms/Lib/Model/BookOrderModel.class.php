@@ -9,17 +9,19 @@
         var $fieldsFocus = 'address';
         //列表字段
         var $listFields = array(
-            'address'=>array('width' => 50,'align'=>'left','halign'=>'center'),
+            'address'=>array('width' => 45,'align'=>'left','halign'=>'center'),
             'ordertxt'=>array('width' => 20,'align'=>'left' ),
             'telphone'=>array('width' => 10,'align'=>'left'),
             'totalmoney'=>array('width' => 10,'align'=>'center'),
-            'custtime'=>array('width' => 10,'align'=>'center'),
-            'state' => array('width' => 10,'align'=>'center'),
+            'bookdate' => array('width' => 13,'align'=>'center'),
+            'custtime'=>array('width' => 8,'align'=>'center'),
+            'state' => array('width' => 7,'align'=>'center'),
             'telname' => array('width' => 10,'align'=>'left'),
-            'rectime' => array('width' => 10,'align'=>'center'));
+            'recdate' => array('width' => 13,'align'=>'center'),
+            );
 
         //定义查询字段
-        var $searchFields = array('address','telphone','custname','company','state');
+        var $searchFields = array('address','telphone','datetxt','state');
         //定义列表快捷字段
         var $listLinkField = 'address';
         //定义选择产品编码的字段

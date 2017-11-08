@@ -13,7 +13,7 @@
             	array('firstdate',date('Y-m-d H:i:s')),  //录入日期
             	array('issend',0), // 状态
             	array('company',$company),
-            	array('domain',$_SERVER['HTTP_HOST']),
+            	array('domain',$this->getDomain()),
             );
 
             return $auto;
@@ -37,7 +37,7 @@
             $company = $this->userInfo['department'];
             //查询条件
             $where['company'] = $company;
-            $where['domain'] = $_SERVER['HTTP_HOST'];
+            $where['domain'] = $this->getDomain();
         }
 
         //定义一个空的函数，用于返回主程序需要的一些参数
@@ -65,7 +65,7 @@
             $where = array();
             $where ['code'] = $code; // 送餐员的编号
             //$where['company'] = $company;
-            $where['domain'] = $_SERVER['HTTP_HOST'];
+            $where['domain'] = $this->getDomain();
             $sendnameResult = $sendnameMgrModel->field('name,telphone,weixin')->where($where)->find();
             if ($sendnameResult) {
                 $sendname = trim($sendnameResult ['name']);

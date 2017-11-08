@@ -15,21 +15,26 @@
         font-size: 16px;
     }
 
+/**
     .datagrid-row-over,
-    .datagrid-header td.datagrid-header-over {
+    td.datagrid-header-over {
         background: yellow;
         color: red;
         cursor: default;
     }
+    **/
+
 
     .invoiceMgrListviewCancelOper{
         color:red;
     }
 
+
     a:hover.invoiceMgrListviewCancelOper {
         background: white;
         color:black;
     }
+
 
     a:hover.invoiceMgrListviewOpenOper{
         background: white;
@@ -46,10 +51,14 @@
             &nbsp;&gt;{$Think.lang.$moduleName}</a></li>
         <li>&nbsp;&gt;列表操作</li>
         <li style="width: 50px;">&nbsp;</li>
+        <li style="margin-left: 10px;display:none;"><a href="javascript:void(0);" onclick="InvoiceOper.closeCard();InvoiceMgrListviewModule.closeInterval();IndexIndexModule.updateOperateTab('__URL__/createview');"><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li style="display: none;"><a href="javascript:void(0);"  onclick="InvoiceMgrListviewModule.createview();">自开发票<span></span></a></li>
+        <li style="width: 50px;">&nbsp;</li>
         <li><a href="javascript:;" onMouseOver=""><img src=".__PUBLIC__/Images/addressBtn.jpg" alt=""
                                                        title="" border="0"></a></li>
+
         <li><a href="javascript:void(0);" class="moduleName"
-               onclick="InvoiceMgrListviewModule.searchInvoiceView();">发票查询<span>^5</span></a></li>
+               onclick="InvoiceMgrListviewModule.searchInvoiceView();">发票查询<span></span></a></li>
         <li style="float: right;margin-right: 40px;"><a href="javascript:void(0);" class="moduleName"
                                                         onclick="InvoiceMgrListviewModule.closeTab();">关闭</a></li>
         <li style="float:right;"><a href="javascript:void(0);" onclick="InvoiceMgrListviewModule.closeTab();"><img
@@ -85,6 +94,8 @@
         //定义发票情况的缓存变量
         monitInfo: '',
 
+        referInvoice:0,  //刷新变量
+
         init: function () {
             this.invoiceMgrHandleGrid = $('#InvoiceMgrHandleTable');
             //设置div的高度
@@ -100,7 +111,7 @@
             this.dataPage();
             this.quickRefreshInvoice();
             //显示订单情况
-           // this.refreshOrderHandleMonit();
+            this.refreshOrderHandleMonit();
 
         },
 
@@ -121,10 +132,26 @@
                 toolbar: '#tb',
                 columns: [[
                     {field: 'invoiceid', title: 'id', hidden: 'true', width: 100},
-                    {field: 'header', title: '发票抬头', width: 110, align: 'left'},
+                    {field: 'header', title: '发票抬头', width: 60, align: 'left'},
                     {field: 'body', title: '发票内容', width: 20, align: 'center'},
-                    {field: 'orderformtxt', title: '订单情况', width: 100, align: 'left'},
+                    {field: 'orderformtxt', title: '订单情况', width: 65, align: 'left'},
                     {field: "ordermoney", width: 15, title: '金额',align:'center'},
+                    {field: "gmf_nsrsbh", width: 25, title: '纳税人识别号',align:'left'},
+                    {field: "type", width: 15, title: '发票类型',align:'center',
+                        formatter: function (value, rowData, rowIndex) {
+                            var invoicetype;
+                            if(value == '3'){
+                                invoicetype = '<span style="color: 	#FF0000">电子票</span>';
+                                return invoicetype;
+                            }
+                            if(value == '2'){
+                                invoicetype = '普通票';
+                                return invoicetype;
+                            }
+
+                        }
+                    },
+                    {field: "state", width: 15, title: '状态',align:'left'},
                     {
                         field: "operation",
                         width: 40,
@@ -133,8 +160,16 @@
                         formatter: function (value, rowData, rowIndex) {
                             var operation;
                             operation = '';
-                            operation += "<a href='javascript:void(0);' onclick='InvoiceMgrListviewModule.cancelOpenInvoice(" + rowData.invoiceid + ",\""+rowData.header + rowData.body+ " </br> " +rowData.orderformtxt+"</br>" +"\")' class='invoiceMgrListviewCancelOper'  style='margin-right:8px;'>放弃开票</a>";
-                            operation += "<a href='javascript:void(0);' id='InvoiceMgrListviewOper" + rowIndex +"' onclick='InvoiceMgrListviewModule.openInvoice(" + rowData.invoiceid  + "," + rowIndex + ")' class='invoiceMgrListviewOpenOper' style='margin-left:4px;' >开票</a>";
+                            operation += "<a href='javascript:void(0);' id='InvoiceMgrListviewOper" + rowIndex +"' onclick='InvoiceMgrListviewModule.editview(" + rowData.invoiceid  + "," + rowIndex + ")' class='invoiceMgrListviewOpenOper' style='margin-right:2px;' >编辑</a>|";
+                            operation += "<a href='javascript:void(0);' onclick='InvoiceMgrListviewModule.cancelOpenInvoice(" + rowData.invoiceid + ",\""+rowData.header + rowData.body+ " </br> " +rowData.orderformtxt+"</br>" +"\")' class='invoiceMgrListviewCancelOper'  style='margin-right:4px;margin-left:4px;'>放弃开票</a>|";
+                            if(rowData.type == 2) {
+                                operation += "<a href='javascript:void(0);' id='InvoiceMgrListviewOper" + rowIndex + "' onclick='InvoiceMgrListviewModule.openInvoice(" + rowData.invoiceid + "," + rowIndex + ")' class='invoiceMgrListviewOpenOper' style='margin-left:4px;' >开票</a>";
+                            }
+                            if(rowData.type == 3) {
+                                operation += "<a href='javascript:void(0);' id='InvoiceMgrListviewOper" + rowIndex + "' onclick='InvoiceMgrListviewModule.openInvoice(" + rowData.invoiceid + "," + rowIndex + ")' class='invoiceMgrListviewOpenOper' style='margin-left:4px;' >打印</a>";
+                            }
+                            operation += "<a href='javascript:void(0);' id='InvoiceMgrListviewOper" + rowIndex +"' onclick='InvoiceMgrListviewModule.detailview(" + rowData.invoiceid  + "," + rowIndex + ")' class='invoiceMgrListviewOpenOper' style='margin-left:4px;' >查看</a>";
+
                             return operation;
                         }
                     }
@@ -248,7 +283,7 @@
          **/
         quickRefreshInvoice: function () {
             var that = this;
-            setInterval(function () {
+            setTimeout(function () {
                 //判断前台是否处理订单
                 if (that.refreshOrder == false) {
                     return false;
@@ -260,24 +295,14 @@
 
         //定时刷新显示订单情况
         refreshOrderHandleMonit: function () {
-            setInterval(function () {
-                var ordermonit = '';
-                $.ajax({
-                    type: "GET",
-                    url: "__URL__/getordermonit",
-                    dataType: "json",
-                    success: function (data) {
-                        if (data.length > 0) {
-                            ordermonit = "订单量:" + data[0].totalnumber + '      ';
-                            ordermonit += "已处理:" + data[0].task + '     ';
-                            ordermonit += "未处理:" + data[0].notask + '     ';
-                            ordermonit += "催餐:" + data[0].fast + '     ';
-                            ordermonit += "总金额:" + data[0].totalmoney;
-                            monitInfo = ordermonit;
-                            $('#orderHandleMonit').html(ordermonit +  ' |  '  +fastKeyHelp)
-                        }
-                    }
-                });
+            var that = this;
+            this.referInvoice = setInterval(function () {
+                //判断前台是否处理订单
+                if (that.refreshOrder == false) {
+                    return false;
+                }
+                that.GetInvoice();
+
             }, 30000);
         },
 
@@ -338,9 +363,7 @@
          * 发票开具
          */
         openInvoice: function (invoiceid,rowIndex ) {
-            alert('open');
             this.refreshOrder = false;
-            //$('#InvoiceMgrListviewOper'+rowIndex).removeAttr('onclick');
             $.messager.progress({text: '处理中，请稍候...'});
             var that = this;
             //获取发票所需要的信息
@@ -349,7 +372,19 @@
                 url: "__URL__/getInvoiceInfo/invoiceid/"+invoiceid,
                 dataType: "json",
                 success: function (data) {
-                    var invoiceOperState = InvoiceOper.openInvoice(data);
+                    if(!data){
+                        alert('没有开票数据!');
+                        $.messager.progress('close');
+                    }
+                    if(data.type == 3){ //电子票
+                        var invoiceOperState = printEticketInvoice(data);  //打印电子发票
+                    }
+                    if(data.type == 2){ //普通票
+                        if(data.city == 'bj'){  //北京用的是航天金税的发票系统
+                            var invoiceOperState = InvoiceOper.openInvoice(data);
+                        }
+                    }
+
                     if(invoiceOperState){
                         $.messager.progress('close');
                         //更新打印状态
@@ -381,6 +416,7 @@
             return false;
         },
 
+
         /**
          * 放弃开具发票
          */
@@ -410,6 +446,31 @@
 
         },
 
+        createview : function () {
+            InvoiceOper.closeCard();
+            this.closeInterval();
+            IndexIndexModule.updateOperateTab('__URL__/createview');
+        },
+
+        //编辑
+        editview: function (id,rowIndex) {
+            InvoiceOper.closeCard();
+            this.closeInterval();
+            var url = "{:U('InvoiceMgr/editview')}";
+            url += url.indexOf('?') != -1 ? '&record=' + id : '?id=' + id;
+            IndexIndexModule.updateOperateTab(url);
+        },
+
+        //查看
+        detailview: function (id,rowIndex) {
+            InvoiceOper.closeCard();
+            this.closeInterval();
+            var url = "{:U('InvoiceMgr/detailview')}";
+            url += url.indexOf('?') != -1 ? '&record=' + id : '?id=' + id;
+            IndexIndexModule.updateOperateTab(url);
+        },
+
+
         /**
          * 开启刷新
          */
@@ -420,9 +481,7 @@
         //定义关不定时任务
         closeInterval:function(){
             //关闭定时任务
-            clearInterval(this.firstGetOrderInterval);
-            clearInterval(this.slowGetOrderInterval);
-            clearInterval(this.orderMonitInterval);
+            clearInterval(this.referInvoice);
         },
 
 

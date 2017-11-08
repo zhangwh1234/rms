@@ -97,8 +97,7 @@ class SystemDb {
 	 * 根据域名，取得历史表的连接字符串
 	 */
 	public function getHistoryDbConnection($tableName) {
-		var_dump('ee');
-		exit;
+
 		// 用户访问域名
 		$accessUrl = $_SERVER ['HTTP_HOST'];
 		// 连接系统库
@@ -175,4 +174,75 @@ class SystemDb {
 		//$connectionDns = "mysql://$db_user:$db_pwd@$db_host:$db_port/$db_name";
 		return $config;
 	}
+
+    /**
+     * 自定义
+     * 基础方法，返回domain,因为lihuaerp备案系统有问题，赶紧改的
+     * 2018-4-6做的
+     */
+    private function getDomain(){
+        $domain = $_SERVER['HTTP_HOST'];
+        //测试域名
+        if($domain == 'localhost'){
+            return 'localhost';
+        }
+        //北京的域名
+        if($domain == 'bj.lihuaerp.com'){
+            return 'bj.lihuaerp.com';
+        }
+        //上海的域名
+        if($domain == 'sh.lihuaerp.com'){
+            return 'sh.lihuaerp.com';
+        }
+        //苏州的域名
+        if($domain == 'sz.lihuaerp.com'){
+            return 'sz.lihuaerp.com';
+        }
+        //无锡的域名
+        if($domain == 'wx.lihuaerp.com'){
+            return 'wx.lihuaerp.com';
+        }
+        //常州的域名
+        if($domain == 'cz.lihuaerp.com'){
+            return 'cz.lihuaerp.com';
+        }
+        //南京的域名
+        if($domain == 'nj.lihuaerp.com'){
+            return 'nj.lihuaerp.com';
+        }
+        //广州的域名
+        if($domain == 'gz.lihuaerp.com'){
+            return 'gz.lihuaerp.com';
+        }
+
+        /*******************************/
+        //北京的域名
+        if($domain == 'bj.lihua.com'){
+            return 'bj.lihuaerp.com';
+        }
+        //上海的域名
+        if($domain == 'sh.lihua.com'){
+            return 'sh.lihuaerp.com';
+        }
+        //苏州的域名
+        if($domain == 'sz.lihua.com'){
+            return 'sz.lihuaerp.com';
+        }
+        //无锡的域名
+        if($domain == 'wx.lihua.com'){
+            return 'wx.lihuaerp.com';
+        }
+        //常州的域名
+        if($domain == 'cz.lihua.com'){
+            return 'cz.lihuaerp.com';
+        }
+        //南京的域名
+        if($domain == 'nj.lihua.com'){
+            return 'nj.lihuaerp.com';
+        }
+        //广州的域名
+        if($domain == 'gz.lihua.com'){
+            return 'gz.lihuaerp.com';
+        }
+    }
 }

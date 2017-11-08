@@ -8,7 +8,7 @@
             if($userInfo['rolename'] == '调度员'){
                 $where['name'] = $userInfo['department'];
             }
-            $where['domain'] = $_SERVER['HTTP_HOST'];
+            $where['domain'] = $this->getDomain();
             $ordermonitModel = D('Ordermonit');
             $ordermonit = $ordermonitModel->where($where)->order('ordermonitid')->select();
             $this->ajaxReturn($ordermonit);

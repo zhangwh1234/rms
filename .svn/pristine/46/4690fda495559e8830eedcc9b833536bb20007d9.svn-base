@@ -1,0 +1,48 @@
+<script type="text/javascript"> 
+    $(function(){ 
+        $('#searchViewForm{$moduleName}Other input[name=searchText]').focus();
+
+        //form提交程序
+        $('#searchViewForm{$moduleName}Other input[name=searchViewBtn]').bind('click',function(){   
+            //返回选项卡
+            var tab = $('#operation').tabs('getSelected');
+            var queryString = $('#searchViewForm{$moduleName}Other').serialize();
+            //提交表单 
+            url = '__URL__/searchviewForOther/&'+queryString;
+            $('#operation').tabs('update',{  
+                tab:tab,
+                options:{href:url}                                                
+            });    
+        }) 
+
+        //按回车不自动提交
+        $('#searchViewForm{$moduleName}Other input[name=searchText]').keydown(function(event){
+            if(event.which == 13){
+                //返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var queryString = $('#searchViewForm{$moduleName}Other').serialize();
+                //提交表单 
+                url = '__URL__/searchviewForOther/&'+queryString;
+                $('#operation').tabs('update',{  
+                    tab:tab,
+                    options:{href:url}                                                
+                });    
+                return false;
+            }
+        })
+
+    })
+</script>
+
+<div class="searchDiv">
+    <form id="searchViewForm{$moduleName}Other" name="searchViewForm{$moduleName}Other"  method="post"  style="border: 1px solid white;">
+        <ul class="searchOption">
+        <ul class="searchOption">
+            <li>查询选项</li>
+            <li>   <input id="searchText" name="searchText"  type="text"   style="width:340px"  value="{$searchTextValue}" AUTOCOMPLETE="off" /></li>
+            <li>&nbsp;</li>          
+            <li><input id="searchViewBtn" name="searchViewBtn" type="button" class="crmbutton small create"  value=" 查  询  " />&nbsp;</li>
+            <li>
+        </ul>  
+    </form>
+</div>

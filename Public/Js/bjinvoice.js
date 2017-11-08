@@ -24,21 +24,27 @@
                 // V2.0
                 //this.kpdriver.CertPassWord='124.205.14.131:8001';
 
+                //加入代码，20170506，发票自动上传设置为不上传，改为人工上传
+                this.kpdriver.UploadInvoiceAuto = 0;
+
                 this.kpdriver.OpenCard();
-                alert(this.kpdriver.RetCode);
                 if(this.kpdriver.RetCode=="1011"){
                     this.isOpen = true;
                     return true;
                 }else if (this.kpdriver.RetCode=="1007"){
                     alert("金税卡已经被占用，请退出所有可能使用金税卡的程序后重试");
+                    return false;
                 }else if (this.kpdriver.RetCode=="1001"){
                     alert("开票信息初始化失败，请重启浏览器或重装开票系统后重试");
+                    return false;
                 }else if (this.kpdriver.RetCode=="1005"){
                     this.closeCard();
-                    this.checkSetup();
+                    alert('应该是浏览器没有用管理员权限打开!错误号:1005');
+                    return false;
                 }else {
                     alert("金税卡开启失败，错误代码："+this.kpdriver.RetCode);
                     this.closeCard();
+                    return false;
                 }
                 return false;
             }catch(e) {
@@ -58,12 +64,12 @@
                     alert("您没有安装开票组件或组件被禁用，无法使用此功能。");
                 } else {
                     alert("开票组件出错，错误信息为setup："+e.description);
+                    alert('检查一下浏览器是否选择了兼容模式,不要用闪电模式!');
                 }
                 this.isSetup = false;
                 this.closeCard();
                 return false;
             }
-            alert('setup');
             return true;
         },
 
@@ -201,6 +207,14 @@
                         //含税标志
                         this.kpdriver.ListPriceKind = 1;
 
+                        //分类税代码
+                        var retStr = this.kpdriver.BatchUpload(this.setCategoryTax());
+
+                        if(retStr.indexOf('0000') == -1){
+                            alert('税收分类编码校验失败！');
+                            return false;
+                        }
+
                         this.kpdriver.AddInvList();
 
                     }
@@ -239,8 +253,8 @@
                 this.kpdriver.GoodsListFlag = goodsListFlag;
                 this.kpdriver.InfoShowPrtDlg = infoShowPrtDlg;
 
-                //this.kpdriver.PrintInv();
-               // return this.kpdriver.RetCode;
+                this.kpdriver.PrintInv();
+                return this.kpdriver.RetCode;
             }catch(e){
                 alert('打印失败');
             }
@@ -335,24 +349,24 @@
         openInvoice:function(data){
             //检查金税设备
             this.checkSetup();
-            alert('setup');
 
             //开启金税盘
-            this.openCard();
-
-            //打印发票
-            this.printInv('2','1100153320','41257002',0,1);
-            alert('print');
-            //this.closeCard();
-            return false;
+            var openState = this.openCard();
+            if(!openState) return false;
 
             //获取开发票的票号等信息
             var invoiceInfo = this.getInfo(2);
             invoiceInfo.main = {};
             invoiceInfo.main.invtype = 2;  //增值税普通发票
             invoiceInfo.main.clientname = data.header;  //购货方名称,发票抬头
-            invoiceInfo.main.invoicer = '张文惠';
-            invoiceInfo.main.cashier = '张文惠';
+            invoiceInfo.main.clienttaxcode = data.gmf_nsrsbh;  //购买方税号
+            invoiceInfo.main.clientbankaccount = data.gmf_yhzh;  //购买方银行账户
+            invoiceInfo.main.clientaddressphone = data.gmf_dzdh;  //购买方地址电话
+            invoiceInfo.main.invoicer = data.name;
+            invoiceInfo.main.cashier = data.cashier;
+            invoiceInfo.main.checker = data.checker;
+            invoiceInfo.main.selleraddressphone = '北京市朝阳区大郊亭中街2号院4号楼4-7Ａ87779899';
+            invoiceInfo.main.sellerbankaccount = '交行北京分行松榆里支行 110060900018001052402';
 
             invoiceInfo.sub = new Array();
             var list = new Array();
@@ -363,10 +377,9 @@
             sub['listunit'] = ' ';
             //sub['amount'] = data.ordermoney;
             //sub['tax'] = 3;
-            sub['taxrate'] = 3;
+            sub['taxrate'] = 6;
             list.push(sub);
             invoiceInfo.sub = list;
-
             //开启发票
             var invoiceResult = this.invoice(invoiceInfo);
             if(this.kpdriver.RetCode == '4011'){
@@ -379,23 +392,127 @@
             }
 
             //打印发票
-            this.printInv('2',invoiceResult.infoTypeCode,invoiceResult.infoNumber,0,1);
-            this.closeCard();
-           // return false;
+            var retCode = this.printInv('2',invoiceResult.infoTypeCode,invoiceResult.infoNumber,0,1);
+            this.returnError(retCode);
+            //this.closeCard();
+            // return false;
+            return true;
+            //打印发票
+            //this.printInv('2','1100153320','41257002',0,1);
+            alert('print');
+            //this.closeCard();
             return true;
         },
+
+        //设置分类税编码
+        setCategoryTax : function(){
+            //定义发票分类编码头
+            var taxHeader = '';
+            //定义数据
+            var taxData   = '<?xml version="1.0" encoding="GBK"?><FPXT><INPUT><GoodsNo><GoodsNoVer>1.0</GoodsNoVer><GoodsTaxNo>3070401</GoodsTaxNo><TaxPre>0</TaxPre><TaxPreCon></TaxPreCon><ZeroTax></ZeroTax><CropGoodsNo></CropGoodsNo><TaxDeduction></TaxDeduction></GoodsNo></INPUT></FPXT>';
+            //base64加密
+            taxData =  Base64.encode(taxData);
+            //组成数据
+            taxHeader = '<?xml version="1.0" encoding="GBK"?>';
+            taxHeader = taxHeader +  '<FPXT_COM_INPUT>';
+            taxHeader = taxHeader +  '<ID>1100</ID>';
+            taxHeader = taxHeader +  '<DATA>'+ taxData +'</DATA>';
+            taxHeader = taxHeader +  '</FPXT_COM_INPUT>';
+            return taxHeader;
+        },
+
 
         //返回错误信息
         returnError : function(retCode){
             switch (retCode){
+                case 1:
+                    alert(" 尚未开启金税盘");
+                    break;
+                case 1001:
+                    alert(" 发票信息初始化失败");
+                    break;
+                case 1003:
+                    alert(" 金税盘初始化失败");
+                    break;
+                case 1007:
+                    alert(" 金税盘不能独占打开");
+                    break;
+                case 1010:
+                    alert(" 注册失败");
+                    break;
+                case 1011:
+                    alert(" 金税盘开启成功");
+                    break;
+                case 3011:
+                    alert(" 金税盘状态信息读取成功");
+                    break;
                 case 4001:
                     alert('4001:发票数据内容不全,不能开票!')
+                    break;
+                case 4003:
+                    alert(" 发票数据写盘失败");
+                    break;
+                case 4005:
+                    alert(" 发票数据写库失败");
+                    break;
+                case 4011:
+                    alert(" 开票成功");
+                    break;
+                case 4012:
+                    alert(" 开票失败");
+                    break;
+                case 4016:
+                    alert(" 发票数据校验通过");
+                    break;
+                case 5001:
+                    alert(" 未找到发票或清单");
+                    break;
+                case 5011:
+                    alert(" 打印成功");
+                    break;
+                case 5012:
+                    alert(" 未打印");
+                    break;
+                case 5013:
+                    alert(" 打印失败");
+                    break;
+                case 6011:
+                    alert(" 发票作废成功");
+                    break;
+                case 6013:
+                    alert(" 发票作废失败");
+                    break;
+                case 7001:
+                    alert( " 未找到发票");
+                    break;
+                case 7011:
+                    alert(" 发票查询成功");
+                    break;
+                case 8000:
+                    alert(" 发票上传成功");
+                    break;
+                case 8001:
+                    alert( " 发票上传失败");
+                    break;
+                case 8050:
+                    alert(" 发票报送状态更新成功");
+                    break;
+                case 8051:
+                    alert(" 发票报送状态更新失败");
+                    break;
+                case 8052:
+                    alert( " 没有待更新包送状态的发票,请先执行发票上传");
+                    break;
+                case 9000:
+                    alert(" 调用成功");
+                    break;
+                case 9001:
+                    alert(" 调用失败");
                     break;
                 default:
                     alert(retCode);
             }
         }
-
 
     }
 
@@ -403,4 +520,181 @@
     window.InvoiceOper = InvoiceOper;
 
 }) (window, document);
+
+
+/**
+ * UTF16和UTF8转换对照表
+ * U+00000000 – U+0000007F   0xxxxxxx
+ * U+00000080 – U+000007FF   110xxxxx 10xxxxxx
+ * U+00000800 – U+0000FFFF   1110xxxx 10xxxxxx 10xxxxxx
+ * U+00010000 – U+001FFFFF   11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
+ * U+00200000 – U+03FFFFFF   111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
+ * U+04000000 – U+7FFFFFFF   1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
+ */
+var Base64 = {
+    // 转码表
+    table : [
+        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
+        'I', 'J', 'K', 'L', 'M', 'N', 'O' ,'P',
+        'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
+        'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
+        'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+        'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+        'w', 'x', 'y', 'z', '0', '1', '2', '3',
+        '4', '5', '6', '7', '8', '9', '+', '/'
+    ],
+    UTF16ToUTF8 : function(str) {
+        var res = [], len = str.length;
+        for (var i = 0; i < len; i++) {
+            var code = str.charCodeAt(i);
+            if (code > 0x0000 && code <= 0x007F) {
+                // 单字节，这里并不考虑0x0000，因为它是空字节
+                // U+00000000 – U+0000007F  0xxxxxxx
+                res.push(str.charAt(i));
+            } else if (code >= 0x0080 && code <= 0x07FF) {
+                // 双字节
+                // U+00000080 – U+000007FF  110xxxxx 10xxxxxx
+                // 110xxxxx
+                var byte1 = 0xC0 | ((code >> 6) & 0x1F);
+                // 10xxxxxx
+                var byte2 = 0x80 | (code & 0x3F);
+                res.push(
+                    String.fromCharCode(byte1),
+                    String.fromCharCode(byte2)
+                );
+            } else if (code >= 0x0800 && code <= 0xFFFF) {
+                // 三字节
+                // U+00000800 – U+0000FFFF  1110xxxx 10xxxxxx 10xxxxxx
+                // 1110xxxx
+                var byte1 = 0xE0 | ((code >> 12) & 0x0F);
+                // 10xxxxxx
+                var byte2 = 0x80 | ((code >> 6) & 0x3F);
+                // 10xxxxxx
+                var byte3 = 0x80 | (code & 0x3F);
+                res.push(
+                    String.fromCharCode(byte1),
+                    String.fromCharCode(byte2),
+                    String.fromCharCode(byte3)
+                );
+            } else if (code >= 0x00010000 && code <= 0x001FFFFF) {
+                // 四字节
+                // U+00010000 – U+001FFFFF  11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
+            } else if (code >= 0x00200000 && code <= 0x03FFFFFF) {
+                // 五字节
+                // U+00200000 – U+03FFFFFF  111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
+            } else /** if (code >= 0x04000000 && code <= 0x7FFFFFFF)*/ {
+                // 六字节
+                // U+04000000 – U+7FFFFFFF  1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
+            }
+        }
+
+        return res.join('');
+    },
+    UTF8ToUTF16 : function(str) {
+        var res = [], len = str.length;
+        var i = 0;
+        for (var i = 0; i < len; i++) {
+            var code = str.charCodeAt(i);
+            // 对第一个字节进行判断
+            if (((code >> 7) & 0xFF) == 0x0) {
+                // 单字节
+                // 0xxxxxxx
+                res.push(str.charAt(i));
+            } else if (((code >> 5) & 0xFF) == 0x6) {
+                // 双字节
+                // 110xxxxx 10xxxxxx
+                var code2 = str.charCodeAt(++i);
+                var byte1 = (code & 0x1F) << 6;
+                var byte2 = code2 & 0x3F;
+                var utf16 = byte1 | byte2;
+                res.push(Sting.fromCharCode(utf16));
+            } else if (((code >> 4) & 0xFF) == 0xE) {
+                // 三字节
+                // 1110xxxx 10xxxxxx 10xxxxxx
+                var code2 = str.charCodeAt(++i);
+                var code3 = str.charCodeAt(++i);
+                var byte1 = (code << 4) | ((code2 >> 2) & 0x0F);
+                var byte2 = ((code2 & 0x03) << 6) | (code3 & 0x3F);
+                utf16 = ((byte1 & 0x00FF) << 8) | byte2
+                res.push(String.fromCharCode(utf16));
+            } else if (((code >> 3) & 0xFF) == 0x1E) {
+                // 四字节
+                // 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
+            } else if (((code >> 2) & 0xFF) == 0x3E) {
+                // 五字节
+                // 111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
+            } else /** if (((code >> 1) & 0xFF) == 0x7E)*/ {
+                // 六字节
+                // 1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
+            }
+        }
+
+        return res.join('');
+    },
+    encode : function(str) {
+        if (!str) {
+            return '';
+        }
+        var utf8    = this.UTF16ToUTF8(str); // 转成UTF8
+        var i = 0; // 遍历索引
+        var len = utf8.length;
+        var res = [];
+        while (i < len) {
+            var c1 = utf8.charCodeAt(i++) & 0xFF;
+            res.push(this.table[c1 >> 2]);
+            // 需要补2个=
+            if (i == len) {
+                res.push(this.table[(c1 & 0x3) << 4]);
+                res.push('==');
+                break;
+            }
+            var c2 = utf8.charCodeAt(i++);
+            // 需要补1个=
+            if (i == len) {
+                res.push(this.table[((c1 & 0x3) << 4) | ((c2 >> 4) & 0x0F)]);
+                res.push(this.table[(c2 & 0x0F) << 2]);
+                res.push('=');
+                break;
+            }
+            var c3 = utf8.charCodeAt(i++);
+            res.push(this.table[((c1 & 0x3) << 4) | ((c2 >> 4) & 0x0F)]);
+            res.push(this.table[((c2 & 0x0F) << 2) | ((c3 & 0xC0) >> 6)]);
+            res.push(this.table[c3 & 0x3F]);
+        }
+
+        return res.join('');
+    },
+    decode : function(str) {
+        if (!str) {
+            return '';
+        }
+
+        var len = str.length;
+        var i   = 0;
+        var res = [];
+
+        while (i < len) {
+            code1 = this.table.indexOf(str.charAt(i++));
+            code2 = this.table.indexOf(str.charAt(i++));
+            code3 = this.table.indexOf(str.charAt(i++));
+            code4 = this.table.indexOf(str.charAt(i++));
+
+            c1 = (code1 << 2) | (code2 >> 4);
+            c2 = ((code2 & 0xF) << 4) | (code3 >> 2);
+            c3 = ((code3 & 0x3) << 6) | code4;
+
+            res.push(String.fromCharCode(c1));
+
+            if (code3 != 64) {
+                res.push(String.fromCharCode(c2));
+            }
+            if (code4 != 64) {
+                res.push(String.fromCharCode(c3));
+            }
+
+        }
+
+        return this.UTF8ToUTF16(res.join(''));
+    }
+};
 

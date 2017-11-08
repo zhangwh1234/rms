@@ -1,0 +1,38 @@
+<div class="moduleMenu">
+    <ul>
+        <li>{$Think.lang.$tabName}</li>
+        <li><a href="javascript:void(0);"  onclick="updateTab('__URL__/listview');">&nbsp;&gt;{$Think.lang.$moduleName}</a></li>
+        <li>&nbsp;&gt;<span style="background-color: #FF9797;font-size: 16px;">{$operName}</span></li>
+
+		<li style="width: 50px;">&nbsp;</li>
+        <li style="margin-left: 10px;"><a href="javascript:;" id="showSubMenu"  onMouseOver="" ><img src=".__PUBLIC__/Images/sendnameBtn.jpg" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);" class="moduleName" id= "orderHandleSearchviewmenuSendnameSearchAClick">送餐员查询<span>^6</span></a></li>
+        <li style="width: 20px;">&nbsp;</li> 
+        
+        <li style="float: right;margin-right: 60px;"><a href="javascript:void(0);"   onclick="orderHandleSearchviewSendnamecloseTab();" >关闭</a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="orderHandleSearchviewSendnamecloseTab();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
+
+    </ul>
+</div>
+<script>
+/* 关闭选项卡 */
+function orderHandleSearchviewSendnamecloseTab(){
+    // 返回选项卡
+    var tab = $('#operation').tabs('getSelected');
+    // 返回选项卡的index
+    var index = $('#operation').tabs('getTabIndex',tab);
+    // 关闭选项卡
+    $('#operation').tabs('close',index);
+    //清理一下DOM
+    orderHandle.searchviewSendname.table.remove();
+    orderHandle.searchviewSendname.beizhuWindow.remove();
+    orderHandle.searchviewSendname.beizhuTable.remove();
+    orderHandle.searchviewSendname.companyWindow.remove();
+    orderHandle.searchviewSendname.companyTable.remove();
+    orderHandle.searchviewSendname.sendnameSearchWindow.remove();
+    orderHandle.searchviewSendname.sendnameSearchInput.remove();
+    orderHandle.searchviewSendname.secondPointWindow.remove();
+    orderHandle.searchviewSendname.secondPointTable.remove();
+
+}
+</script>

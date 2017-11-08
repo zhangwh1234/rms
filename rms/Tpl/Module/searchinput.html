@@ -5,7 +5,7 @@
         <tr>
             <td>
                 <span style="font-size: 16px;">查询</span>
-                <input type="text" class="easyui-validatebox ModuleListviewSearchInput"
+                <input type="text" class="ModuleListviewSearchInput"
                        name="searchText"
                        style="font-size: 16px;width:80%;" value="" autocomplete="off"/>
                 <input type="text" style="width:0px;visibility:hidden;" >
@@ -26,7 +26,7 @@
                         var isValid = $(this).form('validate');
                         if (!isValid) return false;
                         var searchText = $(that).val();
-                        var url = APP+'/'+moduleName+'/listview/searchText/'+searchText;
+                        var url = APP+'/'+moduleName+'/listview/searchText/'+ encodeURI(searchText);
                         IndexIndexModule.updateOperateTab(url);
                         $(dialog).dialog('close');
                         return false;

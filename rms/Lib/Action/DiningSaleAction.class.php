@@ -7,19 +7,24 @@
  * Time: 上午10:36
  */
 
-class DiningSaleAction extends ModuleAction{
+class DiningSaleAction extends ModuleAction
+{
 
     /**
      * 默认进入收银模块
      */
-    public function index(){
+    public function index()
+    {
+        $paymentmgr = $this->getPaymentMgr();
+        $this->assign('paymentmgr', $paymentmgr);
         $this->createview();
     }
 
     /**
      * 收银模块
      */
-    public function createview(){
+    public function createview()
+    {
         // 取得模块的名称
         $moduleName = $this->getActionName();
         $this->assign('moduleName', $moduleName); // 模块名称
@@ -38,7 +43,8 @@ class DiningSaleAction extends ModuleAction{
      * 显示收银列表
      * @return array
      */
-    public function listview(){
+    public function listview()
+    {
         if (IS_POST) {
             // 取得模块的名称
             $moduleName = $this->getActionName();
@@ -52,26 +58,27 @@ class DiningSaleAction extends ModuleAction{
             // 模块的ID
             $moduleId = strtolower($focus->getPk());
 
-
             // 配送店（分公司）的信息
             // 分公司的名称
             // 接线员的姓名
-            $userInfo = $_SESSION ['userInfo'];
+            $userInfo = $_SESSION['userInfo'];
             // 获取分公司
-            $company = $userInfo ['department'];
+            $company = $userInfo['department'];
 
             $where = array();
 
             //$where ['ap'] = $this->getAp();
-            $where ['company'] = $company;
+            $where['company'] = $company;
             //$where ['_string'] = "length(trim(company)) > 0";
-            $where ['domain'] = $_SERVER ['HTTP_HOST'];
+            $where['domain'] = $this->getDomain();
 
             $total = $focus->where($where)->count(); // 查询满足要求的总记录数
 
             //计算总金额
             $totalmoney = $focus->where($where)->sum('money');
-            if(empty($totalmoney)) $totalmoney  = 0.00;
+            if (empty($totalmoney)) {
+                $totalmoney = 0.00;
+            }
 
             // 查询模块的数据
             $selectFields = $listFields;
@@ -81,11 +88,11 @@ class DiningSaleAction extends ModuleAction{
 
             // 从数据中列出列表的数据
             if (count($listResult) > 0) {
-                $listData ['rows'] = $listResult;
-                $listData ['total'] = $total;
+                $listData['rows'] = $listResult;
+                $listData['total'] = $total;
             } else {
-                $listData ['rows'] = array();
-                $listData ['total'] = 0;
+                $listData['rows'] = array();
+                $listData['total'] = 0;
             }
             $returnArr = array();
             $returnArr['data'] = $listData;
@@ -95,9 +102,9 @@ class DiningSaleAction extends ModuleAction{
         }
     }
 
-
     // 保存的补充数据的回调函数
-    public function autoParaInsert(){
+    public function autoParaInsert()
+    {
         //设置午别
         $apTime = date('H');
         if ($apTime > 15) {
@@ -106,39 +113,39 @@ class DiningSaleAction extends ModuleAction{
             $ap = '上午';
         }
         //操作员的姓名
-        $userInfo = $_SESSION ['userInfo'];
-        $operator = $userInfo ['truename'];
+        $userInfo = $_SESSION['userInfo'];
+        $operator = $userInfo['truename'];
         // 分公司的名称
-        $company = $userInfo ['department'];
+        $company = $userInfo['department'];
         $auto = array(
-            array(  //餐厅名字
+            array( //餐厅名字
                 'diningname',
-                $company
+                $company,
             ),
             array(
                 'date',
-                date('Y-m-d')
+                date('Y-m-d'),
             ),
             array(
                 'ap',
-                $ap
+                $ap,
             ),
-            array(  //销售时间
+            array( //销售时间
                 'saletime',
-                date('H:i:s')
+                date('H:i:s'),
             ),
             array(
                 'operator',
-                $operator
+                $operator,
             ),
             array(
                 'company',
-                $company
+                $company,
             ),
             array(
                 'domain',
-                $_SERVER['HTTP_HOST']
-            )
+                $this->getDomain(),
+            ),
         ); // 最后的修改时间
 
         return $auto;
@@ -147,30 +154,31 @@ class DiningSaleAction extends ModuleAction{
     /**
      * 保存附件
      */
-    public function save_slave_table($record){
+    public function save_slave_table($record)
+    {
 
         $diningsaleproductsModel = D('diningsaleproducts');
-        $productsTxt = '';   //产品简述
+        $productsTxt = ''; //产品简述
         $totalmoney = ''; //总额
-         // 保存地址的数量
-        $productsLength = $_REQUEST ['productsLength'];
+        // 保存地址的数量
+        $productsLength = $_REQUEST['productsLength'];
         for ($i = 1; $i <= $productsLength; $i++) {
-            $code = $_REQUEST ['productsCode_' . $i];
-            $name = $_REQUEST ['productsName_' . $i];
-            $shortname = $_REQUEST ['productsShortName_' . $i];
-            $price = $_REQUEST ['productsPrice_' . $i];
-            $number = $_REQUEST ['productsNumber_' . $i];
-            $money = $_REQUEST ['productsMoney_' . $i];
+            $code = $_REQUEST['productsCode_' . $i];
+            $name = $_REQUEST['productsName_' . $i];
+            $shortname = $_REQUEST['productsShortName_' . $i];
+            $price = $_REQUEST['productsPrice_' . $i];
+            $number = $_REQUEST['productsNumber_' . $i];
+            $money = $_REQUEST['productsMoney_' . $i];
             $data = array();
-            $data ['diningsaleid'] = $record;
-            $data ['code'] = $code;
-            $data ['name'] = $name;
-            $data ['shortname'] = $shortname;
-            $data ['price'] = $price;
-            $data ['number'] = $number;
-            $data ['money'] = $money;
-            $data ['domain'] = $_SERVER['HTTP_HOST'];
-            if (!empty ($name) and !empty ($number)) {
+            $data['diningsaleid'] = $record;
+            $data['code'] = $code;
+            $data['name'] = $name;
+            $data['shortname'] = $shortname;
+            $data['price'] = $price;
+            $data['number'] = $number;
+            $data['money'] = $money;
+            $data['domain'] = $this->getDomain();
+            if (!empty($name) and !empty($number)) {
                 $diningsaleproductsModel->create();
                 $diningsaleproductsModel->add($data);
                 $productsTxt .= $number . '×' . $shortname . ' ';
@@ -178,93 +186,118 @@ class DiningSaleAction extends ModuleAction{
             }
         }
 
-
         //操作员的姓名
-        $userInfo = $_SESSION ['userInfo'];
+        $userInfo = $_SESSION['userInfo'];
         // 分公司的名称
-        $company = $userInfo ['department'];
+        $company = $userInfo['department'];
 
         //将金额等内容保存到主表中
         $diningsaleModel = D('diningsale');
         $where = array();
-        $where ['domain'] = $_SERVER['HTTP_HOST'];
-        $where ['ap'] = $this->getAp();
-        $where ['company'] = $company;
+        $where['domain'] = $this->getDomain();
+        $where['ap'] = $this->getAp();
+        $where['company'] = $company;
         //产生序号
         $count = $diningsaleModel->where($where)->count();
 
         $where = array();
         $where['diningsaleid'] = $record;
         $data = array();
-        $data ['money'] = $totalmoney;
-        $data ['productstxt'] = $productsTxt;
-        $data ['sequence'] = $count ;
+        $data['money'] = $totalmoney;
+        $data['productstxt'] = $productsTxt;
+        $data['sequence'] = $count;
         $diningsaleModel->where($where)->save($data);
+
+        //保存到支付表
+        $diningsalepaymentModel = D('diningsalepayment');
+        if (!empty($_REQUEST['diningpaymentmoneyone']) && $_REQUEST['diningpaymentmoneyone'] > 0) {
+            $data = array();
+            $data['diningsaleid'] = $record;
+            $data['code'] = 1;
+            $data['name'] = $_REQUEST['diningpaymenttypeone'];
+            $data['money'] = $_REQUEST['diningpaymentmoneyone'];
+            $data['date'] = date('Y-m-d');
+            $data['ap'] = $this->getAp();
+            $diningsalepaymentModel->create();
+            $diningsalepaymentModel->add($data);
+        }
+        //保存支付表2，第二种支付类型
+        if (!empty($_REQUEST['diningpaymentmoneytwo']) && $_REQUEST['diningpaymentmoneytwo'] > 0) {
+            $data = array();
+            $data['diningsaleid'] = $record;
+            $data['code'] = 1;
+            $data['name'] = $_REQUEST['diningpaymenttypetwo'];
+            $data['money'] = $_REQUEST['diningpaymentmoneytwo'];
+            $data['date'] = date('Y-m-d');
+            $data['ap'] = $this->getAp();
+            $diningsalepaymentModel->create();
+            $diningsalepaymentModel->add($data);
+        }
 
         //将金额保存到diningcollect表中,金额汇总表
         $where = array();
-        $where ['domain'] = $_SERVER['HTTP_HOST'];
-        $where ['company'] = $company;
-        $where ['date'] = date('Y-m-d');
-        $where ['ap'] = $this->getAp();
+        $where['domain'] = $this->getDomain();
+        $where['company'] = $company;
+        $where['date'] = date('Y-m-d');
+        $where['ap'] = $this->getAp();
 
         $diningcollectModel = D('diningcollect');
         $diningcollectResult = $diningcollectModel->where($where)->find();
-        if(empty($diningcollectResult)){
+        if (empty($diningcollectResult)) {
             $data = array();
-            $data['domain'] = $_SERVER['HTTP_HOST'];
+            $data['domain'] = $this->getDomain();
             $data['company'] = $company;
             $data['date'] = date('Y-m-d');
             $data['ap'] = $this->getAp();
             $data['money'] = $totalmoney;
             $diningcollectModel->add($data);
-        }else{
+        } else {
             $where = array();
             $where['diningcollectid'] = $diningcollectResult['diningcollectid'];
             $data = array();
-            $data ['money'] = $totalmoney + $diningcollectResult['money'];
+            $data['money'] = $totalmoney + $diningcollectResult['money'];
             $diningcollectModel->where($where)->save($data);
         }
 
-}
+    }
 
     /* 一般顺序表记录的保存 */
-    public function insert() {
+    public function insert()
+    {
         // 返回当前的模块名
-        $moduleName = $this->getActionName ();
+        $moduleName = $this->getActionName();
 
-        $focus = D ( $moduleName );
+        $focus = D($moduleName);
 
-        $this->assign ( 'moduleName', $moduleName );
+        $this->assign('moduleName', $moduleName);
 
         // 回调自动完成的函数
-        $auto = $this->autoParaInsert ();
-        $focus->setProperty ( "_auto", $auto );
+        $auto = $this->autoParaInsert();
+        $focus->setProperty("_auto", $auto);
 
         // 保存主表
-        $result = $focus->create ();
+        $result = $focus->create();
 
-        if (! $result) {
-            exit ( $focus->getError () );
+        if (!$result) {
+            exit($focus->getError());
         }
-        $result = $focus->add ();
+        $result = $focus->add();
         $sql = $focus->getLastSql();
-        if (! $result) {
+        if (!$result) {
             $info['status'] = 0;
-            $info['info'] =  '保存数据不成功！';
+            $info['info'] = '保存数据不成功！';
             $info['sql'] = $sql;
-            $this->ajaxReturn(json_encode($info),'EVAL');
+            $this->ajaxReturn(json_encode($info), 'EVAL');
         }
-
 
         // 取得保存的主键
         $record = $result;
 
         // 新写的保存从表方案
-        $result = $this->save_slave_table ( $record );
+        $result = $this->save_slave_table($record);
 
         // 如果保存订单都成功，就跳转到查看页面
-        $return ['record'] = $record;
+        $return['record'] = $record;
 
         $returnAction = $_REQUEST['returnAction'];
 
@@ -277,21 +310,22 @@ class DiningSaleAction extends ModuleAction{
         $returnData['diningsaleproducts'] = $diningsaleproductsModel->where($where)->select();
 
         // 生成查看的url
-        $detailviewUrl = U ( "$moduleName/detailview", array (
-            'record' => $record,'returnAction'=>$returnAction
-        ) );
+        $detailviewUrl = U("$moduleName/detailview", array(
+            'record' => $record, 'returnAction' => $returnAction,
+        ));
         $return = $detailviewUrl;
         $info['status'] = 1;
-        $info['info']  = $this->info  . ' 保存成功' ;
-        $info['url'] =  $record; //$return;
+        $info['info'] = $this->info . ' 保存成功';
+        $info['url'] = $record; //$return;
         $info['data'] = $returnData;
-        $this->ajaxReturn(json_encode($info),'EVAL');
+        $this->ajaxReturn(json_encode($info), 'EVAL');
     }
 
     /**
      * 根据id号,获取数据
      */
-    public function  getDiningSaleOrder(){
+    public function getDiningSaleOrder()
+    {
 
         $diningsaleModel = D('diningsale');
         $record = $_REQUEST['id'];
@@ -305,7 +339,7 @@ class DiningSaleAction extends ModuleAction{
 
         $info = array();
         $info['data'] = $returnData;
-        $this->ajaxReturn(json_encode($info),'EVAL');
+        $this->ajaxReturn(json_encode($info), 'EVAL');
     }
 
     /* 弹出选择窗口 */
@@ -332,7 +366,7 @@ class DiningSaleAction extends ModuleAction{
             $this->assign('navName', $navName); // 导航名称
 
             // 取得父窗口的表格行数
-            $row = $_REQUEST ['row'];
+            $row = $_REQUEST['row'];
 
             // 生成list字段列表
             $listFields = $focus->popupProductsFields;
@@ -346,34 +380,33 @@ class DiningSaleAction extends ModuleAction{
             $this->assign('returnAction', 'listview'); // 定义返回的方法
 
             $where = array();
-            $where['domain'] = $_SERVER['HTTP_HOST'];
+            $where['domain'] = $this->getDomain();
 
             // 导入分页类
             import('ORG.Util.Page'); // 导入分页类
-            $total =  $popupModule->where($where)->count(); // 查询满足要求的总记录数
+            $total = $popupModule->where($where)->count(); // 查询满足要求的总记录数
             // 查session取得page的firstRos和listRows
 
-
             // 取得显示页数
-            $pageNumber = $_REQUEST ['page'];
-            if (empty ($pageNumber)) {
+            $pageNumber = $_REQUEST['page'];
+            if (empty($pageNumber)) {
                 $pageNumber = 1;
                 // 查session取得page的值
-                if (!empty ($_SESSION [$moduleName . 'page'])) {
-                    $pageNumber = $_SESSION [$moduleName . 'page'];
+                if (!empty($_SESSION[$moduleName . 'page'])) {
+                    $pageNumber = $_SESSION[$moduleName . 'page'];
                 }
             }
 
             $listMaxRows = C('LIST_MAX_ROWS'); // 定义显示的列表函数
-            if (isset ($listMaxRows)) {
+            if (isset($listMaxRows)) {
                 $listMaxRows = 15;
             }
             // 取得页数
-            $_GET ['p'] = $pageNumber;
-            $Page = new Page ($total, $listMaxRows);
+            $_GET['p'] = $pageNumber;
+            $Page = new Page($total, $listMaxRows);
 
             //保存页数
-            $_SESSION [$moduleName . 'page'] = $pageNumber;
+            $_SESSION[$moduleName . 'page'] = $pageNumber;
 
             // 查询模块的数据
             // 查询模块的数据
@@ -384,11 +417,11 @@ class DiningSaleAction extends ModuleAction{
 
             $listResult = $popupModule->field($selectFields)->where($where)->limit($Page->firstRow . ',' . $Page->listRows)->order("$moduleId desc")->select();
 
-            $orderHandleArray ['total'] = count($listResult);
+            $orderHandleArray['total'] = count($listResult);
             if (count($listResult) > 0) {
-                $orderHandleArray ['rows'] = $listResult;
+                $orderHandleArray['rows'] = $listResult;
             } else {
-                $orderHandleArray ['rows'] = array();
+                $orderHandleArray['rows'] = array();
             }
             $data = array('total' => $total, 'rows' => $listResult);
 
@@ -418,37 +451,49 @@ class DiningSaleAction extends ModuleAction{
                 'options' => array(
                     'url' => U($moduleName . '/popupProductsview'),
                     'pageNumber' => 1,
-                    'pageSize' => 10
-                )
+                    'pageSize' => 10,
+                ),
             );
 
             $datagrid['fields'][$moduleId] = array(
                 'field' => 'ck',
-                'checkbox' => true
+                'checkbox' => true,
             );
 
             foreach ($listFields as $key => $value) {
                 $header = L($key);
-                $datagrid ['fields'] [$header] = array(
+                $datagrid['fields'][$header] = array(
                     'field' => $key,
                     'align' => $value['align'],
-                    'width' => $value['width']
+                    'width' => $value['width'],
                 );
             }
 
-            $datagrid ['fields'] ['操作'] = array(
+            $datagrid['fields']['操作'] = array(
                 'field' => 'id',
                 'width' => 20,
                 'align' => 'center',
-                'formatter' => $moduleName . 'PopupProductsviewModule.operate'
+                'formatter' => $moduleName . 'PopupProductsviewModule.operate',
             );
             $this->assign('datagrid', $datagrid);
-            $this->assign('returnModule',$_REQUEST['returnModule']);
+            $this->assign('returnModule', $_REQUEST['returnModule']);
             // 取得父窗口的表格行数
-            $row = $_REQUEST ['row'];
-            $this->assign('row',$row);  //返回点击的订购商品行
+            $row = $_REQUEST['row'];
+            $this->assign('row', $row); //返回点击的订购商品行
 
             $this->display('DiningSale/popupviewProducts');
         }
+    }
+
+    /**
+     * 获取客户收银类型
+     */
+    public function getPaymentMgr()
+    {
+        $paymentmgrModel = D('PaymentMgr');
+        $where = array();
+        $where['domain'] = $this->getDomain();
+        $paymentmgrResult = $paymentmgrModel->field('name')->where($where)->select();
+        return $paymentmgrResult;
     }
 }

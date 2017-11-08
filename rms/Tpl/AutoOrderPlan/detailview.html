@@ -1,0 +1,63 @@
+<div class="moduleMenu">
+    <ul>
+        <li>{$Think.lang.$navName}</li>
+        <li><a href="javascript:void(0);" class="moduleName" onclick="IndexIndexModule.updateOperateTab('__URL__/{$returnAction}');">&nbsp;&gt;{$Think.lang.$moduleName}</a></li>
+        <li>&nbsp;&gt;查看操作</li>
+        <li style="width: 50px;">&nbsp;</li>
+
+        <li style="margin-left: 10px;"><a href="javascript:void(0);" onclick="IndexIndexModule.updateOperateTab('__URL__/createview/returnAction/{$returnAction}');"><img src=".__PUBLIC__/Images/newBtn.gif" alt="" title="" border="0"></a></li>
+        <li><a id="create{$moduelName}" href="javascript:void(0);"  onclick="IndexIndexModule.updateOperateTab('__URL__/createview/returnAction/{$returnAction}');">新建订单<span>^1</span></a></li>
+
+        <li style="margin-left: 10px;"><a href="javascript:;" onclick="IndexIndexModule.updateOperateTab('__URL__/listview/pagetype/{$pagetype}/rowIndex/{$rowIndex}');" ><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);"  onclick="IndexIndexModule.updateOperateTab('__URL__/listview/pagetype/{$pagetype}/rowIndex/{$rowIndex}');">返回列表<span>^4</span></a></li>
+
+
+        <li style="float: right;margin-right: 60px;"><a href="javascript:void(0);"   onclick="IndexIndexModule.closeOperateTab();" >关闭</a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="IndexIndexModule.closeOperateTab();"><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <div style="clear:both;"></div>
+    </ul>
+</div>
+
+<include file="AutoOrderPlan/detailviewUI" />
+<input id="AutoOrderPlanAction" type="hidden" value="Detailview"/>
+
+<script>
+    var BookOrderDetailviewModule = {
+
+        //初始化
+        init:function(){
+            $('.moduleOperater').height(IndexIndexModule.operationHeight);
+            this.quickKeyboardAction();
+        },
+
+        //新建的快捷操作
+        quickKeyboardAction: function () {
+            // ctrl+1快捷键,新建公告
+            Mousetrap.bind(['ctrl+1','ctrl+f1','f1'], function(e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                IndexIndexModule.updateOperateTab('__URL__/createview/returnAction/{$returnAction}');
+                //};
+            });
+
+            // ctrl+4快捷键,放弃
+            Mousetrap.bind(['ctrl+4', 'ctrl+f4', 'f4'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '抄单' ) {
+                    IndexIndexModule.updateOperateTab("__URL__/listview/pagetype/{$pagetype}/rowIndex/{$rowIndex}");
+                };
+            });
+        }
+    }
+
+    $(function(){
+        BookOrderDetailviewModule.init();
+    })
+
+
+</script>
+
+

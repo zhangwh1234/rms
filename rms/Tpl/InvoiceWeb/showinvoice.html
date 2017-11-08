@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+    <link REL="SHORTCUT ICON" HREF=".__PUBLIC__/Images/lhkc/favicon.ico">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="keywords" content=""/>
+    <meta name="description" content=""/>
+    <title>丽华电子发票平台</title>
+    <link rel="stylesheet"
+          href=".__PUBLIC__/inv/css/showLoading.css"
+          type="text/css">
+    <!-- lee_solar modify 2016-07-06 修改样式 start  -->
+    <link rel="stylesheet"
+          href=".__PUBLIC__/inv/css/index.css?version=0.0.3"
+          type="text/css"/>
+
+    <link rel="stylesheet"
+          href=".__PUBLIC__/inv/css/jquery-ui.css"
+          type="text/css">
+    <!-- lee_solar modify 2016-07-06 修改样式 end  -->
+
+    <link rel="stylesheet" href=".__PUBLIC__/inv/css/xcConfirm.css" type="text/css">
+    <script
+            src=".__PUBLIC__/inv/js/jquery-1.9.1.min.js"></script>
+
+    <script
+            src=".__PUBLIC__/inv/js/jquery.qrcode.min.js"></script>
+
+    <script type="text/javascript"
+            src=".__PUBLIC__/inv/js/xcConfirm.js"></script>
+
+    <script type="text/javascript"
+            src=".__PUBLIC__/inv/js/alert.js"></script>
+
+    <script
+            src=".__PUBLIC__/inv/js/jquery.zclip.min.js"></script>
+    <script
+            src=".__PUBLIC__/inv/js/jquery.fileDownload.js"></script>
+    <script type="text/javascript"
+            src=".__PUBLIC__/inv/js/jquery.showLoading.js"></script>
+
+    <script type="text/javascript"
+            src=".__PUBLIC__/inv/js/jquery-ui.min.js"></script>
+<body>
+
+<!--发票信息开始-->
+<div class="invoice-info" id="info-js">
+    <div id="back03" class="head">发票信息</div>
+    <a id="pre" class="aspect-left on">向左</a> <a id="next"
+                                                 class="aspect-right on">向右</a>
+    <div class="box" style="margin-top:10px; " >
+        <h4>增值税电子普通发票</h4>
+        <img class="lihualogo" src=".__PUBLIC__/inv/images/logo.gif"  width="50%" />
+        <input id="invUrl" type="hidden" />
+        <ul>
+            <li>发票抬头<span id="invoiceTitle">{$invoiceinfo.header}</span></li>
+            <li>金额<span id="amountWithoutTax">{$invoiceinfo.xmdj}</span></li>
+            <li>税额<span id="taxAmount">{$invoiceinfo.suimoney}</span></li>
+            <li>价税合计<span id="totalPrice">{$invoiceinfo.money}</span></li>
+            <li>购买方纳税人识别号<span id="gmf_nsrsbh">{$invoiceinfo.gmf_nsrsbh}</span></li>
+            <li>购买方地址电话<span id="gmf_dzdh">{$invoiceinfo.gmf_dzdh}</span></li>
+            <li>购买方银行账号<span id="gmf_yhzh">{$invoiceinfo.gmf_yhzh}</span></li>
+            <li>销方名称<span id="salesName1">{$invoiceinfo.xsf_mc}</span></li>
+            <li>销方地址<span id="salesAddr1">{$invoiceinfo.xsf_dzdh}</span></li>
+            <li>发票代码<span id="invoiceCode1">{$invoiceinfo.fp_dm}</span></li>
+            <li>发票号码<span id="invoiceNum1">{$invoiceinfo.fp_hm}</span></li>
+        </ul>
+        <div class="tips">电子发票已生成，请按需点击以下按钮获取!</div>
+    </div>
+    <div id="diverroId">
+        <a  href="javascript:void(0);"   onclick="downloadpdf('{$invoiceinfo.url_pdf}');"  class="pdf-b">下载PDF格式电子发票</a>
+        <a id="addAliPay" class="fapiao-b" style="display:block;" onclick="openImage('{$invoiceinfo.ordersn}')">显示发票</a>
+    </div>
+
+</div>
+
+<script>
+  function downloadpdf(url){
+      window.open(url);
+  }
+
+  /**
+   * 发票图形查看
+   */
+  function openImage (ordersn){
+      window.open("http://invoice.lihua.com/index.php?s=/InvoiceWeb/getpdf/ordersn/"+ordersn,'发票')
+  }
+</script>
+</body>
+</html>

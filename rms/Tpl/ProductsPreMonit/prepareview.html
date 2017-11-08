@@ -1,0 +1,114 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{$Think.lang.welcome}</title>
+    <link REL="SHORTCUT ICON" HREF=".__PUBLIC__/Images/lhkc/favicon.ico">
+    <link rel="stylesheet" type="text/css" href=".__PUBLIC__/Css/icons.css"/>
+    <link rel="stylesheet" type="text/css" href=".__PUBLIC__/Css/themes/default/easyui.css" title="default"/>
+
+    <load href=".__PUBLIC__/Css/style.css"/>
+    <script type="text/javascript" src=".__PUBLIC__/Js/jquery.min.js"></script>
+    <script type="text/javascript" src=".__PUBLIC__/Js/jquery.cookie.js"></script>
+    <script type="text/javascript" src=".__PUBLIC__/Js/jquery.json.min.js"></script>
+    <script type="text/javascript" src=".__PUBLIC__/Js/jquery.easyui.min.1.4.1.js"></script>
+    <script type="text/javascript" src=".__PUBLIC__/Js/easyui/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src=".__PUBLIC__/Js/easyui/plugins/jquery.portal.js"></script>
+    <script type="text/javascript" src=".__PUBLIC__/Js/jquery.app.js"></script>
+    <script type="text/javascript" src=".__PUBLIC__/Js/datagrid-detailview.js"></script>
+    <load href=".__PUBLIC__/Js/mousetrap.js"/>
+    <style>
+        /*设置datagrid*/
+        .datagrid-cell {
+            font-size: 18px;
+        }
+
+        .datagrid-row {
+            height: 30px;
+        }
+    </style>
+
+</head>
+<body>
+<div id="OrderPrepareDiv" style="width:100%;height:500px;">
+    <table id="OrderPrepareTable" fit="true"></table>
+</div>
+</body>
+
+<script type="text/javascript">
+
+    var OrderPrepareListviewModule = {
+
+        orderPrepareGrid: '',   //订单处理表
+
+        init: function () {
+            this.orderPrepareGrid = $('#OrderPrepareTable');
+            //设置表格
+            this.setDatagrid();
+            this.getOrderTxt();
+            this.setSize();
+        },
+
+        //设置订单处理表格
+        setDatagrid: function () {
+            /*定义表格*/
+            this.orderPrepareGrid.datagrid({
+                nowrap: false,
+                fitColumns: true,
+                singleSelect: true,
+                autoRowHeight: true,
+                striped: true,
+                border: true,
+                rownumbers: true,  //显示行号
+                showFooter: true,
+                columns: [[
+                    {field: 'orderformid', title: 'id', hidden: 'true', width: 100},
+                    {field: 'ordertxt', title: '数量规格', width: 80, align: 'center'},
+                    {field: "custtime", width: 12, title: '要餐时间',align:'center'},
+                    {field: "beizhu", width: 70, title: '备注'}
+                ]]
+            });
+        },
+
+        //获取订单内容
+        getOrderTxt: function () {
+            var that = this;
+            setInterval(function () {
+                $.ajax({
+                    type: "GET",
+                    url: "__URL__/getOrderTxt",
+                    dataType: "json",
+                    success: function (data) {
+                        //if (data.rows.length > 0) {
+                            //选择第一行焦点
+                            that.orderPrepareGrid.datagrid('loadData', data);
+                        //}
+                    }
+                });
+            }, 2000);
+        },
+
+        //重新设置表格
+        setSize:function(){
+
+
+            setTimeout(function () {
+                var bodyHeight = $(document).height()-10;
+                $('#OrderPrepareDiv').height(bodyHeight);
+                bodyHeight = bodyHeight -10;
+                //设置高度
+                $("#OrderPrepareDiv").find(".panel").find(".datagrid-wrap").css("height", bodyHeight + "px");
+            }, 10);
+
+        }
+
+
+    }
+
+   $(function () {
+       OrderPrepareListviewModule.init();
+   })
+
+</script>
+
+
+</html>

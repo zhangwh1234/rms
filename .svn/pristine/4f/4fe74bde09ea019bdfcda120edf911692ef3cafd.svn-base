@@ -1,0 +1,43 @@
+<?php if (!defined('THINK_PATH')) exit();?><script type="text/javascript">
+    $(document).ready(function() { 
+        //提交程序
+        $('#createView<?php echo ($moduleName); ?>').form({  
+            url:"__URL__/insert",
+            onSubmit: function(){ 
+                if(submitIs == false){
+                    submitIs = true;
+                    return false;                    
+                }
+                submitIs = true;
+            },
+            success:function(data){ 
+            	updateTab(data);
+            }  
+        }); 
+
+        //form提交程序
+        $('#createView<?php echo ($moduleName); ?> input[name=createsave]').bind('click',function(){
+            //提交表单  
+            $('#createView<?php echo ($moduleName); ?>').submit();
+
+        }) 
+
+        //编辑的提交
+        $('#editView<?php echo ($moduleName); ?>').form({  
+            url:'__URL__/update',
+            onSubmit: function(){  
+                //进行表单验证  
+                //如果返回false阻止提交  
+            },  
+            success:function(data){ 
+            	updateTab(data);
+            }  
+        }); 
+
+        //form提交程序
+        $('#editView<?php echo ($moduleName); ?> input[name=editsave]').bind('click',function(){
+            //提交表单  
+            $('#editView<?php echo ($moduleName); ?>').submit();
+        }) 
+    });   
+</script>

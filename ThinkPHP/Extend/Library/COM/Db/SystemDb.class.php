@@ -179,6 +179,7 @@ class SystemDb {
 	public function getDbConnectionCli($tableName,$domain) {
 		// 用户访问域名
 		$accessUrl = $domain;
+
 		// 连接系统库
 		// 系统库主机名称
 		$host = C ( 'DB_HOST' );

@@ -1,0 +1,101 @@
+<script type="text/javascript">
+    //指定某个字段获得焦点
+    $(document).ready(function(){
+        $("#{$fields_focus}").focus();  
+    });
+
+      $('#createView').form({  
+        url:'__URL__/insertTeam',
+        onSubmit: function(){  
+            //进行表单验证  
+            //如果返回false阻止提交  
+        },  
+        success:function(data){ 
+            var dataObj=eval("("+data+")");//转换为json对象 
+            //console.info(dataObj.record);
+            
+            //返回选项卡
+            var tab = $('#operation').tabs('getSelected');
+            //更新一个选项卡面板  
+            $('#operation').tabs('update',{  
+                tab:tab,
+                options:{href:'__URL__/detailview?&record='+dataObj.record}                                                
+            });  
+        }  
+    }); 
+
+    //form提交程序
+    $('#createView input[name=createsave]').bind('click',function(){
+        //提交表单  
+        $('#createView').submit();
+    }) 
+
+</script>
+
+<div class="moduleoperator">
+    <form id="createView" name="createView" method="POST" style="border:1px solid white;" >
+        <input type="hidden" name="returnAction" value="" /> 
+        <input type="hidden" name="pid"  value="{$pid}" />       
+        <table border="0" cellspacing="0" cellpadding="0" width="99%" align="center" bgcolor="">
+            <tr>
+                <td>
+                    <table border=0 cellspacing=0 cellpadding=3 width=100% class="small">
+                        <tr>
+                        <td class="dvtTabCache" style="width:20px" nowrap>&nbsp;</td>
+                        <td class="dvtSelectedCell" align="center" nowrap> 新建 </td>
+                        <td class="dvtTabCache" style="width:80%">&nbsp;</td>
+                        <tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td valign="top" align="center" >
+                    <div id="basicTab" style="border: 1px solid #e0dddd; background: white;">
+                        <table border=0 cellspacing=0 cellpadding=0 width="98%" class="small">
+                             <tr>
+                                <td></td>
+                                <td align="right">
+                                <input  name="createsave" title="" accessKey="" class="crmbutton small save"   type="button"   value="{$Think.lang.Button_Save}" style="width:70px;float:right;margin-right:2px;margin-top:2px;margin-bottom:2px;"></td>
+                                <td>
+                                <input title="{$Think.lang.Button_Cancel}" accessKey="" class="crmbutton small cancel" onclick="updateTab('__APP__/{$moduleName}/{$returnAction}')" type="button" name="button" value="  {$Think.lang.Button_Cancel}  " style="width:70px;float:left;margin-left:2px;margin-top:2px;margin-bottom:2px;"></td>
+                                <td> 
+                                </td>
+                            </tr>
+
+                            <volist name="blocks"  id="data" >
+                                <tr>
+                                    <td colspan=4 class="tabBlockViewHeader">
+                                        {$Think.lang.$key}
+                                    </td>
+                                </tr>
+
+                                <!-- Here we should include the uitype handlings-->
+                                <volist key="label" id="subdata" name="data">
+                                    <tr style="height:30px;border: 1px solid black;background: #F0F0F0;">
+                                        <volist key="mainlabel" id="maindata" name="subdata">                              
+                                            <include file='Module/editviewUI' />       
+                                        </volist>
+                                    </tr>
+                                </volist>
+                                <tr style="height:1px"><td>&nbsp;</td></tr>
+
+                            </volist>
+
+                             <tr>
+                                <td></td>
+                                <td align="right">
+                                <input  name="createsave" title="" accessKey="" class="crmbutton small save"   type="button"   value="{$Think.lang.Button_Save}" style="width:70px;float:right;margin-right:2px;margin-top:2px;margin-bottom:2px;"></td>
+                                <td>
+                                <input title="{$Think.lang.Button_Cancel}" accessKey="" class="crmbutton small cancel" onclick="updateTab('__APP__/{$moduleName}/{$returnAction}')" type="button" name="button" value="  {$Think.lang.Button_Cancel}  " style="width:70px;float:left;margin-left:2px;margin-top:2px;margin-bottom:2px;"></td>
+                                <td> 
+                                </td>
+                            </tr>
+                        </table>
+
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div> 
+

@@ -1,0 +1,104 @@
+<?php if (!defined('THINK_PATH')) exit();?><script type="text/javascript">
+    var orderDistriTable;
+    $(function(){
+        productsMonitTable = $('#ProductsMonitTable').datagrid({  
+            fitColumns:false,            
+            title :"订单情况显示",
+            border:false, 
+            closable:true,
+            columns:[[  
+            {field:'name',title:'名称',width:100},  
+            {field:'p1',title:'产品名',width:80,align:'center'},
+            {field:'p2',title:'产品名',width:80,align:'center'},  
+            {field:'p3',title:'产品名',width:80,align:'center'},  
+            {field:'p4',title:'产品名',width:80,align:'center'},  
+            {field:'p5',title:'产品名',width:80,align:'center'},  
+            {field:'p6',title:'产品名',width:80,align:'center'},  
+            {field:'p7',title:'产品名',width:80,align:'center'},  
+            {field:'p8',title:'产品名',width:80,align:'center'},  
+            {field:'p9',title:'产品名',width:80,align:'center'},  
+            {field:'p10',title:'产品名',width:80,align:'center'},  
+            {field:'p11',title:'产品名',width:80,align:'center'},  
+            {field:'p12',title:'产品名',width:80,align:'center'},  
+            {field:'p13',title:'产品名',width:80,align:'center'},  
+            {field:'p14',title:'产品名',width:80,align:'center'},  
+            {field:'p15',title:'产品名',width:80,align:'center'},  
+            {field:'p16',title:'产品名',width:80,align:'center'},  
+            {field:'p17',title:'产品名',width:80,align:'center'},  
+            {field:'p18',title:'产品名',width:80,align:'center'},  
+            {field:'p19',title:'产品名',width:80,align:'center'},  
+            {field:'p20',title:'产品名',width:80,align:'center'},  
+            {field:'p21',title:'产品名',width:80,align:'center'},  
+            {field:'p22',title:'产品名',width:80,align:'center'},  
+            {field:'p23',title:'产品名',width:80,align:'center'},  
+            {field:'p24',title:'产品名',width:80,align:'center'},  
+            {field:'p25',title:'产品名',width:50,align:'center'},
+            {field:'p26',title:'产品名',width:50,align:'center'},
+            {field:'p27',title:'产品名',width:50,align:'center'},
+            {field:'p28',title:'产品名',width:50,align:'center'},
+            {field:'p29',title:'产品名',width:50,align:'center'},
+            {field:'p30',title:'产品名',width:50,align:'center'},  
+            {field:'p31',title:'产品名',width:50,align:'center'},  
+            {field:'p32',title:'产品名',width:50,align:'center'},  
+            {field:'p33',title:'产品名',width:50,align:'center'},  
+            {field:'p34',title:'产品名',width:50,align:'center'},  
+            {field:'p35',title:'产品名',width:50,align:'center'},  
+            {field:'p36',title:'产品名',width:50,align:'center'},  
+            {field:'p37',title:'产品名',width:50,align:'center'},  
+            {field:'p38',title:'产品名',width:50,align:'center'}, 
+            {field:'p39',title:'产品名',width:50,align:'center'},  
+            {field:'p40',title:'产品名',width:50,align:'center'},  
+            {field:'p41',title:'产品名',width:50,align:'center'},  
+            {field:'p42',title:'产品名',width:50,align:'center'},  
+            {field:'p43',title:'产品名',width:50,align:'center'},  
+            {field:'p44',title:'产品名',width:50,align:'center'},  
+            {field:'p45',title:'产品名',width:50,align:'center'},  
+            {field:'p46',title:'产品名',width:50,align:'center'},  
+            {field:'p47',title:'产品名',width:50,align:'center'},  
+            {field:'p48',title:'产品名',width:50,align:'center'},  
+            {field:'p49',title:'产品名',width:50,align:'center'},  
+            {field:'p50',title:'产品名',width:50,align:'center'} 
+            ]],
+            onClose:function(){
+                $('#operation').tabs('close','餐售情况');
+            } 
+        });  
+    })
+
+    //已启动，就显示
+    setTimeout(function(){
+        $.ajax({
+            type : "POST",
+            url : "__URL__/getProductsMonit",
+            dataType : "json",
+            success : function(data){ 
+                productsMonitTable.datagrid('loadData', data);  
+            }
+        });
+    },300);
+
+    //定时显示
+    setInterval(function(){
+        $.ajax({
+            type : "GET",
+            url : "__URL__/getProductsMonit",
+            dataType : "json",
+            success : function(data){ 
+                productsMonitTable.datagrid('loadData', data);  
+            }
+        });
+    },10000);
+
+    //修改选项卡，加上关闭按钮
+    /**
+    var tab =  $('#operation').tabs('getSelected'); 
+    $('#operation').tabs('update', {
+    tab: tab,
+    options: {
+    closable:true
+    }
+    });        **/
+</script>
+<div id="" style="border: 1px solid blue;height:500px;background-color: #FFFAF0;">
+    <table id="ProductsMonitTable"></table>
+</div>

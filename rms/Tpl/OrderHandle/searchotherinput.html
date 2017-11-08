@@ -29,6 +29,7 @@
                         IndexIndexModule.openOperateTab(url, '配送综合查询');
                         $(dialog).dialog('close');
                         OrderHandleListviewModule.setRefresh(); //开启刷新
+                        OrderHandleListviewModule.orderHandleData = '';  //清理缓存输入量
                         return false;
                     }
                 });

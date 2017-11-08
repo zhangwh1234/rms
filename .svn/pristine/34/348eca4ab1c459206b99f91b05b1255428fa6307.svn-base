@@ -1,0 +1,67 @@
+<script type="text/javascript">
+    $(document).ready(function() { 
+        //提交程序
+        $('#createView{$moduleName}').form({  
+            url:"__URL__/insert",
+            onSubmit: function(){  
+                if(submitIs == false){
+                    submitIs = true;
+                    return false;                    
+                }
+                submitIs = true;
+            },
+            success:function(data){ 
+            	updateTab(data);
+            }  
+        }); 
+
+        //form提交程序
+        $('#createView{$moduleName} input[name=createsave]').bind('click',function(){
+            //提交表单  
+            $('#createView{$moduleName}').submit();
+
+        }) 
+
+        //编辑的提交
+        $('#editView{$moduleName}').form({  
+            url:'__URL__/update',
+            onSubmit: function(){  
+                //进行表单验证  
+                //如果返回false阻止提交  
+            },  
+            success:function(data){ 
+            	updateTab(data);
+            }  
+        }); 
+
+        //form提交程序
+        $('#editView{$moduleName} input[name=editsave]').bind('click',function(){
+            //提交表单  
+            $('#editView{$moduleName}').submit();
+        }) 
+        
+        
+        //输入代码键
+         $('#createView{$moduleName} input[name=code]').bind('keydown',function(event){
+              var code = $(this).val();
+              if(event.which == 13){
+                  $.ajax({
+                      type:'post',
+                      url: '__URL__/getSendnameByCode/code/'+code,
+                      dataType : 'json',
+                      success:function(data){
+                          if(data.success = 'success'){
+                              //显示送餐员
+                             $('#createView{$moduleName} input[name=name]').val(data.data.sendname);
+                             $('#productsNumber_1').focus();  //      
+                          }
+                      }
+                      
+                  })
+              }
+         });
+        
+    });
+    
+       
+</script>

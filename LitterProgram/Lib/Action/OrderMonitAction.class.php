@@ -71,7 +71,9 @@
             if(empty($totalmoney)) $totalmoney =0;
 
             //网订的数量
-            $sql = "select count(*) as web  from rms_orderform where (telname='网络' or telname='手机APP' or  telname='淘点点' or  telname='微信') 
+            $sql = "select count(*) as web  from rms_orderform where (telname like  '微信' or telname like '%APP%'
+                    or telname like '触屏%' or  telname like '美团%' or telname like '百度%' or telname like '网站%'
+                    or telname like '饿了吗' or  telname='网络')
             		and ((state not like '%退餐') and (state not like '%作废')) and domain=$domain ";
             $result = $ordermonitModel->query($sql);
             $web = $result[0]['web'];

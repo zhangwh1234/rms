@@ -1,0 +1,153 @@
+<?php
+    /**
+    * 订单打印后，派给送餐员，同时输入系统中，让系统知道已经派给送餐员了
+    * 2013-12-30开始编制
+    */
+
+    class OrderPrintHandleAction extends ModuleAction{
+
+        /* 启动项目是输入送餐员和订单号  */
+        public function index(){
+            $this->createview();
+        }
+
+
+        //返回一些其他的数据,比如下拉列表框等的数据
+        public function returnMainFnPara(){
+
+            //引入js
+            $this->display('OrderPrintHandle/js');
+        }
+
+        //根据代码获取送餐员名字
+        public function getSendnameByCode(){
+            //分公司的名称
+            $userInfo = $_SESSION['userInfo'];
+            $company = $userInfo['company'];
+
+            //获得处理过了的编码
+            $code = $_REQUEST['code'];
+
+            //定义返回的数组
+            $returnInfo = array();
+
+            /** 先编辑送餐员的编码 ***/
+            //根据编码取得送餐员姓名
+            $sendnameMgrModel = D('Sendnamemgr');
+            $sendnameWhere['code'] = $code; //送餐员的编号
+            //$sendnameWhere['company'] = $company;
+            $sendnameResult = $sendnameMgrModel->field('name,telphone')->where($sendnameWhere)->find();
+            //var_dump($sendnameMgrModel->getLastSql());
+            if($sendnameResult){
+                $sendname = $sendnameResult['name'];
+                $telphone = $sendnameResult['telphone'];
+            }else{
+                $returnInfo['error'] = 'error';
+                $returnInfo['msg']  = '没有查到信息';
+                $this->ajaxReturn($returnInfo);
+            }
+            //根据送餐员信息，处理订单
+            $orderformData['sendname'] = $sendname;
+
+
+            //定义返回
+            $returnInfo['success'] = 'success';
+            $returnInfo['data'] = $orderformData;
+            $this->ajaxReturn($returnInfo,'JSON');
+
+
+        }
+
+        //根据订单号码，取得订单详情
+        public function getOrderByid(){
+            //订单号
+            $orderformid = $_REQUEST['orderformid'];
+            //订单表
+            $orderformModel = D('Orderform');
+            $where = array();
+            $where['orderformid'] = $orderformid;
+            $orderformResult = $orderformModel->where($where)->find();
+            if(!empty($orderformResult)){
+                $address = $orderformResult['address'];
+                $ordertxt = $orderformResult['ordertxt'];
+                $returnData['addressOrdertxt'] = $address.$ordertxt;
+                $returnData['success'] = 'success';
+                $this->ajaxReturn($returnData,'JSON');
+            }else{
+                $returnData['error'] = 'error';
+                $this->ajaxReturn($returnData,'JSON');
+
+            }
+        }
+
+        //保存数据等其他数据
+        function  save_slave_table($record){
+            //打印表
+            $orderprintcontentModel = D('Orderprintcontent');
+            //删除以前的记录 
+            $where = array();
+            $where['orderprinthandleid'] = $record;
+            $orderprintcontentModel->where($where)->delete();
+
+            $orderPrintHandleLength = $_REQUEST['orderPrintHandleLength'];
+            for($i=1;$i<= $orderPrintHandleLength;$i++){
+                $orderformid =  $_REQUEST['orderformid_'.$i];
+                $content =  $_REQUEST['addressOrdertxt_'.$i];
+                $data = array();
+                $data['orderprinthandleid'] = $record;
+                $data['orderformid'] = $orderformid;
+                $data['content'] = $content;
+                if(!empty($orderformid)){
+                    $orderprintcontentModel->create();
+                    $orderprintcontentModel->add($data);
+                }
+                $ordertxt .= $orderformid.',';
+            }
+            
+            //存入打印表中
+            $orderprinthandleModel = D('Orderprinthandle');
+            $data = array();
+            $data['content'] = $ordertxt;
+            $where = array();
+            $where['orderprinthandleid'] = $record;
+            $orderprinthandleModel->where($where)->save($data);
+            
+            //取得分公司名称
+            $userInfo = $this->userInfo;
+            $company = $userInfo['company'];
+            //取得送餐员的送餐号码
+            $sendnamemgrModel = D('Sendnamemgr');
+            $where = array();
+            $where['code'] = $_REQUEST['code'];
+            $where['name'] = $_REQUEST['name'];
+            $where['company'] = $company;
+            $sendnamemgrResult = $sendnamemgrModel->where($where)->find();
+            
+            //写入到状态表中
+            $orderstateModel = D('Orderstate');
+            $data = array();
+            $data['handle'] = 1;
+            $data['handletime'] = date('Y-m-d H:i:s');
+            $data['handlecontent'] = $sendname.' '.$telphone;
+            $where = array();
+            $where['orderformid'] = $record;
+            $orderstateModel->where($where)->save($data);
+        }
+
+        //保存产品数据等其他数据
+        function  update_slave_table($record){
+            $this->save_slave_table($record);
+        }
+        
+        //
+        public function get_slave_table($record){
+            //打印表
+            $orderprintcontentModel = D('Orderprintcontent');
+            $orderprintcontentResult = $orderprintcontentModel->select();
+            $this->orderPrintHandle = $orderprintcontentResult;
+        }
+
+    }
+?>
+
+

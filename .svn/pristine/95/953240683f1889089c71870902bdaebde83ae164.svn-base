@@ -1,0 +1,41 @@
+<?php if (!defined('THINK_PATH')) exit();?><script type="text/javascript">
+    //催送订单
+    function hurryRecord(url){     
+        if(confirm("是否真的要催送订单？")){
+            updateTab(url);
+            //updateTab("__APP__/<?php echo ($module_name); ?>/hurry?&record="+record);
+        }  
+    }
+    
+    //恢复配送订单
+    //function 
+
+</script>
+<div class="pages"><?php echo ($page); ?></div>
+<div class="list" id="list<?php echo ($moduleName); ?>"  >
+    <input id="<?php echo ($moduleName); ?>Action" type="hidden" value="listview" /> 
+    <table  border="0" cellspacing="1" cellpadding="3" width="100%" class="lvt"   align="center">
+        <tr class="listHeader">
+            <td class=""><input class="listColCheck" type="checkbox"  name="selectall" ></td>
+            <?php if(is_array($listHeader)): foreach($listHeader as $key=>$header): ?><td class="listHeader"><?php echo (L("$header")); ?></td><?php endforeach; endif; ?>
+            <td class="listHeader" >操作</td>
+        </tr>
+        <?php if(is_array($listEntries)): $ad = 0; $__LIST__ = $listEntries;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$entity): $mod = ($ad % 2 );++$ad; $record = $key; ?>
+            <tr bgcolor="white" onMouseOver="this.className='lvtColDataHover'" onMouseOut="this.className='lvtColData'" ondblclick="updateTab(&apos;<?php echo U('OrderForm/detailview',array('record'=> $record,'returnAction' => $returnAction));?>&apos;);" id="row_<?php echo ($entity_id); ?>">
+
+                <?php if(is_array($entity)): $i = 0; $__LIST__ = $entity;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$id): $mod = ($i % 2 );++$i; if($key == $moduleId): ?><td class="listColCheck" width="2%"><input  type="checkbox" name="selected_id" id="<?php echo ($record); ?>" value= '<?php echo ($record); ?>'></td> 
+                        <?php elseif($key == $list_link_field): ?>
+                        <td><a class="small" href="#" onclick="updateTab('__URL__/detailview/record/<?php echo ($record); ?>/returnAction/listview');"><?php echo ($id); ?></a></td>
+                        <?php elseif($key == 'datetxt'): ?>
+                           <td class="listColData"><?php echo (substr($id,0,19)); ?></td>                   
+                        <?php else: ?>                  
+                        <td class="listColData"><?php echo ($id); ?></td><?php endif; endforeach; endif; else: echo "" ;endif; ?>               
+                <td><center>       
+                        <a href="#" onclick="updateTab('__URL__/detailview/record/<?php echo ($record); ?>/returnAction/<?php echo ($returnAction); ?>');">查看</a><span >&nbsp&nbsp|&nbsp&nbsp</span>
+                        <a href="#" onclick="updateTab('__URL__/editview/record/<?php echo ($record); ?>/returnAction/<?php echo ($returnAction); ?>');">改单</a>&nbsp&nbsp</span>
+                </center></td>
+            </tr><?php endforeach; endif; else: echo "" ;endif; ?>
+    </table>
+</div>
+
+<div class="pages"><?php echo ($page); ?></div>

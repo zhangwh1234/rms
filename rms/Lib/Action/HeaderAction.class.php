@@ -5,7 +5,7 @@
 
             //为了显示城市
             require APP_PATH.'Conf/datapath.php';
-            $HTTP_POST = $_SERVER['HTTP_HOST'];
+            $HTTP_POST = $this->getDomain();
             $this->assign('city',$rmsDataPath[$HTTP_POST]['CITY']);
 
             $this->display(); 
@@ -84,7 +84,7 @@
             foreach($navResult as $navKey => $navValue){
                 $where = array();
                 $where['navid'] = $navValue['navid'];
-                $navmenuResult = $navmenuModel->order('navid,menuid,sequence')->where($where)->select();
+                $navmenuResult = $navmenuModel->order('sequence')->where($where)->select();
                 foreach($navmenuResult as $navmenuValue){
                     $menu_arr = $menu_info_array[$navmenuValue['menuid']];
                     if(in_array($menu_arr,$access_arr)){

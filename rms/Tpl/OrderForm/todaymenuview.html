@@ -1,7 +1,7 @@
 <div class="moduleMenu">
     <ul>
         <li><input id="todaymenuAfterDate" type="button" value="上一个日期" onclick="OrderFormTodayMenuModel.yesterdayMenuClick();"></li>
-        <li><input id="todaymenuSelectDate" name="todaymenuSelectDate" class="easyui-datebox" value="{$todayDate}"></li>
+        <li><input id="todaymenuSelectDate" name="todaymenuSelectDate" class="easyui-datebox" value="{$todayDate}"  data-options="onSelect:OrderFormTodayMenuModel.onTodaymenuSelect"></li>
         <li><input id="todaymenuBeforeDate" type="button" value="下一个日期" onclick="OrderFormTodayMenuModel.tomorrowMenuClick();"></li>
         <li style="float: right;">按ESC键退出</li>
     </ul>
@@ -14,18 +14,18 @@
     var OrderFormTodayMenuModel = {
         // 今日菜单功能中看昨天的菜单
         yesterdayMenuClick: function () {
-            var date = $('#todaymenuSelectDate').datebox('getValue');
-            date = date.split("-");// 以"-"分割字符串，返回数组；
-            var d = new Date(date[0], date[1], date[2]);   // 格式化为Date对像;
+            var selectDate = $('#todaymenuSelectDate').datebox('getValue');
+            //date = date.split("-");// 以"-"分割字符串，返回数组；
+            var d = new Date(selectDate);   // 格式化为Date对像;
             if (d == "Invalid Date") {
                 alert("非日期");
                 return;
             }
             // 当前日期的毫秒数 + 天数 * 一天的毫秒数
-            var n = d.getTime() + 1 * 24 * 60 * 60 * 1000;
+            var n = d.getTime() - 1 * 24 * 60 * 60 * 1000 ;
             var result = new Date(n);
             // 格式化日期
-            var month = result.getMonth();
+            var month = result.getMonth() + 1;
             if (month < 10) {
                 month = '0' + month;
             }
@@ -53,18 +53,20 @@
 
         // 今日菜单功能中看明天的菜单
         tomorrowMenuClick: function () {
-            var date = $('#todaymenuSelectDate').datebox('getValue');
-            date = date.split("-");// 以"-"分割字符串，返回数组；
-            var d = new Date(date[0], date[1], date[2]);   // 格式化为Date对像;
+            var selectDate = $('#todaymenuSelectDate').datebox('getValue');
+            //date = date.split("-");// 以"-"分割字符串，返回数组；
+            var d = new Date(selectDate);   // 格式化为Date对像; date[0], date[1], date[2]
             if (d == "Invalid Date") {
                 alert("非日期");
                 return;
             }
+            console.info(d);
             // 当前日期的毫秒数 + 天数 * 一天的毫秒数
-            var n = d.getTime() - 1 * 24 * 60 * 60 * 1000;
+            var n = d.getTime() + 1 * 24 * 60 * 60 * 1000  ;
             var result = new Date(n);
             // 格式化日期
-            var month = result.getMonth();
+            var month = result.getMonth() + 1;
+            console.info(month);
             if (month < 10) {
                 month = '0' + month;
             }
@@ -87,7 +89,24 @@
                     }
                 }
             })
-        }
+        },
+
+        // 今日菜单中，选择日期
+        onTodaymenuSelect :function (date) {
+            var todaymenuDate = date.Format("yyyy-MM-dd");
+            $.ajax({
+                type: "GET",
+                url: "__URL__/getTodaymenuContent/date/" + todaymenuDate,
+                dataType: "json",
+                success: function (returnData) {
+                    if(returnData['success'] == 'success'){
+                        $('#todaymenuContent').html(returnData['content']);
+                    }else{
+                        $('#todaymenuContent').html('');
+                    }
+                }
+            })
+    }
 
 
     }

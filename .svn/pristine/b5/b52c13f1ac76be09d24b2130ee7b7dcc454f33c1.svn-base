@@ -1,0 +1,358 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    
+    <script type="text/javascript">
+        var url = "__URL__";
+        var app = "__APP__";
+        var public = '__PUBLIC__';
+        var module_name = '{$module_name}';
+    </script>
+    <if condition="$Think.session.userInfo.department eq '客服部'">
+        <SCRIPT LANGUAGE="JavaScript" FOR="window" EVENT="onLoad()">
+            <!--
+            if(YeahDone1.OpenCPE()>0)
+                {
+                cpe_id = YeahDone1.GetPhoneHandle(0);
+            }
+            else           {
+                alert("来电设备不存在！");
+            }
+            -->
+        </SCRIPT>
+
+        <SCRIPT LANGUAGE="JavaScript" FOR="YeahDone1" EVENT="OnPhoneIncoming(cpe_id, IncomingNum)">
+            <!--
+            //处理来电
+            //document.forms.textcpeid.value = cpe_id;
+            //document.forms.textfieldk.value = IncomingNum;
+            telphone = IncomingNum;
+            //在界面上显示号码
+            $('#telphoneNumber').attr('value',IncomingNum);
+            //查询电话地址
+            $.ajax({
+                type: 'POST',
+                url : "/Telcustomer/getAddressByPhone?&telphone="+telphone,
+                success : function(data){
+                    //alert(data);
+                    $('#center').html(data);
+                    $('#searchDate').attr('value',date);
+                }
+            })      
+
+
+            -->
+        </SCRIPT>
+    </if>
+    <script type="text/javascript">
+        function telclick(){
+            //telphone = '5203908';
+            //alert( app + "/Telcustomer/getAddressByPhone?&telphone="+telphone);
+            //清除缓存
+            localStorage.clear();
+            localStorage['telphone'] = telphone;                
+            //查询电话地址
+            $.ajax({
+                type: 'POST',
+                url : app+"/Telcustomer/getAddressByPhone?&telphone="+telphone,
+                success : function(data){
+                    $('#telphoneAddress').empty();
+                    $.each(data,function(key,value){
+                        //
+                        $('#telphoneAddress').append('<option>'+value.address+'</option>');
+                        //alert(value.address);
+                        //保存在数据表中
+
+
+                    })
+
+                }
+            })     
+
+        }
+
+        $(document).ready(function(){
+            //页面刷新，读取来电
+            if(localStorage.telphone){
+                telphone = localStorage.telphone;
+                //在界面上显示号码
+                $('#telphoneNumber').attr('value',telphone);
+                //显示地址
+                $.ajax({
+                    type: 'POST',
+                    url : app+"/Telcustomer/getAddressByPhone?&telphone="+telphone,
+                    success : function(data){
+                        $('#telphoneAddress').empty();
+                        $.each(data,function(key,value){
+                            //
+                            $('#telphoneAddress').append('<option>'+value.address+'</option>');
+                            //alert(value.address);
+                            //保存在数据表中
+                        })
+
+                    }
+                })        
+            }
+        })
+
+    </script>
+
+</head>
+<style type="text/css">
+    body{
+        margin: 0;
+    }
+
+    a {
+        text-decoration:none;
+        color:#0070BA;
+
+    }
+
+    a:hover {
+        text-decoration:underline;
+    }
+
+
+    /*顶部背景*/
+    .hdrNameBg {
+        background:#ffffff url(__PUBLIC__/Images/header-bg.png) repeat-x;    
+        height:10px;
+    }
+
+    /* 导航背景  */
+    .hdrTabBg {
+        background:#ffffff url(__PUBLIC__/Images/nav_bg1.png) top repeat-x ;
+        background-color:#fff;
+        border: 1px solid red;  
+    }  
+
+    .tabSelected a{
+        color:white;
+        text-transform: uppercase;
+        text-decoration: underline;
+        font-size: 16px;
+
+    }
+
+    .tabUnSelected {    
+        background: #fff url(__PUBLIC__/Images/nav_bg11.png) top repeat-x;
+        background-color:red;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 11px;
+        padding-left:10px;
+        padding-right:10px;
+        padding-top:2px;
+        padding-bottom:2px;
+        border-bottom:0px solid #ffffff; 
+        width:180px;   
+    }
+
+    .tabUnSelected a{
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 16px;
+        color:white;
+        font-weight:bold;        
+    }
+
+    /* 导航分割  */
+    .tabSeperator {
+        background: #fff url(__PUBLIC__/Images/toolbar-div.png) bottom no-repeat;
+        background-color:#fff;
+        width:2px;
+    }
+
+    .tabSelected {
+        padding: 7px 10px;
+        width:180px;
+    }
+
+    /* 一般性字体定义  */
+    .small {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 16px;
+        color: #000000;
+    }
+
+    /*第二层菜单定义 */
+    .level2Bg {
+        background:#fff url(__PUBLIC__/Images/toolbar-bg.png) bottom repeat-x;    
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 16px;
+        border-top:1px solid #b8b8b8;
+        border-bottom:1px solid #bfbfbf;
+        color:white;
+
+    }
+
+    .level2Bg a{
+        /* background:#1F5BFF url(images/level2TabBg.gif) bottom repeat-x; */
+        color:#33338C;    
+    }
+
+    /* 底部菜单 */
+    .level2SelTab{
+        font-weight:bold;
+        color:white;
+        padding-left:20px;
+        padding-right:20px;
+        padding-top:5px;
+        padding-bottom:5px;
+    }
+
+    .level2UnSelTab{
+        color:#000000;
+        padding-left:20px;
+        padding-right:20px;
+        padding-top:5px;
+        padding-bottom:5px;
+    }
+
+    /* 下拉菜单 */
+    .drop_mnu{
+        position:absolute;
+        left:0px;
+        top:-5px;
+        z-index:1000000001;
+        border-left:1px solid #d3d3d3;
+        border-right:1px solid #d3d3d3;
+        border-bottom:1px solid #d3d3d3;
+        width:120px;
+        display:none;
+        padding:0px;
+        text-align:left;
+        overflow-x:hidden;
+        overflow-y:hidden;
+        background-color:#ffffcc;
+        margin-top: 0px; /* added */
+    }
+    a.drop_down{
+        width:150px;
+        text-align:left;
+        font-family:  Arial, Helvetica, sans-serif;
+        font-size: 14px;
+        line-height:20px;
+        font-weight:normal;
+        color:#33338c;
+        background-color:#fff;
+        padding:2px 5px 2px 5px;
+        border-top:1px solid #fafafa;
+        border-bottom:1px solid #d3d3d3;
+        display:block;
+    }
+
+    a.drop_down:Hover{
+        padding:2px 5px 2px 5px;
+        width:150px;
+        text-align:left;
+        color:#0070BA;
+        font-weight:normal;
+        text-decoration:underline;
+        background-color:#ffffcc;
+    }
+</style>
+<body>
+
+{//顶部显示}
+<div>
+    <table border=0 cellspacing=0 cellpadding=0 width=100% height="0" class="hdrNameBg">
+        <tr>
+            <td valign=top><img src="__PUBLIC__/Images/logo.gif" alt="标志" title="标志" border=0></td> 
+            <td width=100% align="center">
+                <span>CRM系统</span>
+            </td>
+
+            <td class=small nowrap>
+                <table border=0 cellspacing=0 cellpadding=0>
+                    <tr>            
+                        <if condition="$IS_ADMIN eq 'on11' ">
+                            <td style="padding-left:10px;padding-right:10px" class=small nowrap>(系统管理员)</td>
+
+                        </if>  
+                        <if condition="$Think.session.userInfo.department eq '分公司'"> 
+                            <td style="padding-left:10px;padding-right:10px" class=small nowrap>部门:{$Think.session.userInfo.department}</td>
+                            <td style="padding-left:10px;padding-right:10px" class=small nowrap>({$Think.session.userInfo.company})分公司</td>
+                        </if>
+                        <if condition="$Think.session.userInfo.department eq '客服部'">  
+                            <td style="padding-left:10px;padding-right:10px" class=small nowrap>部门:{$Think.session.userInfo.department}</td>
+                            <td style="padding-left:10px;padding-right:10px" class=small nowrap>接线员</td>
+                        </if>
+
+                        <td style="padding-left:10px;padding-right:10px" class=small nowrap> <a href="__APP__/Login/logout">({$Think.session.userInfo.name})退出</a></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+
+{//导航菜单}
+<table border=0 cellspacing=0 cellpadding=0 width=100% class="hdrTabBg">
+    <tr>
+        <td  class=small width="20%"></td>    
+        <td class=small nowrap> 
+            <table border=0 cellspacing=0 cellpadding=0 >
+                <tr>
+                    <td class=tabSeperator><img src="__PUBLIC__/Images/lihua_nav_line.gif" width="2px" height="34px"></td>        
+                    <volist name='MENU' id='tab' >
+                        <if condition="$key eq $CATEGORY">
+                            <td class="tabUnSelected"  onmouseover="fnDropDown(this,'{$key}_sub');" onmouseout="fnHideDrop('{$key}_sub');" align="center" nowrap><a href="__APP__/{$tab.0}">{$Think.lang.$key}</a>
+                                <img src="__PUBLIC__/Images/menuDnArrow.gif" border=0 style="padding-left:5px"></td>
+                            <td class="tabSeperator"><img class="tabSeperator"  src="__PUBLIC__/Images/lihua_nav_line.gif" width="2px" height="34px" /></td>
+                            <else/>
+                            <td class="tabSelected"  onmouseover="fnDropDown(this,'{$key}_sub');" onmouseout="fnHideDrop('{$key}_sub');" align="center" nowrap><a href="__APP__/{$tab.0}">{$Think.lang.$key}</a>
+                                <img src="__PUBLIC__/Images/menuDnArrow.gif" border=0 style="padding-left:5px"></td>
+                            <td class="tabSeperator"> <img class="tabSeperator"  src="__PUBLIC__/Images/lihua_nav_line.gif" width="2px" height="34px" /></td>
+                        </if>
+                    </volist>
+                </tr>
+            </table>
+        </td>
+        <td  class=small width="20%"></td>
+    </tr>
+</table>
+
+{//底部菜单}
+<table border=0 cellspacing=0 cellpadding=0 width=100% class="level2Bg" style="display:yes;">
+    <tr>
+        <td nowrap width="15%">所在位置：{$APP.$CATEGORY} </td>
+        <td>
+            <table border=0 cellspacing=0 cellpadding=0 >
+                <tr>
+                    <volist name='MENU' id='tab' >
+                        <if condition="trim($CATEGORY) eq trim($key)" >
+                            <volist name="tab" id="sub">
+                                <if condition="$sub eq $currentModule">
+                                    <td class="level2SelTab" nowrap ><a href="__APP__/{$sub}" ><font color="red">{$Think.lang.$sub}</font></a></td>
+                                    <else/>
+                                    <td class="level2UnSelTab" nowrap> <a href="__APP__/{$sub}">{$Think.lang.$sub}</a> </td>
+                                </if>  
+                                <td width="10px">&nbsp;&nbsp;&nbsp;</td>  
+                            </volist>
+                        </if>
+                    </volist>
+
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>        
+
+
+{//下拉菜单}
+<volist name="MENU"  id="tab" >
+    <div class="drop_mnu" id="{$key}_sub" onmouseout="fnHideDrop('{$key}_sub')" onmouseover="fnShowDrop('{$key}_sub')">
+        <table width="100%" border="0" cellpadding="0" cellspacing="0">
+            <volist name="tab" id="sub">    
+                <tr><td><a href="__APP__/{$sub}" class="drop_down">{$Think.lang.$sub}</a></td></tr>
+            </volist>
+        </table>
+    </div>
+</volist>
+
+
+
+
+    
+    
+

@@ -386,7 +386,7 @@ class InterfaceServerAction extends Action
         $data = array();
         $data['state'] = 1;
         $sendnameapp_model->where($where)->save($data);
-        var_dump($sendnameapp_model->getLastSql());
+        //var_dump($sendnameapp_model->getLastSql());
         echo 'ok';
     }
 

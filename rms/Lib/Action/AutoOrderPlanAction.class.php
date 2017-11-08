@@ -93,7 +93,7 @@
                     }
                 }
 
-                $where ['domain'] = $_SERVER ['HTTP_HOST'];
+                $where ['domain'] = $this->getDomain();
 
                 $total = $focus->where($where)->count(); // 查询满足要求的总记录数
 
@@ -245,7 +245,7 @@
                     }
                 }
 
-                $where ['domain'] = $_SERVER ['HTTP_HOST'];
+                $where ['domain'] = $this->getDomain();
 
 
                 $total = $focus->where($where)->count(); // 查询满足要求的总记录数
@@ -426,7 +426,7 @@
                     //组成复合查询
                     $map = array();
                     $map['_complex'] = $where;
-                    $map ['domain'] = $_SERVER ['HTTP_HOST'];
+                    $map ['domain'] = $this->getDomain();
                 }
                 $this->assign('searchTextValue', $searchText);
 
@@ -550,7 +550,7 @@
             //echo $products_model->getLastSql();
             //dump($orderproducts);
 
-            $this->assign('orderproducts',$orderproducts);
+            //$this->assign('orderproducts',$orderproducts);
 
             //查询送餐方式和送餐费的设置
             $this->assign('shippingname','分公司配送');
@@ -562,6 +562,16 @@
                 array('name'=>'餐饮')
             );
             $this->assign('invoicecontent',$invoicecontent);
+
+            $invoiceeleparaModel = D('invoiceelepara');
+            $where = array();
+            $where['domain'] = $this->getDomain();
+            $invoiceelepara = $invoiceeleparaModel->where($where)->find();
+            if(count($invoiceelepara) > 0){
+                $this->invoiceelectronopen = $invoiceelepara['invoiceelectron_open'];
+            }else{
+                $this->invoiceelectronopen = '关闭';
+            }
 
 
         }
@@ -852,7 +862,7 @@
             $data['autoorderplanid'] = $record;  //订单号
             $data['action'] = $name . ' '.date('Y-m-d').' 新建抄单单 '.$_REQUEST['address'].' '.$orderTxt;
             $data['logtime'] = date('H:i:s');
-            $data['domain'] = $_SERVER['HTTP_HOST'];
+            $data['domain'] = $this->getDomain();
             $autoactionModel->create();
             $result = $autoactionModel->add($data);
 
@@ -1193,13 +1203,10 @@
             $action['autoorderplanid'] = $record;  //订单号
             $action['action'] = $name .' '.date('Y-m-d'). ' 改单 '.$_REQUEST['address'].' '.$orderTxt ;
             $action['logtime'] = date('H:i:s');
-            $action['domain'] = $_SERVER['HTTP_HOST'];
+            $action['domain'] = $this->getDomain();
             $autoactionModel->create();
             $result = $autoactionModel->add($action);
         }
-
-
-
 
         //根据来电，返回来电的发票抬头
         public function getTelphoneHeader(){
@@ -1281,7 +1288,7 @@
                     $_REQUEST ['invoicebody']
                 ), // 发票内容
                 array('state','抄单'),
-                array('domain',$_SERVER['HTTP_HOST'])
+                array('domain',$this->getDomain())
             );
 
             return $auto;
@@ -1330,7 +1337,7 @@
                     $_REQUEST ['invoicebody']
                 ), // 发票内容
                 array('state','抄单'),
-                array('domain',$_SERVER['HTTP_HOST'])
+                array('domain',$this->getDomain())
             );
 
             return $auto;
@@ -1528,10 +1535,13 @@
                 $data['recdate'] = $orderValue['recdate'];
                 $data['state'] = '抄单';
                 $data['invoiceheader'] = $orderValue['invoiceheader'];
+                $data['gmf_dzdh'] = $orderValue['gmf_dzdh'];
+                $data['gmf_nsrsbh'] = $orderValue['gmf_nsrsbh'];
                 $data['invoicebody'] = $orderValue['invoicebody'];
+                $data['invoicetype'] = $orderValue['invoicetype'];
                 $data['shippingname'] = $orderValue['shippingname'];
                 $data['shippingmoney'] = $orderValue['shippingmoney'];
-                $data['domain'] = $_SERVER['HTTP_HOST'];
+                $data['domain'] = $this->getDomain();
                 $data['lastdatetime'] = date('Y-m-d H:i:s');
                 $orderformModel->create();
                 $record = $orderformModel->add($data);
@@ -1591,7 +1601,7 @@
                 $action['ordersn'] = $ordersn;  //订单号
                 $action['action'] = $name . '将抄单' . $orderValue['address'] . ' ' . $orderValue['ordertxt'] . '导入订单表中';
                 $action['logtime'] = date('Y-m-d H:i:s');
-                $action ['domain'] = $_SERVER['HTTP_HOST'];
+                $action ['domain'] = $this->getDomain();
                 $orderactionModel->create();
                 $result = $orderactionModel->add($action);
 
@@ -1603,7 +1613,7 @@
                 $data ['createcontent'] = $name . '导入抄单';
                 $data ['orderformid'] = $record;
                 $data ['ordersn'] = $ordersn;
-                $data ['domain'] = $_SERVER['HTTP_HOST'];
+                $data ['domain'] = $this->getDomain();
                 $orderstateModel->create();
                 $orderstateModel->add($data);
 
@@ -1623,7 +1633,7 @@
                     $data['header'] = substr($orderValue['invoiceheader'],0,80);
                     $data['body'] = $orderValue['invoicebody'];
                     if($orderValue['invoicetype'] == '电子票'){
-                        $data['type'] = 1;
+                        $data['type'] = 3;
                     }else{
                         $data['type'] = 2;  //普通发票
                     }
@@ -1636,7 +1646,7 @@
                     $data['ordertime'] = date('H:i:s');
                     $data['state'] = '未开';
                     $data['company'] =  '';
-                    $data['domain'] = $_SERVER['HTTP_HOST'];
+                    $data['domain'] = $this->getDomain();
                     $invoiceModel = D('Invoice');
                     $invoiceModel->create();
                     $invoice = $invoiceModel->add($data);

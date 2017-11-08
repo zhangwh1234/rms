@@ -1,0 +1,80 @@
+<script type="text/javascript">
+    $(document).ready(function() { 
+        //提交程序
+        $('#createView{$moduleName}').form({  
+            url:"__URL__/insert",
+            onSubmit: function(){  
+                if(submitIs == false){
+                    submitIs = true;
+                    return false;                    
+                }
+                submitIs = true;
+            },
+            success:function(data){ 
+            	updateTab(data);
+            }  
+        }); 
+
+        //form提交程序
+        $('#createView{$moduleName} input[name=createsave]').bind('click',function(){
+            //提交表单  
+            $('#createView{$moduleName}').submit();
+
+        }) 
+
+        //编辑的提交
+        $('#editView{$moduleName}').form({  
+            url:'__URL__/update',
+            onSubmit: function(){  
+                //进行表单验证  
+                //如果返回false阻止提交  
+            },  
+            success:function(data){ 
+            	updateTab(data);
+            }  
+        }); 
+
+        //form提交程序
+        $('#editView{$moduleName} input[name=editsave]').bind('click',function(){
+            //提交表单  
+            $('#editView{$moduleName}').submit();
+        })
+        
+         //按回车不自动提交
+        $('#createView{$moduleName} input[name=code]').keyup(function(event){
+            if(event.which == 13){
+                var inputCode = $(this).val();
+                $.ajax({
+                    type : "GET",
+                    url : "__URL__/getSendnameByCode/code/"+inputCode,
+                    dataType : "json",
+                    success : function(returnData){                 
+                        if(returnData['error'] == 'error'){
+                            $.messager.show({
+                                title:'提示',
+                                msg:'输入代码输入有误!',
+                                height:70,
+                                timeout:5000,
+                                showType:'slide',
+                                style:{
+                                    left:0,right:'',top:'',
+                                    bottom:-document.body.scrollTop-document.documentElement.scrollTop
+                                }
+                            });
+                            return false;
+                        }
+
+                        if(returnData['success'] == 'success'){ 
+                            //$('#createView{$moduleName} input[name=name]').val('eeee');
+                            handleData = returnData['data'];
+                            console.info(handleData.sendname);
+                            $('#createView{$moduleName} input[name=name]').val(handleData.sendname);
+                        }
+                    }
+
+                });  
+                return false;
+            }
+        }) 
+    });   
+</script>

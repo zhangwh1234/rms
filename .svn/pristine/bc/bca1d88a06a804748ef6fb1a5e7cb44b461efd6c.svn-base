@@ -1,0 +1,824 @@
+<?php
+// 定义订单分配模块
+class OrderDistributionAction extends ModuleAction {
+	// 定义编辑页面的菜单的路径
+	var $detailviewMenuPath = false;
+	// 定义查看页面的路径
+	var $detailviewPath = false;
+	
+	// listview
+	public function listview() {
+		// 取得模块的名称
+		$moduleName = $this->getActionName ();
+		$this->assign ( 'moduleName', $moduleName ); // 模块名称
+		                                             
+		// 启动当前模块
+		$focus = D ( $moduleName );
+		
+		// 取得对应的导航名称
+		$tabName = $focus->getTabName ( $moduleName );
+		$this->assign ( 'tabName', $tabName ); // 导航民
+		                                       
+		// 启动列表菜单
+		$this->listviewMenu ();
+		
+		// 生成list字段列表
+		$listFields = $focus->listFields;
+		
+		// 模块的ID
+		$moduleId = $focus->getPk ();
+		
+		// 加入模块id到listHeader中
+		$listHeader = $listFields;
+		$this->assign ( "listHeader", $listHeader ); // 列表头
+		$this->assign ( 'returnAction', 'listview' ); // 定义返回的方法
+		                                              		
+		$this->display ( 'OrderDistribution/listview' );
+	}
+	
+	/**
+	 * listview的菜单
+	 */
+	public function listviewMenu() {
+		$this->display ( 'OrderDistribution/listviewmenu' );
+	}
+	
+	// 返回ajax 所有的订单
+	public function alllistjson() {
+		// 取得模块的名称
+		$moduleName = $this->getActionName ();
+		$this->assign ( 'moduleName', $moduleName ); // 模块名称
+		                                             
+		// 启动当前模块
+		$focus = D ( $moduleName );
+		
+		// 生成list字段列表
+		$listFields = $focus->listFields;
+		
+		// 模块的ID
+		$moduleId = $focus->getPk ();
+		
+		// 加入模块id到listHeader中
+		$listHeader = $listFields;
+		$this->assign ( "listHeader", $listHeader ); // 列表头
+		                                             
+		// 取得显示页数
+		$pageNumber = $_REQUEST ['page'];
+		if (empty ( $pageNumber )) {
+			$pageNumber = 1;
+		}
+		
+		// 导入分页类
+		import ( 'ORG.Util.Page' ); // 导入分页类
+		$where = array ();
+		$where [] = ' length(trim(company)) = 0 ';
+		$where [] = " not (state like '已%')";
+		$where ['ap'] = $this->getAp ();
+		$where ['domain'] = $_SERVER['HTTP_HOST'];
+		$total = $focus->where ( $where )->count (); // 查询满足要求的总记录数
+		                                             // 查session取得page的firstRos和listRows
+		if (isset ( $_SESSION [$moduleName . 'firstRowlistview'] )) {
+			$Page->firstRow = $_SESSION [$moduleName . 'firstRowlistview'];
+		}
+		$listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
+		if (isset ( $listMaxRows )) {
+			$Page->listRows = $listMaxRows;
+		} else {
+			$listMaxRows = 15;
+		}
+		// 取得页数
+		$_GET ['p'] = $pageNumber;
+		$Page = new Page ( $total, $listMaxRows );
+		
+		// 分公司的名称
+		$userInfo = $_SESSION ['userInfo'];
+		$company = $userInfo ['company'];
+		
+		// 进行分页数据查询 注意limit方法的参数要使用Page类的属性
+		// 查询模块的数据
+		$select_fields = $list_fields;
+		array_unshift ( $select_fields, 'orderformid' );
+		$where = array ();
+		$where [] = ' length(trim(company)) = 0 ';
+		$where [] = " not (state like '已%')";
+		$where ['ap'] = $this->getAp ();
+		$where ['domain'] = $_SERVER['HTTP_HOST'];
+		$listResult = $focus->where ( $where )->field ( $select_fields )->limit ( $Page->firstRow . ',' . $Page->listRows )->order ( "$moduleId asc" )->select ();
+		
+		if (empty ( $listResult )) {
+			$listResult = array ();
+		}
+		$orderDistributionArray ['total'] = $total;
+		$orderDistributionArray ['rows'] = $listResult;
+		
+		$this->ajaxReturn ( $orderDistributionArray, 'JSON' );
+	}
+	
+	// 显示产品明细等
+	public function showproducts() {
+		// 取得记录号
+		$record = $_REQUEST ['orderformid'];
+		
+		// 设置查询条件
+		$where ['orderformid'] = $record;
+		
+		$orderproductsModel = D ( 'Orderproducts' );
+		
+		// 取得订单产品信息
+		$orderproducts = $orderproductsModel->where ( $where )->select ();
+		// 返回数据
+		$this->ajaxReturn ( $orderproducts, 'JSON' );
+	}
+	
+	/* 查询 */
+	public function searchviewForAddress() {		
+		// 取得模块的名称
+		$moduleName = $this->getActionName ();
+		$this->assign ( 'moduleName', $moduleName ); // 模块名称
+		$this->assign ( 'actionName', 'searchviewForAddress' ); // 输出程序名称
+		
+		// 如果是从listviewMenu进入的，必须删除session['where']
+		if (isset ( $_REQUEST ['delsession'] )) {
+			unset ( $_SESSION ['searchText' . $moduleName . 'Address'] );
+			unset ( $_SESSION ['searchAp' . $moduleName . 'Address'] );
+		}
+		                                                        
+		// 启动当前模块
+		$focus = D ( $moduleName );
+		
+		// 取得对应的导航名称
+		$tabName = $focus->getTabName ( $moduleName );
+		$this->assign ( 'tabName', $tabName ); // 导航民
+		
+		$this->assign ( 'operName', '地址查询操作' );
+		
+		// 生成list字段列表
+		$listFields = $focus->listFields;
+		// 模块的ID
+		$moduleId = $focus->getPk ();
+		
+		// 加入模块id到listHeader中
+		$listHeader = $listFields;
+		$this->assign ( "listHeader", $listHeader ); // 列表头
+		$this->assign ( 'returnAction', 'searchviewForAddress' ); // 定义返回的方法
+		                                                          
+		// 建立查询条件
+		$where = array ();
+		$searchText = $_REQUEST ['searchTextAddress']; // 查询内容
+		if (isset ( $searchText )) {
+			$where ['address'] = array (
+					'like',
+					'%' . $searchText . '%' 
+			);
+			$this->assign ( 'searchTextValue', $searchText );
+			$_SESSION ['searchText' . $moduleName . 'Address'] = $searchText;
+		} else {
+			if (isset ( $_SESSION ['searchText' . $moduleName . 'Address'] )) {
+				$where ['address'] = array (
+						'like',
+						'%' . $_SESSION ['searchText' . $moduleName . 'Address'] . '%' 
+				);
+				$this->assign ( 'searchTextValue', $_SESSION ['searchText' . $moduleName . 'Address'] );
+			}
+		}
+		
+		// 查询的午别
+		$searchAp = $_REQUEST ['searchAp'];
+		if (isset ( $searchAp )) {
+			if ($searchAp == '全天') {
+			} else {
+				$where ['ap'] = $searchAp;
+				$_SESSION ['searchAp' . $moduleName . 'Address'] = $searchAp;
+				$this->assign ( 'searchApValue', $searchAp );
+			}
+		} else {
+			if (isset ( $_SESSION ['searchAp' . $moduleName . 'Address'] )) {
+				$where ['ap'] = $_SESSION ['searchAp' . $moduleName . 'Address'];
+				$this->assign ( 'searchApValue', $_SESSION ['searchAp' . $moduleName . 'Address'] );
+			} else { // 如果没有指定上午或者下午，那取当前时间的上午和下午
+				$where ['ap'] = $this->getAp ();
+				$this->assign ( 'searchApValue', $this->getAp () );
+			}
+		}
+		
+		$where ['domain'] = $_SERVER['HTTP_HOST'];
+		// 导入分页类
+		import ( 'ORG.Util.NewPage' ); // 导入分页类
+		$total = $focus->where ( $where )->count (); // 查询满足要求的总记录数
+		                                             // 查session取得page的firstRos和listRows
+		if (isset ( $_SESSION [$moduleName . 'firstRowSearchview'] )) {
+			$Page->firstRow = $_SESSION [$moduleName . 'firstRowSearchview'];
+		}
+		$listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
+		if (isset ( $listMaxRows )) {
+			$Page->listRows = $listMaxRows;
+		} else {
+			$listMaxRows = 15;
+		}
+		
+		$Page = new NewPage ( $total, $listMaxRows );
+		$show = $Page->show ();
+		
+		// 查询模块的数据
+		$selectFields = $listFields;
+		array_unshift ( $selectFields, $moduleId );
+		$listResult = $focus->field ( $selectFields )->where ( $where )->limit ( $Page->firstRow . ',' . $Page->listRows )->order ( "$moduleId desc" )->select ();
+		// 从数据中列出列表的数据
+		$listviewEntries = $this->getListviewEntity ( $listResult, $moduleId );
+		
+		$this->assign ( 'moduleId', $moduleId );
+		$this->assign ( 'listEntries', $listviewEntries );
+		$this->assign ( 'page', $show ); // 赋值分页输出
+		$this->assign ( 'returnAction', 'searchviewForAddress' ); // 定义返回的方法
+		
+		$this->display ( $moduleName . '/searchviewmenu' );
+		$this->display ( $moduleName . '/searchviewoptionaddress' ); // 查询参数选择
+		$this->display ( $moduleName . '/searchviewlist' ); // 查询的结果显示
+	}
+	
+	/* 查询配送店 */
+	public function searchviewForCompany() {
+		
+		// 取得模块的名称
+		$moduleName = $this->getActionName ();
+		$this->assign ( 'moduleName', $moduleName ); // 模块名称
+		$this->assign ( 'actionName', 'searchviewForAddress' ); // 输出程序名称
+		                                                        		
+		// 如果是从listviewMenu进入的，必须删除session['where']
+		if (isset ( $_REQUEST ['delsession'] )) {
+			unset ( $_SESSION ['searchText' . $moduleName . 'Company'] );
+			unset ( $_SESSION ['searchAp' . $moduleName . 'Company'] );
+		}
+		
+		// 启动当前模块
+		$focus = D ( $moduleName );
+		
+		// 取得对应的导航名称
+		$tabName = $focus->getTabName ( $moduleName );
+		$this->assign ( 'tabName', $tabName ); // 导航民
+		$this->assign ( 'operName', '分店查询操作' );
+		
+		// 生成list字段列表
+		$listFields = $focus->listFields;
+		// 模块的ID
+		$moduleId = $focus->getPk ();
+		
+		// 加入模块id到listHeader中
+		$listHeader = $listFields;
+		$this->assign ( "listHeader", $listHeader ); // 列表头
+		$this->assign ( 'returnAction', 'searchviewForCompany' ); // 定义返回的方法
+		                                                          
+		// 建立查询条件
+		$where = array ();
+		$searchCompany = $_REQUEST ['searchCompany']; // 查询地址
+		if (isset ( $searchCompany )) {
+			$where ['company'] = $searchCompany;
+			$this->assign ( 'searchCompany', $searchCompany );
+			$_SESSION ['searchCompanyOrderDistribution'] = $searchCompany;
+		} else {
+			if (isset ( $_SESSION ['searchComapnyOrderDistribution'] )) {
+				$where ['company'] = $_SESSION ['searchCompanyOrderDistribution'];
+				$this->assign ( 'searchCompany', $_SESSION ['searchCompanyOrderDistribution'] );
+			}
+		}
+		// 建立查询条件
+		$where = array ();
+		$searchText = $_REQUEST ['searchTextCompany']; // 查询内容
+		if (isset ( $searchText )) {
+			$where ['company'] = array (
+					'like',
+					'%' . $searchText . '%'
+			);
+			$this->assign ( 'searchTextValue', $searchText );
+			$_SESSION ['searchText' . $moduleName . 'Company'] = $searchText;
+		} else {
+			if (isset ( $_SESSION ['searchText' . $moduleName . 'Company'] )) {
+				$where ['company'] = array (
+						'like',
+						'%' . $_SESSION ['searchText' . $moduleName . 'Company'] . '%'
+				);
+				$this->assign ( 'searchTextValue', $_SESSION ['searchText' . $moduleName . 'Company'] );
+			}
+		}
+		
+			// 查询的午别
+		$searchAp = $_REQUEST ['searchAp'];
+		if (isset ( $searchAp )) {
+			if ($searchAp == '全天') {
+			} else {
+				$where ['ap'] = $searchAp;
+				$_SESSION ['searchAp' . $moduleName . 'Address'] = $searchAp;
+				$this->assign ( 'searchApValue', $searchAp );
+			}
+		} else {
+			if (isset ( $_SESSION ['searchAp' . $moduleName . 'Address'] )) {
+				$where ['ap'] = $_SESSION ['searchAp' . $moduleName . 'Address'];
+				$this->assign ( 'searchApValue', $_SESSION ['searchAp' . $moduleName . 'Address'] );
+			} else { // 如果没有指定上午或者下午，那取当前时间的上午和下午
+				$where ['ap'] = $this->getAp ();
+				$this->assign ( 'searchApValue', $this->getAp () );
+			}
+		}
+		$where ['domain'] = $_SERVER['HTTP_HOST'];
+		// 导入分页类
+		import ( 'ORG.Util.Page' ); // 导入分页类
+		$total = $focus->where ( $where )->count (); // 查询满足要求的总记录数
+		                                             // 查session取得page的firstRos和listRows
+		if (isset ( $_SESSION [$moduleName . 'firstRowSearchview'] )) {
+			$Page->firstRow = $_SESSION [$moduleName . 'firstRowSearchview'];
+		}
+		$listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
+		if (isset ( $listMaxRows )) {
+			$Page->listRows = $listMaxRows;
+		} else {
+			$listMaxRows = 15;
+		}
+		
+		$Page = new Page ( $total, $listMaxRows );
+		$show = $Page->show ();
+		
+		// 查询模块的数据
+		$selectFields = $listFields;
+		array_unshift ( $selectFields, $moduleId );
+		$listResult = $focus->field ( $selectFields )->where ( $where )->limit ( $Page->firstRow . ',' . $Page->listRows )->order ( "$moduleId desc" )->select ();
+		// var_dump($focus->getLastSql());
+		// 从数据中列出列表的数据
+		$listviewEntries = $this->getListviewEntity ( $listResult, $moduleId );
+		
+		$this->assign ( 'moduleId', $moduleId );
+		$this->assign ( 'listEntries', $listviewEntries );
+		$this->assign ( 'page', $show ); // 赋值分页输出
+		
+		$this->display ( 'searchviewmenu' );
+		$this->display ( 'searchviewoptioncompany' ); // 查询参数选择
+		$this->display ( 'searchviewlist' ); // 查询的结果显示
+	}
+	
+	/* 取得打印需要的数据 */
+	function getPrintOrder() {
+		// 取得订单号
+		$record = $_REQUEST ['orderformid'];
+		// 查询订单
+		$orderform_model = D ( 'Orderform' );
+		$orderform = $orderform_model->where ( "orderformid=$record" )->find ();
+		// 查询订货
+		$orderproducts_model = D ( 'Orderproducts' );
+		$orderproducts = $orderproducts_model->where ( "orderformid=$record" )->select ();
+		// echo $orderproducts_model->getLastSql();
+		$order ['orderform'] = $orderform;
+		$order ['orderproducts'] = $orderproducts;
+		
+		$this->ajaxReturn ( $order, 'JSON' );
+	}
+	
+	/* 设定订单已打印状态 */
+	function setOrderPrinted() {
+		// 取得订单号
+		$record = $_REQUEST ['orderformid'];
+		// 查询订单
+		$orderform_model = D ( 'Orderform' );
+		$data ['state'] = '已打印';
+		$result = $orderform_model->where ( "orderformid=$record" )->save ( $data );
+		echo $orderform_model->getLastSql ();
+	}
+	
+	// 设置打印机类型
+	public function setprintupdateview() {
+		// 返回当前的模块名
+		$currentModule = $this->getActionName ();
+		// var_dump($currentModule);
+		$focus = D ( $currentModule );
+		
+		// 引入模块菜单
+		$Modulemenu = A ( 'ModuleMenu' );
+		$Modulemenu->index ( $this->getActionName (), 'createview' );
+		
+		// 分公司的名称
+		$userInfo = $_SESSION ['userInfo'];
+		$name = $userInfo ['company'];
+		
+		$companymgr_model = D ( 'Companymgr' );
+		$printtype = $companymgr_model->field ( 'printtype' )->where ( "name='$name'" )->find ();
+		// dump($printtype);
+		
+		$this->assign ( 'printtype', $printtype ['printtype'] ); // 指定字段获得焦点
+		                                                         
+		// dump($this->blocks);
+		$this->display ( 'OrderHandle/setprintupdateview' );
+	}
+	
+	// 保存打印设置
+	public function saveSetPrint() {
+		
+		// 打印类型
+		$printtype = $_REQUEST ['printtypesetup'];
+		// var_dump($printtype);
+		
+		// 分公司的名称
+		$userInfo = $_SESSION ['userInfo'];
+		$name = $userInfo ['company'];
+		
+		$companymgr_model = D ( 'Companymgr' );
+		$data ['printtype'] = $printtype;
+		$result = $companymgr_model->where ( "name='$name'" )->save ( $data );
+		// echo $companymgr_model->getLastSql();
+		
+		// 保存成功
+		// $this->redirect("OrderHandle/setprintdetailview", array(), 0, '页面跳转中...');
+		$returnArr = array ();
+		$this->ajaxReturn ( $returnArr, 'JSON' );
+	}
+	
+	// 显示打印设置的保存结果
+	public function setprintdetailview() {
+		// 返回当前的模块名
+		$currentModule = $this->getActionName ();
+		// var_dump($currentModule);
+		$focus = D ( $currentModule );
+		
+		// 引入模块菜单
+		$Modulemenu = A ( 'ModuleMenu' );
+		$Modulemenu->index ( $this->getActionName (), 'createview' );
+		
+		// 分公司的名称
+		$userInfo = $_SESSION ['userInfo'];
+		$name = $userInfo ['company'];
+		
+		$companymgr_model = D ( 'Companymgr' );
+		$printtype = $companymgr_model->field ( 'printtype' )->where ( "name='$name'" )->find ();
+		// dump($printtype);
+		$this->assign ( 'printtype', $printtype ['printtype'] );
+		$this->display ();
+	}
+	
+	/* 返回分公司订单的情况 */
+	function getOrderMonit() {
+		// 分公司的名称
+		$userInfo = $_SESSION ['userInfo'];
+		$company = $userInfo ['company'];
+		
+		$ordermonitModel = D ( 'Ordermonit' );
+		$where = array ();
+		$where ['name'] = '全部';
+		$ordermonit = $ordermonitModel->where ( $where )->select ();
+		if (empty ( $ordermonit )) {
+			$ordermonit = array ();
+		}
+		// echo $ordermonit_model->getLastSql();
+		$this->ajaxReturn ( $ordermonit, 'JSON' );
+	}
+	
+	/* 分会分公司的分配名称和代码 */
+	function getCompanyMgr() {
+		$companymgr_model = D ( 'Companymgr' );
+		$companyMgr = $companymgr_model->field ( "name,distributionCode" )->select ();
+		$this->ajaxReturn ( $companyMgr, 'JSON' );
+	}
+	
+		
+	/**
+	 * 其他条件查询
+	 */
+	public function searchviewForOther() {
+		// 取得模块的名称
+		$moduleName = $this->getActionName ();
+		$this->assign ( 'moduleName', $moduleName ); // 模块名称
+		                                             
+		// 启动当前模块
+		$focus = D ( $moduleName );
+		
+		// 取得对应的导航名称
+		$tabName = $focus->getTabName ( $moduleName );
+		$this->assign ( 'tabName', $tabName );
+		$this->assign ( 'operName', '其他查询操作' );
+		
+		// 生成list字段列表
+		$listFields = $focus->listFields;
+		// 模块的ID
+		$moduleId = $focus->getPk ();
+		
+		// 加入模块id到listHeader中
+		// array_unshift($listFields,$moduleNameId);
+		$listHeader = $listFields;
+		$this->assign ( "listHeader", $listHeader ); // 列表头
+		$this->assign ( 'returnAction', 'searchview' ); // 定义返回的方法
+		                                                
+		// 建立查询条件
+		$where = array ();
+		$searchText = $_REQUEST ['searchText']; // 查询内容
+		foreach ( $focus->searchFields as $value ) {
+			$where [$value] = array (
+					'like',
+					'%' . $searchText . '%' 
+			);
+		}
+		$where ['_logic'] = 'OR';
+		$map['_complex'] = $where;
+		$map['domain'] = $_SERVER['HTTP_HOST'];
+		
+		$this->assign ( 'searchTextValue', $searchText );
+		
+		// 导入分页类
+		import ( 'ORG.Util.Page' ); // 导入分页类
+		$total = $focus->where ( $map )->count (); // 查询满足要求的总记录数
+		                                           // 查session取得page的firstRos和listRows
+		if (isset ( $_SESSION [$moduleName . 'firstRowSearchview'] )) {
+			$Page->firstRow = $_SESSION [$moduleName . 'firstRowSearchview'];
+		}
+		$listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
+		if (isset ( $listMaxRows )) {
+			$Page->listRows = $listMaxRows;
+		} else {
+			$listMaxRows = 15;
+		}
+		
+		$Page = new Page ( $total, $listMaxRows );
+		$show = $Page->show ();
+		
+		// 查询模块的数据
+		$selectFields = $listFields;
+		array_unshift ( $selectFields, $moduleId );
+		$listResult = $focus->field ( $selectFields )->where ( $map )->limit ( $Page->firstRow . ',' . $Page->listRows )->order ( "$moduleId desc" )->select ();
+
+		// 从数据中列出列表的数据
+		$listviewEntries = $this->getListviewEntity ( $listResult, $moduleId );
+		
+		$this->assign ( 'moduleId', $moduleId );
+		$this->assign ( 'listEntries', $listviewEntries );
+		$this->assign ( 'page', $show ); // 赋值分页输出
+		
+		$searchOption = $focus->searchFields;
+		$this->assign ( 'searchOption', $searchOption );
+		$this->assign ( 'returnAction', 'searchview' ); // 定义返回的方法
+		
+		$this->display ( 'OrderForm/searchviewmenu' );
+		$this->display ( 'OrderDistribution/searchviewoptionother' ); // 查询参数选择
+		$this->display ( 'OrderDistribution/searchviewlist' ); // 查询的结果显示
+	}
+	
+	// 作废订单的页面
+	public function cancelview() {
+		// 取得模块的名称
+		$moduleName = $this->getActionName ();
+		$this->assign ( 'moduleName', $moduleName ); // 模块名称
+		                                             
+		// 启动当前模块
+		$focus = D ( $moduleName );
+		
+		// 取得对应的导航名称
+		$tabName = $focus->getTabName ( $moduleName );
+		$this->assign ( 'tabName', $tabName ); // 导航民
+		                                       
+		// 取得返回的是列表还是查询列表
+		$returnAction = $_REQUEST ['returnAction'];
+		$this->assign ( 'returnAction', $returnAction );
+		
+		// 启动列表菜单
+		if ($this->detailviewMenuPath) {
+			$this->display ( 'Module/detailviewmenu' );
+		} else {
+			$this->display ( $moduleName . '/detailviewmenu' );
+		}
+		
+		// 模块的ID
+		$moduleId = $focus->getPk ();
+		
+		// 返回新建区块和字段
+		// $blocks = $focus->detailBlocks();
+		
+		// 回调主程序需要的参数,比如下拉框的数据
+		// $this->returnMainFnPara();
+		
+		// 取得记录ID
+		$record = $_REQUEST ['record'];
+		$where [$moduleId] = $record;
+		
+		// 返回模块的行记录
+		$result = $focus->where ( $where )->find ();
+		
+		// 返回区块
+		$blocks = $focus->detailBlocks ( $result );
+		
+		$this->assign ( 'blocks', $blocks );
+		$this->assign ( 'record', $record );
+		
+		// 返回从表的内容
+		$this->get_slave_table ( $record );
+		
+		$this->display ( $moduleName . '/cancelview' );
+	}
+	
+	/**
+	 * 根据输入的编码处理订单
+	 * code 输入的编码
+	 */
+	public function orderDistributionByCode() {
+		// 取得模块的名称
+		$moduleName = $this->getActionName ();
+		$this->assign ( 'moduleName', $moduleName ); // 模块名称
+		                                             
+		// 启动当前模块的模型
+		$focus = D ( $moduleName );
+		
+		// 分公司的名称
+		$userInfo = $this->userInfo;
+		$company = $userInfo ['department'];
+		
+		// 获得处理过了的编码
+		$code = $_REQUEST ['code'];
+				
+		// 定义返回的数组
+		$returnInfo = array ();
+		
+		/**
+		 * 先编辑配送店的编码 **
+		 */
+		// 根据编码取得配送点名字
+		$companyMgrModel = D ( 'CompanyMgr' );
+		$where ['distributionCode'] = $code; // 配送点的编号
+		$companymgrResult = $companyMgrModel->field ( 'name,distributioncode' )->where ( $where )->find ();
+		if ($companymgrResult) {
+			$companyName = $companymgrResult ['name'];
+		} else {
+			$returnInfo ['error'] = 'error';
+			$returnInfo ['msg'] = '没有查到信息';
+			$this->ajaxReturn ( $returnInfo );
+		}
+		
+		// 根据配送信息，处理订单
+		$orderformid = $_REQUEST ['orderformid'];
+		//获得订单号
+		$where = array();
+		$where['orderformid'] = $orderformid;
+		$orderformResult = $focus->field('ordersn')->where($where)->find();
+		$ordersn = $orderformResult['ordersn'];
+		
+		$data = array();
+		$data ['company'] = $companyName;
+		$where = array();
+		$where ['orderformid'] = $orderformid;
+		$focus->where ( $where )->save ( $data );
+		var_dump($focus->getLastSql());
+		
+		// 同时写入日志中
+		// 记入操作到action中
+		$orderactionModel = D ( 'Orderaction' );
+		$orderactionData ['ordersn'] = $ordersn; // 订单号
+		$company = $data ['company'];
+		$orderactionData ['action'] = "订单分配给" . $companyName . "配送点";
+		$orderactionData ['logtime'] = date ( 'H:i:s' );
+		$orderactionModel->create ();
+		$result = $orderactionModel->add ( $orderactionData );
+		
+		// 写入到状态表中
+		$orderstateModel = D ( 'Orderstate' );
+		$data = array ();
+		$data ['distribution'] = 1;
+		$data ['distributiontime'] = date ( 'Y-m-d H:i:s' );
+		$data ['distributioncontent'] = $companyName;
+		$where = array ();
+		$where ['orderformid'] = $orderformid;
+		$orderstateModel->where ( $where )->save ( $data );
+		
+		// 写入到营收状态表
+		$orderyingshouexchangeModel = D ( 'Orderyingshouexchange' );
+		$data = array ();
+		$data ['orderformid'] = $orderformid;
+		$data ['ordersn'] = $ordersn;
+		$data ['status'] = 0;
+		$orderyingshouexchangeModel->create ();
+		$orderyingshouexchangeModel->add ( $data );
+		
+		// 定义返回
+		$returnInfo ['success'] = 'success';
+		$returnInfo ['data'] = $orderformData;
+		$this->ajaxReturn ( $returnInfo, 'JSON' );
+	}
+	
+	// 输入代码，获得分公司名字
+	public function getCompanyByCode() {
+		
+		// 获得处理过了的编码
+		$code = $_REQUEST ['code'];
+		
+		// 定义返回的数组
+		$returnInfo = array ();
+		
+		/**
+		 * 先编辑配送店的编码 **
+		 */
+		// 根据编码取得配送点名字
+		$companyMgrModel = D ( 'CompanyMgr' );
+		$where ['distributionCode'] = $code; // 配送点的编号
+		$companymgrResult = $companyMgrModel->field ( 'name,distributioncode' )->where ( $where )->find ();
+		$companyName = array ();
+		if ($companymgrResult) {
+			$companyName ['company'] = $companymgrResult ['name'];
+		} else {
+			$returnInfo ['error'] = 'error';
+			$returnInfo ['msg'] = '没有查到信息';
+			$this->ajaxReturn ( $returnInfo );
+		}
+		
+		// 定义返回
+		$returnInfo ['success'] = 'success';
+		$returnInfo ['data'] = $companyName;
+		$this->ajaxReturn ( $returnInfo, 'JSON' );
+	}
+	
+	// 作废订单
+	public function cancel() {
+		// 取得模块的名称
+		$moduleName = $this->getActionName ();
+		$this->assign ( 'moduleName', $moduleName ); // 模块名称
+		                                             
+		// 启动当前模块
+		$focus = D ( $moduleName );
+		
+		// 订单号
+		$record = $_REQUEST ['record'];
+		// 将订单状态设为已作废
+		$where = array ();
+		$where ['orderformid'] = $record;
+		$data = array ();
+		$data ['state'] = '已作废';
+		$focus->where ( $where )->save ( $data );
+		
+		//获得ordersn
+		$orderformResult = $focus->where($where)->find();
+		$ordersn = $orderformResult['ordersn'];
+		
+		// 同时写入日志中
+		// 记入操作到action中
+		$orderactionModel = D ( 'Orderaction' );
+		$orderactionData ['ordersn'] = $ordersn;
+		$company = '联络员';
+		$orderactionData ['action'] = "订单联络员作废";
+		$orderactionData ['logtime'] = date ( 'H:i:s' );
+		$orderactionModel->create ();
+		$result = $orderactionModel->add ( $orderactionData );
+		
+		// 写入到状态表中
+		$orderstateModel = D ( 'Orderstate' );
+		$data = array ();
+		$data ['cancel'] = 1;
+		$data ['canceltime'] = date ( 'Y-m-d H:i:s' );
+		$data ['cancelcontent'] = '联络员';
+		$where = array ();
+		$where ['orderformid'] = $record;
+		$orderstateModel->where ( $where )->save ( $data );
+		
+		// 取得对应的导航名称
+		$tabName = $focus->getTabName ( $moduleName );
+		$this->assign ( 'tabName', $tabName ); // 导航民
+		                                       
+		// 启动列表菜单
+		$this->listviewMenu ();
+		
+		// 生成list字段列表
+		$listFields = $focus->listFields;
+		
+		// 模块的ID
+		$moduleId = $focus->getPk ();
+		
+		// 加入模块id到listHeader中
+		$listHeader = $listFields;
+		$this->assign ( "listHeader", $listHeader ); // 列表头
+		$this->assign ( 'returnAction', 'listview' ); // 定义返回的方法
+		                                              
+		// 导入分页类
+		import ( 'ORG.Util.Page' ); // 导入分页类
+		$total = $focus->count (); // 查询满足要求的总记录数
+		                           // 查session取得page的firstRos和listRows
+		if (isset ( $_SESSION [$moduleName . 'firstRowlistview'] )) {
+			$Page->firstRow = $_SESSION [$moduleName . 'firstRowlistview'];
+		}
+		$listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
+		if (isset ( $listMaxRows )) {
+			$Page->listRows = $listMaxRows;
+		} else {
+			$listMaxRows = 15;
+		}
+		
+		$Page = new Page ( $total, $listMaxRows );
+		$show = $Page->show ();
+		
+		// 查询模块的数据
+		$selectFields = $listFields;
+		array_unshift ( $selectFields, $moduleId );
+		
+		$listResult = $focus->field ( $selectFields )->limit ( $Page->firstRow . ',' . $Page->listRows )->order ( "$moduleId desc" )->select ();
+		
+		// 从数据中列出列表的数据
+		$listviewEntries = $this->getListviewEntity ( $listResult, $moduleId );
+		
+		$this->assign ( 'list_link_field', $focus->list_link_field );
+		$this->assign ( 'moduleId', $moduleId );
+		$this->assign ( 'listEntries', $listviewEntries );
+		$this->assign ( 'page', $show ); // 赋值分页输出
+		
+		$this->display ( 'OrderDistribution/listview' );
+	}
+}
+
+?>

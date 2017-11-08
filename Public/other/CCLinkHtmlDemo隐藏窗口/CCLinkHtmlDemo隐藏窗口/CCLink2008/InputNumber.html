@@ -1,0 +1,226 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>输入号码</title>
+    <style type="text/css">
+        body{
+	        margin: 0;
+	        padding: 0;
+        }
+        .container{
+	        border: 1px solid gray;
+	        padding: 5px;
+	        width: 206px;
+	        height: 202px;
+	        float: left;
+        }
+        .container .header{
+	        background: #B7B7B7;
+	        border: 1px solid gray;
+	        line-height: 17px;
+	        font-size: 12px;
+	        padding: 5px;
+	        position: relative;
+        }
+        .container .header .msg{
+	        position: absolute;
+	        right: 35px;
+	        cursor: pointer;
+        }
+        .container .header .user_manage{
+	        position: absolute;
+	        right: 10px;
+	        cursor: pointer;
+        }
+        .container .number{
+	        border: 1px solid gray;
+	        margin-top: 5px;
+	        position: relative;
+        }
+        .container .number input{
+	        width: 194px;
+	        padding: 5px;
+	        border: 0;
+	        color: gray;
+        }
+        .container .bhp{
+	        border-collapse: collapse;
+        }
+        .container .bhp td{
+	        text-align: center;
+	        color: #FFF;
+	        padding: 4px 4px 0 0;
+	        font-weight: bold;
+        }
+        .container .bhp td div{
+	        background: gray;
+	        line-height: 30px;
+	        cursor: pointer;
+	
+        }
+        .btn{
+	        background: #808080;
+	        border-left: 1px solid gray;
+	        border-top: 1px solid gray;
+	        border-right: 1px solid black;
+	        border-bottom: 1px solid black;
+	        margin: 2px;
+	        padding: 4px 2px 2px 2px;
+	        overflow: visible;
+	        width: 70px;
+	        color: #FFF;
+        }
+    </style>
+    <script language="javascript" type="text/javascript">
+        function OnButtonClick(tag) {
+            switch (tag) {
+                case 1:  //1
+                    {
+                        document.getElementById("txtNumber").value = document.getElementById("txtNumber").value + "1";
+                    }
+                    break;
+                case 2:  //2
+                    {
+                        document.getElementById("txtNumber").value = document.getElementById("txtNumber").value + "2";
+                    }
+                    break;
+                case 3:  //3
+                    {
+                        document.getElementById("txtNumber").value = document.getElementById("txtNumber").value + "3";
+                    }
+                    break;
+                case 4:  //4
+                    {
+                        document.getElementById("txtNumber").value = document.getElementById("txtNumber").value + "4";
+                    }
+                    break;
+                case 5:  //5
+                    {
+                        document.getElementById("txtNumber").value = document.getElementById("txtNumber").value + "5";
+                    }
+                    break;
+                case 6:  //6
+                    {
+                        document.getElementById("txtNumber").value = document.getElementById("txtNumber").value + "6";
+                    }
+                    break;
+                case 7:  //7
+                    {
+                        document.getElementById("txtNumber").value = document.getElementById("txtNumber").value + "7";
+                    }
+                    break;
+                case 8:  //8
+                    {
+                        document.getElementById("txtNumber").value = document.getElementById("txtNumber").value + "8";
+                    }
+                    break;
+                case 9:  //9
+                    {
+                        document.getElementById("txtNumber").value = document.getElementById("txtNumber").value + "9";
+                    }
+                    break;
+                case 0:  //0
+                    {
+                        document.getElementById("txtNumber").value = document.getElementById("txtNumber").value + "0";
+                    }
+                    break;
+                case 10:  //*
+                    {
+                        document.getElementById("txtNumber").value = document.getElementById("txtNumber").value + "*";
+                    }
+                    break;
+                case 11:  //#
+                    {
+                        document.getElementById("txtNumber").value = document.getElementById("txtNumber").value + "#";
+                    }
+                    break;
+                case 12:  //确定
+                    {
+                        if (window.opener) {
+                            window.opener.cclinkMakeCall(document.getElementById("txtNumber").value);
+                        }
+                        window.close();
+                    }
+                    break;
+                case 13:  //回退
+                    {
+                        var value = document.getElementById("txtNumber").value;
+                        if (value.length > 0) {
+                            document.getElementById("txtNumber").value = value.substring(0, value.length - 1);
+                        }
+                    }
+                    break;
+                case 14:  //取消
+                    {
+                        window.close();
+                    }
+                    break;
+            }
+        }
+
+        function OnNumberKeyPress(e) {
+            var keynum
+            var keychar
+            var numcheck
+
+            if (window.event) // IE
+            {
+                keynum = e.keyCode
+            }
+            else if (e.which) // Netscape/Firefox/Opera
+            {
+                keynum = e.which
+            }
+            if (keynum == 13) {
+                if (window.opener) {
+                    window.opener.cclinkMakeCall(document.getElementById("txtNumber").value);
+                }
+                window.close();
+            }
+        }
+
+        window.onload = function () {
+            document.getElementById("txtNumber").focus();
+        }
+    </script>
+</head>
+
+    <body>
+        <div style="margin: auto; width: 230px; padding-top: 10px; padding-left :10px">
+            <!--拨号盘-->
+            <div class="container">
+                <div class="number">
+                    <input id="txtNumber" name="txtNumber" type="text" value="" onkeypress="OnNumberKeyPress(event);" />
+                </div>
+                <table class="bhp" width="210">
+                  <tr>
+                    <td><div onclick="OnButtonClick(1);">1</div></td>
+                    <td><div onclick="OnButtonClick(2);">2</div></td>
+                    <td><div onclick="OnButtonClick(3);">3</div></td>
+                  </tr>
+                  <tr>
+                    <td><div onclick="OnButtonClick(4);">4</div></td>
+                    <td><div onclick="OnButtonClick(5);">5</div></td>
+                    <td><div onclick="OnButtonClick(6);">6</div></td>
+                  </tr>
+                  <tr>
+                    <td><div onclick="OnButtonClick(7);">7</div></td>
+                    <td><div onclick="OnButtonClick(8);">8</div></td>
+                    <td><div onclick="OnButtonClick(9);">9</div></td>
+                  </tr>
+                  <tr>
+                    <td><div onclick="OnButtonClick(10);">*</div></td>
+                    <td><div onclick="OnButtonClick(0);">0</div></td>
+                    <td><div onclick="OnButtonClick(11);">#</div></td>
+                  </tr>
+                  <tr>
+                    <td width="70"><div  onclick="OnButtonClick(12);">确定</div></td>
+                    <td width="70"><div  onclick="OnButtonClick(13);">回退</div></td>
+                    <td width="70"><div  onclick="OnButtonClick(14);">取消</div></td>
+                  </tr>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>

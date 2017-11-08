@@ -1,0 +1,49 @@
+<?php
+    /**
+    * 导sqlserver的来电表到rms中
+    * 执行字段：litter.php TranTeltoRms/index
+    */
+    class TranTeltoRmsAction extends Action{
+        public function index(){
+            $handle = fopen("/home/tel.txt","r");
+            if($handle){
+                while(!feof($handle)){
+                    $context= fgets($handle);
+                    $content_arr = explode(',',$context);
+                    foreach($content_arr as $key => $value){
+                        if($key == 1){
+                            $telphone = str_replace('"','',$value);
+                            $telphone = trim($telphone);
+                            echo $telphone;
+                        }
+                        if($key == 2){
+                            $address = str_replace('"','',$value);
+                            $address = trim($address);
+                            echo $address;
+                        }
+                    }
+                    $TelcustomerModel = D('Telcustomer');
+                    $data = array();
+                    $data['telphone'] = $telphone;
+                    $data['address'] = $address;
+                    $data['rectime'] = date('Y-m-d H:i:s');
+                    var_dump($data);
+                    $TelcustomerModel->create($data);
+                    $result = $TelcustomerModel->add();
+                    var_dump($TelcustomerModel->getLastSql());
+                    if($result){
+                        var_dump($result);
+                        $record = $TelcustomerModel->getLastInsID();
+                        $TeladdressModel = D('Teladdress');
+                        $data = array();
+                        $data['telcustomerid'] = $record;
+                        $data['address'] = $address;
+                        $TeladdressModel->create($data);
+                        $result = $TeladdressModel->add();                            
+                    }
+                }
+            }
+            fclose($handle);
+        }
+    }
+?>

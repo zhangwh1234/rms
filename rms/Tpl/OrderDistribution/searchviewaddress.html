@@ -79,7 +79,7 @@
         setDatagrid: function () {
             //定义订单orderform处理表
             $(this.datagrid).datagrid({
-                nowrap: "false",
+                nowrap: false,
                 fitColumns: "true",
                 singleSelect: "true",
                 autoRowHeight: "true",
@@ -97,7 +97,6 @@
                     {field: "totalmoney", width: 20, title: '金额'},
                     {field: "custtime", width: 20, title: '要餐时间'},
                     {field: "state", width: 20, title: '状态'},
-                    {field: "beizhu", width: 20, title: '备注'},
                     {field: "company", width: 20, title: '分公司'},
                     {
                         field: "operation",
@@ -274,11 +273,9 @@
             //定义根据输入的键，获得的分公司名称
             var event = event || window.event;
             var inputCode = event.which ? event.which : event.keyCode;
-            var inputValue = String.fromCharCode(inputCode);
-            if ((inputCode >= 48 && inputCode <= 57) || (inputCode >= 65 && inputCode <= 90) || (inputCode >= 96 && inputCode <= 105)) {
-                if(inputCode >= 96){
-                    inputValue = String.fromCharCode(inputCode - 48);
-                }
+            inputValue = $(obj).val();
+            inputValue = inputValue.substring(0,1);
+            if ((inputCode >= 48 && inputCode <= 57) || (inputCode >= 65 && inputCode <= 90) || (inputCode >= 96 && inputCode <= 220)) {
                 $(obj).val(this.companyMgrName[inputValue]);
                 $(this.datagrid).datagrid('updateRow', {
                     index: rowIndex,    //定位行
@@ -387,6 +384,9 @@
                                 var formArray = $(this).serializeArray();
                                 var url = '__URL__/searchviewAddress/';
                                 $.each(formArray, function (key, value) {
+                                    if((value.name == 'searchTextAddress') && (value.value == '')){
+                                        value.value = '全部';
+                                    }
                                     url = url + value.name + '/' + value.value;
                                 });
                                 url = encodeURI(url);

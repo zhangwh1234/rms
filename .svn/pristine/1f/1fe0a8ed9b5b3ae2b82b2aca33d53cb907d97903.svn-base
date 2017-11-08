@@ -1,0 +1,1055 @@
+<style type="text/css">
+/*定义备注字段大小*/
+#beizhuOrderHandle .l-btn-text {
+	font-size: 16px;
+	color: #33338c;
+	margin-top: 2px;
+}
+
+.orderHandleCls {
+	font-size: 14px;
+	float: left;
+	width: 35px;
+}
+
+.orderHandleDetailview {
+	font-size: 16px;
+	float: left;
+	border: 0px solid red;
+	margin-left: 2px;
+	margin-right: 2px;
+	line-height: 24px;
+}
+
+#otherInfoOrderHandle {
+	padding-left: 28px;
+	font-size: 16px;
+	border-bottom: 1px solid black;
+}
+
+#orderHandleMonit {
+	height: 18px;
+	padding-left: 20px;
+	margin-top: 2px;
+	font-size: 16px;
+}
+
+/*显示总金额*/
+#totalMoney {
+	font-size: 14px;
+	margin-top: 4px;
+}
+
+.datagrid-cell {
+	font-size: 16px;
+}
+
+.datagrid-row {
+	height: 30px;
+}
+</style>
+
+<div id="orderHandle" class="easyui-layout" fit="true" border="false">
+	<div data-options="region:'west',split:true,border:true"
+		style="width: 100px;">
+		<div id="goods" class="easyui-layout" fit="true">
+			<div data-options="region:'center',border:false"
+				style="padding: 0px; background: #eee;">
+				<table id="OrderProductsHandleTable" style="width: 100px;">
+				</table>
+			</div>
+			<div data-options="region:'south',split:true,border:false"
+				style="height: 30px;">
+				<div id="totalMoney">总金额</div>
+			</div>
+		</div>
+	</div>
+	<div data-options="region:'center',border:false"
+		style="padding: 0px; background: #eee;">
+		<table id="OrderFormHandleTable" fit="true"></table>
+	</div>
+	<div data-options="region:'south',split:false,border:false"
+		style="height: 80px;">
+		<div class="pagestop">
+			<div id="otherInfoOrderHandle" style="height: 20px;" align="center">
+				接线员:</div>
+			<div id="orderHandleMonit" align="center"></div>
+		</div>
+	</div>
+</div>
+<input id="{$moduleName}Action" type="hidden" value="listview" />
+<if condition="$Think.session.PrintOn eq '开启'">
+<div id="winprintpage" class="easyui-window"
+	data-options="title:'打印纸张设置',collapsible:false,
+        minimizable:false,
+        maximizable:false,
+        modal:true,closed:true"
+	style="width: 200px; height: 100px;">
+	<span>打印纸张选择</span> <select style="width: 100px;" id="selectprintpage"
+		name="selectprintpage">
+		<option value=""></option>
+		<option value="30lian">三联单</option>
+		<option value="60hot">60宽热敏</option>
+		<option value="80hot">80款热敏</option>
+	</select></br> <input type="button" value="确定"
+		style="margin-left: 30px; margin-top: 10px;"
+		onclick="setPrintPageOK();"> <input type="button" value="放弃"
+		style="margin-left: 20px; margin-top: 10px;"
+		onclick="setPrintPageCancel();">
+</div>
+</if>
+<div id="addressSearchListviewWin" class="easyui-window"
+	data-options="title:'地址查询',collapsible:false,
+    minimizable:false,
+    maximizable:false,
+    modal:true,
+    onClose:function(){
+    refreshOrder = true;
+    },
+    closed:true
+    "
+	style="width: 500px; height: 80px;">
+	<table style="margin-left: 5px;">
+		<tr>
+			<td style="font-size: 16px; margin-top: 10px;">地址查询</td>
+			<td><input id="addressSearchListviewWinInput"
+				name="addressSearchWinInput" style="width: 350px;"
+				style="font-size: 16px;margin-top: 5px;"
+				onkeydown="addressSearchListviewKeydown(event,this);" value="" /></td>
+		<tr>
+	</table>
+</div>
+
+<div id="sendnameSearchListviewWin" class="easyui-window"
+	data-options="title:'配送送餐员查询',collapsible:false,
+    minimizable:false,
+    maximizable:false,
+    modal:true,
+    onClose:function(){
+    refreshOrder = true;
+    },
+    closed:true
+    "
+	style="width: 300px; height: 80px;">
+	<table style="margin-left: 5px; margin-top: 5px;">
+		<tr>
+			<td style="font-size: 16px; margin-top: 10px;">送餐员代码</td>
+			<td><input id="sendnameSearchListviewWinInput"
+				name="senanameSearchListviewWinInput" style="width: 80px;"
+				style="font-size: 16px;margin-top: 0px;"
+				onkeydown="sendnameSearchListviewKeydown(event,this);" value="" /></td>
+			<td style=""><span id="sendnameSearchListviewName"
+				style="font-size: 16px; margin-left: 10px;"></span></td>
+		<tr>
+	</table>
+</div>
+
+<div id="smsAloneOrderhandleWin" class="easyui-window"
+	data-options="title:'单发消息',collapsible:false,
+    minimizable:false,
+    maximizable:false,
+    modal:true,
+    onClose:function(){
+    refreshOrder = true;
+    },
+    closed:true
+    "
+	style="width: 500px; height: 80px;">
+	<table style="margin-left: 5px; margin-top: 5px;">
+		<tr>
+			<td style="font-size: 16px; margin-top: 10px;">送餐员代码</td>
+			<td><input id="smsAloneOrderHandleWinInput"
+				name="smsAloneOrderHandleWinInput" style="width: 80px;"
+				style="font-size: 16px;margin-top: 0px;"
+				onkeydown="sendnameSearchQuickKey(event,this);" value="" /></td>
+			<td style=""><span id="smsAloneOrderHandleWinSpan"
+				style="font-size: 16px; margin-left: 10px;"></span></td>
+			<td><input id="smsContent" name="smsContent" value=""></td>
+		<tr>
+	</table>
+</div>
+
+
+<div id="beizhuOrderhandleWin" class="easyui-window"
+	data-options="
+	minimizable:false,
+	maximizable:false,
+	collapsible:false,
+	title:'备注输入',
+	modal:true,
+	onClose:beizhuOrderhandleWinClose,	
+	closed:true
+"
+	style="width: 500px; height: 400px;">
+	<table id="beizhuOrderhandleTable" class="easyui-datagrid"
+		data-options="fitColumns:true,
+		singleSelect:true,
+		rownumbers:true,
+		singleSelect : true,
+		onSelect:selectBeizhuOrderRow
+	">
+		<thead>
+			<tr>
+				<th data-options="field:'name',width:300,align:'center'"
+					align="center">备注名称</th>
+			</tr>
+		</thead>
+		<tbody>
+			<foreach name="beizhuOrderhandle" item="vo">
+			<tr>
+				<td>{$vo.name}</td>
+			</tr>
+			</foreach>
+		</tbody>
+	</table>
+</div>
+
+<script type="text/javascript">
+	//定义命名空间
+	//Namespace.register('orderHandle');
+	Namespace.register('orderHandle.listview');
+	
+    var APP = '__APP__';
+    var focusNumberOH = 0 ;  //定义光标，OH是OrderHandle的缩写
+    var focusOrderformidOH = 0 ;  //定义光标订单号
+    var refreshOrder = true;  //定义刷新标志，默认是开启刷新 
+    var sendnameMgr = new Array(); //定义处理的送餐员的数组
+    //定义订单的其他信息缓存变量
+    var orderformOtherInfo  = '';
+    //定义订单情况的缓存变量 
+    var monitInfo = '';
+    //定义产品的缓存数组
+    var orderProductsArray = new Array(); 
+    //建立快速刷新和慢速刷新
+    var firstOrderNumber = 0;  //刷新后得到的订单数量
+    var taskOrderNumber = 0;   //处理后的订单数量
+
+    var beizhuOrderhandleTable = $('#beizhuOrderhandleTable').datagrid();
+    //定义订单Orderform处理表
+    var orderFormHandleGrid = $('#OrderFormHandleTable').datagrid({ 
+        nowrap:"true",  
+        fitColumns:"true",
+        singleSelect:"true",
+        autoRowHeight:"true",
+        striped:"true",        
+        border:"false", 
+        rownumbers:"false",  //显示行号
+        showFooter:'true',
+        pagination:true,
+        pagePosition:'bottom', 
+        toolbar:'#tb',  
+        rowStyler: function(index,row){ //处理订单，状态改为已，就改变背景颜色，以便区别
+        	state = row.state;
+    		if (state.indexOf('已') >= 0){  
+    			return 'background-color:#6293BB;color:red;'; // return inline style
+    		}
+    	},
+        columns:[[  
+        {field:'orderformid',title:'id',hidden:'true',width:100},  
+        {field:'address',title:'地址',width:110,align:'left'},  
+        {field:'ordertxt',title:'数量规格',width:60,align:'center'},
+        {field:"state", width:15,title:'状态',
+        	styler: function(value,row,index){
+				if (value.indexOf('改单') >= 0){
+					return 'background-color:#ffee00;color:	#02C874;';
+				}
+				if (value.indexOf('催送') >= 0){
+					return 'background-color:#ffee00;color:#FF0000;';
+				}
+				if (value.indexOf('退餐') >= 0){
+					return 'background-color:#ffee00;color:#01B468;';
+				}				
+			}
+        },
+        {field:"sendname", width:20,title:'送餐员'}, 
+        {field:"operation", width:38,title:'操作',align:'center',formatter: function(value,rowData,rowIndex){
+                var operation; 
+                operation = "<input class='orderHandleCls' id='orderHandle"+rowIndex+"'  name='orderHandle"+rowIndex+"' type='text'  size='6' onkeyup='orderHandle(event,this,"+rowData.orderformid+","+rowIndex+")'  onfocus='orderHandleFocus();' >";
+                operation += "<a href='javascript:void(0);' onclick='updateTab(&apos;__URL__/detailview/record/"+rowData.orderformid+"/returnAction/listview&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>查看</a>"; 
+                operation += "<a href='javascript:void(0);' onclick='orderPrintHandle("+rowData.orderformid+","+rowIndex+")' class='orderHandleDetailview' style='margin-left:4px;' >打印</a>";
+                if(rowData.invoiceHeader){
+                    operation += "<a href='javascript:void(0);' onclick='openNewTab(&apos;发票管理&apos;,&apos;__APP__/InvoiceMgr/editview/record/"+rowData.orderformid+"/returnAction/listview&apos;)' class='orderHandleDetailview' style='margin-left:4px' >票</a>";
+                }
+                return operation;
+            }
+        },        
+        {field:"totalmoney",width:30,title:'金额'},
+        {field:"telphone",width:30,title:'电话',align:'center'},
+        {field:"custtime", width:30,title:'要餐时间'}
+
+        ]],
+        onSelect:selectDataGridRow,   //选择行事件
+        onClickRow:clickDataGridRow   //单击行的处理事件
+    });
+
+    //定义订单分页表
+    var pager = $('#OrderFormHandleTable').datagrid('getPager') 
+    pager.pagination({
+        showRefresh:false,
+        layout:['first','links','last'],
+        buttons:[{
+            id:'beizhuOrderHandle',
+            text:'备注:'
+
+        }]
+    }); 
+
+
+    ///定义订货OrderGoods显示表
+    var orderProductsHandleGrid = $('#OrderProductsHandleTable').datagrid({
+        nowrap:false,
+        columns:[[
+        {field:'number',title:'数量',width:30},
+        {field:'name',title:'名称',width:50}
+        ]]
+    })
+
+    //快捷代码帮助 
+    var fastKeyHelp = '提示：0处理退餐;改单;催单,2订单备注,3转给其他公司,4单发消息,5地址查询,6送餐员查询,7订单返回,8打印订单,9转给分送点';
+    //显示快捷代码帮助
+    $('#orderHandleMonit').html(fastKeyHelp);  
+
+    //返回所有分公司送餐员的名称代码
+    $.ajax({
+        type : "POST",
+        url : '__URL__/getSendnameMgr',
+        dataType : "json",
+        success : function(data){
+            if(!data)  return;
+            sendnameMgr = data;
+        }
+    })
+
+    //启动启动，取得订单
+    function GetOrderFrom(){
+        //取得订单表页码
+        var options = orderFormHandleGrid.datagrid('getPager').pagination('options');
+        var pageNumber = options.pageNumber; //页码
+        //当前选择的行
+        var selectedRowObj = orderFormHandleGrid.datagrid('getSelected');
+        if(selectedRowObj){
+        	//当前选择行的index
+        	var selectedRowIndex = orderFormHandleGrid.datagrid('getRowIndex', selectedRowObj);
+        	//处理输入框的值
+        	var inputCode = $('#orderHandle'+selectedRowIndex).val();
+            //当前行的订单号
+            var selectedOrderformid = selectedRowObj.orderformid;
+        }else{
+        	var selectedRowIndex = 0;
+        	var inputCode  = '';
+        }
+  
+        $.ajax({
+            type : "GET",
+            url : "__URL__/alllistjson/page/"+pageNumber,
+            dataType : "json",
+            success : function(data){                 
+                //选择第一行焦点
+                orderFormHandleGrid.datagrid('loadData', data); 
+                if(data.rows.length == 0){
+                	//初始化快速刷新订单的数量标志
+                    firstOrderNumber = taskOrderNumber = 0;
+                    return false;
+                }
+
+                //根据订单好重新计算光标
+                var getFocusOrderformid = false;  //判断是否根据订单号取得光标
+                //var orderform = eval("("+data.rows+")"); 
+                var rowIndex = 0;
+                $.each(data.rows,function(key,value){
+                    if(selectedOrderformid == value.orderformid){
+                        $('#orderHandle'+ rowIndex).focus();
+                        $('#orderHandle'+ rowIndex).val(inputCode);
+                        //行选中
+                        orderFormHandleGrid.datagrid('selectRow',rowIndex);
+                        getFocusOrderformid = true; 
+                        return false;  //退出循环
+                    }
+                    rowIndex ++;
+                })
+                //原来的订单已经处理，需要根据规则重新制定光标位置
+                if(getFocusOrderformid == false){
+                	//原来的订单是在行尾，那焦点跟踪到行尾
+                    if(selectedRowIndex > data.total){
+                    	$('#orderHandle'+ data.total).focus();
+                    	$('#orderHandle'+ data.total).val(inputCode);
+                    	//行选中
+                        orderFormHandleGrid.datagrid('selectRow',data.total);
+                    }
+                	//原来的焦点不在行尾，那就上继续在原来的位置
+                	
+                    if((focusNumberOH == data.rows.length) && (focusNumberOH > 0)) {
+                        focusNumberOH = focusNumberOH -1; 
+                    }
+                    $('#orderHandle'+focusNumberOH).focus();
+                    
+                }
+                //初始化快速刷新订单的数量标志
+                firstOrderNumber = taskOrderNumber = data.total;                
+            }
+        }) 
+    } 
+
+    //*******************************************
+    //通讯服务器，取得订单数据
+    setTimeout(function(){
+        $.ajax({
+            type : "GET",
+            url : "__URL__/alllistjson",
+            dataType : "json",
+            success : function(data){    
+                if(data.rows.length > 0){
+                    //选择第一行焦点
+                    orderFormHandleGrid.datagrid('loadData', data); 
+                    focusNumberOH = 0;  //初始定位
+                    //缓存订单号
+                    focusOrderformidOH = data.rows[0].orderformid;  
+                    //显示焦点
+                    $('#orderHandle'+focusNumberOH).focus();                         
+                    //行选中
+                    orderFormHandleGrid.datagrid('selectRow',focusNumberOH);
+                    //初始化快速刷新订单的数量标志
+                    firstOrderNumber = taskOrderNumber = data.total;
+                }
+            }
+        }) 
+    },300);
+
+    /**
+     *  快速定时更新订单  
+     *  快速刷新，需要根据前台是否处理订单来定,如果前台处理了订单，就快速刷新订单
+     **/
+    var refreshOrderHandleOrder = setInterval(function(){
+    	//判断前台是否处理订单
+    	if(firstOrderNumber > 0 && taskOrderNumber >= 0 && firstOrderNumber>taskOrderNumber){
+        	if(refreshOrder == false){
+            	return false; 
+        	}
+        	GetOrderFrom();
+    	}
+    },900);
+    
+  	//慢速定时更新订单
+    setInterval(function(){ 
+    	if(refreshOrder == false){
+        	return false; 
+    	}
+    	GetOrderFrom();
+    },15000);
+
+    //定时刷新显示订单情况
+    var refreshOrderHandleMonit =  setInterval(function(){
+        var ordermonit = '';
+        $.ajax({
+            type : "GET",
+            url : "__URL__/getordermonit",
+            dataType : "json",
+            success : function(data){   
+            	if(data.length > 0){
+                	ordermonit = "订单量:"+data[0].totalnumber+'      ';
+                	ordermonit += "已处理:"+data[0].task+ '     ';  
+                	ordermonit += "未处理:"+data[0].notask+ '     ';   
+                	ordermonit += "催餐:"+data[0].fast+ '     ';   
+                	ordermonit += "总金额:"+data[0].totalmoney; 
+                	monitInfo = ordermonit;  
+                	$('#otherInfoOrderHandle').html(monitInfo + '  '+orderformOtherInfo); 
+            	}
+            }
+        });                       
+    },60000);
+
+
+    //处理订单 ,根据送餐员编码
+    function orderHandle(event,obj,orderformid,rowIndex){
+        //定义根据输入值，处理订单
+        var inputCode = $(obj).val();
+        //输入的键值 
+        var event = event || window.event;
+        var keyCode = event.which ? event.which : event.keyCode;  
+        if(keyCode == 38) return; //上移动
+        if(keyCode == 40) return; //下移动
+        if(keyCode == 13){   //订单处理
+            switch(inputCode){
+                case '0':  //对退餐的处理;对已经处理送餐员的订单的改单或者催单的处理 
+                    cancelchangehurryOrder(orderformid,rowIndex);
+                    break;
+                case '2':  //对启动订单备注操作界面
+                    beizhuOrderView();
+                	break;
+                case '3': //将订单转给其它分公司，不用再返回
+                	alert('在制作中');
+                	break;
+                case '4': //单独发送消息
+                	sendAloneMessagesView();
+                	break;
+                case '5':  //根据地址查询的快捷键
+                	addressSearchView(rowIndex);
+                    break;
+                case '6': //根据送餐员代码查询的快捷键
+                	sendnameSearchView(rowIndex);
+                	break;
+                case '7' :  //返回订单
+                    backOrder(orderformid,rowIndex);
+                    break;
+                case '8' : //订单打印
+                    orderPrintHandle(orderformid,rowIndex);
+                    break;
+                case '9': //将转发给分送点
+                	
+                	break;                   
+                default:    //对订单处理到送餐员身上
+                	if(inputCode.length < 2) break;
+                	var findSendname = false;
+                    $.each(sendnameMgr,function(key,value){
+                    	if(value.code == inputCode){ //送餐员代码相等
+                    		//更新订单状态和送餐员名字
+                    		orderFormHandleGrid.datagrid('updateRow',{
+                                index: rowIndex,    //定位行
+                                row: {
+                                    state : '已处理',
+                                    sendname: value.name  //送餐员
+                                }  
+                            });
+                    		taskOrderNumber = taskOrderNumber - 1;  //为了启动快速刷新，减1  
+                            $('#orderHandle'+rowIndex).val();
+                    		rowIndex = rowIndex + 1;
+                            $('#orderHandle'+rowIndex).focus();  //下移动一行
+                            findSendname = true;    //标志已经处理
+                            //上传处理结果
+                    		$.ajax({
+                                type : "GET",
+                                url : "__URL__/orderHandleByCode/orderformid/"+orderformid+"/code/"+inputCode,
+                                dataType : "json",
+                                success : function(returnData){                 
+                                }
+                            });  
+                    		return false; 
+                    	}                  	
+                    })
+                    //输入送餐员代码不对，提示
+                    if(findSendname == false){
+                        $.messager.show({
+                            title:'提示',
+                            msg:'输入代码输入有误!',
+                            height:70,
+                            timeout:5000,
+                            showType:'slide',
+                            style:{
+                                left:0,right:'',top:'',
+                                bottom:-document.body.scrollTop-document.documentElement.scrollTop
+                            }
+                        });
+                        return false;
+                    }
+                    
+            } 
+
+        }  
+        //F8订单打印
+        if(keyCode == 119){
+          orderPrintHandle(orderformid,rowIndex);
+        } 
+        
+        //预处理显示送餐员的产品规格信息
+        if(inputCode.length >= 2){  //输入的是送餐员的代码，才处理
+        	preproSendnameProduct(inputCode);
+        }
+    }
+
+
+    //定义表格移动的键盘处理
+    orderFormHandleGrid.datagrid('getPanel').panel('panel').attr('tabindex', 1).bind('keydown', function (e) {
+        //当前选择的行
+        var selectedRowObj = orderFormHandleGrid.datagrid('getSelected');
+        //当前选择行的number
+        var selectedRowIndex = orderFormHandleGrid.datagrid('getRowIndex', selectedRowObj);
+        //处理输入框的值
+        var inputCode = $('#orderHandle'+selectedRowIndex).val();
+
+        switch (e.keyCode) {
+            case 38: // up  上移动
+                $('#orderHandle'+selectedRowIndex).val('');  //将原来的输入置空            
+                if(selectedRowIndex == 0) return false;//为0，就是到顶了，不用再移动了
+                selectedRowIndex -= 1;
+                orderFormHandleGrid.datagrid('selectRow', selectedRowIndex);
+                $('#orderHandle'+selectedRowIndex).focus();  //设置焦点
+                break;
+            case 40: // down 下移动
+            	 $('#orderHandle'+selectedRowIndex).val(''); //将原来的输入置空
+                var rowsObj = orderFormHandleGrid.datagrid('getRows');  //返回当前页的记录
+                var rowLength = rowsObj.length - 1;
+                if(selectedRowIndex == rowLength) return;  //到表格尾部了，就不用再移动了
+                selectedRowIndex += 1;
+                orderFormHandleGrid.datagrid('selectRow', selectedRowIndex);
+                $('#orderHandle'+selectedRowIndex).focus();
+                break;
+            case 13: //回车，确认备注
+            	break;
+        }
+    });
+    
+  	//定义备注栏的移动
+    beizhuOrderhandleTable.datagrid('getPanel').panel('panel').attr('tabindex', 1).bind('keydown', function (e) {
+    	//当前选择的行
+        var selectedRowObj = beizhuOrderhandleTable.datagrid('getSelected');
+        //当前选择行的number
+        var selectedRowIndex = beizhuOrderhandleTable.datagrid('getRowIndex', selectedRowObj);
+ 
+        switch (e.keyCode) {
+            case 38: // up  上移动         
+                if(selectedRowIndex == 0) return false;//为0，就是到顶了，不用再移动了
+                selectedRowIndex -= 1;
+                beizhuOrderhandleTable.datagrid('selectRow', selectedRowIndex);
+                $('#beizhuOrderhandleTable'+selectedRowIndex).focus();  //设置焦点
+
+                break;
+            case 40: // down 下移动
+                var rowsObj = beizhuOrderhandleTable.datagrid('getRows');  //返回当前页的记录
+                var rowLength = rowsObj.length - 1;
+                if(selectedRowIndex == rowLength) return;  //到表格尾部了，就不用再移动了
+                selectedRowIndex += 1;
+                beizhuOrderhandleTable.datagrid('selectRow', selectedRowIndex);
+                $('#beizhuOrderhandleTable'+selectedRowIndex).focus();
+                break;
+            case 13:  //回车，处理备注
+            	//当前选择的行
+                var selectedOrderformRowObj = orderFormHandleGrid.datagrid('getSelected');
+                if(selectedOrderformRowObj){
+                    //当前行的订单号
+                    var selectedOrderformid = selectedOrderformRowObj.orderformid;
+                  //当前选择行的index
+                	var selectedOrderformRowIndex = orderFormHandleGrid.datagrid('getRowIndex', selectedOrderformRowObj);
+                }else{
+                	 var selectedOrderformid = '';
+                	 var selectedOrderformRowIndex = 0;
+                }
+            	 //备注写入数据库      
+            	$.ajax({
+                	type : "GET",
+                	url : APP+"/OrderHandle/setBeizhuOrder/orderformid/"+selectedOrderformid+
+                			'/beizhu/' + selectedRowObj.name,
+                	dataType : "json",
+                	success : function(data){      	
+            		}
+            	 })
+                             
+                //更新状态
+        		orderFormHandleGrid.datagrid('updateRow',{
+                    index:selectedOrderformRowIndex,    //定位行
+                    row: {
+                        state : '已备注'
+                    }  
+                });
+        		$('#beizhuOrderhandleWin').window('close');	//关闭备注输入
+        		//修改备注
+        		 selectedOrderformRowObj.beizhu =  selectedOrderformRowObj.beizhu + ' '+ selectedRowObj.name;
+        		 //显示备注
+        		$('#beizhuOrderHandle').linkbutton({text:'备注:' + selectedOrderformRowObj.beizhu});
+            	//启动刷新订单页面
+            	refreshOrder = true;  
+            	break;
+        }
+    });
+
+
+    //处理栏活动焦点，开启从表显示
+    function orderHandleFocus(){
+        //行选中
+        orderFormHandleGrid.datagrid('selectRow',focusNumberOH);
+        //显示货物
+        orderProductsShow(focusOrderformidOH);
+    }
+
+    //订单表获得焦点后，显示订货的内容
+    function orderProductsShow(orderformid){
+        var orderProductsIsExits = false;  //产品缓存已经存在
+
+        $.each(orderProductsArray,function(key,value){
+            if(value.orderformid == orderformid){
+                //存在缓存，直接写入
+                $('#OrderProductsHandleTable').datagrid('loadData', [value]); 
+                return;
+            }
+        })
+
+        $.ajax({
+            type : "GET",
+            url : "__URL__/showproducts/orderformid/"+orderformid,
+            dataType : "json",
+            success : function(data){ 
+                if(!data){
+                    var orderProducts = new Array();
+                    $('#OrderProductsHandleTable').datagrid('loadData', orderProducts);
+                    return;
+                }
+
+                $('#OrderProductsHandleTable').datagrid('loadData', data); 
+                //保持到产品缓存区中
+                $.each(orderProductsArray,function(key,value){
+                    if(value.orderformid == data[0].orderformid){
+                        //console.info('true');
+                        //如果已经存在，就不需要缓存
+                        orderProductsIsExits = true;
+                    }
+                })
+                if(!orderProductsIsExits){
+                    orderProductsArray.push(data[0]);
+                    
+                }
+
+
+            }
+        }) 
+    }
+
+    //订单表格行选择事件的处理函数
+    function selectDataGridRow(rowIndex,rowData){
+        //显示当前行订单的订货的内容
+        if(rowData){ //初始化的时候，可能没有数据
+            //显示备注
+            $('#beizhuOrderHandle').linkbutton({text:'备注:'+rowData.beizhu});
+        	orderformOtherInfo = '录入员:'+rowData.telname+' 录入时间:'+rowData.rectime
+            +' 催送次数: 催送时间: 更改人: 更改时间:'
+            $('#otherInfoOrderHandle').html(monitInfo+ ' ' +orderformOtherInfo);
+            //总金额
+            $('#totalMoney').html('总金额:' + rowData.totalmoney);    
+            //缓存光标位置
+            focusNumberOH = rowIndex; 
+            focusOrderformidOH = rowData.orderformid;
+            //取得光标的定位值
+            var offsetHandle = $('#orderHandle'+rowIndex).offset();
+           
+
+        }
+    }
+    
+    //备注表格选择行的处理事件
+    function selectBeizhuOrderRow(rowIndex,rowData){
+    	if(rowData){
+    		$('#beizhuOrderhandleInput'+rowIndex).focus();
+    	}
+    }
+
+    //单击订单表格一行
+    function clickDataGridRow(rowIndex,rowData){
+    	 $('#orderHandle'+rowIndex).focus();  //设置焦点       
+    }
+
+    //表格的分页事件
+    orderFormHandleGrid.datagrid('getPager').pagination({ 
+        onSelectPage:function(pageNumber,pageSize){   
+            $.ajax({
+                type : "GET",
+                url : "__URL__/alllistjson/page/"+pageNumber,
+                dataType : "json",
+                success : function(data){                              
+                    //选择第一行焦点
+                    orderFormHandleGrid.datagrid('loadData', data); 
+                    focusNumberOH = 0;  //初始定位
+                    //缓存订单号
+                    focusOrderformidOH = data.rows[0].orderformid;                           
+                    //行选中
+                    orderFormHandleGrid.datagrid('selectRow',focusNumberOH);
+                    //显示焦点
+                    $('#orderHandle'+focusNumberOH).focus();
+                    //显示货物
+                    orderProductsShow(focusOrderformidOH);
+                }
+            })
+
+        }
+    });
+
+    //对退餐的处理
+    function cancelchangehurryOrder(orderformid,rowIndex){
+        //如果是退餐，就把订单置为已退餐；催送改为已催送，改单改为已改单
+        $.ajax({
+            type : "GET",
+            url : "__URL__/cancelchangehurryOrderHandle/orderformid/"+orderformid,
+            dataType : "json",
+            success : function(returnData){                 
+                if(returnData['error'] == 'error'){
+                    $.messager.show({
+                        title:'提示',
+                        msg : returnData['msg'],
+                        height:70,
+                        timeout:9000,
+                        showType:'slide',
+                        style:{
+                            left:0,right:'',top:'',
+                            bottom:-document.body.scrollTop-document.documentElement.scrollTop
+                        }
+                    });
+                    return false;
+                };
+
+                if(returnData['success'] == 'success'){ 
+                    orderFormHandleGrid.datagrid('updateRow',{
+                        index: rowIndex,    //定位行
+                        row : {
+                            state : returnData['state']
+                        }  
+                    });
+                    $('#orderHandle'+rowIndex).val();                    
+                    $('#orderHandle'+rowIndex).focus();                    
+                };
+            }
+
+        });
+    }
+
+    //对订单备注，比如没有人要等等信息
+    function beizhuOrderView(){
+    	//停止刷新订单页面
+    	refreshOrder = false;
+   		//保存当前场景
+    	//当前选择的行
+        var selectedRowObj = orderFormHandleGrid.datagrid('getSelected');
+        if(selectedRowObj){
+        	//当前选择行的index
+        	var selectedRowIndex = orderFormHandleGrid.datagrid('getRowIndex', selectedRowObj);
+        	//处理输入框的值
+        	var inputCode = $('#orderHandle'+selectedRowIndex).val();
+            //当前行的订单号
+            var selectedOrderformid = selectedRowObj.orderformid;
+        }else{
+        	var selectedRowIndex = 0;
+        	var inputCode  = '';
+        }
+      	//开始备注窗口
+    	$('#beizhuOrderhandleWin').window('open');	
+        beizhuOrderhandleTable.datagrid('selectRow', 0);  //设置焦点
+        beizhuOrderhandleTable.datagrid('getPanel').panel('panel').attr('tabindex', 1).focus();
+        
+    }
+   
+    //关闭备注窗口，触发的事件
+    function beizhuOrderhandleWinClose(){
+    	//启动刷新订单页面
+    	refreshOrder = true; 
+        //当前选择的行
+        var selectedRowObj = orderFormHandleGrid.datagrid('getSelected');
+        if(selectedRowObj){
+        	//当前选择行的index
+        	var selectedRowIndex = orderFormHandleGrid.datagrid('getRowIndex', selectedRowObj);
+            //当前行的订单号
+            var selectedOrderformid = selectedRowObj.orderformid;
+        }else{
+        	var selectedRowIndex = 0;
+        	var inputCode  = '';
+        }
+        $('#orderHandle'+selectedRowIndex).val(''); //输入框恢复空
+        $('#orderHandle'+selectedRowIndex).focus(); //输入框恢复空
+    }
+    
+    //单独发送消息
+    function sendAloneMessagesView(){
+    	//显示单独消息窗口
+    	$('#smsAloneOrderhandleWin').window('open');
+    }
+    
+    //地址查询快键键
+    function addressSearchView(rowIndex){
+    	 $('#orderHandle'+rowIndex).val('');
+    	 $('#addressSearchOrderHandleWin').window('open');
+         $('#addressSearchOrderHandleWinInput').focus();
+    }
+    
+    //送餐员快键键查询
+    function sendnameSearchView(rowIndex){
+    	$('#orderHandle'+rowIndex).val('');
+    	$('#sendnameSearchOrderHandleWin').window('open');
+        $('#sendnameSearchOrderHandleWinInput').focus();
+    }
+    
+    //返回订单的操作
+    function backOrder(orderformid,rowIndex){
+      	//关闭刷新订单页面
+    	refreshOrder = false; 
+    	$('#orderHandle'+rowIndex).blur();
+        $.messager.confirm('确认', '是否真的需要返回订单?', function(r){
+            if (r){
+                $.ajax({
+                    type : "GET",
+                    url : "__URL__/backOrderHandle/orderformid/"+orderformid,
+                    dataType : "json",
+                    success : function(returnData){                 
+                        if(returnData['error'] == 'error'){
+                            $.messager.show({
+                                title:'提示',
+                                msg:returnData['msg'],
+                                height:70,
+                                timeout:5000,
+                                showType:'slide',
+                                style:{
+                                    left:0,right:'',top:'',
+                                    bottom:-document.body.scrollTop-document.documentElement.scrollTop
+                                }
+                            });
+                            return false;
+                        }
+
+                        if(returnData['success'] == 'success'){ 
+                            //handleData = returnData['data'];
+                            orderFormHandleGrid.datagrid('updateRow',{
+                                index: rowIndex,    //定位行
+                                row: {
+                                    state : '返回'
+                                }  
+                            });
+                            refreshOrder = true; 
+                            $('#orderHandle'+rowIndex).val('');
+                            $('#orderHandle'+rowIndex).focus();   
+                            taskOrderNumber = taskOrderNumber - 1;  //为了启动快速刷新，减1
+                        }
+                    }
+
+                });
+            }else{
+            	refreshOrder = true; 
+                $('#orderHandle'+rowIndex).val('');
+                $('#orderHandle'+rowIndex).focus();
+            }
+        });
+    }
+
+    //地址查询的快捷键
+    function addressSearchListviewKeydown(event,obj){
+        //定义根据输入值，处理订单
+        var inputCode = $(obj).val();
+        //输入的键值 
+        var event = event || window.event;
+        var keyCode = event.which ? event.which : event.keyCode;    
+        if(keyCode == 13){   //订单处理
+        	 // 判断选项卡是否存在，如果存在，就不需要创建
+            var tab =  $('#operation').tabs('exists','配送地址查询');
+            if(tab){
+            	var objValue = $(obj).val();
+            	$.ajax({
+    	            type : "GET",
+    	            url : "__URL__/searchForAddress/searchAddress/"+encodeURI(objValue),
+    	            dataType : "json",
+    	            success : function(returnData){                 
+    	            	orderHandle.searchviewAddress.table.datagrid('loadData',returnData);
+    	            }
+    	        });
+            	$('#operation').tabs('select','配送地址查询');
+            	setTimeout(function() {
+            		orderHandle.searchviewAddress.table.datagrid('selectRow',0);
+            		$('#orderHandleSearchviewAddressOperation0').focus();
+            	},100);
+            }else{
+            	var objValue = $(obj).val();
+            	openNewTabUrl('配送地址查询','__URL__/searchviewForAddress/delsession/1/searchAddress/'+encodeURI(objValue));
+        	}
+            $(obj).val('');
+            $('#addressSearchListviewWin').window('close');  //关闭地址查询
+            refreshOrder = true;
+        }
+
+    }
+
+    //送餐员查询的快捷键
+    function sendnameSearchListviewKeydown(event,obj){
+        //定义根据输入值，处理订单
+        var inputCode = $(obj).val();
+        //输入的键值 
+        var event = event || window.event;
+        var keyCode = event.which ? event.which : event.keyCode;    
+        if(keyCode == 13){   //订单处理
+            var objValue = $(obj).val();
+            var sendname = $('#sendnameSearchListviewName').html();
+            if(sendname.length == 0 ){
+                //根据代码，查询送餐员姓名
+                $.ajax({
+                    type : "GET",
+                    url : "__URL__/orderHandleByCode/code/"+objValue,
+                    dataType : "json",
+                    success : function(returnData){                 
+                        if(returnData['error'] == 'error'){
+                            $.messager.show({
+                                title:'提示',
+                                msg:'输入代码输入有误!',
+                                height:70,
+                                timeout:5000,
+                                showType:'slide',
+                                style:{
+                                    left:0,right:'',top:'',
+                                    bottom:-document.body.scrollTop-document.documentElement.scrollTop
+                                }
+                            });
+                            return false;
+                        }
+                        
+
+                        if(returnData['success'] == 'success'){ 
+                            handleData = returnData['data'];
+                            $('#sendnameSearchListviewName').html(handleData.sendname);
+                        }
+                    }
+
+                }); 
+                return true; 
+            }
+        	// 判断选项卡是否存在，如果存在，就不需要创建
+            var tab =  $('#operation').tabs('exists','配送送餐员查询');
+            if(tab){
+            	var objValue = $(obj).val();
+            	$.ajax({
+    	            type : "GET",
+    	            url : "__URL__/searchForSendname/searchSendname/"+encodeURI(sendname),
+    	            dataType : "json",
+    	            success : function(returnData){                 
+    	            	orderHandle.searchviewSendname.table.datagrid('loadData',returnData);
+    	            }
+    	        });
+            	$('#operation').tabs('select','配送送餐员查询');
+            	setTimeout(function() {
+            		orderHandle.searchviewSendname.table.datagrid('selectRow',0);
+            		$('#orderHandleSearchviewSendnameOperation0').focus();
+            	},100);
+            }else{
+            	var objValue = $(obj).val();
+            	openNewTabUrl('配送送餐员查询','__URL__/searchviewForSendname/delsession/1/searchSendname/'+encodeURI(sendname)+'/searchSendnameCode/'+encodeURI(objValue));
+        	}           
+            $('#searchViewForSendname{$moduleName} input[name=searchSendnameCode]').focus();
+            $(obj).val('');
+            $('#sendnameSearchListviewName').html('');
+            $('#sendnameSearchListviewWin').window('close');  //关闭地址查询
+            refreshOrder = true;
+        }
+
+    }
+
+
+    //预处理显示装箱送餐员的产品规格信息
+    function preproSendnameProduct(inputCode){
+    	 $.ajax({
+             type : "GET",
+             url : "__URL__/getProperSendnameproductsByCode/code/"+inputCode,
+             dataType : "json",
+             success : function(returnData){                                  
+                 $('#orderHandleMonit').html(returnData.content);
+             }
+
+         }); 
+    }
+    
+    //打印的处理，有点绕，回头再改写
+    function orderPrintHandle(orderformid,rowIndex){
+    	  orderPrintData(orderformid,rowIndex); 
+          //更新打印状态
+    		orderFormHandleGrid.datagrid('updateRow',{
+                index: rowIndex,    //定位行
+                row: {
+                    state : '已打印'
+                }  
+            });
+    		rowIndex = rowIndex + 1;
+            $('#orderHandle'+rowIndex).focus();  //下移动一行
+            taskOrderNumber = taskOrderNumber - 1;  //为了启动快速刷新，减1 
+    }
+
+</script>
+
+

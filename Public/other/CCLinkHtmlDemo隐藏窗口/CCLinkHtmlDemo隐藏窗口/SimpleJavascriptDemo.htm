@@ -1,0 +1,167 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <script language="javascript" charset="UTF-8" src="CCLink2008.js"></script>
+    <script language="javascript">
+
+        var LinkHost = "127.0.0.1";
+        var LinkExtCode = "8001";
+
+        function btnLogin_onclick() {
+            LinkHost = document.getElementById("txtLinkHost").value;
+            LinkExtCode = document.getElementById("txtLinkExtCode").value;
+            CCLink.Link_ConnectServer(LinkHost, 3008, 1);
+        }
+
+        function btnLogout_onclick() {
+            CCLink.Link_DisconnectServer();
+        }
+
+        function btnMakeCall_onclick() {
+            CCLink.Ext_MakeCall(LinkExtCode, "13801274462");
+        }
+
+        function btnTransferCall_onclick() {
+            CCLink.Ext_TransferCall(LinkExtCode, "18613801654", "", "");
+        }
+
+        function btnRetriveCall_onclick() {
+            CCLink.Ext_CancelTransfer(LinkExtCode);
+        }
+
+        function btnThreeParty_onclick() {
+            CCLink.Ext_ThreeParty(LinkExtCode);
+        }
+
+        function btnSetBusy_onclick() {
+            CCLink.Ext_SetExtDoNotDisturb(LinkExtCode, 1);
+        }
+
+        function btnSetIdle_onclick() {
+            CCLink.Ext_SetExtDoNotDisturb(LinkExtCode, 0);
+        }
+
+        function btnDropCall_onclick() {
+            CCLink.Ext_DropCall(LinkExtCode);
+        }
+
+        CCLink.LinkEvent_OnConnected = function () {
+            var Err = CCLink.Ext_Assign(LinkExtCode, LinkExtCode);
+            if (Err != "") {
+                document.getElementById("txtCCLinkEvent").value = document.getElementById("txtCCLinkEvent").value + Err + "\r\n";
+                return;
+            }
+            CCLink.Ext_CheckInQueue(LinkExtCode);
+            CCLink.Ext_SetExtName(LinkExtCode, "张三");
+            CCLink.Ext_SetExtWorkNo(LinkExtCode, "1001");
+            CCLink.Other_ExtensionToolBar(LinkExtCode, 0xFFFF, 1);
+            document.getElementById("btnLogin").disabled = true;
+            document.getElementById("btnLogout").disabled = false;
+            document.getElementById("btnMakeCall").disabled = false;
+            document.getElementById("btnTransferCall").disabled = false;
+            document.getElementById("btnRetriveCall").disabled = false;
+            document.getElementById("btnThreeParty").disabled = false;
+            document.getElementById("btnSetBusy").disabled = false;
+            document.getElementById("btnSetIdle").disabled = false;
+            document.getElementById("btnDropCall").disabled = false;
+            document.getElementById("txtCCLinkEvent").value = document.getElementById("txtCCLinkEvent").value + "与CTI服务器连接成功！" + "\r\n";
+        }
+
+        CCLink.LinkEvent_OnDisconnected = function () {
+            document.getElementById("txtCCLinkEvent").value = document.getElementById("txtCCLinkEvent").value + "与CTI服务器断开!" + "\r\n";
+            document.getElementById("btnLogin").disabled = false;
+            document.getElementById("btnLogout").disabled = true;
+            document.getElementById("btnMakeCall").disabled = true;
+            document.getElementById("btnTransferCall").disabled = true;
+            document.getElementById("btnRetriveCall").disabled = true;
+            document.getElementById("btnThreeParty").disabled = true;
+            document.getElementById("btnSetBusy").disabled = true;
+            document.getElementById("btnSetIdle").disabled = true;
+            document.getElementById("btnDropCall").disabled = true;
+        }
+
+        CCLink.ExtEvent_OnCallIn = function (ExtCode, OtherCode, OtherRole, TransferCode, TransferRole, CallData) {
+            document.getElementById("txtCCLinkEvent").value = document.getElementById("txtCCLinkEvent").value + "ExtEvent_OnCallIn(" + ExtCode + "," + OtherCode + "," + OtherRole + "," + TransferCode + "," + TransferRole + "," + CallData + ")" + "\r\n";
+            document.getElementById("txtCCLinkEvent").value = document.getElementById("txtCCLinkEvent").value + "分机" + ExtCode + "电话呼入:" + OtherCode + "被叫号码:" + CCLink.Ext_GetCallInfo_OtherDNIS(ExtCode) + "\r\n";
+        }
+
+        CCLink.ExtEvent_OnConnected = function (ExtCode, OtherCode, OtherRole, TransferCode, TransferRole, CallData) {
+            document.getElementById("txtCCLinkEvent").value = document.getElementById("txtCCLinkEvent").value + "ExtEvent_OnConnected(" + ExtCode + "," + OtherCode + "," + OtherRole + "," + TransferCode + "," + TransferRole + "," + CallData + ")" + "\r\n";
+            document.getElementById("txtCCLinkEvent").value = document.getElementById("txtCCLinkEvent").value + "分机" + ExtCode + "电话接通:" + OtherCode + "；录音文件：" + CCLink.Ext_GetCallInfo_RecordFile(ExtCode) + "\r\n";
+        }   
+
+        CCLink.ExtEvent_OnDisconnected = function (ExtCode) {
+            document.getElementById("txtCCLinkEvent").value = document.getElementById("txtCCLinkEvent").value + "ExtEvent_OnDisconnected(" + ExtCode + ")" + "\r\n";
+            document.getElementById("txtCCLinkEvent").value = document.getElementById("txtCCLinkEvent").value + "分机"+ExtCode+"通话结束" + "\r\n";
+        }
+
+        CCLink.ExtEvent_OnCallStateChange = function (ExtCode,CallState) {
+            document.getElementById("txtCCLinkEvent").value = document.getElementById("txtCCLinkEvent").value + "ExtEvent_OnCallStateChange(" + ExtCode + "," + CallState + ")" + "\r\n";
+            document.getElementById("txtCCLinkEvent").value = document.getElementById("txtCCLinkEvent").value + "分机" + ExtCode + "呼叫状态:" + CallState + "\r\n";
+        }
+
+        CCLink.ExtEvent_OnDoNotDisturbChange = function (ExtCode, DoNotDisturb) {
+            document.getElementById("txtCCLinkEvent").value = document.getElementById("txtCCLinkEvent").value + "ExtEvent_OnDoNotDisturbChange(" + ExtCode + "," + DoNotDisturb + ")" + "\r\n";
+            if (DoNotDisturb==0)
+            {
+                document.getElementById("txtCCLinkEvent").value = document.getElementById("txtCCLinkEvent").value + "分机" + ExtCode + "置闲!" + "\r\n";
+            }
+            else
+            {
+                document.getElementById("txtCCLinkEvent").value = document.getElementById("txtCCLinkEvent").value + "分机" + ExtCode + "置忙!" + "\r\n";
+            }
+        }
+
+        window.onload = function () {
+            document.getElementById("btnLogin").disabled = false;
+            document.getElementById("btnLogout").disabled = true;
+            document.getElementById("btnMakeCall").disabled = true;
+            document.getElementById("btnTransferCall").disabled = true;
+            document.getElementById("btnRetriveCall").disabled = true;
+            document.getElementById("btnThreeParty").disabled = true;
+            document.getElementById("btnSetBusy").disabled = true;
+            document.getElementById("btnSetIdle").disabled = true;
+            document.getElementById("btnDropCall").disabled = true;
+            document.getElementById("txtLinkHost").value = LinkHost;
+            document.getElementById("txtLinkExtCode").value = LinkExtCode;
+        }
+    </script>
+
+    <title></title>
+    <style type="text/css">
+        #txtCCLinkEvent
+        {
+            height: 455px;
+            width: 949px;
+        }
+        #Text2
+        {
+            width: 74px;
+        }
+        #txtLinkExtCode
+        {
+            width: 85px;
+        }
+    </style>
+</head>
+<body>
+
+    <p>
+        CTI服务器：<input id="txtLinkHost" type="text" /> 监控分机：<input id="txtLinkExtCode" 
+            type="text" />&nbsp;
+        <input id="btnLogin" type="button" value="登录" onclick="return btnLogin_onclick()" />
+        <input id="btnLogout" type="button" value="注销" onclick="return btnLogout_onclick()" />
+        </p>
+    <p>
+        <input id="btnMakeCall" type="button" value="外呼" onclick="return btnMakeCall_onclick()" />
+        <input id="btnTransferCall" type="button" value="转移" onclick="return btnTransferCall_onclick()" />
+        <input id="btnRetriveCall" type="button" value="收回" onclick="return btnRetriveCall_onclick()" />
+        <input id="btnThreeParty" type="button" value="三方" onclick="return btnThreeParty_onclick()" />
+        <input id="btnSetBusy" type="button" value="置忙" onclick="return btnSetBusy_onclick()" />
+        <input id="btnSetIdle" type="button" value="置闲" onclick="return btnSetIdle_onclick()" />
+        <input id="btnDropCall" type="button" value="挂机" onclick="return btnDropCall_onclick()" /></p>
+    <p>
+        <textarea id="txtCCLinkEvent" name="S1"></textarea></p>
+
+</body>
+</html>

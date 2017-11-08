@@ -14,6 +14,7 @@
     'telname' => '接线员',
     'rectime' => '录入时间',
     'ap' => '午别',
+    'ordersn' => '订单号',
     'LBL_ORDERFORM_INFORMATION' => '订单基本信息',
     'LBL_PRODUCTS_INFORMATION' => '产品信息',
     'LBL_ORDERACTION_INFORMATION' => '订单日志',

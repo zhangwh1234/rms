@@ -1,0 +1,334 @@
+<?php if (!defined('THINK_PATH')) exit();?><script type="text/javascript">
+	$(function() {
+		$('#createView<?php echo ($moduleName); ?>').form({
+			url : '__URL__/insert',
+			onSubmit : function() {												
+					//进行表单验证  
+					//如果返回false阻止提交 
+					if ($('#createView<?php echo ($moduleName); ?>  input[name=address]').val() == '') {
+								alert('地址不能为空!');
+								return false;
+						}
+				},
+			success : function(data) {
+					//data = eval('(' + data + ')'); 
+					updateTab(data);
+			}
+		});
+
+						//新建form提交程序
+						$('#createView<?php echo ($moduleName); ?> input[name=createsave]')
+								.bind('click', function() {
+									//提交表单  
+									$('#createView<?php echo ($moduleName); ?>').submit();
+								})
+								
+						
+						//定制键盘移动方案
+						$('#clientname').bind('keydown', function(event) { //联系人
+							if ((event.which == 13) || (event.which == 40)) {
+								$('#telphone').focus();
+							}
+							if (event.which == 38) {
+
+							}
+						})
+						//电话移动
+						$('#telphone').bind('keydown', function(event) {
+							if ((event.which == 13) || (event.which == 40)) { //下移               
+								var address = $('#address').val();
+								$('#address').focus();
+								$('#address').val();
+								$('#address').val(address);
+
+							}
+							if (event.which == 38) { //上移
+								$('#clientname').focus();
+							}
+						})
+						//地址移动
+						$('#address').bind('keydown', function(event) {
+							if ((event.which == 13) || (event.which == 40)) { //下移
+								$('#custtime_1').focus();
+							}
+							if (event.which == 38) { //上移
+								$('#telphone').focus();
+							}
+
+						})
+
+						//要餐时间移动
+						$('#custtime_1').bind('keydown', function(event) {
+							if ((event.which == 13) || (event.which == 40)) { //下移
+								$('#custtime_2').focus();
+							}
+							if (event.which == 38) { //上移
+								var address = $('#address').val();
+								$('#address').focus();
+								$('#address').val();
+								$('#address').val(address);
+							}
+						})
+						//如果输入的时间有两位，就自动跳到下面一格
+						$('#custtime_1').bind('keyup', function(event) {
+							var inputCode = event.which;
+							if ((inputCode >= 48) && (inputCode <= 57)) {
+								custtime = $(this).val();
+								if (custtime.length == 2) {
+									$('#custtime_2').focus();
+								}
+							}
+						})
+
+						//只能输入数字
+						$('#custtime_1').bind('keypress', function(event) {
+							return event.keyCode >= 4 && event.keyCode <= 57;
+						})
+
+						//要餐时间移动
+						$('#custtime_2').bind('keydown', function(event) {
+							if ((event.which == 13) || (event.which == 40)) { //下移
+								$('#beizhu').focus();
+							}
+							if (event.which == 38) { //上移
+								$('#custtime_1').focus();
+							}
+						})
+
+						//只能输入数字
+						$('#custtime_2').bind('keypress', function(event) {
+							return event.keyCode >= 4 && event.keyCode <= 57;
+						})
+
+						//备注的移动
+						//地址移动
+						$('#beizhu').bind('keydown', function(event) {
+							if ((event.which == 13) || (event.which == 40)) { //下移
+								$('#productsNumber_1').focus();
+							}
+							if (event.which == 38) { //上移
+								$('#custtime_2').focus();
+							}
+
+						})
+
+						//编辑的提交
+						$('#editView<?php echo ($moduleName); ?>')
+								.form(
+										{
+											url : '__URL__/update',
+											onSubmit : function() {
+												//进行表单验证  
+												//如果返回false阻止提交 
+												if ($('#address').val() == '') {
+													alert('地址不能为空!');
+													return false;
+												}
+												//if($('#company').val() == ''){
+												//    alert('分公司不能为空!');
+												//    return false;
+												//} 
+											},
+											success : function(data) {												 
+								            	updateTab(data);												
+											}
+										});
+						//编辑的提交
+						$('#editView<?php echo ($moduleName); ?> input[name=editsave]').bind('click', function() {
+									//提交表单  
+									$('#editView<?php echo ($moduleName); ?>').submit();
+								})
+
+						//复制form提交程序
+						$('#duplicateView<?php echo ($moduleName); ?>').form({
+								url : '__URL__/duplicate',
+								onSubmit : function() {
+										//进行表单验证  
+										//如果返回false阻止提交 
+										if ($('#duplicateView<?php echo ($moduleName); ?>  input[name=address]').val() == '') {
+													alert('地址不能为空!');
+													return false;
+												}
+											},
+											success : function(data) {
+												updateTab(data);
+											}
+												
+										});
+
+						//新建form提交程序
+						$('#duplicateView<?php echo ($moduleName); ?> input[name=duplicatesave]').bind('click', function() {
+									//提交表单  
+									$('#duplicateView<?php echo ($moduleName); ?>').submit();
+								})
+
+						//送餐费的处理
+						$('#shippingmoney').bind('keyup',function(event) {
+											//产品的总金额
+											var productsTotalMoney = $(
+													"#productsTotalMoney")
+													.val();
+											if (productsTotalMoney == '') {
+												productsTotalMoney = 0;
+											}
+											//送餐费
+											var shippingMoney = $(
+													"#shippingmoney").val();
+											//总金额
+											var totalMoney = parseFloat(productsTotalMoney)
+													+ parseFloat(shippingMoney);
+											totalMoney = parseFloat(totalMoney)
+													.toFixed(2);
+											//赋值
+											$('#totalmoney').val(totalMoney);
+										})
+
+						//启动今日菜单
+						$('#todaymenu').click(function() {
+							$('#todaymenuWin').window('open');
+						})
+
+						//关闭今日菜单
+						$('#todaymenuCloseBtn').click(function() {
+							$('#todaymenuWin').window('close');
+						})
+
+						//选择日期，显示菜单
+						$('#todaymenuSelectDate').datebox(
+										{
+											onSelect : function(date) {
+												var todaymenuDate = date
+														.Format("yyyy-MM-dd");
+												$.ajax({
+															url : '__URL__/getTodaymenuContent/date/'
+																	+ todaymenuDate,
+															type : 'GET',
+															success : function(
+																	data) {
+																if (data.error == 'error') {
+																	$(
+																			'#todaymenuContent')
+																			.val(
+																					'');
+																	return;
+																}
+																if (data.success == 'success') {
+																	$(
+																			'#todaymenuContent')
+																			.val(
+																					data.content);
+																}
+															}
+														})
+
+											}
+										})
+
+						//上一个日期的菜单
+						$('#todaymenuBeforeDate')
+								.click(
+										function() {
+											var date = $('#todaymenuSelectDate')
+													.datebox('getValue');
+											date = date.split("-");//以"-"分割字符串，返回数组；
+											var d = new Date(date[0], date[1],
+													date[2]); //格式化为Date对像;
+											if (d == "Invalid Date") {
+												alert("非日期");
+												return;
+											}
+											//当前日期的毫秒数 + 天数 * 一天的毫秒数
+											var n = d.getTime() + 1 * 24 * 60
+													* 60 * 1000;
+											var result = new Date(n);
+											//格式化日期
+											var month = result.getMonth();
+											if (month < 10) {
+												month = '0' + month;
+											}
+											var date = result.getDate();
+											if (date < 10) {
+												date = '0' + date;
+											}
+
+											var yesterday = result
+													.getFullYear()
+													+ "-" + month + "-" + date;
+											$('#todaymenuSelectDate').datebox(
+													'setValue', yesterday);
+											$.ajax({
+														url : '__URL__/getTodaymenuContent/date/'
+																+ yesterday,
+														type : 'GET',
+														success : function(data) {
+															if (data.error == 'error') {
+																$(
+																		'#todaymenuContent')
+																		.val('');
+																return;
+															}
+															if (data.success == 'success') {
+																$(
+																		'#todaymenuContent')
+																		.val(
+																				data.content);
+															}
+														}
+													})
+										})
+
+						//下一个日期的菜单
+						$('#todaymenuAfterDate')
+								.click(
+										function() {
+											var date = $('#todaymenuSelectDate')
+													.datebox('getValue');
+											date = date.split("-");//以"-"分割字符串，返回数组；
+											var d = new Date(date[0], date[1],
+													date[2]); //格式化为Date对像;
+											if (d == "Invalid Date") {
+												alert("非日期");
+												return;
+											}
+											//当前日期的毫秒数 + 天数 * 一天的毫秒数
+											var n = d.getTime() - 1 * 24 * 60
+													* 60 * 1000;
+											var result = new Date(n);
+											//格式化日期
+											var month = result.getMonth();
+											if (month < 10) {
+												month = '0' + month;
+											}
+											var date = result.getDate();
+											if (date < 10) {
+												date = '0' + date;
+											}
+
+											var tomorrow = result.getFullYear()
+													+ "-" + month + "-" + date;
+											$('#todaymenuSelectDate').datebox(
+													'setValue', tomorrow);
+											$
+													.ajax({
+														url : '__URL__/getTodaymenuContent/date/'
+																+ tomorrow,
+														type : 'GET',
+														success : function(data) {
+															if (data.error == 'error') {
+																$(
+																		'#todaymenuContent')
+																		.val('');
+																return;
+															}
+															if (data.success == 'success') {
+																$(
+																		'#todaymenuContent')
+																		.val(
+																				data.content);
+															}
+														}
+													})
+										})
+
+					});
+</script>

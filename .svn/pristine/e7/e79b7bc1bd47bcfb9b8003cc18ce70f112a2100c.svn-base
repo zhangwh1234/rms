@@ -1,0 +1,76 @@
+<div class="moduleoperator" id="detailview{$moduleName}" style="border: 1px solid white;">
+	<input id="{$moduleName}Action" type="hidden" value="detailview" />
+	<input type="hidden" id="{$moduleName}record" value="{$record}">
+    <input type="hidden" id="{$moduleName}returnAction" value="{$returnAction}">
+    <table border="0" cellspacing="0" cellpadding="0" width="99%" align="0" bgcolor="">
+        <tr>
+            <td>
+                <table border="0" cellspacing="0" cellpadding="3" width="100%" class="small">
+                    <tr>
+                    <td class="dvtTabCache" style="width:20px" nowrap>&nbsp;</td>
+                    <td class="dvtSelectedCell" align="center" nowrap> 查看 </td>
+                    <td class="dvtTabCache" style="width:80%">&nbsp;</td>
+                    <tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td valign=top align="center" >
+                <div id="basicTab" style="border: 1px solid #e0dddd; background: white;">
+                    <table border=0 cellspacing=0 cellpadding=0 width="98%" class="small">
+                        <tr>
+                            <td width="25%"></td>
+                            <td width="25%" align="right">
+                                <input id="createsave" name="createsave" title="" accessKey="" class="crmbutton small save"    onclick="updateTab('__URL__/editview/?&record={$record}')"   type="button"  value="{$Think.lang.Button_Edit} ^8 " style="width:70px;float:right;margin-right:2px;margin-top:2px;margin-bottom:2px;"></td>
+                            <td width="25%">
+                                <input title="" accessKey="" class="crmbutton small cancel" onclick="updateTab('__APP__/{$moduleName}/{$returnAction}')" type="button" name="button" value="  {$Think.lang.Button_Back} ^4 " style="width:70px;float:left;margin-left:2px;margin-top:2px;margin-bottom:2px;"></td>
+                            <td width="25%"> 
+                            </td>
+                        </tr>
+                        <!-- 这里显示具体的编辑 -->
+
+                        <volist name="blocks"  id="data" >
+                            <tr>
+                                <td colspan=4 class="tabBlockViewHeader">
+                                    {$Think.lang.$key}
+                                </td>
+                            </tr>
+
+                            <!-- Here we should include the uitype handlings-->
+                            <volist key="label" id="subdata" name="data">
+                                <tr style="height:30px;border: 1px solid black;background: #F0F0F0;">
+                                    <volist key="mainlabel" id="maindata" name="subdata"> 
+                                        <assign name="label" value="$Think.lang.$maindata[name]" />        {//标题}
+                                        <assign name="uitype"   value="$maindata[uitype]" />                {//类型}
+                                        <assign name="name" value="$maindata[name]" />                      {//字段名称}
+                                        <assign name="value" value="$maindata[value]" />                    {//字段的值}
+                                        <assign name="length" value="$maindata[length]" />                  {//字段长度}
+                                        <assign name="readonly" value="$maindata[readonly]" />              {//字段是否只读}                                                  <td width="20%" class="dvtCellLabel" align=right>
+                                            {$label} 
+                                        </td>
+                                        <td width="40%" align="left" class="dvtCellInfo" colspan="2">
+                                            <textarea class="detailedViewTextBox"  readonly="readonly"  rows="10" style="width:100%;">{$value}</textarea>
+                                        </td>
+                                    </volist>
+                                </tr>
+                            </volist>
+                            <tr style="line-height: 2px;"><td>&nbsp;</td></tr>
+                        </volist>
+                        <tr>
+                            <td></td>
+                            <td align="right">
+                                <input id="createsave" name="createsave" title="" accessKey="" class="crmbutton small save"    onclick="updateTab('__URL__/editview/?&record={$record}')"   type="button"  value="{$Think.lang.Button_Edit} ^8" style="width:70px;float:right;margin-right:2px;margin-top:2px;margin-bottom:2px;"></td>
+                            <td> 
+                                <input title="" accessKey="" class="crmbutton small cancel" onclick="updateTab('__APP__/{$moduleName}/{$returnAction}')" type="button" name="button" value="  {$Think.lang.Button_Cancel} ^4 "  style="width:70px;float:left;margin-left:2px;margin-top:2px;margin-bottom:2px;"></td>
+                            <td> 
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+ 

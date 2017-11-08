@@ -1,0 +1,59 @@
+<?php if (!defined('THINK_PATH')) exit();?><script type="text/javascript">
+    //判断是否是从index开始执行的
+    if(typeof indexFromGo === 'undefined'){
+        window.location.href = '__APP__/Index/index';
+    }
+
+    function deleteRecord(url){
+        // 
+
+        if(confirm("是否真的要删除？")){
+            updateTab(url);
+            //updateTab("__APP__/<?php echo ($module_name); ?>/hurry?&record="+record);
+        }
+    }
+
+    //快捷键的操作
+    $(function(){
+        $("#list<?php echo ($moduleName); ?>").attr("tabindex",0);
+        $("#list<?php echo ($moduleName); ?>").focus(); 
+        $("#list<?php echo ($moduleName); ?>").keydown(function(e){ 
+            if(e.which == 112){  //新建F1快捷键
+                //返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if(tabOptions.title == '<?php echo (L("$moduleName")); ?>' ){
+                    updateTab('__APP__/<?php echo ($moduleName); ?>/createview');         
+                }     
+                e.preventDefault(); 
+            }
+        })
+
+    })  
+
+</script>
+<div class="pages" align="center"><?php echo ($page); ?></div>
+<div class="list" id="list<?php echo ($moduleName); ?>">   
+    <input id="<?php echo ($moduleName); ?>Action" type="hidden" value="listview" />    
+    <table  border="0" cellspacing="1" cellpadding="3" width="100%" class="lvt"   align="center">
+        <tr class="listHeader">
+            <td class=""><input class="listColCheck" type="checkbox"  name="selectall" ></td>
+            <?php if(is_array($listHeader)): foreach($listHeader as $key=>$header): ?><td class="listHeader"><?php echo (L("$header")); ?></td><?php endforeach; endif; ?>
+            <td class="listHeader" >操作</td>
+        </tr>
+        <?php if(is_array($listEntries)): $ad = 0; $__LIST__ = $listEntries;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$entity): $mod = ($ad % 2 );++$ad; $record = $key; ?>
+            <tr bgcolor="white" onMouseOver="this.className='lvtColDataHover'" onMouseOut="this.className='lvtColData'" ondblclick="updateTab('__URL__/detailview/record/<?php echo ($record); ?>/returnAction/<?php echo ($returnAction); ?>');" id="row_<?php echo ($entity_id); ?>">
+
+                <?php if(is_array($entity)): $i = 0; $__LIST__ = $entity;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$id): $mod = ($i % 2 );++$i; if($key == $moduleId): ?><td class="listColCheck" width="2%"><input  type="checkbox" name="selected_id" id="<?php echo ($record); ?>" value= '<?php echo ($record); ?>'></td> 
+                        <?php elseif($key == $list_link_field): ?>
+                        <td><a class="small" href="#" onclick="updateTab('__URL__/detailview/record/<?php echo ($record); ?>/returnAction/listview');"><?php echo ($id); ?></a></td>
+                        <?php else: ?>                  
+                        <td class="listColData"><?php echo ($id); ?></td><?php endif; endforeach; endif; else: echo "" ;endif; ?>               
+                <td><center><a href="javascript:void(0);" onclick="updateTab('__URL__/detailview/record/<?php echo ($record); ?>/returnAction/<?php echo ($returnAction); ?>');">查看</a><span >&nbsp&nbsp|&nbsp&nbsp</span>
+                        <a href="javascript:void(0);" onclick="updateTab('__URL__/editview/record/<?php echo ($record); ?>/returnAction/listview');">编辑</a>&nbsp&nbsp|&nbsp&nbsp</span>
+                        <a href="javascript:void(0);" onclick="deleteRecord('__URL__/delete/record/<?php echo ($record); ?>/returnAction/<?php echo ($returnAction); ?>');">删除</a>&nbsp&nbsp|&nbsp&nbsp
+                        <a href="javascript:void(0);" onclick="updateTab('__URL__/editviewUserOrganization/uid/<?php echo ($record); ?>/returnAction/listview');">设置部门</a></center></td>
+            </tr><?php endforeach; endif; else: echo "" ;endif; ?>
+    </table>
+</div>
+<div class="pages"><?php echo ($page); ?></div>

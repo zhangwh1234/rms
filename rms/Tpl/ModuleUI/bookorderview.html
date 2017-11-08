@@ -1,27 +1,56 @@
 <div align="left">
     <label>增加预订日期：</label><input type="text" class="easyui-datebox" id="bookdateadd" style="float: left;"></br>
-    <div id="bookdatediv" style="float: left;width:1200px;" >
+    <div id="bookdatediv" style="float: left;width:auto;border: 0px solid red;" >
         <foreach name="bookdate" item="vo">
-            <input  type="text" id="bookorderdate{$key}" name="bookorderdate[]" value="{$vo.bookdate}" size="14">
-            <input  type='button' value='删除' onclick="clearbook({$key},this);" > 
+            <div style='border: 1px solid #A9A9A9;float: left;margin:4px;'>
+                <input  type="text" id="bookorderdate{$key}" name="bookorderdate[]" value="{$vo.bookdate}" size="10" readonly  style="font-size: 14px;"/>
+                <input  type='button' value='删除' onclick="clearbook({$key},this);" >
+            </div>
         </foreach> 
     </div>
 </div>
 <script type="text/javascript">
     var count = 1;
     $(function(){
+        //$('#bookdatediv').width(document.body.clientWidth);
         $('#bookdateadd').datebox({
             onSelect: function(date){
-                // alert(date.getFullYear()+":"+(date.getMonth()+1)+":"+date.getDate());
+                var date_now = new Date();  //当前日期
+                var date_str_now = date_now.Format('yyyy-MM-dd'); // date_now.getFullYear()+"-"+(date_now.getMonth()+1)+"-"+date_now.getDate();
+                //选择的日期
                 //selectDate =    date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();
                 selectDate = date.Format('yyyy-MM-dd');
-                //alert(selectDate);
-                var st = "<input type='text' id='bookorderdate"+count+"' value='"+selectDate+"' name='bookorderdate[]' /><input  type='button' value='删除' onclick='clearbook("+count+",this);' >";
+                //计算日期差
+                var dateOfDiff = daysBetween(selectDate,date_str_now);
+                if(dateOfDiff < 0){
+                    //不能选择小于今天的日期,小于今天,就不算是预订了
+                    alert('预订日期'+selectDate+',选择有误,请重新选择!');
+                    return false;
+                }
+
+                var st = "<div style='border: 1px solid #A9A9A9;float: left;margin:4px;'><input type='text' id='bookorderdate"+count+"' value='"+selectDate+"' name='bookorderdate[]' size='10' readonly  style='font-size:14px;' /><input  type='button' value='删除' onclick='clearbook("+count+",this);'></div>";
                 $('#bookdatediv').append(st);
                 count = count + 1;
             }
         });    
     })
+
+    //+---------------------------------------------------
+    //| 求两个时间的天数差 日期格式为 YYYY-MM-dd
+    //+---------------------------------------------------
+    function daysBetween(DateOne,DateTwo)
+    {
+        var OneMonth = DateOne.substring(5,DateOne.lastIndexOf ('-'));
+        var OneDay = DateOne.substring(DateOne.length,DateOne.lastIndexOf ('-')+1);
+        var OneYear = DateOne.substring(0,DateOne.indexOf ('-'));
+
+        var TwoMonth = DateTwo.substring(5,DateTwo.lastIndexOf ('-'));
+        var TwoDay = DateTwo.substring(DateTwo.length,DateTwo.lastIndexOf ('-')+1);
+        var TwoYear = DateTwo.substring(0,DateTwo.indexOf ('-'));
+
+        var cha=((Date.parse(OneMonth+'/'+OneDay+'/'+OneYear)- Date.parse(TwoMonth+'/'+TwoDay+'/'+TwoYear))/86400000);
+        return cha;
+    }
 
     function add(){
         //$('#bookdatediv').append("<input type='text' class='easyui-datebox'>");

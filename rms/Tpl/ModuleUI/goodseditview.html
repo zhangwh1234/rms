@@ -61,7 +61,11 @@
                 </td>
                 <td width="15%" align="center" > {//单价}
                     <input id="{$moduleName}{$Think.ACTION_NAME|ucfirst}productsPrice_{$key+1}" name="productsPrice_{$key+1}" type="text" size="10"
-                           readonly="readonly" tabindex="1" value="" style="font-size:16px;"/>
+                           readonly="readonly" tabindex="1"
+                           onblur="{$moduleName}{$Think.ACTION_NAME|ucfirst}GoodsEditViewModule.blurkeydownSumProductsMoney({$key+1},this)" value="" style="font-size:16px;"/>
+                    <img id="{$moduleName}{$Think.ACTION_NAME|ucfirst}searchIcon1" title="产品选择" src="./__PUBLIC__/Images/products.gif" style="cursor: pointer;"
+                         align="absmiddle"
+                         onclick="{$moduleName}{$Think.ACTION_NAME|ucfirst}GoodsEditViewModule.setGoodsPrice('{$key+1}');"/>
                 </td>
                 <td width="15%" align="center" > {//金额}
                     <input id="{$moduleName}{$Think.ACTION_NAME|ucfirst}productsMoney_{$key+1}" name="productsMoney_{$key+1}" type="text" size="10"
@@ -113,7 +117,7 @@
 <table width="100%" style="BORDER-COLLAPSE: collapse"  borderColor="#CCCCCC" cellSpacing="0" width="100%"
        align="center" border="1">
     <tr>
-        <td class="productsTableXiaojiLeftTd" width="75%">
+        <td class="productsTableXiaojiLeftTd" width="65%">
             <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-car_cart_basket-basket_add'"
                onclick="{$moduleName}{$Think.ACTION_NAME|ucfirst}GoodsEditViewModule.addProducts();" style="font-size:16px;">添加产品行</a>
             <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-car_cart_basket-basket_delete'"
@@ -121,10 +125,14 @@
             <input id="{$moduleName}{$Think.ACTION_NAME|ucfirst}productsLength" name="productsLength" type="hidden" value="{$key+1}"/>
         </td>
 
-        <td class="productsTableXiaojiRightTd"> {// 金额小计}
+        <td style="font-size: 16px;">
+            <span>份数:</span>
+            <span id="productsTotalNumber"></span>
+        </td>
+        <td class="productsTableXiaojiRightTd" style="font-size: 14px;"> {// 金额小计}
             <span>小计</span>
             <input id="{$moduleName}{$Think.ACTION_NAME|ucfirst}productsTotalMoney" name="productsTotalMoney" type="text" size="10" readonly="readonly"
-                   style="border: 0px;" value="{$info.goodsmoney}"/>
+                   style="border: 0px;font-size: 14px;" value="{$info.goodsmoney}"/>
         </td>
     </tr>
 </table>
@@ -193,7 +201,7 @@
 
         //产品数量输入框失去焦点
         blurkeydownSumProductsMoney: function (rowNum, obj) {
-
+            this.sumProductsMoney(rowNum);
         },
 
         /* 通过产品代码取得产品 */
@@ -342,8 +350,14 @@
         sumProductsMoney: function (rowNum) {
             var productsNumber = $("#{$moduleName}{$Think.ACTION_NAME|ucfirst}productsNumber_" + rowNum).val();  //数量
             //如果没有输入产品数量,就为零
-            if(productsNumber == ''){
+            if(productsNumber == '') {
                 productsNumber = 0;
+            }
+            else{
+                if (this.IsNum(productsNumber)  == false){
+                   alert('输入的产品数量不对!请检查');
+                   return false;
+                }
             }
             var productsPrice = $("#{$moduleName}{$Think.ACTION_NAME|ucfirst}productsPrice_" + rowNum).val();  //单价
             var productsMoney = 0;
@@ -353,11 +367,19 @@
             $("#{$moduleName}{$Think.ACTION_NAME|ucfirst}productsMoney_" + rowNum).val(productsMoney);
             //计算全部的金额
             var totalMoney = 0;
+            var productsTotalNumber = 0;
             //取得表格行的长度
             var rowLength = $("#{$moduleName}{$Think.ACTION_NAME|ucfirst}productsTable tr").length;
             for (i = 1; i < rowLength; i++) {
                 if ($("#{$moduleName}{$Think.ACTION_NAME|ucfirst}productsMoney_" + i).val() > 0) {
                     totalMoney = totalMoney + parseFloat($("#{$moduleName}{$Think.ACTION_NAME|ucfirst}productsMoney_" + i).val());
+                }
+                var productsNumberCount =   $("#{$moduleName}{$Think.ACTION_NAME|ucfirst}productsNumber_" + i).val();
+                if(productsNumberCount == ''){
+                    productsNumberCount = 0;
+                }
+                if (productsNumberCount > 0) {
+                productsTotalNumber = productsTotalNumber + parseInt($("#{$moduleName}{$Think.ACTION_NAME|ucfirst}productsNumber_" + i).val());
                 }
             }
 
@@ -378,6 +400,7 @@
             $("#{$moduleName}{$Think.ACTION_NAME|ucfirst}Form input[name=totalmoney]").val(totalMoney);
             $("#{$moduleName}{$Think.ACTION_NAME|ucfirst}FormShouldMoney").html(totalMoney+'元');    //应收金额
             $("#{$moduleName}{$Think.ACTION_NAME|ucfirst}Form input[name=shouldmoney]").val(totalMoney);
+            $('#productsTotalNumber').html(productsTotalNumber + '份');
         },
 
 
@@ -386,6 +409,22 @@
             if ($("#{$moduleName}{$Think.ACTION_NAME|ucfirst}productsName_" + rowNum).val() != '') {    //如果不为空，才计算
                 sumProductsMoney(rowNum);
             }
+        },
+
+        //把产品价格单元设置为可改写
+        setGoodsPrice : function(row){
+            $("#{$moduleName}{$Think.ACTION_NAME|ucfirst}productsPrice_" + row).attr('readonly',false);
+        },
+
+
+        //判断是否为数字
+        IsNum :function (s)
+        {
+            if (s!=null && s!="")
+            {
+             return !isNaN(s);
+            }
+        return false;
         }
 
     }

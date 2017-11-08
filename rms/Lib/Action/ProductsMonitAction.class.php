@@ -8,7 +8,7 @@
             if($userInfo['rolename'] == '调度员'){
                 $where['name'] = array(array('like','产品名称'),array('like',$userInfo['department']),'or');
             }
-            $where['domain'] = $_SERVER['HTTP_HOST'];
+            $where['domain'] = $this->getDomain();
             $productsmonitModel = D('Productsmonit');
             $productsmonit = $productsmonitModel->where($where)->order('productsmonitid')->select();
             $this->ajaxReturn($productsmonit);

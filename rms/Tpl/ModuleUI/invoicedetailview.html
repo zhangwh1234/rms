@@ -12,6 +12,31 @@
         font-size:14px;
     }
 
+    a:hover.copyinvoiceheaderbtn {
+        background: white;
+        color:black;
+        cursor:pointer;
+    }
+    a:hover.copyinvoicebodybtn {
+        background: white;
+        color:black;
+        cursor:pointer;
+    }
+    a:hover.copyinvoicensrsbhbtn {
+        background: white;
+        color:black;
+        cursor:pointer;
+    }
+    a:hover.copyinvoicedzdhbtn {
+        background: white;
+        color:black;
+        cursor:pointer;
+    }
+    a:hover.copyinvoiceyhzhbtn {
+        background: white;
+        color:black;
+        cursor:pointer;
+    }
 </style>
 <table id="DetailOrderFormInvoice" width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr>
@@ -19,11 +44,110 @@
             <span style="margin-right: 5px;">发票抬头:</span></td>
         <td width="45%"  align="left" style="background: #F5F5F5;">
             <span>{$info.invoiceheader}</span>
+            <a style="float:right;margin-right: 10px;" class="copyinvoiceheaderbtn" data-clipboard-text="{$info.invoiceheader}" >复制</a>
         </td>
         <td width="10%" align="right">
             <span style="margin-right:5px;">发票内容:</span></td>
         <td  align="left" style="background: #F5F5F5;">
             <span>{$info.invoicebody}</span>
+            <a style="float:right;margin-right: 10px;" class="copyinvoicebodybtn" data-clipboard-text="{$info.invoicebody}" >复制</a>
+        </td>
+    </tr>
+    <tr>
+        <td width="10%" align="right">
+            <span style="margin-right:5px;">发票类型:</span></td>
+        <td  align="left" style="background: #F5F5F5;">
+            <span>{$info.invoicetype}</span>
+        </td>
+        <td width="10%" align="right">
+            <span style="margin-right:5px;">纳税人识别号:</span></td>
+        <td  align="left" style="background: #F5F5F5;">
+            <span>{$info.gmf_nsrsbh}</span>
+            <a style="float:right;margin-right: 10px;" class="copyinvoicensrsbhbtn" data-clipboard-text="{$info.gmf_nsrsbh}" >复制</a>
+        </td>
+    </tr>
+    <tr>
+        <td width="10%" align="right">
+            <span style="margin-right:5px;">购买方电话地址:</span></td>
+        <td  align="left" style="background: #F5F5F5;">
+            <span>{$info.gmf_dzdh}</span>
+            <a style="float:right;margin-right: 10px;" class="copyinvoicedzdhbtn" data-clipboard-text="{$info.gmf_dzdh}" >复制</a>
+        </td>
+        <td width="10%" align="right">
+            <span style="margin-right:5px;">购买方银行账号:</span></td>
+        <td  align="left" style="background: #F5F5F5;">
+            <span>{$info.gmf_yhzh}</span>
+            <a style="float:right;margin-right: 10px;" class="copyinvoiceyhzhbtn" data-clipboard-text="{$info.gmf_yhzh}" >复制</a>
         </td>
     </tr>
 </table>
+
+<script>
+    $(document).ready(function(){
+
+        var clipboard_invoiceheader = new Clipboard('.copyinvoiceheaderbtn');
+        clipboard_invoiceheader.on('success', function(e) {
+            $.messager.show({
+                title: '消息提示',
+                msg: e.text,
+                showType: 'show',
+                timeout: 1000
+            });
+        });
+        clipboard_invoiceheader.on('error', function(e) {
+            $.messager.show({
+                title: '复制失败',
+                msg: e.text,
+                showType: 'show',
+                timeout: 1000
+            });
+        });
+        var clipboard_invoicebody = new Clipboard('.copyinvoicebodybtn');
+        clipboard_invoicebody.on('success', function(e) {
+            $.messager.show({
+                title: '消息提示',
+                msg: e.text,
+                showType: 'show',
+                timeout: 1000
+            });
+        });
+
+
+        var clipboard_invoicensrsbh = new Clipboard('.copyinvoicensrsbhbtn');
+        clipboard_invoicensrsbh.on('success', function(e) {
+            $.messager.show({
+                title: '消息提示',
+                msg: e.text,
+                showType: 'show',
+                timeout: 1000
+            });
+        });
+        clipboard_invoicensrsbh.on('error', function(e) {
+            $.messager.show({
+                title: '复制失败',
+                msg: e.text,
+                showType: 'show',
+                timeout: 1000
+            });
+        });
+        var clipboard_invoicedzdh = new Clipboard('.copyinvoicedzdhbtn');
+        clipboard_invoicedzdh.on('success', function(e) {
+            $.messager.show({
+                title: '消息提示',
+                msg: e.text,
+                showType: 'show',
+                timeout: 1000
+            });
+        });
+        var clipboard_invoiceyhzh = new Clipboard('.copyinvoiceyhzhbtn');
+        clipboard_invoiceyhzh.on('success', function(e) {
+            $.messager.show({
+                title: '消息提示',
+                msg: e.text,
+                showType: 'show',
+                timeout: 1000
+            });
+        });
+
+    })
+</script>

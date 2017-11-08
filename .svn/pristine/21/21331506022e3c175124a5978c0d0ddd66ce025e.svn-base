@@ -1,0 +1,88 @@
+<script type="text/javascript">
+    //添加地址
+    function addTelAddress(){
+        //取得表格行的长度
+        var rowNum = $("#orderPrintHandleTable tr").length;
+        var tableTrAppend =  "<tr style='height:25px;border: 1px solid black;background: #F0F0F0;' class='CaseRow' >";
+        tableTrAppend += "<td width='10%' align='center' class='dvtCellLabel'>"+rowNum+"</td>";
+        tableTrAppend += "<td width='10%' align='left' class='dvtCellLabel'><input id='telAddress_"+rowNum+"' name='telAddress_"+rowNum+"'   type='text' size='10' value='' /></td> ";
+        tableTrAppend += "<td width='70%' align='center' class='dvtCellLabel'><input id='telCompany_"+rowNum+"' name='telCompany_"+rowNum+"'   type='text' size='80' value='' /></td> ";
+
+        tableTrAppend += "<td width='10%' align='center' class='dvtCellLabel'><a href='#' onclick='clearTelAddress("+rowNum+")' >清空地址</a></td></tr>";               
+
+        $("#telAddressTable").append(tableTrAppend);
+        $("#addressLength").attr("value",rowNum+1);  //表格行数保存
+    } 
+
+    //根据输入的订单号，显示订单内容
+    function getOrderByid(rowNum,evt,obj){
+        evt = evt ? evt : ((window.event) ? window.event : null);     
+        var key = evt.keyCode ? evt.keyCode : evt.which; 
+        var orderformid = $(obj).val();
+        if(key == 13){
+            $.ajax({
+                url:"__URL__/getOrderByid/orderformid/"+orderformid,
+                async:true,
+                beforeSend:function(){
+
+                },
+                complete:function(){
+                },                            
+                success:function(mydata){
+                    if(mydata.error == 'error'){
+                        $.messager.show({
+                            title:'提示',
+                            msg:'输入号码有误!',
+                            height:70,
+                            timeout:5000,
+                            showType:'slide',
+                            style:{
+                                left:0,right:'',top:'',
+                                bottom:-document.body.scrollTop-document.documentElement.scrollTop
+                            }
+                        });
+                        return false;  
+                    }
+                    if(mydata.success == 'success'){
+                        $('#addressOrdertxt_'+rowNum).val(mydata.addressOrdertxt);
+                    }
+                }
+            })
+        }
+    }
+</script>
+<table id="orderPrintHandleTable" width="90%" border=0 style="border: 1px solid #e0dddd; margin-top: 2px;" class="small">
+    <tr class="detailedViewHeader">
+        <td width="10%" align="center">序号</td>
+        <td width="10%" align="center">打印编号</td>
+        <td width="70%" align="center">打印订单内容</td>           
+        <td width="10%" align="center">操作</td>
+    </tr>
+    <foreach name="orderPrintHandle" item="vo" >
+        <tr style="height:25px;border: 1px solid black;background: #F0F0F0;" class="CaseRow" >
+            <td width="10%" align="center" class="dvtCellLabel">{$key+1}</td>
+            <td width="10%" align="left" class="dvtCellLabel"><input id="orderformid_{$key+1}" name="orderformid_{$key+1}" type="text" size="10" value="{$vo.orderformid}" onkeyup="getOrderByid({$key+1},event,this);" /></td>
+            <td width="70%" align="center" class="dvtCellLabel"><input id="addressOrdertxt_{$key+1}" name="addressOrdertxt_{$key+1}" type="text" size="80" value="{$vo.content}" /></td>
+            <td width="10%" align="center" class="dvtCellLabel"><a href="#" onclick="clearAddressOrdertxt('{$key+1}');" >清空内容</a></td>
+        </tr>
+    </foreach>
+    <empty name="orderPrintHandle">
+        <for start="0" end="3" name="key">
+            <tr style="height:25px;border: 1px solid black;background: #F0F0F0;" class="CaseRow" >
+                <td width="10%" align="center" class="dvtCellLabel">{$key+1}</td>
+                <td width="10%" align="left" class="dvtCellLabel"><input id="orderformid_{$key+1}" name="orderformid_{$key+1}" type="text" size="10" value="" onkeyup="getOrderByid({$key+1},event,this);" /></td>
+                <td width="70%" align="center" class="dvtCellLabel"><input id="addressOrdertxt_{$key+1}" name="addressOrdertxt_{$key+1}" type="text" size="80" value="" /></td>
+                <td width="10%" align="center" class="dvtCellLabel"><a href="#" onclick="clearAddressOrdertxt('{$key+1}');" >清空内容</a></td>
+            </tr>
+        </for>
+    </empty>
+</table> 
+<table  width="90%" >
+    <tr>
+        <td>    
+            <input type="button" value="添加输入行" class="crmbutton small save" style="width:100px;margin-right: 10px;" onclick="addTelAddress();">  
+            <input type="button" value="删除最后一行"  class="crmbutton small save" style="float: left;" onclick="delTelAddress();">  
+            <input id="orderPrintHandleLength" name="orderPrintHandleLength" type="hidden" value="{$key+1}" />
+        </td>
+    </tr>
+</table> 

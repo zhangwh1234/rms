@@ -1,0 +1,241 @@
+<HTML>
+
+<OBJECT ID="YeahDone1" WIDTH=15 HEIGHT=15
+ CLASSID="CLSID:68E13FA4-E8E5-4719-986B-DE6A6476BF44"
+ CODEBASE="FR60.CAB#version=2.3">
+</OBJECT>
+
+<HEAD>
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+    <meta http-equiv="Content-Language" content="zh-cn">
+    <TITLE>YeahDone FR60.OCX JavaScript Sample</TITLE>
+    <meta name="keywords" content="YeahDone">
+
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+    var cpe_id;
+    window.defaultStatus="长沙思远科技实业有限公司FR60[" + YeahDone1.aboutbox() + "]";
+-->
+</SCRIPT>
+
+<SCRIPT LANGUAGE="JavaScript" FOR="window" EVENT="onLoad()">
+<!--
+//Form加载事件
+    document.forms.txtInfo.value = "控件版本(aboutbox)=" + YeahDone1.aboutbox() + "\r\n";
+    
+    var m_cpecnt = YeahDone1.OpenCPE();
+    document.forms.txtInfo.value += "设备个数(OpenCPE)=" + m_cpecnt + "\r\n";
+    if(m_cpecnt > 0)//取连接的设备个数
+    {
+    cpe_id = YeahDone1.GetPhoneHandle(0);        //取对设备的操作句柄
+    YeahDone1.RecordChannels = 1;
+    YeahDone1.RecordSample = 8000;
+    YeahDone1.RecordBits = 8;
+    document.forms.txtInfo.value += "操作句柄(GetPhoneHandle)=" + cpe_id +"\r\n";
+    
+    document.forms.txtInfo.value += "\r\n--以下在 2.1(2012-11-26)以后版本得到支持!\r\n\r\n";   
+    document.forms.txtInfo.value += "设备版本号(GetPhoneVersion)=" + YeahDone1.GetPhoneVersion(cpe_id) + "\r\n";
+    document.forms.txtInfo.value += "设备序列号(GetPhoneSerialNumber)=" + YeahDone1.GetPhoneSerialNumber(cpe_id) + "\r\n";
+    document.forms.txtInfo.value += "拨号有效长度(DTMFDuration)=" + YeahDone1.DTMFDuration() + "\r\n";
+    document.forms.txtInfo.value += "拨号速度(DialSpeed)=" + YeahDone1.DialSpeed() + "\r\n";
+    document.forms.txtInfo.value += "号码归属地(GetMobileCity(13574128436))=" + YeahDone1.GetMobileCity("13574128436") + "\r\n";
+    document.forms.txtInfo.value += "号码归属地(GetMobileCity(073185551705))=" + YeahDone1.GetMobileCity("073185551705") + "\r\n";
+    document.forms.txtInfo.value += "公农历换算(GetLunar(2012,11,27))=" + YeahDone1.GetLunar(2012, 11, 27) + "\r\n";
+    
+    //指定终端中的设备序列号；12字节长度
+    //100605000018:10是,06是月,05是日,00001是生产序列号,8是设备类型号:8/9/A/B
+    }
+    else
+    {
+        document.forms.txtInfo.value += "找不到指定的设备！\r\n";
+    }
+-->
+</SCRIPT>
+    
+<SCRIPT LANGUAGE="JavaScript" FOR="YeahDone1" EVENT="OnPhoneIncoming(cpe_id, OnIncomingValue)">
+<!--
+// 获取到线路来电事件
+    document.forms.txtInfo.value += "设备" + cpe_id + 
+                                    "来电:" + OnIncomingValue + 
+                                    ", City:" + YeahDone1.GetMobileCity(OnIncomingValue) + 
+                                    "\r\n";
+//    window.open("http://www.yeahdone.com");
+-->
+</SCRIPT>
+
+<SCRIPT LANGUAGE="JavaScript" FOR="YeahDone1" EVENT="OnPhoneListened(cpe_id, bState)">
+<!--
+// 获取到来电是否已接/未接事件
+    if(bState)
+    document.forms.txtInfo.value += "设备" + cpe_id + "来电未接\r\n";
+    else
+    document.forms.txtInfo.value += "设备" + cpe_id + "来电已接\r\n";
+-->
+</SCRIPT>
+
+<SCRIPT LANGUAGE="JavaScript" FOR="YeahDone1" EVENT="OnPhoneState(cpe_id, bState)">
+<!--
+// 获取到线路状态变化事件
+    if(bState)
+        document.forms.txtInfo.value += "设备" + cpe_id + "线路变闲\r\n";
+    else
+        document.forms.txtInfo.value += "设备" + cpe_id + "线路变忙\r\n";
+-->
+</SCRIPT>
+
+<SCRIPT LANGUAGE="JavaScript" FOR="YeahDone1" EVENT="OnPhoneRing(cpe_id)">
+<!--
+// 获取到线路振铃事件
+    document.forms.txtInfo.value += "设备" + cpe_id + "线路振铃\r\n";
+-->
+</SCRIPT>
+
+<SCRIPT LANGUAGE="JavaScript" FOR="YeahDone1" EVENT="OnPhoneKeyPress(cpe_id, vNewValue)">
+<!--
+// 获取到线路按键事件
+    document.forms.txtInfo.value += "设备" + cpe_id + "线路按键" + vNewValue + "\r\n";
+-->
+</SCRIPT>
+
+<SCRIPT LANGUAGE="JavaScript" FOR="YeahDone1" EVENT="OnPhoneSignaling(cpe_id, vNewValue)">
+<!--
+//测到线路上发生了信号的变化
+// vNewValue 检测到的线路状态情况：0 = 拨号音,1 = 回铃音,2 = 忙音
+//这个事件的准确度达不到100%,MAX=75%
+    // var strSignaling[] = {"拨号音", "回铃音", "忙音"};
+    // document.forms.txtInfo.value += "设备" + cpe_id + "线路信号 = " + vNewValue + strSignaling[vNewValue] + "\r\n";
+    document.forms.txtInfo.value += "设备" + cpe_id + "线路信号 = " + vNewValue + "\r\n";
+-->
+</SCRIPT>
+
+<SCRIPT LANGUAGE="JavaScript" FOR="YeahDone1" EVENT="OnPhoneDetect(cpe_id, bState)">
+<!--
+// 设备拔插事件
+  if(bState)
+  {
+      window.defaultStatus="长沙思远科技实业有限公司FR60.OCX(2012-11-27) —— 设备接上了"
+    }
+  else
+  {
+      window.defaultStatus="长沙思远科技实业有限公司FR60.OCX(2012-11-27) —— 设备移走了"
+  }
+-->
+</SCRIPT>
+
+<SCRIPT LANGUAGE="JavaScript" FOR="YeahDone1" EVENT="OnPhoneDialDone(cpe_id, strNum)">
+<!--
+// 拨号结束事件
+    document.forms.txtInfo.value += "设备" + cpe_id + "拨" + strNum + "完成\r\n";
+-->
+</SCRIPT>
+
+<SCRIPT LANGUAGE="JavaScript" FOR="YeahDone1" EVENT="OnPhoneError(cpe_id, Number, Description)">
+<!--
+// 错误消息事件
+    document.forms.txtInfo.value += "设备" + cpe_id + "错误" + Number + ":" + description +"\r\n";
+-->
+</SCRIPT>
+
+<SCRIPT LANGUAGE="JavaScript" type="text/javascript">
+<!--
+   //摘机函数
+   function OffHand()
+   {
+       YeahDone1.OffHand(cpe_id);
+   }
+   //挂机函数
+   function OnHand()
+   {
+       YeahDone1.OnHand(cpe_id);
+   }
+   
+   //排叉函数
+   //控制指定设备进行拍叉操作;此方法是配合交换机实现特殊功能
+   function Flash()
+   {
+       YeahDone1.Flash(cpe_id, 150);
+   }
+   //拨一个指定的号码串
+   function Dial()
+   {
+       YeahDone1.Dial(cpe_id,document.forms.dialnumber.value);
+   }
+   
+   //来电转移的功能实现流程是:
+   //Flash(300)
+   //
+   //for(号码长度进行单号拨发)
+   //{
+   //   DialSingle()
+   //   Sleep(600)
+   //}
+   //OnHand()
+   
+   //拨单个的号码,配合Flash可以实现来电转移的功能
+   function DialSingle(charTele)
+   {
+       YeahDone1.DialSingle(cpe_id,charTele);
+   }
+   //录音开始
+   function RecordStart()
+   {
+       YeahDone1.RecordStart(cpe_id, "C:\\rec.wav");
+   }
+   //录音结束
+   function RecordStop()
+   {
+       YeahDone1.RecordStop(cpe_id);
+   }
+   //将WAVE格式转换为MP3
+   function Wav2MP3()
+   {
+       YeahDone1.Wav2MP3("C:\\rec.wav", "C:\\rec.mp3");
+   }
+-->
+    </SCRIPT>
+</HEAD>
+
+<BODY oncontextmenu="return false" style="text-align: center">
+    <FORM ACTION="#" NAME="forms">
+        <p>
+            <h3>FR60.OCX 控件 拨号、来电</h3>
+        </p>
+        
+        <p>
+            <textarea name="txtInfo" cols="80" rows="28" style="ime-mode: active;" class="active"></textarea>
+        </p>
+        
+        <p>
+            <INPUT TYPE=button VALUE="摘&nbsp;机" ONCLICK="OffHand()">
+            <INPUT TYPE=button VALUE="拍&nbsp;叉" ONCLICK="Flash()">
+            <INPUT TYPE=button VALUE="挂&nbsp;机" ONCLICK="OnHand()">
+        </p>
+        
+        <p>
+            <INPUT TYPE=button VALUE="开始录音" ONCLICK="RecordStart()">
+            <INPUT TYPE=button VALUE="停止录音" ONCLICK="RecordStop()">
+            <INPUT TYPE=button VALUE="MP3压缩" ONCLICK="Wav2MP3()">
+        </p>
+        
+        <p>待拨号码<INPUT TYPE=text VALUE="123456789*0#" SIZE=38 NAME="dialnumber" style="text-align: right"/>
+           <INPUT TYPE=button VALUE="拨 打" ONCLICK="Dial()">
+        </p>
+        
+        <p>
+            待拨单号:
+            <INPUT TYPE=button VALUE="1" ONCLICK="DialSingle('1')">
+            <INPUT TYPE=button VALUE="2" ONCLICK="DialSingle('2')">
+            <INPUT TYPE=button VALUE="3" ONCLICK="DialSingle('3')">
+            <INPUT TYPE=button VALUE="4" ONCLICK="DialSingle('4')">
+            <INPUT TYPE=button VALUE="5" ONCLICK="DialSingle('5')">
+            <INPUT TYPE=button VALUE="6" ONCLICK="DialSingle('6')">
+            <INPUT TYPE=button VALUE="7" ONCLICK="DialSingle('7')">
+            <INPUT TYPE=button VALUE="8" ONCLICK="DialSingle('8')">
+            <INPUT TYPE=button VALUE="9" ONCLICK="DialSingle('9')">
+            <INPUT TYPE=button VALUE="*" ONCLICK="DialSingle('*')">
+            <INPUT TYPE=button VALUE="0" ONCLICK="DialSingle('0')">
+            <INPUT TYPE=button VALUE="#" ONCLICK="DialSingle('#')">
+        </p>
+    </FORM>
+</BODY>
+</HTML>

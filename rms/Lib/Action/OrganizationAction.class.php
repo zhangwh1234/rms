@@ -62,7 +62,7 @@ class OrganizationAction extends ModuleAction
         $listviewEntries = $this->getListviewEntity($listResult, $moduleId);
 
         $where = array();
-        $where['domain'] = $_SERVER['HTTP_HOST'];
+        $where['domain'] = $this->getDomain();
 
         $this->assign('moduleId', $moduleId);
         $this->assign('listEntries', $listviewEntries);
@@ -92,7 +92,7 @@ class OrganizationAction extends ModuleAction
         $arr = array(
             array('level', 1),
             array('sort', 1),
-            array('domain', $_SERVER['HTTP_HOST'])
+            array('domain', $this->getDomain())
         );
         return $arr;
     }
@@ -193,7 +193,7 @@ class OrganizationAction extends ModuleAction
             array('pid', $pid),
             array('name', $name),
             array('level', 2),
-            array('domain', $_SERVER['HTTP_HOST'])
+            array('domain', $this->getDomain())
         );
 
         $focus->setProperty("_auto", $auto);

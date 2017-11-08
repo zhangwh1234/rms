@@ -1,0 +1,95 @@
+<script type="text/javascript">
+    $(function(){  
+        //查询内容获得焦点   
+        $('#searchViewForm{$moduleName} input[name=searchText]').focus();
+        
+        //form提交程序
+        $('#searchViewForm{$moduleName} input[name=searchButton]').bind('click',function(){   
+            //返回选项卡
+            var tab = $('#operation').tabs('getSelected');
+            var queryString = $('#searchViewForm{$moduleName}').serialize();
+            //提交表单 
+            url = '__URL__/searchview&'+queryString;
+            $('#operation').tabs('update',{  
+                tab:tab,
+                options:{href:url}                                                
+            });    
+        })
+
+        //查询输入框回车
+        $('#searchViewForm{$moduleName} input[name=searchText]').bind('keydown',function(event){
+            if(event.which == 13){
+                    //返回选项卡
+                    var tab = $('#operation').tabs('getSelected');
+                    var queryString = $('#searchViewForm{$moduleName}').serialize();
+                    //提交表单 
+                    url = '__URL__/searchview/&'+queryString;
+                    $('#operation').tabs('update',{  
+                        tab:tab,
+                        options:{href:url}                                                
+                    });    
+            }
+        }) 
+    })
+</script>
+
+<div class="searchDiv">
+    <form id="searchViewForm{$moduleName}" name="searchViewForm{$moduleName}"  method="post"  style="border: 1px solid white;">
+        <input id="{$moduleName}Action" type="hidden" value="searchview" />
+        <ul class="searchOption">
+            <li>查询选项</li>
+            <li><select name="searchOption" id="searchOption" class="txtBox" style="width:150px">
+                    <if condition='$searchOptionValue'>
+                        <option value="{$searchOptionValue}">{$Think.lang.$searchOptionValue}</option>
+                        <else/>
+                        <option>全部</option>
+                    </if>
+                    <foreach name="searchOption" item="value">
+                        <option value="{$value}">{$Think.lang.$value}</option>
+                    </foreach>
+                </select>
+            </li>
+            <li>查询内容</li>
+            <li><input id="searchText" name="searchText"  type="text"   style="width:240px"  value="{$searchTextValue}"></li>
+            <li><input id="searchButton" name="searchButton" type="button" class="crmbutton small create"  value="确 定">&nbsp;</li>
+            <li>
+                <input id="cancelButton" name="cancelButton" type="button" class="crmbutton small create" value="放 弃" onclick="updateTab('__URL__/listview')"></li>
+            <li>&nbsp;</li>
+        </ul>  
+    </form>
+</div>
+
+<div class="searchList" style="margin: 0px;"> 
+    <div class="pages">{$page}</div>
+    <div class="list"  >
+        <table  border="0" cellspacing="1" cellpadding="3" width="100%" class="lvt small"  align="center">
+            <tr class="lvtCol">
+                <td class="lvtCol"><input type="checkbox"  name="selectall" ></td>
+                <foreach name="listHeader" item="header">
+                    <td class="lvtCol1">{$Think.lang.$header}</td>
+                </foreach>
+                <td class="lvtCol1" >操作</td>
+            </tr>
+            <volist id="entity"  name="listEntries" key='ad'>
+                <assign name='record' value="$key" />
+                <tr bgcolor="white" onMouseOver="this.className='lvtColDataHover'" onMouseOut="this.className='lvtColData'" ondblclick="alert('row_{$record}');" id="row_{$entity_id}">
+
+                    <volist name="entity" id="id">
+                        <if condition="$key eq $moduleId">
+                            <td class="lvtCol1" width="2%"><input  type="checkbox" name="selected_id" id="{$record}" value= '{$record}'></td> 
+                            <elseif condition="$key eq $list_link_field" />
+                            <td ><a href="javascript:void(0);" onclick="updateTab('__APP__/{$moduleName}/detailview/record={$record}');">{$id}</a></td>
+                            <else />                  
+                            <td >{$id}</td>                   
+                        </if>
+                    </volist>               
+                    <td><center><a href="javascript:void(0);" onclick="updateTab('__APP__/{$moduleName}/detailview/returnAction/searchview&record={$record}')">查看</a><span >&nbsp&nbsp|&nbsp&nbsp</span>
+                            <a href="javascript:void(0);" onclick="updateTab('__APP__/{$moduleName}/editview/returnAction/searchview&record={$record}');">编辑</a>&nbsp&nbsp|&nbsp&nbsp</span><a href="#" onclick="deleteRecord('{$record}');">删除</a></center></td>
+                </tr>
+            </volist>
+        </table>
+    </div>
+    <div class="pages">{$page}</div>
+</div>
+
+

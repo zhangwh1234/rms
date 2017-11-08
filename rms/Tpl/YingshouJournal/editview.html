@@ -1,0 +1,75 @@
+<include file="Module/editview" />
+<script>
+    var YingshouAccountsEditviewModule = {
+
+        //初始化
+        init: function () {
+            $('.moduleoperator').height(IndexIndexModule.operationHeight);
+            this.quickKeyboardAction();
+        },
+
+        //保存记录
+        update: function () {
+            $('#NoticeEditviewForm').form('submit', {
+                url: '__URL__/update',
+                onSubmit: function () {
+                    //进行表单验证
+                    if($('#code').val() == ''){
+                        alert('产品编码不能为空!');
+                        return false;
+                    }
+                    if($('#name').val() == ''){
+                        alert('产品名称不能为空!');
+                        return false;
+                    }
+                    var isValid = $(this).form('validate');
+                    if (!isValid) {
+                        alert('error');
+                        return false;
+                    }
+                },
+                success : function(res){
+                    var data = eval('(' + res + ')');
+                    if(!data.status){
+                        $.app.method.tip('提示信息', data.info, 'error');
+                    }else{
+                        $.app.method.tip('提示信息', data.info, 'info');
+                        IndexIndexModule.updateOperateTab(data.url);
+                    }
+                }
+            });
+        },
+
+        //新建的快捷操作
+        quickKeyboardAction: function () {
+            // ctrl+9快捷键,新建公告
+            Mousetrap.bind(['ctrl+9','ctrl+f9','f9'], function(e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '公告' && ($('#NoticeAction').val() == 'Editview')) {
+                    NoticeEditviewModule.update();
+                };
+            });
+
+            // ctrl+4快捷键,放弃
+            Mousetrap.bind(['ctrl+4', 'ctrl+f4', 'f4'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '公告' && ($('#NoticeAction').val() == 'Editview')) {
+                    IndexIndexModule.updateOperateTab('__URL__/listview');
+                };
+            });
+        }
+    }
+
+    $(function(){
+        $('#YingshouAccountsEditviewForm textarea[name=content]').focus();
+        YingshouAccountsEditviewModule.init();
+        setTimeout(function(){
+
+        },100);
+    })
+</script>
+

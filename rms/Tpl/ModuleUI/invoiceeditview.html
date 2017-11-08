@@ -2,19 +2,106 @@
 <table width="100%"  style="BORDER-COLLAPSE: collapse;font-size:16px;"  borderColor="#CCCCCC" cellSpacing="0" width="100%"
        align="center" border="1">
     <tr>
-        <td width="45%" class="invoiceTableLeftTd" align="center">
-            <span>来电发票历史记录</span>
-            <select id="invoiceheaderselect" class="easyui-combox" style="width:50%;" >
-
+        <td width="15%" class="invoiceTableLeftTd" align="left">
+            <label style="vertical-align:middle;display:inline-block;margin-left:30px;">来电发票历史记录:</label>
+        </td>
+        <td width="35">
+            <select id="invoiceheaderselect"  style="width:50%;" >
             </select>
         </td>
-        <td class="invoceTableRightTd">
-            <span style="margin-left: 10px;">发票抬头</span>
-            <input type="text" name="invoiceheader"  value="{$info.invoiceheader}"
-                    style="margin-left: 1px;width:50%;"/>
-            <span>发票内容</span>
-            <input type="text" name="invoicebody"   value="{$info.invoicebody}"
-                   style="margin-left: 1px;width:20%;"/>
+        <td width="15%" class="invoceTableRightTd">
+            <label style="margin-left:30px;">发票类型:</label>
+        </td>
+        <td width="35%">
+            <select id="invoice_type" name="invoicetype" style="margin-left: 1px;width: 30%;">
+             <if condition="$info.invoicetype neq ''">
+                <option value="{$info.invoicetype}">{$info.invoicetype}</option>
+             <else />
+                 <option value=""></option>
+             </if>
+
+             <if condition="$invoiceelectronopen eq '启用'" >
+                <option value="电子票">电子票</option>
+             </if>
+                <option value="普通票">普通票</option>
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td width="10%" class="invoiceTableLeftTd" align="left">
+            <span style="vertical-align:middle;display:inline-block;margin-left:30px;">发票抬头:</span>
+        </td>
+        <td>
+            <input id="invoice_header" type="text" name="invoiceheader"  value="{$info.invoiceheader}"
+                                           style="margin-left: 1px;width: 50%;float:left;"/></td>
+        <td width="10%" class="invoceTableRightTd">
+            <span style="margin-left:30px;">发票内容:</span>
+        </td>
+        <td>
+            <select id="invoice_body" name="invoicebody"
+                                            style="margin-left: 1px;width: 30%;">
+                <if  condition="$info.invoicebody neq ''">
+                    <option value="{$info.invoicebody}">{$info.invoicebody}</option>
+                </if>
+                        <option value="工作餐">工作餐</option>
+                        <option value="盒饭">盒饭</option>
+                        <option value="餐费">餐费</option>
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td width="10%" class="invoiceTableLeftTd" align="left">
+            <span style="vertical-align:middle;display:inline-block;margin-left:30px;">购买方纳税人识别号:</span>
+        </td>
+        <td>
+            <input id="invoice_gmf_nsrsbh" type="text" name="gmf_nsrsbh"  value="{$info.gmf_nsrsbh}"
+                   style="margin-left: 1px;width: 50%;"/><i style="color: red;">*必填</i></td>
+        <td width="10%" class="invoceTableRightTd">
+            <span style="margin-left:30px;">购买方地址电话:</span>
+        </td>
+        <td>
+            <input id="invoice_gmf_dzdh" type="text" name="gmf_dzdh"  value="{$info.gmf_dzdh}"
+                   style="margin-left: 1px;width: 90%;"/>
+        </td>
+    </tr>
+    <tr>
+        <td width="10%" class="invoiceTableLeftTd" align="left">
+            <span style="vertical-align:middle;display:inline-block;margin-left:30px;">购买方银行账号:</span>
+        </td>
+        <td>
+            <input id="invoice_gmf_yhzh" type="text" name="gmf_yhzh"  value="{$info.gmf_yhzh}"
+                   style="margin-left: 1px;width: 70%;"/></td>
+        <td width="10%" class="invoceTableRightTd">
+        </td>
+        <td>
+
         </td>
     </tr>
 </table>
+<script>
+    $(function(){
+        $('#invoiceheaderselect').bind('change',function(){
+            invoiceHeader = $('#invoiceheaderselect').find("option:selected").text();
+            if(invoiceHeader){  //如果存在发票头
+                $('#invoiceheaderselectset').val();
+                //检搜发票其他信息
+                $(telInvoiceArray).each(function (i, val) {
+                    if(val.header == invoiceHeader){
+                        $('#invoice_header').val($.trim(val.header));
+                        $('#invoice_body').val($.trim(val.body));
+                        $('#invoice_gmf_nsrsbh').val($.trim(val.gmf_nsrsbh));
+                        $('#invoice_gmf_dzdh').val($.trim(val.gmf_dzdh));
+                        $('#invoice_gmf_yhzh').val($.trim(val.gmf_yhzh));
+                        return false;
+                    }else{
+                        $('#invoice_header').val('');
+                        $('#invoice_body').val('');
+                        $('#invoice_gmf_nsrsbh').val('');
+                        $('#invoice_gmf_dzdh').val('');
+                        $('#invoice_gmf_yhzh').val('');
+                    }
+                });
+            }
+        })
+    })
+</script>

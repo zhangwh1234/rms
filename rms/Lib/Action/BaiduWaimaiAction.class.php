@@ -49,7 +49,7 @@ class BaiduWaimaiAction extends ModuleAction
     public function shopinfoListview()
     {
         $where = array();
-        $where ['domain'] = $_SERVER ['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
         $baiduwaimaishopinfoModel = D('baiduwaimaishopinfo');
         $total = $baiduwaimaishopinfoModel->where($where)->count();
         $baiduwaimaishopinfoResult = $baiduwaimaishopinfoModel->where($where)->select();
@@ -108,7 +108,7 @@ class BaiduWaimaiAction extends ModuleAction
         //处理字符串，防止有回车等特俗字符
         $data['content'] = $this->ReMoveChar($data['content']);
         $data['delivery_region_region'] = str_replace(PHP_EOL, '', $data['delivery_region_region']);
-        $data ['domain'] = $_SERVER ['HTTP_HOST'];
+        $data ['domain'] = $this->getDomain();
 
         $baiduwaimaishopinfoModel = D('baiduwaimaishopinfo');
         $baiduwaimaishopinfoModel->create();
@@ -209,7 +209,7 @@ class BaiduWaimaiAction extends ModuleAction
         if ($baiduwaimaishopinfoResult) {
             $body = array();
             $body = $baiduwaimaishopinfoResult;
-            $baiduwaimaiApi = new BaiduwaimaiV3();
+            $baiduwaimaiApi = new BaiduwaimaiV3($this->baiduwaimaiInfo());
             $resp = $baiduwaimaiApi->shopinfoCreate($body);
             //创建成功,处理到数据库
             if($resp['errno'] == 0){
@@ -235,7 +235,7 @@ class BaiduWaimaiAction extends ModuleAction
         if ($baiduwaimaishopinfoResult) {
             $body = array();
             $body = $baiduwaimaishopinfoResult;
-            $baiduwaimaiApi = new Baiduwaimai();
+            $baiduwaimaiApi = new Baiduwaimai($this->baiduwaimaiInfo());
             $resp = $baiduwaimaiApi->shopinfoOffline($body);
             $data = array();
             $data ['shop_state'] = 0;
@@ -251,7 +251,7 @@ class BaiduWaimaiAction extends ModuleAction
     {
         import('@.Extend.Baiduwaimai');
         $baiduwaimaishopinfoModel = D('baiduwaimaishopinfo');
-        $baiduwaimaiApi = new Baiduwaimai();
+        $baiduwaimaiApi = new Baiduwaimai($this->baiduwaimaiInfo());
         $resp = $baiduwaimaiApi->shopinfoList();
         if($resp['data']){
             foreach($resp['data'] as $key=>$value){
@@ -270,7 +270,7 @@ class BaiduWaimaiAction extends ModuleAction
     {
         import('@.Extend.BaiduwaimaiV3');
         $baiduwaimaishopinfoModel = D('baiduwaimaishopinfo');
-        $baiduwaimaiApi = new BaiduwaimaiV3();
+        $baiduwaimaiApi = new BaiduwaimaiV3($this->baiduwaimaiInfo());
         $resp = $baiduwaimaiApi->shopinfoView();
         if($resp['data']){
             foreach($resp['data'] as $key=>$value){
@@ -288,7 +288,7 @@ class BaiduWaimaiAction extends ModuleAction
     public function supplierList(){
         import('@.Extend.BaiduwaimaiV3');
         $baiduwaimaishopinfoModel = D('baiduwaimaishopinfo');
-        $baiduwaimaiApi = new BaiduwaimaiV3();
+        $baiduwaimaiApi = new BaiduwaimaiV3($this->baiduwaimaiInfo());
         $resp = $baiduwaimaiApi->supplierList();
         $this->ajaxReturn($resp);
     }
@@ -318,7 +318,7 @@ class BaiduWaimaiAction extends ModuleAction
         if ($baiduwaimaishopinfoResult) {
             $body = array();
             $body = $baiduwaimaishopinfoResult;
-            $baiduwaimaiApi = new Baiduwaimai();
+            $baiduwaimaiApi = new Baiduwaimai($this->baiduwaimaiInfo());
             $resp = $baiduwaimaiApi->shopinfoUpdate($body);
             $this->ajaxReturn($resp);
         } else {
@@ -338,7 +338,7 @@ class BaiduWaimaiAction extends ModuleAction
         if ($baiduwaimaishopinfoResult) {
             $body = array();
             $body = $baiduwaimaishopinfoResult;
-            $baiduwaimaiApi = new Baiduwaimai();
+            $baiduwaimaiApi = new Baiduwaimai($this->baiduwaimaiInfo());
             $resp = $baiduwaimaiApi->shopinfoClose($body);
             $this->ajaxReturn($resp);
         } else {
@@ -358,7 +358,7 @@ class BaiduWaimaiAction extends ModuleAction
         if ($baiduwaimaishopinfoResult) {
             $body = array();
             $body = $baiduwaimaishopinfoResult;
-            $baiduwaimaiApi = new Baiduwaimai();
+            $baiduwaimaiApi = new Baiduwaimai($this->baiduwaimaiInfo());
             $resp = $baiduwaimaiApi->shopinfoOpen($body);
             $this->ajaxReturn($resp);
         } else {
@@ -383,7 +383,7 @@ class BaiduWaimaiAction extends ModuleAction
         if ($baiduwaimaishopinfoResult) {
             $body = array();
             $body = $baiduwaimaishopinfoResult;
-            $baiduwaimaiApi = new Baiduwaimai();
+            $baiduwaimaiApi = new Baiduwaimai($this->baiduwaimaiInfo());
             $resp = $baiduwaimaiApi->shopinfoTheshold($body);
             $this->ajaxReturn($resp);
         } else {
@@ -407,7 +407,7 @@ class BaiduWaimaiAction extends ModuleAction
         if ($baiduwaimaishopinfoResult) {
             $body = array();
             $body = $baiduwaimaishopinfoResult;
-            $baiduwaimaiApi = new Baiduwaimai();
+            $baiduwaimaiApi = new Baiduwaimai($this->baiduwaimaiInfo());
             $resp = $baiduwaimaiApi->shopinfoDelivery($body);
             $this->ajaxReturn($resp);
         } else {
@@ -431,7 +431,7 @@ class BaiduWaimaiAction extends ModuleAction
         if ($baiduwaimaishopinfoResult) {
             $body = array();
             $body = $baiduwaimaishopinfoResult;
-            $baiduwaimaiApi = new Baiduwaimai();
+            $baiduwaimaiApi = new Baiduwaimai($this->baiduwaimaiInfo());
             $resp = $baiduwaimaiApi->shopinfoContent($body);
             $this->ajaxReturn($resp);
         } else {
@@ -447,7 +447,7 @@ class BaiduWaimaiAction extends ModuleAction
     public function categorymgrListview()
     {
         $where = array();
-        $where ['domain'] = $_SERVER ['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
         $baiduwaimaicategorymgrModel = D('baiduwaimaicategorymgr');
         $total = $baiduwaimaicategorymgrModel->where($where)->count();
         $baiduwaimaicategorymgrResult = $baiduwaimaicategorymgrModel->where($where)->select();
@@ -467,7 +467,7 @@ class BaiduWaimaiAction extends ModuleAction
     public function categorymgrCreateview()
     {
         $where = array();
-        $where ['domain'] = $_SERVER ['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
         $baiduwaimaishopinfoModel = D('baiduwaimaishopinfo');
         $shopinfoResult = $baiduwaimaishopinfoModel->where($where)->select();
         $this->assign('categorymgr', $shopinfoResult);
@@ -479,7 +479,7 @@ class BaiduWaimaiAction extends ModuleAction
     {
         $data = array();
         $data = $_REQUEST;
-        $data ['domain'] = $_SERVER ['HTTP_HOST'];
+        $data ['domain'] = $this->getDomain();
         $baiduwaimaicategorymgrModel = D('baiduwaimaicategorymgr');
         $baiduwaimaicategorymgrModel->create();
         $baiduwaimaicategorymgrResult = $baiduwaimaicategorymgrModel->add($data);
@@ -509,7 +509,7 @@ class BaiduWaimaiAction extends ModuleAction
     public function categorymgrEditUpdate()
     {
         $data = $_REQUEST;
-        $data ['domain'] = $_SERVER ['HTTP_HOST'];
+        $data ['domain'] = $this->getDomain();
         $where = array();
         $where['categoryid'] = $_REQUEST['categoryid'];
         $baiduwaimaicategorymgrModel = D('baiduwaimaicategorymgr');
@@ -549,7 +549,7 @@ class BaiduWaimaiAction extends ModuleAction
         import('@.Extend.Baiduwaimai');
         $categoryid = $_REQUEST ['categoryid'];
         $where = array();
-        $where ['domain'] = $_SERVER ['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
         $baiduwaimaishopinfoModel = D('baiduwaimaishopinfo');
         $baiduwaimaishopinfoResult = $baiduwaimaishopinfoModel->where($where)->select();
         $where = array();
@@ -559,7 +559,7 @@ class BaiduWaimaiAction extends ModuleAction
         if ( $baiduwaimaicategorymgrResult) {
             $body = array();
             $body =  $baiduwaimaicategorymgrResult;
-            $baiduwaimaiApi = new Baiduwaimai();
+            $baiduwaimaiApi = new Baiduwaimai($this->baiduwaimaiInfo());
             $resp = $baiduwaimaiApi->categorymgrCreate($body,$baiduwaimaishopinfoResult);
             $this->ajaxReturn($resp);
         } else {
@@ -572,7 +572,7 @@ class BaiduWaimaiAction extends ModuleAction
         import('@.Extend.Baiduwaimai');
         $categoryid = $_REQUEST ['categoryid'];
         $where = array();
-        $where ['domain'] = $_SERVER ['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
         $baiduwaimaishopinfoModel = D('baiduwaimaishopinfo');
         $baiduwaimaishopinfoResult = $baiduwaimaishopinfoModel->where($where)->select();
         $where = array();
@@ -582,7 +582,7 @@ class BaiduWaimaiAction extends ModuleAction
         if ( $baiduwaimaicategorymgrResult) {
             $body = array();
             $body =  $baiduwaimaicategorymgrResult;
-            $baiduwaimaiApi = new Baiduwaimai();
+            $baiduwaimaiApi = new Baiduwaimai($this->baiduwaimaiInfo());
             $resp = $baiduwaimaiApi->categorymgrUpdate($body,$baiduwaimaishopinfoResult);
             $this->ajaxReturn($resp);
         } else {
@@ -596,7 +596,7 @@ class BaiduWaimaiAction extends ModuleAction
     public function menumgrListview()
     {
         $where = array();
-        $where ['domain'] = $_SERVER ['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
         $baiduwaimaimenumgrModel = D('baiduwaimaimenumgr');
         $total = $baiduwaimaimenumgrModel->where($where)->count();
         $baiduwaimaimenumgrResult = $baiduwaimaimenumgrModel->where($where)->select();
@@ -616,7 +616,7 @@ class BaiduWaimaiAction extends ModuleAction
     public function menumgrCreateview()
     {
         $where = array();
-        $where ['domain'] = $_SERVER ['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
         $fields = array(
             'shopinfoid',
             'name'
@@ -662,7 +662,7 @@ class BaiduWaimaiAction extends ModuleAction
         }
         unset($data['pic_tmp']);
         $data['description'] = $this->ReMoveChar($data['description']); //处理字符串，防止有回车等特俗字符
-        $data ['domain'] = $_SERVER ['HTTP_HOST'];
+        $data ['domain'] = $this->getDomain();
         $baiduwaimaimenumgrModel = D('baiduwaimaimenumgr');
         $baiduwaimaimenumgrModel->create();
         $baiduwaimaimenumgrResult = $baiduwaimaimenumgrModel->add($data);
@@ -689,7 +689,7 @@ class BaiduWaimaiAction extends ModuleAction
         }else{
             // 取得shopid的商户名称
             $where = array();
-            $where ['domain'] = $_SERVER ['HTTP_HOST'];
+            $where ['domain'] = $this->getDomain();
             $where ['shopinfoid'] = $baiduwaimaimenumgrResult [0] ['shop_id'];
             $fields = array(
                 'shopinfoid',
@@ -702,7 +702,7 @@ class BaiduWaimaiAction extends ModuleAction
         }
         // 取得所有商户号和名称
         $where = array();
-        $where ['domain'] = $_SERVER ['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
 
         $baiduwaimaishopinfoModel = D('baiduwaimaishopinfo');
         $shopinfoResult = $baiduwaimaishopinfoModel->where($where)->select();
@@ -751,7 +751,7 @@ class BaiduWaimaiAction extends ModuleAction
         }
         unset($data['pic_tmp']);
         $data['description'] = $this->ReMoveChar($data['description']); //处理字符串，防止有回车等特俗字符
-        $data ['domain'] = $_SERVER ['HTTP_HOST'];
+        $data ['domain'] = $this->getDomain();
         $baiduwaimaimenumgrModel = D('baiduwaimaimenumgr');
         $baiduwaimaimenumgrResult = $baiduwaimaimenumgrModel->where($where)->save($data);
 
@@ -783,7 +783,7 @@ class BaiduWaimaiAction extends ModuleAction
         import('@.Extend.Baiduwaimai');
         $menuid = $_REQUEST ['menuid'];
         $where = array();
-        $where ['domain'] = $_SERVER ['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
         $baiduwaimaishopinfoModel = D('baiduwaimaishopinfo');
         $baiduwaimaishopinfoResult = $baiduwaimaishopinfoModel->where($where)->select();
         $where = array();
@@ -793,7 +793,7 @@ class BaiduWaimaiAction extends ModuleAction
         if ( $baiduwaimaimenumgrResult) {
             $body = array();
             $body =  $baiduwaimaimenumgrResult;
-            $baiduwaimaiApi = new Baiduwaimai();
+            $baiduwaimaiApi = new Baiduwaimai($this->baiduwaimaiInfo());
             $resp = $baiduwaimaiApi->menumgrCreate($body,$baiduwaimaishopinfoResult);
             $this->ajaxReturn($resp);
         } else {
@@ -821,7 +821,7 @@ class BaiduWaimaiAction extends ModuleAction
         import('@.Extend.Baiduwaimai');
         $menuid = $_REQUEST ['menuid'];
         $where = array();
-        $where ['domain'] = $_SERVER ['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
         $baiduwaimaishopinfoModel = D('baiduwaimaishopinfo');
         $baiduwaimaishopinfoResult = $baiduwaimaishopinfoModel->where($where)->select();
         $where = array();
@@ -830,7 +830,7 @@ class BaiduWaimaiAction extends ModuleAction
         $baiduwaimaimenumgrResult = $baiduwaimaimenumgrModel->where($where)->find();
         if($baiduwaimaimenumgrResult['shop_id'] !=  0){
             $where = array();
-            $where ['domain'] = $_SERVER ['HTTP_HOST'];
+            $where ['domain'] = $this->getDomain();
             $where ['shopinfoid'] = $baiduwaimaimenumgrResult['shop_id'];
             $baiduwaimaishopinfoModel = D('baiduwaimaishopinfo');
             $baiduwaimaishopinfoResult = $baiduwaimaishopinfoModel->where($where)->select();
@@ -838,7 +838,7 @@ class BaiduWaimaiAction extends ModuleAction
         if ( $baiduwaimaimenumgrResult) {
             $body = array();
             $body =  $baiduwaimaimenumgrResult;
-            $baiduwaimaiApi = new Baiduwaimai();
+            $baiduwaimaiApi = new Baiduwaimai($this->baiduwaimaiInfo());
             $resp = $baiduwaimaiApi->menumgrUpdate($body,$baiduwaimaishopinfoResult);
             $this->ajaxReturn($resp);
         } else {
@@ -852,7 +852,7 @@ class BaiduWaimaiAction extends ModuleAction
         import('@.Extend.Baiduwaimai');
         $menuid = $_REQUEST ['menuid'];
         $where = array();
-        $where ['domain'] = $_SERVER ['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
         $baiduwaimaishopinfoModel = D('baiduwaimaishopinfo');
         $baiduwaimaishopinfoResult = $baiduwaimaishopinfoModel->where($where)->select();
         $where = array();
@@ -861,7 +861,7 @@ class BaiduWaimaiAction extends ModuleAction
         $baiduwaimaimenumgrResult = $baiduwaimaimenumgrModel->where($where)->find();
         if($baiduwaimaimenumgrResult['shop_id'] !=  0){
             $where = array();
-            $where ['domain'] = $_SERVER ['HTTP_HOST'];
+            $where ['domain'] = $this->getDomain();
             $where ['shopinfoid'] = $baiduwaimaimenumgrResult['shop_id'];
             $baiduwaimaishopinfoModel = D('baiduwaimaishopinfo');
             $baiduwaimaishopinfoResult = $baiduwaimaishopinfoModel->where($where)->select();
@@ -869,7 +869,7 @@ class BaiduWaimaiAction extends ModuleAction
         if ( $baiduwaimaimenumgrResult) {
             $body = array();
             $body =  $baiduwaimaimenumgrResult;
-            $baiduwaimaiApi = new Baiduwaimai();
+            $baiduwaimaiApi = new Baiduwaimai($this->baiduwaimaiInfo());
             $resp = $baiduwaimaiApi->menumgrDelete($body,$baiduwaimaishopinfoResult);
             $this->ajaxReturn($resp);
         } else {
@@ -883,7 +883,7 @@ class BaiduWaimaiAction extends ModuleAction
         import('@.Extend.Baiduwaimai');
         $menuid = $_REQUEST ['menuid'];
         $where = array();
-        $where ['domain'] = $_SERVER ['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
         $baiduwaimaishopinfoModel = D('baiduwaimaishopinfo');
         $baiduwaimaishopinfoResult = $baiduwaimaishopinfoModel->where($where)->select();
         $where = array();
@@ -892,7 +892,7 @@ class BaiduWaimaiAction extends ModuleAction
         $baiduwaimaimenumgrResult = $baiduwaimaimenumgrModel->where($where)->find();
         if($baiduwaimaimenumgrResult['shop_id'] !=  0){
             $where = array();
-            $where ['domain'] = $_SERVER ['HTTP_HOST'];
+            $where ['domain'] = $this->getDomain();
             $where ['shopinfoid'] = $baiduwaimaimenumgrResult['shop_id'];
             $baiduwaimaishopinfoModel = D('baiduwaimaishopinfo');
             $baiduwaimaishopinfoResult = $baiduwaimaishopinfoModel->where($where)->select();
@@ -900,7 +900,7 @@ class BaiduWaimaiAction extends ModuleAction
         if ( $baiduwaimaimenumgrResult) {
             $body = array();
             $body =  $baiduwaimaimenumgrResult;
-            $baiduwaimaiApi = new Baiduwaimai();
+            $baiduwaimaiApi = new Baiduwaimai($this->baiduwaimaiInfo());
             $resp = $baiduwaimaiApi->menumgrOnline($body,$baiduwaimaishopinfoResult);
             $this->ajaxReturn($resp);
         } else {
@@ -913,7 +913,7 @@ class BaiduWaimaiAction extends ModuleAction
         import('@.Extend.Baiduwaimai');
         $menuid = $_REQUEST ['menuid'];
         $where = array();
-        $where ['domain'] = $_SERVER ['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
         $baiduwaimaishopinfoModel = D('baiduwaimaishopinfo');
         $baiduwaimaishopinfoResult = $baiduwaimaishopinfoModel->where($where)->select();
         $where = array();
@@ -922,7 +922,7 @@ class BaiduWaimaiAction extends ModuleAction
         $baiduwaimaimenumgrResult = $baiduwaimaimenumgrModel->where($where)->find();
         if($baiduwaimaimenumgrResult['shop_id'] !=  0){
             $where = array();
-            $where ['domain'] = $_SERVER ['HTTP_HOST'];
+            $where ['domain'] = $this->getDomain();
             $where ['shopinfoid'] = $baiduwaimaimenumgrResult['shop_id'];
             $baiduwaimaishopinfoModel = D('baiduwaimaishopinfo');
             $baiduwaimaishopinfoResult = $baiduwaimaishopinfoModel->where($where)->select();
@@ -930,7 +930,7 @@ class BaiduWaimaiAction extends ModuleAction
         if ( $baiduwaimaimenumgrResult) {
             $body = array();
             $body =  $baiduwaimaimenumgrResult;
-            $baiduwaimaiApi = new Baiduwaimai();
+            $baiduwaimaiApi = new Baiduwaimai($this->baiduwaimaiInfo());
             $resp = $baiduwaimaiApi->menumgrOffline($body,$baiduwaimaishopinfoResult );
             $this->ajaxReturn($resp);
         } else {
@@ -942,7 +942,7 @@ class BaiduWaimaiAction extends ModuleAction
         import('@.Extend.Baiduwaimai');
         $menuid = $_REQUEST ['menuid'];
         $where = array();
-        $where ['domain'] = $_SERVER ['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
         $baiduwaimaishopinfoModel = D('baiduwaimaishopinfo');
         $baiduwaimaishopinfoResult = $baiduwaimaishopinfoModel->where($where)->select();
         $where = array();
@@ -952,7 +952,7 @@ class BaiduWaimaiAction extends ModuleAction
         if ( $baiduwaimaimenumgrResult) {
             $body = array();
             $body =  $baiduwaimaimenumgrResult;
-            $baiduwaimaiApi = new Baiduwaimai();
+            $baiduwaimaiApi = new Baiduwaimai($this->baiduwaimaiInfo());
             $resp = $baiduwaimaiApi->menumgrThreshold($body,$baiduwaimaishopinfoResult);
             $this->ajaxReturn($resp);
         } else {
@@ -964,7 +964,7 @@ class BaiduWaimaiAction extends ModuleAction
     public function shopimgmgrListview()
     {
         $where = array();
-        $where ['domain'] = $_SERVER ['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
         $baiduwaimaishopimgmgrModel = D('baiduwaimaishopimgmgr');
         $total = $baiduwaimaishopimgmgrModel->where($where)->count();
         $baiduwaimaishopimgmgrResult = $baiduwaimaishopimgmgrModel->where($where)->select();
@@ -984,7 +984,7 @@ class BaiduWaimaiAction extends ModuleAction
     public function shopimgmgrCreateview()
     {
         $where = array();
-        $where ['domain'] = $_SERVER ['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
         $fields = array(
             'shopinfoid',
             'poi_name'
@@ -1031,7 +1031,7 @@ class BaiduWaimaiAction extends ModuleAction
             }
         }
         $data ['desc'] = $_REQUEST ['desc'];
-        $data ['domain'] = $_SERVER ['HTTP_HOST'];
+        $data ['domain'] = $this->getDomain();
         $baiduwaimaishopimgmgrModel = D('baiduwaimaishopimgmgr');
         $baiduwaimaishopimgmgrModel->create();
         $baiduwaimaishopimgmgrResult = $baiduwaimaishopimgmgrModel->add($data);
@@ -1050,7 +1050,7 @@ class BaiduWaimaiAction extends ModuleAction
     public function shopimgmgrDetailview()
     {
         $where = array();
-        $where ['domain'] = $_SERVER ['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
         $fields = array(
             'shopinfoid',
             'poi_name'
@@ -1072,7 +1072,7 @@ class BaiduWaimaiAction extends ModuleAction
     public function shopimgmgrEditview()
     {
         $where = array();
-        $where ['domain'] = $_SERVER ['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
         $fields = array(
             'shopinfoid',
             'poi_name'
@@ -1127,7 +1127,7 @@ class BaiduWaimaiAction extends ModuleAction
             }
         }
         $data ['desc'] = $_REQUEST ['desc'];
-        $data ['domain'] = $_SERVER ['HTTP_HOST'];
+        $data ['domain'] = $this->getDomain();
         $baiduwaimaishopimgmgrModel = D('baiduwaimaishopimgmgr');
         $baiduwaimaishopimgmgrResult = $baiduwaimaishopimgmgrModel->where($where)->save($data);
 
@@ -1145,7 +1145,7 @@ class BaiduWaimaiAction extends ModuleAction
     public function ordermgrListview()
     {
         $where = array();
-        $where ['domain'] = $_SERVER ['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
         $baiduwaimaiordermgrModel = D('baiduwaimaiordermgr');
         $total = $baiduwaimaiordermgrModel->where($where)->count();
         $baiduwaimaiordermgrResult = $baiduwaimaiordermgrModel->where($where)->select();
@@ -1175,7 +1175,7 @@ class BaiduWaimaiAction extends ModuleAction
     {
         $data = array();
         $data = $_REQUEST;
-        $data ['domain'] = $_SERVER ['HTTP_HOST'];
+        $data ['domain'] = $this->getDomain();
         $baiduwaimaiordermgrModel = D('baiduwaimaiordermgr');
         $baiduwaimaiordermgrModel->create();
         $baiduwaimaiordermgrResult = $baiduwaimaiordermgrModel->add($data);
@@ -1206,7 +1206,7 @@ class BaiduWaimaiAction extends ModuleAction
     public function ordermgrEditUpdate()
     {
         $data = $_REQUEST;
-        $data ['domain'] = $_SERVER ['HTTP_HOST'];
+        $data ['domain'] = $this->getDomain();
         $where = array();
         $where['categoryid'] = $_REQUEST['categoryid'];
         $baiduwaimaicategorymgrModel = D('baiduwaimaicategorymgr');
@@ -1246,7 +1246,7 @@ class BaiduWaimaiAction extends ModuleAction
         import('@.Extend.Baiduwaimai');
         $categoryid = $_REQUEST ['categoryid'];
         $where = array();
-        $where ['domain'] = $_SERVER ['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
         $baiduwaimaishopinfoModel = D('baiduwaimaishopinfo');
         $baiduwaimaishopinfoResult = $baiduwaimaishopinfoModel->where($where)->select();
         $where = array();
@@ -1256,7 +1256,7 @@ class BaiduWaimaiAction extends ModuleAction
         if ( $baiduwaimaicategorymgrResult) {
             $body = array();
             $body =  $baiduwaimaicategorymgrResult;
-            $baiduwaimaiApi = new Baiduwaimai();
+            $baiduwaimaiApi = new Baiduwaimai($this->baiduwaimaiInfo());
             $resp = $baiduwaimaiApi->categorymgrCreate($body,$baiduwaimaishopinfoResult);
             $this->ajaxReturn($resp);
         } else {
@@ -1269,7 +1269,7 @@ class BaiduWaimaiAction extends ModuleAction
         import('@.Extend.Baiduwaimai');
         $categoryid = $_REQUEST ['categoryid'];
         $where = array();
-        $where ['domain'] = $_SERVER ['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
         $baiduwaimaishopinfoModel = D('baiduwaimaishopinfo');
         $baiduwaimaishopinfoResult = $baiduwaimaishopinfoModel->where($where)->select();
         $where = array();
@@ -1279,7 +1279,7 @@ class BaiduWaimaiAction extends ModuleAction
         if ( $baiduwaimaicategorymgrResult) {
             $body = array();
             $body =  $baiduwaimaicategorymgrResult;
-            $baiduwaimaiApi = new Baiduwaimai();
+            $baiduwaimaiApi = new Baiduwaimai($this->baiduwaimaiInfo());
             $resp = $baiduwaimaiApi->categorymgrUpdate($body,$baiduwaimaishopinfoResult);
             $this->ajaxReturn($resp);
         } else {
@@ -1292,7 +1292,7 @@ class BaiduWaimaiAction extends ModuleAction
         import('@.Extend.Baiduwaimai');
         $orderid = $_REQUEST ['orderid'];
         $body['orderid'] = $orderid;
-        $baiduwaimaiApi = new Baiduwaimai();
+        $baiduwaimaiApi = new Baiduwaimai($this->baiduwaimaiInfo());
         $resp = $baiduwaimaiApi->ordermgrComplete($body);
         $this->ajaxReturn($resp);
     }
@@ -1303,7 +1303,7 @@ class BaiduWaimaiAction extends ModuleAction
     {
         $baiduwaimailogModel = D('baiduwaimailog');
         $where = array();
-        $where ['domain'] = $_SERVER ['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
         $total = $baiduwaimailogModel->where($where)->count();
         $baiduwaimailogResult = $baiduwaimailogModel->where($where)->order('date desc')->select();
         foreach ($baiduwaimailogResult as $key => $value) {
@@ -1329,6 +1329,18 @@ class BaiduWaimaiAction extends ModuleAction
         $this->display('operateloglistview');
     }
 
+    //获得百度接入参数
+    public function baiduwaimaiInfo(){
+        $where = array();
+        $where['domain'] = $this->getDomain();
+        $baiduwaimaiModel = D('baiduwaimai');
+        $baiduwaimaiResult = $baiduwaimaiModel->where($where)->find();
+        if($baiduwaimaiResult){
+            return $baiduwaimaiResult;
+        }else{
+            return array();
+        }
+    }
 
 
 

@@ -53,6 +53,7 @@
 
                            }else if(data.success){
                                $('#orderHandleListviewSearchInputSendname').val(data.data.sendname);
+                               OrderHandleListviewModule.orderHandleData = '';  //清理缓存输入量
                            }
                        });
                    }

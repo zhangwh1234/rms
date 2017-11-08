@@ -1,0 +1,127 @@
+<?php if (!defined('THINK_PATH')) exit();?><style>
+	.searchview{
+		clear:both;
+	}
+</style>
+<div class ="searchview" >
+	<table id="searchview"></table>
+</div>
+<div id="beizhu" style="width:400px;height:500px;">
+	<table id="beizhuaction"></table>
+</div>
+<script>
+	//查询操作
+	var listview = '<?php echo ($listEntries); ?>';
+    listview = eval('(' + listview + ')');
+	var searchviewTable = $('#searchview').datagrid({
+		 	nowrap:"true",  
+	        fitColumns:"true",
+	        singleSelect:"true",
+	        autoRowHeight:"true",
+	        striped:"true",        
+	        border:"false", 
+	        rownumbers:"false",  //显示行号
+	        showFooter:'true',
+	        pagination:true,
+	        pagePosition:'bottom', 
+	        toolbar:'#tb',  
+	        rowStyler: function(index,row){ //处理订单，状态改为已，就改变背景颜色，以便区别
+	        	state = row.state;
+	    		if (state.indexOf('已') >= 0){  
+	    			return 'background-color:#6293BB;color:red;'; // return inline style
+	    		}
+	    	},
+	        columns:[[  
+	        {field:'orderformid',title:'id',hidden:'true',width:100},  
+	        {field:'address',title:'地址',width:110,align:'left'},  
+	        {field:'ordertxt',title:'数量规格',width:60,align:'center'},
+	        {field:"state", width:15,title:'状态',
+	        	styler: function(value,row,index){
+					if (value.indexOf('改单') >= 0){
+						return 'background-color:#ffee00;color:	#02C874;';
+					}
+					if (value.indexOf('催送') >= 0){
+						return 'background-color:#ffee00;color:#FF0000;';
+					}
+					if (value.indexOf('退餐') >= 0){
+						return 'background-color:#ffee00;color:#01B468;';
+					}				
+				}
+	        },
+	        {field:"sendname", width:20,title:'送餐员'}, 
+	        {field:"operation", width:38,title:'操作',align:'center',formatter: function(value,rowData,rowIndex){
+	                var operation; 
+	                operation = "<input class='orderHandleCls' id='orderHandle"+rowIndex+"'  name='orderHandle"+rowIndex+"' type='text'  size='6' onkeyup='ordersearch(event,this,"+rowData.orderformid+","+rowIndex+")'  onfocus='orderHandleFocus();' >";
+	                operation += "<a href='javascript:void(0);' onclick='updateTab(&apos;__URL__/detailview/record/"+rowData.orderformid+"/returnAction/listview&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>查看</a>"; 
+	                operation += "<a href='javascript:void(0);' onclick='orderPrintHandle("+rowData.orderformid+","+rowIndex+")' class='orderHandleDetailview' style='margin-left:4px;' >打印</a>";
+	                if(rowData.invoiceHeader){
+	                    operation += "<a href='javascript:void(0);' onclick='openNewTab(&apos;发票管理&apos;,&apos;__APP__/InvoiceMgr/editview/record/"+rowData.orderformid+"/returnAction/listview&apos;)' class='orderHandleDetailview' style='margin-left:4px' >票</a>";
+	                }
+	                return operation;
+	            }
+	        },        
+	        {field:"totalmoney",width:30,title:'金额'},
+	        {field:"telphone",width:30,title:'电话',align:'center'},
+	        {field:"custtime", width:30,title:'要餐时间'}
+
+	        ]],
+	        onSelect:selectDataGridRow,   //选择行事件
+	        onClickRow:clickDataGridRow   //单击行的处理事件
+	});
+	
+	//load data
+	searchviewTable.datagrid('loadData',listview);
+	
+	//备注操作窗口
+	var beizhu = $('#beizhu').window({
+		minimizable:false,
+		maximizable:false,
+		collapsible:false,
+		title:'备注输入',
+		modal:true,
+		onClose:beizhuOrderhandleWinClose,	
+		closed:true
+	});
+	
+	//备注操作表格
+	var beizhuTable = $('#beizhuaction').datagrid({
+		 columns:[[  
+					{field:'beizhuid',title:'id',hidden:'true',width:100},  
+					{field:'name',title:'备注',width:60,align:'center'}
+			      ]],
+		fitColumns:true,
+		singleSelect:true,
+		showHeader:false,
+		rownumbers:true,
+		singleSelect : true,
+		onSelect:selectBeizhuOrderRow
+	});
+	
+	//load beizhu
+	var beizhuContent = '<?php echo ($beizhuOrderhandle); ?>';
+	beizhuContent =  eval('(' + beizhuContent + ')');
+	console.info(beizhuContent);
+	
+	
+	//处理订单 ,根据送餐员编码
+    function ordersearch(event,obj,orderformid,rowIndex){
+        //定义根据输入值，处理订单
+        var inputCode = $(obj).val();
+        //输入的键值 
+        var event = event || window.event;
+        var keyCode = event.which ? event.which : event.keyCode;  
+        if(keyCode == 38) return; //上移动
+        if(keyCode == 40) return; //下移动
+        if(keyCode == 13){   //订单处理
+            switch(inputCode){
+                case '2':  //对退餐的处理;对已经处理送餐员的订单的改单或者催单的处理 
+                    beizhu.window('open');
+                    //beizhuTable.datagrid('loadData',{'rows':{}});
+                    beizhuTable.datagrid('loadData',beizhuContent);
+                    beizhuTable.datagrid('selectRow',0);
+                    break;
+            };
+        }
+	}
+	
+</script>

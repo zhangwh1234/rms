@@ -1,0 +1,12 @@
+<?php if (!defined('THINK_PATH')) exit();?><div class="moduleMenu">
+    <ul>
+        <li><?php echo (L("$tabName")); ?></li>
+        <li><a href="#"  onclick="updateTab('__URL__/listview');">&nbsp;&gt;<?php echo (L("$moduleName")); ?></a></li>
+        <li>&nbsp;&gt;<span style="background-color: #FF9797;font-size: 16px;"><?php echo ($operName); ?></span></li>
+        <li style="width: 50px;">&nbsp;</li>
+        
+        <li style="float: right;margin-right: 60px;"><a href="#"   onclick="closeTab();" >关闭</a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="closeTab();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
+        
+    </ul>
+</div>

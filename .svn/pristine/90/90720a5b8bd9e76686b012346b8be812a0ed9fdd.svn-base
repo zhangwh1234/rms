@@ -1,0 +1,57 @@
+<?php if (!defined('THINK_PATH')) exit();?><script type="text/javascript"> 
+    $(function(){   
+        //查询内容获得焦点   
+        $('#searchViewForm<?php echo ($moduleName); ?>Address input[name=searchTextAddress]').focus();
+
+
+        //form提交程序
+        $('#searchViewForm<?php echo ($moduleName); ?>Address input[name=searchViewBtn]').bind('click',function(){   
+            //返回选项卡
+            var tab = $('#operation').tabs('getSelected');
+            var queryString = $('#searchViewForm<?php echo ($moduleName); ?>Address').serialize();
+            //提交表单 
+            url = '__URL__/searchviewForAddress&'+queryString;
+            $('#operation').tabs('update',{  
+                tab:tab,
+                options:{href:url}                                                
+            });    
+        }) 
+
+        //回车查询
+        $('#searchViewForm<?php echo ($moduleName); ?>Address input[name=searchTextAddress]').bind('keydown',function(event){
+            if(event.which == 13){
+                //返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var queryString = $('#searchViewForm<?php echo ($moduleName); ?>Address').serialize();
+                //提交表单 
+                url = '__URL__/searchviewForAddress&'+queryString;
+                $('#operation').tabs('update',{  
+                    tab:tab,
+                    options:{href:url}                                                
+                });    
+                return false;
+            }
+        }) 
+
+    })
+</script>
+<div class="searchDiv">
+    <form id="searchViewForm<?php echo ($moduleName); ?>Address" name="searchViewForm<?php echo ($moduleName); ?>Address"  method="post"  style="border: 1px solid white;">
+        <input id="<?php echo ($moduleName); ?>Action" type="hidden" value="searchview" />
+        <ul class="searchOption">
+            <li>查询内容</li>
+            <li><input id="searchTextAddress" name="searchTextAddress"  type="text"   style="width:240px"  value="<?php echo ($searchTextValue); ?>" AUTOCOMPLETE="off" /></li>
+            <li>&nbsp;</li>
+            <li><select name="searchAp">
+                    <?php if($searchApValue): ?><option value="<?php echo ($searchApValue); ?>"><?php echo ($searchApValue); ?></option><?php endif; ?>
+                    <option value="上午">上午</option>
+                    <option value="下午">下午</option>
+                    <option value="全天">全天</option>
+                </select>
+            </li>
+
+            <li><input id="searchViewBtn" name="searchViewBtn" type="button" class="crmbutton small create"  value=" 查  询  "  />&nbsp;</li>
+            <li>
+        </ul>  
+    </form>    
+</div>

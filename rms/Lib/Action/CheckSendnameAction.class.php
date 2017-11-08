@@ -20,7 +20,7 @@ class CheckSendnameAction extends ModuleAction
                 $where ['company'] = $company;
             }
         }
-        $where['domain'] = $_SERVER['HTTP_HOST'];
+        $where['domain'] = $this->getDomain();
         $checksendnameModel = D('Checksendname');
         $checksendname = $checksendnameModel->where($where)->select();
         $this->ajaxReturn($checksendname);
@@ -70,7 +70,7 @@ class CheckSendnameAction extends ModuleAction
         );
         $where = array ();
         $where ['status'] = 0;
-        $where ['domain'] = $_SERVER['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
         $newMsg = $focus->field ( $filed )->where ( $where )->limit ( 0, 1 )->select ();
 
         if (!empty ( $newMsg ) ) {
@@ -123,7 +123,7 @@ class CheckSendnameAction extends ModuleAction
 
             }
 
-            //$where ['domain'] = $_SERVER ['HTTP_HOST'];
+            //$where ['domain'] = $this->getDomain();
 
             $where = array();
             $where['sendname'] = $sendname;

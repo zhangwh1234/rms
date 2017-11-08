@@ -1,0 +1,224 @@
+<style>
+    .eedatagrid-row-selected {
+        background: yellow;
+        color: red;
+        cursor: default;
+    }
+</style>
+<div class="moduleMenu">
+    <ul>
+        <li>{$Think.lang.$navName}</li>
+        <li><a href="javascript:void(0);" onclick="IndexIndexModule.updateOperateTab('__URL__/listview');">&nbsp;&gt;{$Think.lang.$moduleName}</a>
+        </li>
+        <li>&nbsp;&gt;列表操作</li>
+        <li style="width: 30px;">&nbsp;</li>
+
+        <li style="margin-left: 10px;"><a href="javascript:void(0);"
+                                          onclick="YingshouJournalMgrListviewModule.createview();"><img
+                src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);"
+               onclick="YingshouJournalListviewModule.createview();">结账</a></li>
+
+        <li style="margin-left: 50px;"><input type="text" id="roomservicebillCreateviewDateInput"
+                                              class="easyui-datebox"
+                                              name="roomservicebillCreateviewDateInput"
+                                              style="font-size: 16px;width:150px;" value="cdate"/></li>
+
+        <li style="margin-left: 20px;"><select name="roomservicebillCreateviewApInput"
+                                               id="roomservicebillCreateviewApInput"
+                                               class="txtBox" style="width:100px;font-size: 14px;margin-top: 5px;">
+            <if condition="$searchAp">
+                <option value="{$cap}">{$cp}</option>
+            </if>
+            <option value="上午">上午</option>
+            <option value="下午">下午</option>
+        </select></li>
+        <li style="margin-left: 10px;"><a href="javascript:;" onclick="OrderHistorySearchviewModule.search(this);"
+                                          class="easyui-linkbutton"
+                                          iconCls="icons-table-table">查询</a></li>
+
+
+        <li style="float: right;margin-right: 10px;"><a href="javascript:void(0);"
+                                                        onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
+        <li style="float:right;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();"><img
+                src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
+    </ul>
+</div>
+
+<tagLib name="easyui"/>
+<div id="YingshouJournalListviewDiv" style="height:400px;width:100%;clear:both;">
+    <easyui:datagrid options="datagrid.options" fields="datagrid.fields"/>
+</div>
+<input id="{$moduleName}Action" type="hidden" value="Listview"/>
+<script type="text/javascript">
+    var YingshouJournalListviewModule = {
+        dialog: '#globel-dialog-div',
+        datagrid: '#notice_index_datagrid',
+
+        init: function () {
+            //设置div的高度
+            $('#YingshouJournalListviewDiv').height(IndexIndexModule.operationHeight);
+            this.quickKeyboardAction();
+        },
+
+        //操作格式化
+        operate: function (val, rowData, rowIndex) {
+            var btn = [];
+            btn.push('<a href="javascript:void(0);" onclick="YingshouJournalListviewModule.detailview(' + rowData.noticeid + ')">查看</a>');
+            btn.push('<a href="javascript:void(0);" onclick="YingshouJournalListviewModule.editview(' + rowData.noticeid + ')">编辑</a>');
+            btn.push('<a href="javascript:void(0);" onclick="YingshouJournalListviewModule.deleteRecord(' + rowData.noticeid + ')">删除</a>');
+            return btn.join(' | ');
+        },
+
+
+
+        //刷新
+        refresh: function () {
+            $(this.datagrid).datagrid('reload');
+        },
+
+        //查看记录
+        detailview: function (id) {
+            var url = "{:U('Notice/detailview')}";
+            url += url.indexOf('?') != -1 ? '&record=' + id : '?id=' + id;
+            IndexIndexModule.updateOperateTab(url);
+        },
+
+        //编辑
+        editview: function (id) {
+            var url = "{:U('Notice/editview')}";
+            url += url.indexOf('?') != -1 ? '&record=' + id : '?id=' + id;
+            IndexIndexModule.updateOperateTab(url);
+        },
+
+
+        //删除
+        deleteRecord: function (id) {
+            var that = this;
+            $.messager.confirm('提示信息', '确定要删除吗？', function (result) {
+                if (!result) return false;
+                $.messager.progress({text: '处理中，请稍候...'});
+                $.post("{:U('Notice/delete')}", {record: id}, function (res) {
+                    $.messager.progress('close');
+                    if (!res.status) {
+                        $.app.method.tip('提示信息', res.info, 'error');
+                    } else {
+                        $.app.method.tip('提示信息', res.info, 'info');
+                        that.refresh();
+                    }
+                    ;
+                }, 'json');
+            });
+        },
+
+        //生成结账单的对话框
+        createview: function () {
+            var that = this;
+            $(that.dialog).dialog({
+                title: '财务结账',
+                iconCls: 'icons-application-application_add',
+                width: 400,
+                height: 140,
+                cache: false,
+                href: "{:U('YingshouJournal/generalview')}",
+                modal: true,
+                collapsible: false,
+                minimizable: false,
+                resizable: false,
+                maximizable: false,
+                buttons: [{
+                    text: '确定',
+                    iconCls: 'icons-other-tick',
+                    handler: function () {
+                        $(that.dialog).dialog('close');
+                        $.messager.progress({text: '处理中，请稍候...'});
+                        //获取日期
+                        var journal_date = $('#yingshouJournalGeneralviewDateInput').datebox('getValue');	//
+                        var data = {'journal_date': journal_date};
+                        $.ajax({
+                            type: "POST",
+                            url: "__URL__/journalCalculate",
+                            data: data,
+                            dataType: "json",
+                            success: function (data) {
+                                if(res.state == 0) {  //0就是错误
+                                    $.messager.progress('close');
+                                    var url = '__URL__/resultview/module/journal/getdate/'+journal_date;
+                                    IndexIndexModule.updateOperateTab(url);
+                                }else{  //state = 1就是success
+                                    $.messager.progress('close');
+                                    //$('#roomservicebillCreateviewDateInput').datebox('setValue',finance_date);
+                                    //$('#roomservicebillCreateviewApInput').val(room_ap);
+                                    $(that.datagrid).datagrid('reload');
+                                }
+                            }
+                        });
+                    }
+                }, {
+                    text: '取消',
+                    iconCls: 'icons-arrow-cross',
+                    handler: function () {
+                        $(that.dialog).dialog('close');
+                    }
+                }]
+            });
+        },
+
+
+        //新建的快捷操作
+        quickKeyboardAction: function () {
+            // ctrl+1快捷键,新建公告
+            Mousetrap.bind(['ctrl+1', 'ctrl+f1', 'f1'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '公告') {
+                    IndexIndexModule.updateOperateTab('__URL__/createview');
+                }
+                ;
+            });
+
+            // ctrl+3快捷键,查询公告
+            Mousetrap.bind(['ctrl+3', 'ctrl+f3', 'f3'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '公告') {
+                    IndexIndexModule.search('Notice', '{$Think.lang.Notice}');
+                }
+                ;
+            });
+
+            // ctrl+4快捷键,放弃
+            Mousetrap.bind(['ctrl+4', 'ctrl+f4', 'f4'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '公告') {
+                    IndexIndexModule.updateOperateTab('__URL__/listview/delsession/del');
+                }
+                ;
+            });
+
+            // ESC键
+            Mousetrap.bind('esc', function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '公告') {
+                    $(NoticeListviewModule.dialog).dialog('close');
+                }
+            });
+        }
+
+    };
+
+    $(function () {
+        YingshouJournalListviewModule.init();
+
+    })
+</script>
+
+
+
+

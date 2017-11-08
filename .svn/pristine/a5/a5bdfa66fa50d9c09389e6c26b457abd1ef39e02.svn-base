@@ -1,0 +1,277 @@
+<?php if (!defined('THINK_PATH')) exit();?><style>
+#orderFormListviewList {
+	clear: both;
+}
+
+#orderFormListviewHelp {
+	height: 18px;
+	padding-left: 20px;
+	margin-top: 2px;
+	font-size: 16px;
+}
+/* 操作输入框 */
+.orderFormListviewOperation {
+	font-size: 14px;
+	float: left;
+	width: 35px;
+}
+/*定义备注字段大小*/
+#orderFormListviewTb .l-btn-text {
+	font-size: 16px;
+	color: #33338c;
+	margin-top: 2px;
+}
+</style>
+
+<div id="orderFormListviewMain" class="easyui-layout" fit="true"
+	border="false">
+	<div data-options="region:'center',border:false"
+		style="padding: 0px; background: #eee; clear: both;">
+		<table id="OrderFormListviewTable" fit="true"></table>
+	</div>
+	<div data-options="region:'south',split:false,border:false"
+		style="height: 80px;">
+		<div class="pagestop">
+			<div id="otherInfoOrderHandle" style="height: 20px;" align="center">
+			</div>
+			<div id="orderHandleSearchviewAddressHelp" align="center"></div>
+		</div>
+	</div>
+</div>
+
+<script>
+	Namespace.register('orderForm.listview');
+
+	//定义查询操作表格
+	orderForm.listview.table = $('#OrderFormListviewTable');
+	orderForm.listview.table.datagrid({
+				nowrap : "true",
+				fitColumns : "true",
+				singleSelect : "true",
+				autoRowHeight : "true",
+				striped : "true",
+				border : "false",
+				rownumbers : "false", //显示行号
+				showFooter : 'true',
+				pagination : true,
+				pagePosition : 'bottom',
+				toolbar : '#orderFormListviewTb',
+				rowStyler : function(index, row) { //处理订单，状态改为已，就改变背景颜色，以便区别
+					var state = row.state;
+					if (state.indexOf('已执行') >= 0) {
+						return 'background-color:#6293BB;color:red;'; // return inline style
+					}
+				},
+				columns : [ [
+						{
+							field : 'orderformid',
+							title : 'id',
+							hidden : 'true',
+							width : 100
+						},
+						{
+							field : 'address',
+							title : '地址',
+							width : 110,
+							align : 'left'
+						},
+						{
+							field : 'ordertxt',
+							title : '数量规格',
+							width : 50,
+							align : 'center'
+						},
+						{
+							field : "totalmoney",
+							width : 30,
+							title : '金额'
+						},
+						{
+							field : "telphone",
+							width : 20,
+							title : '电话',
+							align : 'center'
+						},
+						{
+							field : "custtime",
+							width : 30,
+							title : '要餐时间'
+						},
+						{
+							field : "state",
+							width : 20,
+							title : '状态',
+							styler : function(value, row, index) {
+								if (value.indexOf('改单') >= 0) {
+									return 'background-color:#ffee00;color:	#02C874;';
+								}
+								if (value.indexOf('催送') >= 0) {
+									return 'background-color:#ffee00;color:#FF0000;';
+								}
+								if (value.indexOf('退餐') >= 0) {
+									return 'background-color:#ffee00;color:#01B468;';
+								}
+							}
+						},
+						{
+							field : "sendname",
+							width : 20,
+							title : '送餐员'
+						},
+						{
+							field : "telname",
+							width : 30,
+							title : '接线员',
+							align : 'center'
+						},
+						{
+							field : "rectime",
+							width : 30,
+							title : '下单时间',
+							align : 'center'
+						},
+						{
+							field : "invoiceheader",
+							width : 30,
+							title : '发票抬头',
+							align : 'center'
+						},
+						{
+							field : "operation",
+							width : 54,
+							title : '操作',
+							align : 'center',
+							formatter : function(value, rowData, rowIndex) {
+								var operation;
+								operation = "<input class='orderFormListviewOperation' id='orderFormListviewOperation"
+											+ rowIndex
+											+ "'  name='orderFormListviewOperation"
+											+ rowIndex
+											+ "' type='text'  size='2' rowIndex='"+rowIndex+"' orderformid='"+rowData.orderformid+"'  >";
+								operation += "<a href='javascript:void(0);' onclick='updateTab(&apos;__URL__/detailview/record/"
+										+ rowData.orderformid
+										+ "/returnAction/listview&apos;)' class='orderHandleDetailview'  style='margin-left:4px;'>查看</a>";
+								operation += "<a href='javascript:void(0);' onclick='orderPrintHandle("
+										+ rowData.orderformid
+										+ ","
+										+ rowIndex
+										+ ")' class='orderHandleDetailview' style='margin-left:4px;' >打印</a>";
+								if (rowData.invoiceHeader) {
+									operation += "<a href='javascript:void(0);' onclick='openNewTab(&apos;发票管理&apos;,&apos;__APP__/InvoiceMgr/editview/record/"
+											+ rowData.orderformid
+											+ "/returnAction/listview&apos;)' class='orderHandleDetailview' style='margin-left:4px' >票</a>";
+								}
+								return operation;
+							}
+						} ] ],
+				onSelect : orderFormListviewTableSelectRow, //选择行
+				onClickRow : orderFormListviewTableClickRow
+			//单击行事件
+			});
+	
+	var orderFormListviewTableSelectRow = function(){
+		
+	}
+	
+	var orderFormListviewTableClickRow = function(){
+		
+	}
+	
+	//定义查询返回的订单数据
+	orderForm.listview.listData = '<?php echo ($listData); ?>';
+	//转换成json对象
+	orderForm.listview.listData = eval('('
+			+ orderForm.listview.listData + ')');
+	//载入订单数据，初始化
+	orderForm.listview.table.datagrid('loadData',
+			orderForm.listview.listData);
+	
+</script>
+
+
+<div id="addressSearchOrderFormWin" class="easyui-window"
+	data-options="title:'地址查询',collapsible:false,
+    minimizable:false,
+    maximizable:false,
+    modal:true,
+    onClose:function(){
+    refreshOrder = true;
+    },
+    closed:true
+    "
+	style="width: 500px; height: 80px;">
+	<table style="margin-left: 5px;">
+		<tr>
+			<td style="font-size: 16px; margin-top: 10px;">地址查询</td>
+			<td><input id="addressSearchOrderFormWinInput"
+				name="addressSearchOrderFormWinInput" style="width: 350px;"
+				style="font-size: 16px;margin-top: 5px;"
+				onkeydown="addressSearchOFQuickKey(event,this);" value="" /></td>
+
+			<tr>
+	</table>
+</div>
+<div id="telphoneSearchOrderFormWin" class="easyui-window" data-options="title:'电话查询',collapsible:false,
+    minimizable:false,
+    maximizable:false,
+    modal:true,
+    onClose:function(){
+    refreshOrder = true;
+    },
+    closed:true
+    " style="width: 500px;height: 80px;">
+    <table style="margin-left: 5px;"><tr>
+        <td style="font-size: 16px;margin-top: 10px;">电话查询</td>
+        <td><input id="telphoneSearchOrderFormWinInput" name="telphoneSearchOrderFormWinInput" style="width: 350px;" style="font-size: 16px;margin-top: 5px;" onkeydown="telphoneSearchOFQuickKey(event,this);" value="" /></td>
+        <tr></table>
+</div><script type="text/javascript">
+	//催送订单
+	function hurryRecord(url) {
+		if (confirm("是否真的要催送订单？")) {
+			updateTab(url);
+			//updateTab("__APP__/<?php echo ($module_name); ?>/hurry?&record="+record);
+		}
+	}
+
+	//地址查询的快捷键
+	function addressSearchOFQuickKey(event, obj) {
+		//定义根据输入值，处理订单
+		var inputCode = $(obj).val();
+		//输入的键值 
+		var event = event || window.event;
+		var keyCode = event.which ? event.which : event.keyCode;
+		if (keyCode == 13) { //订单处理
+			var objValue = $(obj).val();
+			openNewTabUrl('订单地址查询',
+					'__URL__/searchviewForAddress/delsession/1/searchTextAddress/'
+							+ encodeURI(objValue));
+			$(
+					'#searchViewForAddress<?php echo ($moduleName); ?>Address input[name=searchAddress]')
+					.focus();
+			$(obj).val('');
+			$('#addressSearchOrderFormWin').window('close'); //关闭地址查询
+		}
+
+	}
+
+	//电话查询的快捷键
+	function telphoneSearchOFQuickKey(event, obj) {
+		//定义根据输入值，处理订单
+		var inputCode = $(obj).val();
+		//输入的键值 
+		var event = event || window.event;
+		var keyCode = event.which ? event.which : event.keyCode;
+		if (keyCode == 13) { //订单处理
+			var objValue = $(obj).val();
+			openNewTabUrl('订单电话查询',
+					'__URL__/searchviewForTelphone/delsession/1/searchTelphone/'
+							+ encodeURI(objValue));
+			$(
+					'#searchViewForAddress<?php echo ($moduleName); ?>Telphone input[name=searchTelphone]')
+					.focus();
+			$(obj).val('');
+			$('#telphoneSearchOrderFormWin').window('close'); //关闭地址查询
+		}
+
+	}
+</script>

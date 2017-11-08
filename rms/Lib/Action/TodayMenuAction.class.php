@@ -59,7 +59,7 @@ class TodayMenuAction extends ModuleAction
             $where['date'] = $date;
         }
 
-        $where['domain'] = $_SERVER['HTTP_HOST'];
+        $where['domain'] = $this->getDomain();
 
         //返回模块的行记录
         $result = $focus->where($where)->find();
@@ -181,7 +181,7 @@ class TodayMenuAction extends ModuleAction
         $focus->setProperty("_auto", $auto);
 
         $where['date'] = $_REQUEST['date'];
-        $where['domain'] = $_SERVER['HTTP_HOST'];
+        $where['domain'] = $this->getDomain();
 
         $result = $focus->where($where)->find();
         if ($result) {

@@ -1,0 +1,41 @@
+<include file="Module/detailview"/>
+<script>
+    var FreebieMgrDetailviewModule = {
+
+        //初始化
+        init: function () {
+            this.quickKeyboardAction();
+        },
+
+        //新建的快捷操作
+        quickKeyboardAction: function () {
+            // ctrl+1快捷键,新建公告
+            Mousetrap.bind(['ctrl+1','ctrl+f1','f1'], function(e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '产品' && ($('#FreebieMgrAction').val() == 'Detailview')) {
+                    IndexIndexModule.updateOperateTab('__URL__/createview');
+                };
+            });
+
+            // ctrl+4快捷键,放弃
+            Mousetrap.bind(['ctrl+4', 'ctrl+f4', 'f4'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '产品' && ($('#FreebieMgrAction').val() == 'Detailview')) {
+                    IndexIndexModule.updateOperateTab('__URL__/listview');
+                }
+                ;
+            });
+        }
+    }
+
+    $(function () {
+        FreebieMgrDetailviewModule.init();
+    })
+
+</script>
+
+

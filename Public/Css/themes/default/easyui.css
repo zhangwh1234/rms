@@ -700,7 +700,7 @@
   background-color: #ffe48d;
   color: #000000;
 }
-.layout {
+.layout{
   position: relative;
   overflow: hidden;
   margin: 0;
@@ -1288,7 +1288,7 @@
 .datagrid-body td,
 .datagrid-footer td {
   border-width: 0 1px 1px 0;
-  border-style: dotted;
+  border-style: dotted solid;
   margin: 0;
   padding: 0;
 }
@@ -1428,6 +1428,7 @@
 .datagrid-mask {
   background: #ccc;
 }
+
 .datagrid-mask-msg {
   border-color: #95B8E7;
 }
@@ -1455,14 +1456,17 @@
 .datagrid-row-alt {
   background: #fafafa;
 }
+
 .datagrid-row-over,
 .datagrid-header td.datagrid-header-over {
   background: #eaf2ff;
   color: #000000;
   cursor: default;
 }
+
+/* #ffe48d; 这里做了修改*/
 .datagrid-row-selected {
-  background: #ffe48d;
+  background: #7BCCB5;
   color: #000000;
 }
 .datagrid-row-editing .textbox,

@@ -1,0 +1,181 @@
+[16-03-31 11:08:02] INFO: 获取数据！{"error":0,"success":"success","result":{"271709":{"orderproducts":null,"orderactivity":null,"orderpayment":[{"orderpaymentid":"1","ordersn":"","orderformid":"0","paymentid":"","name":"","money":"0.00","note":"","date":""},{"orderpaymentid":"2","ordersn":"","orderformid":"0","paymentid":"","name":"","money":"0.00","note":"","date":""},{"orderpaymentid":"3","ordersn":"","orderformid":"0","paymentid":"","name":"","money":"0.00","note":"","date":""}]}}}
+[16-03-31 11:08:42] INFO: 获取数据！{"error":0,"success":"success","result":{"271709":{"orderproducts":null,"orderactivity":null,"orderpayment":[{"orderpaymentid":"1","ordersn":"","orderformid":"0","paymentid":"","name":"","money":"0.00","note":"","date":""},{"orderpaymentid":"2","ordersn":"","orderformid":"0","paymentid":"","name":"","money":"0.00","note":"","date":""},{"orderpaymentid":"3","ordersn":"","orderformid":"0","paymentid":"","name":"","money":"0.00","note":"","date":""}]}}}
+[16-03-31 11:23:35] INFO: 获取数据！array(1) {
+  [0]=>
+  array(6) {
+    ["id"]=>
+    string(6) "271958"
+    ["orderformid"]=>
+    string(3) "575"
+    ["ordersn"]=>
+    string(11) "57520160331"
+    ["status"]=>
+    string(1) "0"
+    ["domain"]=>
+    string(15) "cz.lihuaerp.com"
+    ["assisstatus"]=>
+    string(1) "0"
+  }
+}
+array(33) {
+  ["orderformid"]=>
+  string(3) "575"
+  ["ordersn"]=>
+  string(11) "57520160331"
+  ["clientname"]=>
+  string(0) ""
+  ["address"]=>
+  string(82) "薛家 庆阳路199号 星光热处理 门口打电话联系 18651200732 王先生"
+  ["telphone"]=>
+  string(8) "88050688"
+  ["ordertxt"]=>
+  string(13) "1×牛腩饭 "
+  ["beizhu"]=>
+  string(40) "票 现金   改 字 张工要求 测试"
+  ["totalmoney"]=>
+  string(4) "0.00"
+  ["paidmoney"]=>
+  NULL
+  ["shouldmoney"]=>
+  string(5) "35.00"
+  ["goodsmoney"]=>
+  NULL
+  ["custtime"]=>
+  string(5) "17:00"
+  ["custdate"]=>
+  string(10) "2016-03-31"
+  ["ap"]=>
+  string(6) "下午"
+  ["lastdatetime"]=>
+  string(19) "2016-03-31 17:23:02"
+  ["sendname"]=>
+  string(9) "顾家海"
+  ["company"]=>
+  string(6) "薛家"
+  ["telname"]=>
+  string(9) "管理员"
+  ["rectime"]=>
+  string(8) "16:15:10"
+  ["recdate"]=>
+  string(10) "2016-03-31"
+  ["state"]=>
+  string(6) "改单"
+  ["hurrytime"]=>
+  string(0) ""
+  ["hurrynumber"]=>
+  string(1) "0"
+  ["handlestate"]=>
+  string(1) "0"
+  ["distributionstate"]=>
+  string(1) "0"
+  ["invoiceheader"]=>
+  string(0) ""
+  ["invoicebody"]=>
+  string(0) ""
+  ["shippingname"]=>
+  string(0) ""
+  ["shippingmoney"]=>
+  string(4) "0.00"
+  ["longitude"]=>
+  NULL
+  ["latitude"]=>
+  NULL
+  ["origin"]=>
+  NULL
+  ["domain"]=>
+  string(15) "cz.lihuaerp.com"
+}
+string(75) "SELECT * FROM `rms_orderform` WHERE ( `ordersn` = '57520160331' ) LIMIT 1  "
+{"error":0,"success":"success","result":{"271958":{"orderformid":"575","ordersn":"57520160331","clientname":"","address":"\u859b\u5bb6 \u5e86\u9633\u8def199\u53f7 \u661f\u5149\u70ed\u5904\u7406 \u95e8\u53e3\u6253\u7535\u8bdd\u8054\u7cfb 18651200732 \u738b\u5148\u751f","telphone":"88050688","ordertxt":"1\u00d7\u725b\u8169\u996d ","beizhu":"\u7968 \u73b0\u91d1   \u6539 \u5b57 \u5f20\u5de5\u8981\u6c42 \u6d4b\u8bd5","totalmoney":"0.00","paidmoney":null,"shouldmoney":"35.00","goodsmoney":null,"custtime":"17:00","custdate":"2016-03-31","ap":"\u4e0b\u5348","lastdatetime":"2016-03-31 17:23:02","sendname":"\u987e\u5bb6\u6d77","company":"\u859b\u5bb6","telname":"\u7ba1\u7406\u5458","rectime":"16:15:10","recdate":"2016-03-31","state":"\u6539\u5355","hurrytime":"","hurrynumber":"0","handlestate":"0","distributionstate":"0","invoiceheader":"","invoicebody":"","shippingname":"","shippingmoney":"0.00","longitude":null,"latitude":null,"origin":null,"domain":"cz.lihuaerp.com","orderproducts":[{"orderproductsid":"1249319","orderformid":"575","ordersn":"57520160331","code":"035","name":"\u725b\u8169\u996d","shortname":"\u725b\u8169\u996d","price":"35.00","number":"1","money":"35.00","domain":"cz.lihuaerp.com"}],"orderactivity":null,"orderpayment":null}}}
+[16-03-31 11:27:58] INFO: 获取数据！array(1) {
+  [0]=>
+  array(6) {
+    ["id"]=>
+    string(6) "271958"
+    ["orderformid"]=>
+    string(3) "575"
+    ["ordersn"]=>
+    string(11) "57520160331"
+    ["status"]=>
+    string(1) "0"
+    ["domain"]=>
+    string(15) "cz.lihuaerp.com"
+    ["assisstatus"]=>
+    string(1) "0"
+  }
+}
+{"error":0,"success":"success","result":{"271958":{"orderformid":"575","ordersn":"57520160331","clientname":"","address":"\u859b\u5bb6 \u5e86\u9633\u8def199\u53f7 \u661f\u5149\u70ed\u5904\u7406 \u95e8\u53e3\u6253\u7535\u8bdd\u8054\u7cfb 18651200732 \u738b\u5148\u751f","telphone":"88050688","ordertxt":"1\u00d7\u725b\u8169\u996d ","beizhu":"\u7968 \u73b0\u91d1   \u6539 \u5b57 \u5f20\u5de5\u8981\u6c42 \u6d4b\u8bd5","totalmoney":"0.00","paidmoney":null,"shouldmoney":"35.00","goodsmoney":null,"custtime":"17:00","custdate":"2016-03-31","ap":"\u4e0b\u5348","lastdatetime":"2016-03-31 17:23:02","sendname":"\u987e\u5bb6\u6d77","company":"\u859b\u5bb6","telname":"\u7ba1\u7406\u5458","rectime":"16:15:10","recdate":"2016-03-31","state":"\u6539\u5355","hurrytime":"","hurrynumber":"0","handlestate":"0","distributionstate":"0","invoiceheader":"","invoicebody":"","shippingname":"","shippingmoney":"0.00","longitude":null,"latitude":null,"origin":null,"domain":"cz.lihuaerp.com","orderproducts":[{"orderproductsid":"1249319","orderformid":"575","ordersn":"57520160331","code":"035","name":"\u725b\u8169\u996d","shortname":"\u725b\u8169\u996d","price":"35.00","number":"1","money":"35.00","domain":"cz.lihuaerp.com"}],"orderactivity":null,"orderpayment":null}}}
+[16-03-31 11:31:29] INFO: 获取数据！array(1) {
+  [0]=>
+  array(6) {
+    ["id"]=>
+    string(6) "271958"
+    ["orderformid"]=>
+    string(3) "575"
+    ["ordersn"]=>
+    string(11) "57520160331"
+    ["status"]=>
+    string(1) "0"
+    ["domain"]=>
+    string(15) "cz.lihuaerp.com"
+    ["assisstatus"]=>
+    string(1) "1"
+  }
+}
+{"error":0,"success":"success","result":{"271958":{"orderformid":"575","ordersn":"57520160331","clientname":"","address":"\u859b\u5bb6 \u5e86\u9633\u8def199\u53f7 \u661f\u5149\u70ed\u5904\u7406 \u95e8\u53e3\u6253\u7535\u8bdd\u8054\u7cfb 18651200732 \u738b\u5148\u751f","telphone":"88050688","ordertxt":"1\u00d7\u725b\u8169\u996d ","beizhu":"\u7968 \u73b0\u91d1   \u6539 \u5b57 \u5f20\u5de5\u8981\u6c42 \u6d4b\u8bd5","totalmoney":"0.00","paidmoney":null,"shouldmoney":"35.00","goodsmoney":null,"custtime":"17:00","custdate":"2016-03-31","ap":"\u4e0b\u5348","lastdatetime":"2016-03-31 17:23:02","sendname":"\u987e\u5bb6\u6d77","company":"\u859b\u5bb6","telname":"\u7ba1\u7406\u5458","rectime":"16:15:10","recdate":"2016-03-31","state":"\u5df2\u5904\u7406","hurrytime":"","hurrynumber":"0","handlestate":"0","distributionstate":"0","invoiceheader":"","invoicebody":"","shippingname":"","shippingmoney":"0.00","longitude":null,"latitude":null,"origin":null,"domain":"cz.lihuaerp.com","orderproducts":[{"orderproductsid":"1249319","orderformid":"575","ordersn":"57520160331","code":"035","name":"\u725b\u8169\u996d","shortname":"\u725b\u8169\u996d","price":"35.00","number":"1","money":"35.00","domain":"cz.lihuaerp.com"}],"orderactivity":null,"orderpayment":null}}}
+[16-03-31 11:31:36] INFO: 获取数据！array(1) {
+  [0]=>
+  array(6) {
+    ["id"]=>
+    string(6) "271958"
+    ["orderformid"]=>
+    string(3) "575"
+    ["ordersn"]=>
+    string(11) "57520160331"
+    ["status"]=>
+    string(1) "0"
+    ["domain"]=>
+    string(15) "cz.lihuaerp.com"
+    ["assisstatus"]=>
+    string(1) "1"
+  }
+}
+{"error":0,"success":"success","result":{"271958":{"orderformid":"575","ordersn":"57520160331","clientname":"","address":"\u859b\u5bb6 \u5e86\u9633\u8def199\u53f7 \u661f\u5149\u70ed\u5904\u7406 \u95e8\u53e3\u6253\u7535\u8bdd\u8054\u7cfb 18651200732 \u738b\u5148\u751f","telphone":"88050688","ordertxt":"1\u00d7\u725b\u8169\u996d ","beizhu":"\u7968 \u73b0\u91d1   \u6539 \u5b57 \u5f20\u5de5\u8981\u6c42 \u6d4b\u8bd5","totalmoney":"0.00","paidmoney":null,"shouldmoney":"35.00","goodsmoney":null,"custtime":"17:00","custdate":"2016-03-31","ap":"\u4e0b\u5348","lastdatetime":"2016-03-31 17:23:02","sendname":"\u987e\u5bb6\u6d77","company":"\u859b\u5bb6","telname":"\u7ba1\u7406\u5458","rectime":"16:15:10","recdate":"2016-03-31","state":"\u5df2\u5904\u7406","hurrytime":"","hurrynumber":"0","handlestate":"0","distributionstate":"0","invoiceheader":"","invoicebody":"","shippingname":"","shippingmoney":"0.00","longitude":null,"latitude":null,"origin":null,"domain":"cz.lihuaerp.com","orderproducts":[{"orderproductsid":"1249319","orderformid":"575","ordersn":"57520160331","code":"035","name":"\u725b\u8169\u996d","shortname":"\u725b\u8169\u996d","price":"35.00","number":"1","money":"35.00","domain":"cz.lihuaerp.com"}],"orderactivity":null,"orderpayment":null}}}
+[16-03-31 11:31:40] INFO: 获取数据！array(1) {
+  [0]=>
+  array(6) {
+    ["id"]=>
+    string(6) "271958"
+    ["orderformid"]=>
+    string(3) "575"
+    ["ordersn"]=>
+    string(11) "57520160331"
+    ["status"]=>
+    string(1) "0"
+    ["domain"]=>
+    string(15) "cz.lihuaerp.com"
+    ["assisstatus"]=>
+    string(1) "1"
+  }
+}
+{"error":0,"success":"success","result":{"271958":{"orderformid":"575","ordersn":"57520160331","clientname":"","address":"\u859b\u5bb6 \u5e86\u9633\u8def199\u53f7 \u661f\u5149\u70ed\u5904\u7406 \u95e8\u53e3\u6253\u7535\u8bdd\u8054\u7cfb 18651200732 \u738b\u5148\u751f","telphone":"88050688","ordertxt":"1\u00d7\u725b\u8169\u996d ","beizhu":"\u7968 \u73b0\u91d1   \u6539 \u5b57 \u5f20\u5de5\u8981\u6c42 \u6d4b\u8bd5","totalmoney":"0.00","paidmoney":null,"shouldmoney":"35.00","goodsmoney":null,"custtime":"17:00","custdate":"2016-03-31","ap":"\u4e0b\u5348","lastdatetime":"2016-03-31 17:23:02","sendname":"\u987e\u5bb6\u6d77","company":"\u859b\u5bb6","telname":"\u7ba1\u7406\u5458","rectime":"16:15:10","recdate":"2016-03-31","state":"\u5df2\u5904\u7406","hurrytime":"","hurrynumber":"0","handlestate":"0","distributionstate":"0","invoiceheader":"","invoicebody":"","shippingname":"","shippingmoney":"0.00","longitude":null,"latitude":null,"origin":null,"domain":"cz.lihuaerp.com","orderproducts":[{"orderproductsid":"1249319","orderformid":"575","ordersn":"57520160331","code":"035","name":"\u725b\u8169\u996d","shortname":"\u725b\u8169\u996d","price":"35.00","number":"1","money":"35.00","domain":"cz.lihuaerp.com"}],"orderactivity":null,"orderpayment":null}}}
+[16-03-31 11:32:17] INFO: 获取数据！array(1) {
+  [0]=>
+  array(6) {
+    ["id"]=>
+    string(6) "271958"
+    ["orderformid"]=>
+    string(3) "575"
+    ["ordersn"]=>
+    string(11) "57520160331"
+    ["status"]=>
+    string(1) "0"
+    ["domain"]=>
+    string(15) "cz.lihuaerp.com"
+    ["assisstatus"]=>
+    string(1) "1"
+  }
+}
+{"error":0,"success":"success","result":{"271958":{"orderformid":"575","ordersn":"57520160331","clientname":"","address":"\u859b\u5bb6 \u5e86\u9633\u8def199\u53f7 \u661f\u5149\u70ed\u5904\u7406 \u95e8\u53e3\u6253\u7535\u8bdd\u8054\u7cfb 18651200732 \u738b\u5148\u751f","telphone":"88050688","ordertxt":"1\u00d7\u725b\u8169\u996d ","beizhu":"\u7968 \u73b0\u91d1   \u6539 \u5b57 \u5f20\u5de5\u8981\u6c42 \u6d4b\u8bd5","totalmoney":"0.00","paidmoney":null,"shouldmoney":"35.00","goodsmoney":null,"custtime":"17:00","custdate":"2016-03-31","ap":"\u4e0b\u5348","lastdatetime":"2016-03-31 17:23:02","sendname":"\u987e\u5bb6\u6d77","company":"\u859b\u5bb6","telname":"\u7ba1\u7406\u5458","rectime":"16:15:10","recdate":"2016-03-31","state":"\u5df2\u5904\u7406","hurrytime":"","hurrynumber":"0","handlestate":"0","distributionstate":"0","invoiceheader":"","invoicebody":"","shippingname":"","shippingmoney":"0.00","longitude":null,"latitude":null,"origin":null,"domain":"cz.lihuaerp.com","orderproducts":[{"orderproductsid":"1249319","orderformid":"575","ordersn":"57520160331","code":"035","name":"\u725b\u8169\u996d","shortname":"\u725b\u8169\u996d","price":"35.00","number":"1","money":"35.00","domain":"cz.lihuaerp.com"}],"orderactivity":null,"orderpayment":null}}}
+[16-03-31 11:53:10] INFO: 没有数据！
+[16-03-31 11:53:12] INFO: 没有数据！

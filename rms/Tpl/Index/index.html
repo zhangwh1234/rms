@@ -5,10 +5,9 @@
     <link REL="SHORTCUT ICON" HREF=".__PUBLIC__/Images/lhkc/favicon.ico">
     <link rel="stylesheet" type="text/css" href=".__PUBLIC__/Css/icons.css"/>
     <link rel="stylesheet" type="text/css" href=".__PUBLIC__/Css/themes/default/easyui.css" title="default"/>
-    <link rel="stylesheet" type="text/css" href=".__PUBLIC__/Css/themes/gray/easyui.css" title="gray"/>
-    <link rel="stylesheet" type="text/css" href=".__PUBLIC__/Css/themes/bootstrap/easyui.css" title="bootstrap"/>
-    <link rel="stylesheet" type="text/css" href=".__PUBLIC__/Css/themes/metro/easyui.css" title="metro"/>
+
     <load href=".__PUBLIC__/Css/style.css"/>
+    <script type="text/javascript" src=".__PUBLIC__/Js/clipboard.min.js"></script>
     <script type="text/javascript" src=".__PUBLIC__/Js/jquery.min.js"></script>
     <script type="text/javascript" src=".__PUBLIC__/Js/jquery.cookie.js"></script>
     <script type="text/javascript" src=".__PUBLIC__/Js/jquery.json.min.js"></script>
@@ -17,20 +16,22 @@
     <script type="text/javascript" src=".__PUBLIC__/Js/easyui/locale/easyui-lang-zh_CN.js"></script>
     <script type="text/javascript" src=".__PUBLIC__/Js/easyui/plugins/jquery.portal.js"></script>
     <script type="text/javascript" src=".__PUBLIC__/Js/jquery.app.js"></script>
+    <script type="text/javascript" src=".__PUBLIC__/Js/datagrid-detailview.js"></script>
     <load href=".__PUBLIC__/Js/mousetrap.js"/>
 
     <script language="JavaScript">
         //指定当前组模块URL地址
         var APP = '__APP__';
         var PUBLIC = '__PUBLIC__';
+        var companyRegion = {};
     </script>
 
     <include file="telphone" />
     <include file="printer" />
 
     <load href=".__PUBLIC__/Js/general.js"/>
-
 </head>
+
 <body class="easyui-layout" id="main">
 
 <div id="header" data-options="region:'north',href:'__APP__/Header',border:false" style="height:79px;overflow: hidden;">
@@ -58,7 +59,39 @@
      style="top:1px;left:1000px;width:500px;height:130px;padding:0px;display: none;">
 
 </div>
+<div style="visibility:hidden;" id="map"></div>
+<script language="JavaScript">
 
+    function initialize() {
+
+        var mp = new BMap.Map('map');
+        mp.centerAndZoom(new BMap.Point(121.491, 31.233), 11);
+
+        //启用滚轮放大缩小
+        mp.enableScrollWheelZoom(true);
+        //禁用地图拖拽
+        mp.disableDragging(true);
+        //禁用滚轮放大缩小
+        mp.disableScrollWheelZoom(true);
+        //启用键盘操作
+        mp.enableKeyboard(true);
+
+    }
+
+    function loadScript() {
+        var script = document.createElement("script");
+        script.src = "http://api.map.baidu.com/api?v=2.0&ak=jLheOGOPRm4rZtnkii8ZOy7C&callback=initialize";
+        document.body.appendChild(script);
+    }
+
+    window.onload = loadScript;
+
+</script>
+
+<!--
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=jLheOGOPRm4rZtnkii8ZOy7C"></script>
+<script type="text/javascript" src=".__PUBLIC__/Js/GeoUtil.js"></script>
+-->
 
 
 <script type="text/javascript">
@@ -80,6 +113,9 @@
         operationHeight:0,
         //表格区可以显示行数的变量
         gridRowsNumber:0,
+        //定义消息对象，可以停止对象
+        messageObj: 0,
+        sendnameMessageObj:0,
 
         getOperationHeight: function () {
             var bodyHeight = $(document).height();
@@ -93,7 +129,8 @@
         init: function () {
             this.operationHeight = this.getOperationHeight();
             this.calculateMaxRows();
-            this.messages();
+            //this.messages();
+            //this.checkmessages();
         },
 
 
@@ -190,7 +227,7 @@
 
         //启动消息群发功能
         messages: function () {
-            setInterval(function () {
+          this.messageObj =  setInterval(function () {
                 $.get("{:U('Messages/getMessages')}", function (data) {
                     if (data) {
                         $.messager.show({
@@ -206,16 +243,39 @@
             }, 15000);
         },
 
+        //启动送餐员监测消息功能
+        checkmessages: function () {
+            this.sendnameMessageObj = setInterval(function () {
+                $.get("{:U('CheckSendname/getMessages')}", function (data) {
+                    if (data) {
+                        $.messager.show({
+                            title: '消息提示',
+                            msg: data,
+                            showType: 'show',
+                            height: 150,
+                            timeout:5000,
+                            style:{
+                                right:'',
+                                left:0,
+                                top:document.body.scrollTop+document.documentElement.scrollTop
+                            }
+                        });
+                    }
+                }, 'json');
+
+            }, 15000);
+        },
+
         //修改用户密码
         changeCode:function(){
             var that = this;
             $(that.dialog).dialog({
                 title: '修改用户密码',
                 iconCls: 'icons-application-application_add',
-                width: 500,
-                height: 140,
+                width: 300,
+                height: 160,
                 cache: false,
-                href:'',
+                href:APP + '/User/changeCodeView',
                 modal: true,
                 collapsible: false,
                 minimizable: false,
@@ -227,11 +287,27 @@
                     handler: function () {
                         $(that.dialog).find('form').eq(0).form('submit', {
                             onSubmit: function () {
-                                var isValid = $(this).form('validate');
-                                if (!isValid) return false;
-                                var searchText = $(that.dialog).find("form input[name='searchText']").val();
-                                var url = APP + '/' + moduleName + '/listview/searchText/' + searchText;
-                                IndexIndexModule.updateOperateTab(url);
+                                var password = $(that.dialog).find("form input[name='firstcodechangecode']").val();
+                                var passtwo = $(that.dialog).find("form input[name='secondcodechangecode']").val();
+                                var record = $(that.dialog).find("form input[name='recordchangecode']").val();
+                                if(password != passtwo){
+                                    alert('重复输入的密码需要相同!');
+                                    return;
+                                }
+                                if(password.length < 3){
+                                    alert('密码小于3位,请输入密码大于3位的密码!');
+                                    return;
+                                }
+                                var url = APP + '/User/changeCode/password/'+password + '/record/'+record;
+                                $.get(url, {}, function (res) {
+                                    $.messager.progress('close');
+                                    if (!res.status) {
+                                        $.app.method.tip('提示信息', res.info, 'error');
+                                    } else {
+                                        $.app.method.tip('提示信息', res.info, 'info');
+                                        that.refresh();
+                                    };
+                                }, 'json');
                                 $(that.dialog).dialog('close');
                                 return false;
                             }
@@ -248,7 +324,7 @@
         }
 
 
-    }
+    };
 
     $(function () {
         IndexIndexModule.init();
@@ -270,10 +346,10 @@
                             ObjAction.quickKeyboardAction();
                     }
 
-
-
             }
         })
+
+
     });
 
 
@@ -296,4 +372,25 @@
             }
         }
     };
+
+    setTimeout(function () {
+        var script = document.createElement("script");
+        script.src = ".__PUBLIC__/Js/GeoUtil.js";
+        document.body.appendChild(script);
+    },2000);
+
 </script>
+
+<!--将分公司的地图参数:送餐范围载入内存 -->
+<script type="text/javascript">
+    $.ajax({
+        type: "POST",
+        url: "__APP__/CompanyMgr/getRegion",
+        dataType: "json",
+        success: function (data) {
+            companyRegion = data;
+        }
+    });
+
+</script>
+

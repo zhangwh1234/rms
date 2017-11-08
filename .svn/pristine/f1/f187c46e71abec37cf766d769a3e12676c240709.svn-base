@@ -1,0 +1,154 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>CCLinkDemo</title>
+    <object classid="clsid:4CFBD1C3-7492-4F9D-92BF-4001D006387E" id="CCLink" width="0" height="0">
+    </object>
+    <script language="javascript" type="text/javascript">
+        var LinkHost="hqrt.3322.org";
+        var LinkPort=2008;
+        var LinkExtCode="888";
+
+        function Link_ConnectServer() {
+            LinkExtCode = window.prompt("请输入您使用的分机号码", LinkExtCode);
+            if (LinkExtCode != "") {
+                var Err = CCLink.Link_ConnectServer(LinkHost, LinkPort, 1); //建立客户端和服务器端连接
+                if (Err != "") {
+                    alert("连接呼叫中心服务器失败!");
+                    return;
+                }
+                Err = CCLink.Ext_Assign(LinkExtCode, LinkExtCode); //绑定到分机设备
+                if (Err != "") {
+                    alert('绑定分机失败,' + Err);
+                    return;
+                }
+                CCLink.Ext_CheckInQueue(LinkExtCode); //将分机签入队列
+            }
+            document.getElementById("btnLogin").disabled = true;
+            document.getElementById("btnLogout").disabled = false;
+            document.getElementById("btnMakeCall").disabled = false;
+            document.getElementById("btnTransferCall").disabled = false;
+            document.getElementById("btnRetriveCall").disabled = false;
+            document.getElementById("btnThreeParty").disabled = false;
+            document.getElementById("btnSetBusy").disabled = false;
+            document.getElementById("btnSetIdle").disabled = false;
+            document.getElementById("btnDropCall").disabled = false;
+            return;
+        }
+
+        function Link_DisconnectServer() {
+            CCLink.Link_DisConnectServer(); //断开客户端和服务器端连接
+            document.getElementById("btnLogin").disabled = false;
+            document.getElementById("btnLogout").disabled = true;
+            document.getElementById("btnMakeCall").disabled = true;
+            document.getElementById("btnTransferCall").disabled = true;
+            document.getElementById("btnRetriveCall").disabled = true;
+            document.getElementById("btnThreeParty").disabled = true;
+            document.getElementById("btnSetBusy").disabled = true;
+            document.getElementById("btnSetIdle").disabled = true;
+            document.getElementById("btnDropCall").disabled = true;
+            return;
+        }
+
+        function Link_MakCall()//外呼
+        {
+            var DestCode = window.prompt("请输入外呼电话", "");
+            CCLink.Ext_MakeCall(LinkExtCode, DestCode);
+        }
+        
+        function Link_TransferCall()//转移
+        {
+            var DestCode = window.prompt("请输入转移电话", "");
+            CCLink.Ext_TransferCall(LinkExtCode, DestCode, "", "");
+        }
+
+        function Link_RetriveCall()//收回
+        {
+            CCLink.Ext_CancelTransfer(LinkExtCode);
+        }
+
+        function Link_ThreeParty()//三方
+        {
+            CCLink.Ext_ThreeParty(LinkExtCode);
+        }
+
+        function Link_SetBusy()//致忙
+        {
+            CCLink.Ext_SetExtDoNotDisturb(LinkExtCode, 1);
+        }
+
+        function Link_SetIdle()//致闲
+        {
+            CCLink.Ext_SetExtDoNotDisturb(LinkExtCode, 0);
+        }
+
+        function Link_DropCall()//挂机
+        {
+            CCLink.Ext_DropCall(LinkExtCode);
+        }
+
+        window.onload = function () {
+            document.getElementById("btnLogin").disabled = false;
+            document.getElementById("btnLogout").disabled = true;
+            document.getElementById("btnMakeCall").disabled = true;
+            document.getElementById("btnTransferCall").disabled = true;
+            document.getElementById("btnRetriveCall").disabled = true;
+            document.getElementById("btnThreeParty").disabled = true;
+            document.getElementById("btnSetBusy").disabled = true;
+            document.getElementById("btnSetIdle").disabled = true;
+            document.getElementById("btnDropCall").disabled = true;
+        }
+    </script>
+
+    <script LANGUAGE="JavaScript" FOR="CCLink" Event="LinkEvent_OnDisconnected()">//与呼叫中心断开
+        alert("与呼叫中心服务器断开!");
+        document.getElementById("btnLogin").disabled = false;
+        document.getElementById("btnLogout").disabled = true;
+        document.getElementById("btnMakeCall").disabled = true;
+        document.getElementById("btnTransferCall").disabled = true;
+        document.getElementById("btnRetriveCall").disabled = true;
+        document.getElementById("btnThreeParty").disabled = true;
+        document.getElementById("btnSetBusy").disabled = true;
+        document.getElementById("btnSetIdle").disabled = true;
+        document.getElementById("btnDropCall").disabled = true;
+    </script>
+
+    <script LANGUAGE="JavaScript" FOR="CCLink" Event="ExtEvent_OnDoNotDisturbChange(ExtCode,DoNotDisturb)">//分机免打扰标志改变事件
+        if (DoNotDisturb==0)
+        {
+            alert("分机"+ExtCode+"致闲!");
+        }
+        else
+        {
+            alert("分机"+ExtCode+"致忙!");
+        }
+    </script>
+
+    <script LANGUAGE="JavaScript" FOR="CCLink" Event="ExtEvent_OnCallIn(ExtCode,OtherCode,OtherRole,TransferCode,TransferRole,CallData)">//分机呼入事件
+        alert("分机"+ExtCode+"电话呼入:"+OtherCode);
+    </script>
+
+    <script LANGUAGE="JavaScript" FOR="CCLink" Event="ExtEvent_OnConnected(ExtCode,OtherCode,OtherRole,TransferCode,TransferRole,CallData)">//分机通话事件
+        alert("分机"+ExtCode+"电话接通:"+OtherCode+"；录音文件："+Ext_GetCallInfo_RecordFile(ExtCode));
+    </script>
+
+    <script LANGUAGE="JavaScript" FOR="CCLink" Event="ExtEvent_OnDisconnected(ExtCode)">//分机挂机事件
+        alert("分机"+ExtCode+"通话结束");
+    </script>
+</head>
+<body>
+
+    <p>
+        <input id="btnLogin" type="button" value="登录" onclick="return Link_ConnectServer()"/>
+        <input id="btnLogout" type="button" value="注销" onclick="return Link_DisconnectServer()" />
+        <input id="btnMakeCall" type="button" value="外呼" onclick="return Link_MakCall()" />
+        <input id="btnTransferCall" type="button" value="转移" onclick="return Link_TransferCall()" />
+        <input id="btnRetriveCall" type="button" value="收回" onclick="return Link_RetriveCall()" />
+        <input id="btnThreeParty" type="button" value="三方" onclick="return Link_ThreeParty()" />
+        <input id="btnSetBusy" type="button" value="致忙" onclick="return Link_SetBusy()" />
+        <input id="btnSetIdle" type="button" value="致闲" onclick="return Link_SetIdle()" />
+        <input id="btnDropCall" type="button" value="挂机" onclick="return Link_DropCall()" />
+    </p>
+
+</body>
+</html>

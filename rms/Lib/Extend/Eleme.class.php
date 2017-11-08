@@ -14,13 +14,22 @@
 class Eleme
 {
     //饿了吗分配的key参数
-    public $consumer_key = '9097121068 ';  //'5534154664';   //合
-    public $consumer_secret = 'bd023caa4642ae2a6cbea312c7629889124ace90'; //'0393ae038ee320adbe085fbaa280b9f4ace7a540';  //合参数
+    //public $consumer_key = '9097121068 ';  //'5534154664';   //合
+    // public $consumer_secret = 'bd023caa4642ae2a6cbea312c7629889124ace90'; //'0393ae038ee320adbe085fbaa280b9f4ace7a540';  //合参数
     //public $consumer_key = '0914469256';
     //public $consumer_secret = '7c50076b32c61b201ccd0da9373ede206e2b6647';
     //public $consumer_key = '7284397484';
     //public $consumer_secret = '4d31ba58fd73c71db697ab5e4946d52d';
     //public $url = 'http://v2.openapi.ele.me';
+
+    //南京参数
+    //public $consumer_key = '7517902737';
+    //public $consumer_secret  = '5e0526b457b48d4f91c927725876c6ad6e844e99';
+
+    //苏州参数
+    public $consumer_key = '5423766653';
+    public $consumer_secret  =  '285bf945b6bb868c78dc74d6114cb63b66b2ed9d';
+
 
 
     /**
@@ -53,6 +62,48 @@ class Eleme
 
         var_dump($resp);
 
+    }
+
+    /**
+     * 修改商户的接单模式,改为使用开发平台接单
+     *
+     */
+    public function changeOrderMode(){
+        $restaurant_id = 152173796;
+        //$restaurant_id = 152173753;
+        //$restaurant_id = 152107954;
+        //$restaurant_id = 143269756;
+        //$restaurant_id = 143193484;
+        //$restaurant_id = 143193319;
+        // 查询新订单ID的url
+        $getUrl = 'http://v2.openapi.ele.me/restaurant/'.$restaurant_id.'/order_mode/';
+        // 时间戳
+        $timestamp = time();
+        // 取得数组
+        $params = array(
+            'consumer_key' => $this->consumer_key,
+            //'restaurant_id' => $restaurant_id,
+            'order_mode' => 1,
+            'timestamp' => time()
+        );
+        // 加密前的url
+        $url = $getUrl . '?' . $this->concatParams($params);
+        // 记入日志
+        Log::write('下载的url:' . $url, 'info');
+        // 加密
+        $signUrl = $this->genSig($getUrl, $params, $this->consumer_secret);
+
+        // 获得url
+        $url = $url . '&sig=' . $signUrl;
+        var_dump($url);
+
+        //post_url
+        $putFields = array(
+            'order_mode' => 1,
+        );
+
+        $resp = $this->curl_put($url,$putFields);
+        var_dump($resp);
     }
 
     /**
@@ -375,7 +426,9 @@ class Eleme
         var_dump($resp);
     }
 
+
     //**********************************************************************
+    /***
     function concatParams($params)
     {
         ksort($params);
@@ -394,6 +447,23 @@ class Eleme
 
         return sha1(bin2hex($str));
     }
+     **/
+
+    // **********************************************************************
+    private function concatParams($params) {
+        ksort ( $params );
+        $pairs = array ();
+        foreach ( $params as $key => $val ) {
+            array_push ( $pairs, $key . '=' . urlencode ( $val ) );
+        }
+        return join ( '&', $pairs );
+    }
+    private function genSig($pathUrl, $params, $consumerSecret) {
+        $params = $this->concatParams ( $params );
+        $str = $pathUrl . '?' . $params . $consumerSecret;
+        return sha1 ( bin2hex ( $str ) );
+    }
+
 
     /**
      * cur的处理函数

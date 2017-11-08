@@ -1,0 +1,76 @@
+<?php if (!defined('THINK_PATH')) exit();?><script type="text/javascript">
+    //指定某个字段获得焦点
+    $(document).ready(function(){
+        $("#<?php echo ($fieldsFocus); ?>").focus(); 
+    });
+</script>
+<div class="moduleoperator">
+    <form id="createView<?php echo ($moduleName); ?>" name="createView<?php echo ($moduleName); ?>" method="post" style="border:1px solid white;" >   
+     <input id="<?php echo ($moduleName); ?>Action" type="hidden" value="createview" />    
+        <input type="hidden" name="returnAction" value=""> 
+        <table border="0" cellspacing="0" cellpadding="0" width="99%" align="center" bgcolor="">
+            <tr>
+                <td>
+                    <table border="0" cellspacing=0 cellpadding=3 width=100% class="small">
+                        <tr>
+                        <td class="dvtTabCache" style="width:20px" nowrap>&nbsp;</td>
+                        <td class="dvtSelectedCell" align="center" nowrap> 新建 </td>
+                        <td class="dvtTabCache" style="width:80%">&nbsp;</td>
+                        <tr>
+                    </table>
+                </td>
+            </tr>
+
+            <tr>             
+                <td valign="top" align="center" >
+                    <div id="basicTab" style="border: 1px solid #e0dddd; background: white;">
+                        <table border="0" cellspacing=0 cellpadding=0 width="98%" class="small">
+                            <tr>
+                                <td></td>
+                                <td align="right">
+                                    <input  name="createsave" title="" accessKey="" class="crmbutton small save"   type="button"   value="<?php echo (L("Button_Save")); ?> ^9" style="width:70px;float:right;margin-right:2px;margin-top:2px;margin-bottom:2px;"></td>
+                                <td>
+                                    <input title="<?php echo (L("Button_Cancel")); ?>" accessKey="" class="crmbutton small cancel" onclick="updateTab('__APP__/<?php echo ($moduleName); ?>/<?php echo ($returnAction); ?>')" type="button" name="button" value="  <?php echo (L("Button_Cancel")); ?>  ^4 " style="width:80px;float:left;margin-left:2px;margin-top:2px;margin-bottom:2px;"></td>
+                                <td> 
+                                </td>
+                            </tr>
+                            <?php if(is_array($blocks)): $i = 0; $__LIST__ = $blocks;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$data): $mod = ($i % 2 );++$i;?><tr>
+                                    <td colspan="4" class="tabBlockViewHeader">
+                                        <?php echo (L("$key")); ?>
+                                    </td>
+                                </tr>
+
+                                <!-- Here we should include the uitype handlings-->
+                                <?php if(is_array($data)): $label = 0; $__LIST__ = $data;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$subdata): $mod = ($label % 2 );++$label;?><tr style="border: 1px solid black;background: #F0F0F0;" >
+                                        <?php if(is_array($subdata)): $mainlabel = 0; $__LIST__ = $subdata;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$maindata): $mod = ($mainlabel % 2 );++$mainlabel; $label = L("$maindata[name]"); ?>        
+                                            <?php $uitype = $maindata[uitype]; ?>                
+                                            <?php $name = $maindata[name]; ?>                      
+                                            <?php $value = $maindata[value]; ?>                    
+                                            <?php $length = $maindata[length]; ?>                  
+                                            <td width="15%" class="dvtCellLabel" align="right" >
+                                                <font color="red"><?php echo ($mandatory_field); ?></font> <?php echo ($label); ?>
+                                            </td>
+                                            <td width="35%" align="left" class="dvtCellInfo"  >
+                                                <textarea  name="<?php echo ($name); ?>" id="<?php echo ($name); ?>" <?php echo ($readonly); ?>  class="detailedViewTextBox" onFocus="this.className='detailedViewTextBoxOn'"   onBlur="this.className='detailedViewTextBox'"  rows="10" style="width:100%;font-size:16px;"><?php echo ($value); ?></textarea>
+                                        </td><?php endforeach; endif; else: echo "" ;endif; ?>
+                                    </tr><?php endforeach; endif; else: echo "" ;endif; ?>
+                                <tr style="line-height: 5px;"><td>&nbsp;</td></tr><?php endforeach; endif; else: echo "" ;endif; ?>
+                            <tr>
+                                <td></td>
+                                <td align="right">
+                                    <input  name="createsave" title="" accessKey="" class="crmbutton small save"   type="button"   value="<?php echo (L("Button_Save")); ?> ^9" style="width:70px;float:right;margin-right:2px;margin-top:0px;"></td>
+                                <td>
+                                    <input title="<?php echo (L("Button_Cancel")); ?>" accessKey="" class="crmbutton small cancel" onclick="updateTab('__APP__/<?php echo ($moduleName); ?>/<?php echo ($returnAction); ?>')" type="button" name="button" value="  <?php echo (L("Button_Cancel")); ?> ^4 " style="width:70px;float:left;margin-left:2px;margin-top:0px"></td>
+                                <td> 
+                                </td>
+                            </tr>
+                        </table>
+
+                    </div>
+                </td>
+
+            </tr>
+
+        </table>
+    </form>
+</div>

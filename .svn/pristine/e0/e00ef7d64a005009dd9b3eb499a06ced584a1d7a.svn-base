@@ -1,0 +1,647 @@
+ <script type="text/javascript">
+        function telclick(){
+            //telphone = '5203908';
+            //alert( app + "/Telcustomer/getAddressByPhone?&telphone="+telphone);
+            //清除缓存
+            localStorage.clear();
+            localStorage['telphone'] = telphone;                
+            //查询电话地址
+            $.ajax({
+                type: 'POST',
+                url : "__APP__/Telcustomer/getAddressByPhone?&telphone="+telphone,
+                success : function(data){
+                    $('#telphoneAddress').empty();
+                    $.each(data,function(key,value){
+                        //
+                        $('#telphoneAddress').append('<option>'+value.address+'</option>');
+                        //alert(value.address);
+                        //保存在数据表中
+
+
+                    })
+
+                }
+            })     
+
+        }
+
+        $(document).ready(function(){
+            //页面刷新，读取来电
+            /**
+            if(localStorage.telphone){
+            telphone = localStorage.telphone;
+            //在界面上显示号码
+            $('#telphoneNumber').attr('value',telphone);
+            //显示地址
+            $.ajax({
+            type: 'POST',
+            url : "__APP__/Telcustomer/getAddressByPhone?&telphone="+telphone,
+            success : function(data){
+            $('#telphoneAddress').empty();
+            $.each(data,function(key,value){
+            //
+            $('#telphoneAddress').append('<option>'+value.address+'</option>');
+            //alert(value.address);
+            //保存在数据表中
+            })
+
+            }
+            })        
+            }
+            **/
+        })
+
+    </script>
+    
+    
+                    if($.browser.msie) {
+                    //alert("这是一个IE浏览器");
+                }else if($.browser.opera) {
+                    alert("来电显示不正常，请更换IE浏览器");
+                }else if($.browser.mozilla) {
+                    alert("来电显示不正常，请更换IE浏览器");   
+                }else if($.browser.safari) {
+                    alert("来电显示不正常，请更换IE浏览器");   
+                }else if($.browser.chrome) {
+                    alert("来电显示不正常，请将浏览器改成兼容模式");   
+                }
+                
+                
+                
+                 <OBJECT ID="YeahDone1" WIDTH=7 HEIGHT=3  CLASSID="CLSID:68E13FA4-E8E5-4719-986B-DE6A6476BF44" CODEBASE="FR60.OCX"></OBJECT>
+    <if condition="$Think.session.userInfo.department eq '客服部'">
+        <script type="text/javascript" >
+            //来电显示兼容性检查
+            $(function(){
+
+            });
+            if(YeahDone1.OpenCPE()>0)
+                {
+                var cpe_id = YeahDone1.GetPhoneHandle(0);
+            }
+            else           {
+                alert("来电设备不存在！");
+            }
+
+        </SCRIPT>
+
+        <SCRIPT LANGUAGE="JavaScript" FOR="YeahDone1" EVENT="OnPhoneIncoming(cpe_id, IncomingNum)">
+            <!--
+            //处理来电
+            //document.forms.textcpeid.value = cpe_id;
+            //document.forms.textfieldk.value = IncomingNum;
+            //var telphone = IncomingNum;
+            
+            //在界面上显示号码
+            $('#telphoneNumber').attr('value',IncomingNum);
+            //查询电话地址
+
+            $.ajax({
+                type : "POST",
+                url :  "__APP__/Telcustomer/getAddressByPhone/telphone/"+IncomingNum,
+                dataType : "json",
+                success : function(data){  
+                    $('#telphoneAddress').empty();
+                    $.each(data,function(key,value){
+                        //
+                        $('#telphoneAddress').append('<option>'+value.address+'</option>');
+                    })  
+                }
+            });
+
+
+
+            -->
+        </SCRIPT>
+    </if>
+
+
+    <if condition="$Think.session.userInfo.department eq '分公司'">
+        <load href="__PUBLIC__/Js/LodopFuncs.js" />
+        <object id="LODOP" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width=0 height=0>
+            <embed id="LODOP_EM" type="application/x-print-lodop" width=0 height=0></embed>
+        </object>
+
+
+        <script language="JavaScript">
+            //定义打印机编号
+            var print_index=0;
+
+            var LODOP=getLodop(document.getElementById('LODOP'),document.getElementById('LODOP_EM'));
+            //显示所先的打印机名称
+            LODOP.SET_LICENSES("北京龙城丽华快餐有限公司","653625970697469919278901905623","",""); 
+            if(localStorage.printIndex){       
+                var print_index = localStorage.printIndex;
+
+            }else{
+                alert('请设置打印机');
+            }
+
+            //打印机设置
+            function SetupPrint(){
+                var tmp_index;
+                tmp_index = LODOP.SELECT_PRINTER();
+                if(tmp_index != -1){
+                    print_index = tmp_index ;
+                    printname = LODOP.GET_PRINTER_NAME(print_index);
+                    //$jq("#print_name").attr("value",'所选打印机:'+printname);
+                    //保存选择的设置
+                    localStorage['printIndex'] = print_index;
+                }    
+            };   
+
+
+
+        </script>
+    </if>
+    
+    <SCRIPT>
+        $(function(){
+        
+            //来电显示兼容性检查
+            if(YeahDone1.OpenCPE()>0)
+                {
+                var cpe_id = YeahDone1.GetPhoneHandle(0);
+            }
+            else           {
+                alert("来电设备不存在！");
+            } 
+        })
+
+    </SCRIPT>
+    <script LANGUAGE="JavaScript" FOR="YeahDone1" EVENT="OnPhoneIncoming(cpe_id, IncomingNum)">
+
+        //在界面上显示号码
+        $('#telphoneNumber').attr('value',IncomingNum);
+        //查询电话地址
+
+        $.ajax({
+            type : "POST",
+            url :  "__APP__/Telcustomer/getAddressByPhone/telphone/"+IncomingNum,
+            dataType : "json",
+            success : function(data){  
+                $('#telphoneAddress').empty();
+                $.each(data,function(key,value){
+                    //
+                    //$('#telphoneAddress').append('<option>'+value.address+'</option>');
+                })  
+            }
+        });
+
+       </script>
+       
+       
+       <script language="JavaScript">
+        //定义打印机编号
+        var print_index=0;
+
+        var LODOP=getLodop(document.getElementById('LODOP'),document.getElementById('LODOP_EM'));
+        //显示所先的打印机名称
+        LODOP.SET_LICENSES("北京龙城丽华快餐有限公司","653625970697469919278901905623","",""); 
+        //if(localStorage.printIndex){       
+        //    var print_index = localStorage.printIndex;
+
+        //}else{
+        //    alert('请设置打印机');
+        //}
+
+        //打印机设置
+        function SetupPrint(){
+            var tmp_index;
+            tmp_index = LODOP.SELECT_PRINTER();
+            if(tmp_index != -1){
+                print_index = tmp_index ;
+                printname = LODOP.GET_PRINTER_NAME(print_index);
+                //$jq("#print_name").attr("value",'所选打印机:'+printname);
+                //保存选择的设置
+                localStorage['printIndex'] = print_index;
+            }    
+        };   
+
+
+
+    </script>
+    
+    
+       //新建F1快捷键
+    if(event.keyCode == 112){
+        //返回选项卡
+        var tab = $('#operation').tabs('getSelected');
+        var tabOptions = tab.panel('options');
+        if(tabOptions.title == '公告' ){
+            if($('#NoticeAction').val() == 'listview'){  //列表的话，就是创建
+                updateTab(APP+'/Notice/createview');  
+            }
+        }
+        if(tabOptions.title == '订餐单' ){
+            if($('#OrderFormAction').val() == 'listview'){  //列表的话，就是创建
+                updateTab(APP+'/OrderForm/createview');  
+            }
+            if($('#OrderFormAction').val() == 'detailview'){  //查看的话，就是创建
+                updateTab(APP+'/OrderForm/createview');  
+            }
+        }
+        event.preventDefault();  
+        event.stopPropagation();
+
+    } 
+    
+        //来电显示，F2复制电话和地址到订单表单中
+    if(event.keyCode == 113){
+        //返回选项卡
+        var tab = $('#operation').tabs('getSelected');
+        var tabOptions = tab.panel('options');
+        if(tabOptions.title == '订餐单' ){  //订单创建状态，
+            if($('#OrderFormAction').val() == 'createview'){ //保存
+                //var address = $('#createViewOrderForm input[name=address]').val();
+                //var telphone = $('#createViewOrderForm input[name=telphone]').val();
+                //if((telphone == '') && ( address == '')){
+                //可以复制电话内容  
+                var telphoneNumber = $('#telphoneNumber').val();
+                var telphoneAddress = $('#telphoneAddress').val();
+                if(telphoneAddress  !== null){
+                    //处理来电地址，分拆出分公司和订单地址
+                    var splitStri = telphoneAddress.indexOf('|');
+                    var company = telphoneAddress.substr(0,splitStri);
+                    var address = telphoneAddress.substr(splitStri+1);
+                    address = $.trim(address);
+                    $('#createViewOrderForm input[name=address]').val(address);
+                }
+                $('#createViewOrderForm input[name=telphone]').val(telphoneNumber); 
+                if(telphoneNumber.length == 0){
+                    return;
+                }
+                //查询发票，如果有发票，加入发票下拉列表框
+                $.ajax({
+                    url: APP+'/OrderForm/getTelphoneHeader/telphoneNumber/'+telphoneNumber,
+                    type : "GET",
+                    dataType : "json",
+                    success:function(data){
+                        if(data.success == 'success'){
+                            //删掉以前的选项
+                            $('#invoiceheaderselect').empty();
+                            $(data.data).each(function(i,val){
+                                $('#invoiceheaderselect').append("<option value=''>"+val.header+"</option>");
+                            })
+                        }   
+                    }
+                })
+            }
+        }
+        event.preventDefault();  
+        event.stopPropagation();
+
+    }
+    
+    
+    
+    // F4快捷键
+    if(event.keyCode == 115){
+        // 返回选项卡
+        var tab = $('#operation').tabs('getSelected');
+        var tabOptions = tab.panel('options');
+        if(tabOptions.title == '公告' ){
+            if($('#NoticeAction').val() == 'createview'){ // 放弃
+                updateTab(APP+'/Notice/listview');
+            }
+            if($('#NoticeAction').val() == 'editview'){ // 编辑中的放弃
+                updateTab(APP+'/Notice/listview');
+            }
+        }
+        if(tabOptions.title == '订餐单' ){
+            if($('#OrderFormAction').val() == 'createview'){ // 保存
+                $.messager.confirm('确认', '你确定要放弃订单吗？', function(r){
+                    if (r){
+                        // 提交表单
+                        updateTab(APP+'/OrderForm/listview');
+                    }
+                });               
+            }
+            if($('#OrderFormAction').val() == 'detailview'){ // 查看状态下的放弃返回
+                // 提交表单
+                updateTab(APP+'/OrderForm/listview');
+            }
+
+        }
+        
+        if(tabOptions.title == '订单配送' ){
+            if($('#OrderHandleAction').val() == 'listview'){ // 订餐单的地址查询快捷键
+                $('#smsAloneOrderHandleWin').window('open');
+                $('#smsAloneOrderHandleWinInput').focus();
+                refreshOrder = false;
+            }
+        }   
+        event.preventDefault();  
+        event.stopPropagation();
+    }
+    
+// 全局文档的键盘事件
+$(document).keydown(function(event){
+ 
+	// 新建F1快捷键
+    if(event.keyCode == 112){
+        // 返回选项卡
+        var tab = $('#operation').tabs('getSelected');
+        var tabOptions = tab.panel('options');
+        if(tabOptions.title == '公告' ){
+            if($('#NoticeAction').val() == 'listview'){  // 列表的话，就是创建
+                updateTab(APP+'/Notice/createview');  
+            }
+        }
+        if(tabOptions.title == '订餐单' ){
+            if($('#OrderFormAction').val() == 'listview'){  // 列表的话，就是创建
+                updateTab(APP+'/OrderForm/createview');  
+            }
+            if($('#OrderFormAction').val() == 'detailview'){  // 查看的话，就是创建
+                updateTab(APP+'/OrderForm/createview');  
+            }
+        }
+        event.preventDefault();  
+        event.stopPropagation();
+
+    } 
+    
+        // 来电显示，F2复制电话和地址到订单表单中
+    if(event.keyCode == 113){
+        // 返回选项卡
+        var tab = $('#operation').tabs('getSelected');
+        var tabOptions = tab.panel('options');
+        if(tabOptions.title == '订餐单' ){  // 订单创建状态，
+            if($('#OrderFormAction').val() == 'createview'){ // 保存
+                // var address = $('#createViewOrderForm
+				// input[name=address]').val();
+                // var telphone = $('#createViewOrderForm
+				// input[name=telphone]').val();
+                // if((telphone == '') && ( address == '')){
+                // 可以复制电话内容
+                var telphoneNumber = $('#telphoneNumber').val();
+                var telphoneAddress = $('#telphoneAddress').val();
+                if(telphoneAddress  !== null){
+                    // 处理来电地址，分拆出分公司和订单地址
+                    var splitStri = telphoneAddress.indexOf('|');
+                    var company = telphoneAddress.substr(0,splitStri);
+                    var address = telphoneAddress.substr(splitStri+1);
+                    address = $.trim(address);
+                    $('#createViewOrderForm input[name=address]').val(address);
+                }
+                $('#createViewOrderForm input[name=telphone]').val(telphoneNumber); 
+                if(telphoneNumber.length == 0){
+                    return;
+                }
+                // 查询发票，如果有发票，加入发票下拉列表框
+                $.ajax({
+                    url: APP+'/OrderForm/getTelphoneHeader/telphoneNumber/'+telphoneNumber,
+                    type : "GET",
+                    dataType : "json",
+                    success:function(data){
+                        if(data.success == 'success'){
+                            // 删掉以前的选项
+                            $('#invoiceheaderselect').empty();
+                            $(data.data).each(function(i,val){
+                                $('#invoiceheaderselect').append("<option value=''>"+val.header+"</option>");
+                            })
+                        }   
+                    }
+                })
+            }
+        }
+        event.preventDefault();  
+        event.stopPropagation();
+
+    }
+    
+    
+    
+    // F4快捷键
+    if(event.keyCode == 115){
+        // 返回选项卡
+        var tab = $('#operation').tabs('getSelected');
+        var tabOptions = tab.panel('options');
+        if(tabOptions.title == '公告' ){
+            if($('#NoticeAction').val() == 'createview'){ // 放弃
+                updateTab(APP+'/Notice/listview');
+            }
+            if($('#NoticeAction').val() == 'editview'){ // 编辑中的放弃
+                updateTab(APP+'/Notice/listview');
+            }
+        }
+        if(tabOptions.title == '订餐单' ){
+            if($('#OrderFormAction').val() == 'createview'){ // 保存
+                $.messager.confirm('确认', '你确定要放弃订单吗？', function(r){
+                    if (r){
+                        // 提交表单
+                        updateTab(APP+'/OrderForm/listview');
+                    }
+                });               
+            }
+            if($('#OrderFormAction').val() == 'detailview'){ // 查看状态下的放弃返回
+                // 提交表单
+                updateTab(APP+'/OrderForm/listview');
+            }
+
+        }
+        
+        if(tabOptions.title == '订单配送' ){
+            if($('#OrderHandleAction').val() == 'listview'){ // 订餐单的地址查询快捷键
+                $('#smsAloneOrderHandleWin').window('open');
+                $('#smsAloneOrderHandleWinInput').focus();
+                refreshOrder = false;
+            }
+        }   
+        event.preventDefault();  
+        event.stopPropagation();
+    }
+
+
+    // F6快捷键
+    if(event.keyCode == 117){
+        // 返回选项卡
+        var tab = $('#operation').tabs('getSelected');
+        var tabOptions = tab.panel('options');
+        if(tabOptions.title == '订餐单' ){
+            if($('#OrderFormAction').val() == 'listview'){ // 订餐单的地址查询快捷键
+                // openNewTab('订单地址查询',APP+'/OrderForm/searchviewForAddress');
+                $('#addressSearchOrderFormWin').window('open');
+                $('#addressSearchOrderFormWinInput').focus();
+            }
+            if($('#OrderFormAction').val() == 'createview'){ // 订餐单的地址查询快捷键
+                // openNewTab('订单地址查询',APP+'/OrderForm/searchviewForAddress');
+                $('#addressSearchOrderFormWin').window('open');
+                $('#addressSearchOrderFormWinInput').focus();
+            }
+        }
+        event.preventDefault();  
+        event.stopPropagation();
+    }
+
+    // F7快捷键
+    if(event.keyCode == 118){
+        // 返回选项卡
+        var tab = $('#operation').tabs('getSelected');
+        var tabOptions = tab.panel('options');
+        if(tabOptions.title == '订餐单' ){
+            if($('#OrderFormAction').val() == 'listview'){ // 订餐单的地址查询快捷键
+                // openNewTab('订单电话查询',APP+'/OrderForm/searchviewForTelphone');
+                $('#telphoneSearchOrderFormWin').window('open');
+                $('#telphoneSearchOrderFormWinInput').focus();
+            }
+            if($('#OrderFormAction').val() == 'createview'){ // 订餐单的地址查询快捷键
+                $('#telphoneSearchOrderFormWin').window('open');
+                $('#telphoneSearchOrderFormWinInput').focus();
+            }
+        } 
+        event.preventDefault();  
+        event.stopPropagation();
+    }
+
+    // F8快捷键，一般用于打印
+    if(event.keyCode == 119){
+        // 返回选项卡
+        var tab = $('#operation').tabs('getSelected');
+        var tabOptions = tab.panel('options');
+
+    }
+
+    // 保存F9快捷键
+    if(event.keyCode == 120){
+        // 返回选项卡
+        var tab = $('#operation').tabs('getSelected');
+        var tabOptions = tab.panel('options');
+        if(tabOptions.title == '公告' ){
+            if($('#NoticeAction').val() == 'createview'){ // 保存
+                if($('#createViewNotice input[name=content]').val()  == ''){
+                    alert('内容不能为空!');
+                    return false;
+                }
+                // 提交表单
+                $('#createViewNotice').submit();
+            }
+        }
+        if(tabOptions.title == '订餐单' ){
+            if($('#OrderFormAction').val() == 'createview'){ // 保存
+                // 提交表单
+                $('#createViewOrderForm').submit();
+            }
+        }
+
+        if(tabOptions.title == '订单配送' ){
+            if($('#OrderHandleAction').val() == 'listview'){ // 订餐单的地址查询快捷键
+                $('#sendnameSearchOrderHandleWin').window('open');
+                $('#sendnameSearchOrderHandleWinInput').focus();
+                refreshOrder = false;
+            }
+        } 
+
+        if(tabOptions.title == '订单分配' ){
+            if($('#OrderDistributionAction').val() == 'listview'){ // 分配的配送店查询快捷键
+                $('#companySearchOrderDistributionWin').window('open');
+                $('#companySearchOrderDistributionWinInput').focus();
+                ODrefreshOrder = false;
+            }
+        }           
+        event.preventDefault();  
+        event.stopPropagation();
+    }
+
+
+    // F10快捷键
+    if(event.keyCode == 121){
+        // 返回选项卡
+        var tab = $('#operation').tabs('getSelected');
+        var tabOptions = tab.panel('options');
+        if(tabOptions.title == '订餐单' ){
+            if($('#OrderFormAction').val() == 'createview'){ // 订餐单的地址查询快捷键
+                $('#todaymenuWin').window('open');
+            }
+        }  
+        if(tabOptions.title == '订单配送' ){
+            if($('#OrderHandleAction').val() == 'listview'){ // 订餐单的地址查询快捷键
+                $('#addressSearchOrderHandleWin').window('open');
+                $('#addressSearchOrderHandleWinInput').focus();
+                refreshOrder = false;
+            }
+        }   
+
+        if(tabOptions.title == '订单分配' ){
+            if($('#OrderDistributionAction').val() == 'listview'){ // 分配的地址查询快捷键
+                $('#addressSearchOrderDistributionWin').window('open');
+                $('#addressSearchOrderDistributionWinInput').focus();
+                ODrefreshOrder = false;
+            }
+        }       
+    }
+
+
+
+
+    // ESC键
+    if(event.keyCode == 27){
+        // 返回选项卡
+        var tab = $('#operation').tabs('getSelected');
+        var tabOptions = tab.panel('options');
+        if(tabOptions.title == '订餐单' ){
+            if($('#OrderFormAction').val() == 'createview'){ // 订餐单的地址查询快捷键
+                $('#todaymenuWin').window('close');
+                $('#addressSearchOrderFormWin').window('close');
+            }
+        } 
+
+        if(tabOptions.title == '订单地址查询'){
+            $('#operation').tabs('select','订餐单');
+        }
+
+        if(tabOptions.title == '订单电话查询'){
+            $('#operation').tabs('select','订餐单');
+        }
+
+        if(tabOptions.title == '配送地址查询' ){
+            $('#operation').tabs('select','订单配送'); 
+        }
+        if(tabOptions.title == '配送送餐员查询' ){
+            $('#operation').tabs('select','订单配送'); 
+        }
+        if(tabOptions.title == '配送查询' ){
+            $('#operation').tabs('select','订单配送'); 
+        }
+
+        if(tabOptions.title == '订单配送'){
+            if($('#OrderHandleAction').val() == 'listview'){ // 订餐单的地址查询快捷键
+                $('#addressSearchOrderHandleWinInput').val('');
+                $('#addressSearchOrderHandleWin').window('close');  // 关闭地址查询
+
+                $('#sendnameSearchOrderHandleWinInput').val('');
+                $('#sendnameSearchOrderHandleWinSpan').html('');             
+                $('#sendnameSearchOrderHandleWin').window('close');
+                $('#orderHandle'+focusNumber).focus();  // 恢复行焦点
+                refreshOrder = true;
+            }
+        }
+
+        if(tabOptions.title == '订单分配'){
+            if($('#OrderDistributionAction').val() == 'listview'){
+                $('#addressSearchOrderDistributionWinInput').val('');
+                $('#addressSearchOrderDistributionWin').window('close');
+                ODrefreshOrder = true;
+            }
+        }
+
+        if(tabOptions.title == '分配地址查询'){
+            $('#operation').tabs('select','订单分配');
+        }
+        if(tabOptions.title == '分配配送店查询'){
+            $('#operation').tabs('select','订单分配');
+        }
+
+    }
+});
+
+if(typeof(telphoneAddress)  !== "undefined"){
+                // 处理来电地址，分拆出分公司和订单地址
+                var splitStri = telphoneAddress.indexOf('|');
+                var company = telphoneAddress.substr(0,splitStri);
+                var address = telphoneAddress.substr(splitStri+1);
+                address = $.trim(address);
+                $('#createViewOrderForm input[name=address]').val(address);
+            }
+    
+    

@@ -1,0 +1,15 @@
+<?php if (!defined('THINK_PATH')) exit();?><div class="moduleMenu">
+    <ul>
+        <li><?php echo (L("$tabName")); ?></li>
+        <li><a href="javascript:void(0);" class="moduleName" onclick="updateTab('__URL__/listview');">&nbsp;&gt;<?php echo (L("$moduleName")); ?></a></li>
+        <li>&nbsp;&gt;订单复制操作</li>
+        <li style="width: 50px;">&nbsp;</li>
+       
+       
+        <li style="margin-left: 10px;"><a href="javascript:;" id="showSubMenu"  onMouseOver="" ><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);" class="moduleName" onclick="updateTab('__URL__/<?php echo ($returnAction); ?>');">返回列表</a></li>
+        
+        <li style="float: right;margin-right: 40px;"><a href="javascript:void(0);" class="moduleName" onclick="updateTab('__URL__/listview');">关闭</a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="closeTab();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
+    </ul>
+</div>

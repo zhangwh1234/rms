@@ -1,0 +1,32 @@
+<!-- 新建商户页面 -->
+<style>
+ #baiduwaimaiShopmgrCreateviewToolbar{
+ 	margin:0px;
+ 	padding-top:0px;
+ 	background:#fafafa;
+ 	border:1px solid red;
+ }
+ 
+ #baiduwaimaiShopmgrBodyCls{
+ 	padding:0px;
+ 	margin:0px;
+ }
+</style>
+ 
+<div id="baiduwaimaiShopmgrCreateviewToolbar" style="">
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="waimaiShopmgrListviewCreateShop()">新建商户</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="waimaiShopmgrListviewEditShop()">编辑商户</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="waimaiShopmgrListviewDeleteShop()">删除商户</a>
+</div> 
+	 
+<div id="p" class="easyui-panel" title="新建商户"
+    style="width:500px;height:150px;padding:10px;background:#fafafa;"
+    data-options="iconCls:'icon-save',closable:true,
+    collapsible:true,minimizable:true,maximizable:true"
+    fit="true" collapsible="false" minimizable="false" maximizable ="false" closable="false"
+    bodyCls="baiduwaimaiShopmgrBodyCls" border="false"
+    >
+   
+   <span>dddd</span>
+</div>
+

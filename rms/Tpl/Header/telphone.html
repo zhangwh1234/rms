@@ -1,46 +1,53 @@
 <style type="text/css">
     /*来电显示条*/
-    .telphoneCall{
+    .telphoneCall {
         height: 30px;
         width: 100%;
         border: 1px solid #9D9D9D;
         background: #F0F0F0;
-        margin-top:1px;
+        margin-top: 1px;
         margin-bottom: 0px;
 
     }
 
-    #telphoneCall{
+    #telphoneCall {
         width: 99.5%;
         height: 30px;
-        border:#909090 1px solid;
-        background:#FFF;
-        color:#333;
-        filter:progid:DXImageTransform.Microsoft.Shadow(color=#909090,direction=120,strength=3);/*ie*/
-        -moz-box-shadow: 2px 2px 10px #909090;/*firefox*/
-        -webkit-box-shadow: 2px 2px 10px #909090;/*safari或chrome*/
-        box-shadow:2px 2px 10px #909090;/*opera或ie9*/
-        margin-left:1px ;
+        border: #909090 1px solid;
+        background: #FFF;
+        color: #333;
+        filter: progid:DXImageTransform.Microsoft.Shadow(color=#909090, direction=120, strength=3);
+        /*ie*/
+        -moz-box-shadow: 2px 2px 10px #909090;
+        /*firefox*/
+        -webkit-box-shadow: 2px 2px 10px #909090;
+        /*safari或chrome*/
+        box-shadow: 2px 2px 10px #909090;
+        /*opera或ie9*/
+        margin-left: 1px;
     }
 
-    #telphoneshowcls{
-        background-image: url('./__PUBLIC__/Images/telphone.ico') ;
-        background-repeat: no-repeat;  
-        width:31px;
-        height: 30px; 
-        margin:0px;
+    #telphoneshowcls {
+        background-image: url('./__PUBLIC__/Images/telphone.ico');
+        background-repeat: no-repeat;
+        width: 31px;
+        height: 30px;
+        margin: 0px;
         float: left;
 
     }
 
-    #telphoneCall label,input,select,button{
-        float:left;
+    #telphoneCall label,
+    input,
+    select,
+    button {
+        float: left;
         font-size: 14px;
         margin-top: 0px;
     }
 
     /*提示设置*/
-    #1telphoneCall label{
+    #1telphoneCall label {
         margin-left: 10px;
         margin-top: 7px;
         margin-right: 3px;
@@ -48,62 +55,76 @@
 
 
     .telphoneButton {
-        -moz-box-shadow:inset 0px 1px 3px 0px #91b8b3;
-        -webkit-box-shadow:inset 0px 1px 3px 0px #91b8b3;
-        box-shadow:inset 0px 1px 3px 0px #91b8b3;
-        background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #768d87), color-stop(1, #6c7c7c));
-        background:-moz-linear-gradient(top, #768d87 5%, #6c7c7c 100%);
-        background:-webkit-linear-gradient(top, #768d87 5%, #6c7c7c 100%);
-        background:-o-linear-gradient(top, #768d87 5%, #6c7c7c 100%);
-        background:-ms-linear-gradient(top, #768d87 5%, #6c7c7c 100%);
-        background:linear-gradient(to bottom, #768d87 5%, #6c7c7c 100%);
-        filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#768d87', endColorstr='#6c7c7c',GradientType=0);
-        background-color:#768d87;
-        -moz-border-radius:2px;
-        -webkit-border-radius:2px;
-        border-radius:2px;
-        border:1px solid #566963;
-        display:inline-block;
-        cursor:pointer;
-        color:#ffffff;
-        font-family:Arial;
-        font-size:14px;
-        padding:2px 19px;
-        text-decoration:none;
-        text-shadow:0px -1px 0px #2b665e;
+        -moz-box-shadow: inset 0px 1px 3px 0px #91b8b3;
+        -webkit-box-shadow: inset 0px 1px 3px 0px #91b8b3;
+        box-shadow: inset 0px 1px 3px 0px #91b8b3;
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #768d87), color-stop(1, #6c7c7c));
+        background: -moz-linear-gradient(top, #768d87 5%, #6c7c7c 100%);
+        background: -webkit-linear-gradient(top, #768d87 5%, #6c7c7c 100%);
+        background: -o-linear-gradient(top, #768d87 5%, #6c7c7c 100%);
+        background: -ms-linear-gradient(top, #768d87 5%, #6c7c7c 100%);
+        background: linear-gradient(to bottom, #768d87 5%, #6c7c7c 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#768d87', endColorstr='#6c7c7c', GradientType=0);
+        background-color: #768d87;
+        -moz-border-radius: 2px;
+        -webkit-border-radius: 2px;
+        border-radius: 2px;
+        border: 1px solid #566963;
+        display: inline-block;
+        cursor: pointer;
+        color: #ffffff;
+        font-family: Arial;
+        font-size: 14px;
+        padding: 2px 19px;
+        text-decoration: none;
+        text-shadow: 0px -1px 0px #2b665e;
     }
+
     .telphoneButton:hover {
-        background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #6c7c7c), color-stop(1, #768d87));
-        background:-moz-linear-gradient(top, #6c7c7c 5%, #768d87 100%);
-        background:-webkit-linear-gradient(top, #6c7c7c 5%, #768d87 100%);
-        background:-o-linear-gradient(top, #6c7c7c 5%, #768d87 100%);
-        background:-ms-linear-gradient(top, #6c7c7c 5%, #768d87 100%);
-        background:linear-gradient(to bottom, #6c7c7c 5%, #768d87 100%);
-        filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#6c7c7c', endColorstr='#768d87',GradientType=0);
-        background-color:#6c7c7c;
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #6c7c7c), color-stop(1, #768d87));
+        background: -moz-linear-gradient(top, #6c7c7c 5%, #768d87 100%);
+        background: -webkit-linear-gradient(top, #6c7c7c 5%, #768d87 100%);
+        background: -o-linear-gradient(top, #6c7c7c 5%, #768d87 100%);
+        background: -ms-linear-gradient(top, #6c7c7c 5%, #768d87 100%);
+        background: linear-gradient(to bottom, #6c7c7c 5%, #768d87 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#6c7c7c', endColorstr='#768d87', GradientType=0);
+        background-color: #6c7c7c;
     }
+
     .telphoneButton:active {
-        position:relative;
-        top:1px;
+        position: relative;
+        top: 1px;
     }
-
-
 </style>
 <div id="telphoneCall">
     <table>
         <tr>
             <td><img src=".__PUBLIC__/Images/telphone.png" style="width:30px;height:25px;" /></td>
             <td><label>来电号码</label></td>
-            <td><input id="telphoneNumber"  name="telphoneNumber" value=""  /></td>
+            <td><input id="telphoneNumber" name="telphoneNumber" value="" /></td>
             <td><label style="margin-left: 0px;">(!回车查询)</label></td>
             <td><label>来电地址</label></td>
-            <td><select id="telphoneAddress" name="telphoneAddress" class="easyui-combobox" style="width:300px;"  >
-            </select></td>
+            <td><select id="telphoneAddress" name="telphoneAddress" class="easyui-combobox" style="width:300px;">
+                </select></td>
             <td><label style="margin-left: 0px;">(鼠标选择){$telphoneNoShow}</label></td>
-            <td><button  id="telphoneOrderHistorySearch" class="telphoneButton">查询历史</button></td>
-            <td><if condition="$Think.session.TelphoneType eq 'CCLinkServer'">
-                <button id="cclinkSetup">设置华旗来电</button>
-            </if></td>
+            <td><button id="telphoneOrderHistorySearch" class="telphoneButton">查询历史</button></td>
+            <td>
+                <if condition="$Think.session.TelphoneType eq 'CCLinkServer'">
+                    <button id="cclinkSetup">设置华旗来电</button>
+                </if>
+            </td>
+            <td>
+                <if condition="$Think.session.TelphoneType eq 'CCLink2008'">
+                    <button id="cclinkSetup">设置华旗来电</button>
+                </if>
+            </td>
+            <td>
+                <if condition="$Think.session.TelphoneType eq 'BJCCLink2019'">
+                    <button id="cclinkSetup">设置华旗来电</button>
+                </if>
+            </td>
+            <td><select id="telphoneHistory" name="telphoneHistory" class="easyui-combobox" style="width:200px;">
+                </select></td>
         </tr>
     </table>
 </div>
@@ -111,15 +132,15 @@
     <table style="margin-left: 10px;">
         <tr>
             <td><label>服务器</label></td>
-            <td><input id="cclinkHost" value="" ></td>
+            <td><input id="cclinkHost" value=""></td>
         </tr>
         <tr>
             <td><label>端口</label></td>
-            <td><input id="cclinkPort" value="" ></td>
+            <td><input id="cclinkPort" value=""></td>
         </tr>
         <tr>
             <td><label>分机号</label></td>
-            <td><input id="cclinkExtCode" value="" ></td>
+            <td><input id="cclinkExtCode" value=""></td>
         </tr>
     </table>
     <table border="0" align="center" width="100%">
@@ -132,64 +153,114 @@
 
 
 <script type="text/javascript">
-
     //来电查询的操作
-    $(function(){
-    	$("#telphoneAddress").combobox({
-    		panelHeight:100,
-    		valueField:'id',
-    		textField:'teladdress',
-    		onSelect:function(record){
-    			teladdressObjId = record.id;
-    			// 可以复制电话内容
+    $(function () {
+        //初始化来电地址
+        $("#telphoneAddress").combobox({
+            panelHeight: 100,
+            valueField: 'id',
+            textField: 'teladdress',
+            onSelect: function (record) { //当接线员选择地址下拉框的时候，将地址和来电和分公司输入订单中
+                teladdressObjId = record.id;
+                // 可以复制电话内容
                 var telphoneNumber = $('#telphoneNumber').val();
-                $.each(teladdressObj,function(key,value){
-                	if(value.teladdressid == teladdressObjId){
-                		$('#createViewOrderForm input[name=address]').val(value.address);
-                	}
+                $.each(teladdressObj, function (key, value) {
+                    if (value.teladdressid == teladdressObjId) {
+                        $('#OrderFormCreateviewForm input[name=address]').val(value.address);
+                    }
                 });
-                
-                if(typeof(telphoneNumber) != "undefined"){
-                	$('#createViewOrderForm input[name=telphone]').val(telphoneNumber);
+
+                if (typeof (telphoneNumber) != "undefined") {
+                    $('#OrderFormCreateviewForm input[name=telphone]').val(telphoneNumber);
                 }
-    		}
-    	});
+            }
+        });
+
+        //初始化来电历史
+        $("#telphoneHistory").combobox({
+            panelHeight: 100,
+            valueField: 'id',
+            textField: 'telhistory'
+        });
+
+
+
         //输入来电号码，按回车查询地址
-        $('#telphoneNumber').bind('keydown',function(event){
+        //回车查询,不需要把来电保存在历史表中,做了标志:noaddhistory
+        $('#telphoneNumber').bind('keydown', function (event) {
+
             //回车
-            switch (event.keyCode) { 
+            switch (event.keyCode) {
                 case 13: //回车查询
+                    var telphoneNumber = $('#telphoneNumber').val();
+                    if (telphoneNumber == '') {
+                        alert('电话号码不能为空!');
+                        return;
+                    }
                     $.ajax({
-                        type : "POST",
-                        url :  "__APP__/Telcustomer/getAddressByPhone/telphone/"+this.value,
-                        dataType : "json",
-                        success : function(data){  
-                        	if(data.teladdress.length == 0){
-                        		$('#telphoneAddress').combobox('loadData',[]);
-                        		$("#telphoneAddress").combobox('hidePanel');
-                        	}
-                        	teladdressObj = data.teladdress; //缓存来电地址数据
-                        	teladdressObjId = data.teladdress[0].teladdressid;     //缓存第一个来电的ID
-                        	var teladdress = new Array();
-                            $.each(data.teladdress,function(key,value){
-                            	teladdress.push({
-                            		'id':value.teladdressid,
-                            		'teladdress':value.company + '  |  ' + value.address
-                            	});
-                            })  
-							$('#telphoneAddress').combobox('loadData',teladdress);
-                            
-                            var telphoneNumber = $('#telphoneNumber').val();
-                            if(telphoneNumber == ''){
-                                alert('电话号码不能为空!');
-                                return;
+                        type: "POST",
+                        url: "__APP__/Telcustomer/getAddressByPhone/noaddhistory/no/telphone/" +
+                            this.value,
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.teladdress.length == 0) {
+                                $('#telphoneAddress').combobox('loadData', []);
+                                $('#telphoneAddress').combobox('setValue', '');
+                                $("#telphoneAddress").combobox('hidePanel');
+                                teladdressObj = {};
+                                return false;
                             }
+                            teladdressObj = data.teladdress; //缓存来电地址数据
+                            teladdressObjId = data.teladdress[0].teladdressid; //缓存第一个来电的ID
+                            var teladdress = new Array();
+                            $.each(data.teladdress, function (key, value) {
+                                teladdress.push({
+                                    'id': value.teladdressid,
+                                    'teladdress': value.company + '  |  ' +
+                                        value.address
+                                });
+                            })
+                            $('#telphoneAddress').combobox('loadData', teladdress);
+                            $('#telphoneAddress').combobox('setValue', data.teladdress[0].address);
+
                             $("#telphoneAddress").combobox('showPanel');
-                            $(document).unbind(".combo").bind("mousedown.combo", function(e) {});  //固定Panle
-                            
-                     
-                            //url = "__APP__/Telcustomer/getByPhoneOrderhistoryView/telphoneNumber/"+telphoneNumber;
-                            //window.open(url,'telphonehistory');
+                            //$(document).unbind(".combo").bind("mousedown.combo", function(e) {});  //固定Panle
+
+                            //来电历史的处理
+                            if (data.telhistory) {
+                                var telhistoryHtml = new Array(); //开始组装来电历史记录
+                                $.each(data.telhistory, function (key, value) {
+                                    telhistoryHtml.push({
+                                        'id': value.telhistoryid,
+                                        'telhistory': value.teltime + ' ' +
+                                            value.teltask
+                                    })
+                                });
+                                $('#telphoneHistory').combobox('loadData', telhistoryHtml);
+                                $("#telphoneHistory").combobox('showPanel');
+                            }
+
+                            //来电发票的处理,不用对发票查询
+                            //if (data.telinvoice){
+                            //}
+
+                            /** 这一段代码先空着,以后晚上
+                            //显示来电历史记录
+                            url = "__APP__/Telcustomer/getByPhoneOrderhistoryView/telphoneNumber/"+telphoneNumber;
+                            if ($('#operation').tabs('exists', '来电历史记录')) {
+                                var tab = $('#operation').getTab('来电历史记录');  // get selected panel
+                                $('#operation').tabs('update', {
+                                    tab: tab,
+                                    options: {
+                                        title: '来电历史记录',
+                                        href:  url  // the new content URL
+                                    }
+                                });
+                            } else {
+                                $('#operation').tabs('add', {title: '来电历史记录', href: url, closable: true, cache: true});
+                            }
+                             */
+
                         }
                     });
                     break;
@@ -197,24 +268,22 @@
         })
 
         //根据电话号码，查询订餐的历史
-        $('#telphoneOrderHistorySearch').bind('click',function(){
+        $('#telphoneOrderHistorySearch').bind('click', function () {
 
             var telphoneNumber = $('#telphoneNumber').val();
-            if(telphoneNumber == ''){
+            if (telphoneNumber == '') {
                 alert('电话号码不能为空!');
                 return;
             }
-            url = "__APP__/Telcustomer/getByPhoneOrderhistoryView/telphoneNumber/"+telphoneNumber;
-            window.open(url,'telphonehistory');
+            url = "__APP__/Telcustomer/getByPhoneOrderhistoryView/telphoneNumber/" + telphoneNumber;
+            //window.open(url,'telphonehistory');
         })
 
-        //查询过去的来电记录
-        $('#telphoneHistory').bind('click',function(event){
-            // alert('功能正在开发中');
-        })
 
-        //当接线员选择地址下拉框的时候，将地址和来电和分公司输入订单中
+
+        /***
         $('#telphoneAddress').bind('click',function(){
+            console.info('eee');
             //来电号码 ，地址，分公司
             var telphoneNumber = $('#telphoneNumber').val();
             var telphoneAddress = $('#telphoneAddress').val();
@@ -225,16 +294,17 @@
 
             //设置company的text的值
             var count=$("#company").size();
-            for(var i=0;i<count;i++) 
-            {           
-                if($("#company").get(0).options[i].text == telphoneCompany) 
-                    { 
-                    $("#company").get(0).options[i].selected = true; 
-                    break; 
-                } 
+            for(var i=0;i<count;i++)
+            {
+                if($("#company").get(0).options[i].text == telphoneCompany)
+                    {
+                    $("#company").get(0).options[i].selected = true;
+                    break;
+                }
             }
 
         })
+         **/
 
         //读取来电的缓存号码
         /**
@@ -245,7 +315,7 @@
                 type : "POST",
                 url :  "__APP__/Telcustomer/getAddressByPhone/telphone/"+telphonelocalStorage,
                 dataType : "json",
-                success : function(data){  
+                success : function(data){
                     $('#telphoneAddress').empty();
                     $.each(data.teladdress,function(key,value){
                         var address = value.company + '  |  ' + value.address;
@@ -256,34 +326,34 @@
                         var telhistoryHtml = '';  //开始组装来电历史记录
                         $.each(data.telhistory,function(key,value){
                             telhistoryHtml += value.teltime+' '+value.teltask+"<br>";
-                        }) 
+                        })
                         $('#telhistoryWin').html(telhistoryHtml);
                         $('#telhistoryWin').window('open');
                     }else{
                         $('#telhistoryWin').window('close');
-                    }  
+                    }
                 }
             });
         }
-        
+
         **/
 
     })
 </script>
 <!-- 华旗的代码 -->
 <script type="text/javascript">
-    $(function(){
+    $(function () {
         //设置华旗的参数
-        $('#cclinkSetup').click(function(){
+        $('#cclinkSetup').click(function () {
             $('#cclinkWin').window({
-                width:240,
-                height:180,
-                modal:true,
-                minimizable:false,
-                maximizable:false,
-                collapsible:false,
-                title:'华旗来电设置'
-            }); 
+                width: 240,
+                height: 180,
+                modal: true,
+                minimizable: false,
+                maximizable: false,
+                collapsible: false,
+                title: '华旗来电设置'
+            });
 
             $('#cclinkHost').val(localStorage.cclinkHost);
             $('#cclinkPort').val(localStorage.cclinkPort);
@@ -291,14 +361,14 @@
         });
 
         //关闭设置窗口
-        $('#cclinkCloseBtn').click(function(){
+        $('#cclinkCloseBtn').click(function () {
             $('#cclinkWin').window('close');
         })
 
         //保存数据，并关闭窗口
-        $('#cclinkSaveBtn').click(function(){
+        $('#cclinkSaveBtn').click(function () {
             //保存服务器
-            localStorage.cclinkHost = $('#cclinkHost').val(); 
+            localStorage.cclinkHost = $('#cclinkHost').val();
             //保存端口
             localStorage.cclinkPort = $('#cclinkPort').val();
             //保存分机号
@@ -310,27 +380,24 @@
 </script>
 <script type="text/javascript">
     //改变header的高度，以便显示来电条
-    $(function(){
-        $('#main').layout('panel', 'north').panel('resize',{height:112});
+    $(function () {
+        $('#main').layout('panel', 'north').panel('resize', {
+            height: 112
+        });
         $('#main').layout('resize');
     })
-
 </script>
 
 
 
 <SCRIPT LANGUAGE="JavaScript" FOR="window" EVENT="onLoad()">
-    if(YeahDone1.OpenCPE()>0)
-        {
-        cpe_id = YeahDone1.GetPhoneHandle(0);
-    }
-    else
-        {
-        alert("来电设备不存在！");
-        $('#telphoneshowcls').hide();
-    }
+    //if(YeahDone1.OpenCPE()>0)
+    //    {
+    //    cpe_id = YeahDone1.GetPhoneHandle(0);
+    //}
+    //else
+    //    {
+    //    alert("来电设备不存在！");
+    //    $('#telphoneshowcls').hide();
+    //}
 </SCRIPT>
-
-        
-
- 

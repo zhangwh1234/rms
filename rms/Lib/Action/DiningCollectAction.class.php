@@ -39,31 +39,6 @@ class DiningCollectAction extends ModuleAction{
             $where['date'] = $cdate;
             $where['ap'] = $cap;
 
-            if (!empty ( $searchText )) {
-                foreach ( $focus->searchFields as $value ) {
-                    $where [$value] = array (
-                        'like',
-                        '%' . $searchText . '%'
-                    );
-                }
-                $where ['_logic'] = 'OR';
-            }else{
-                $searchText = $_SESSION ['searchText' . $moduleName]; // 查询内容
-                if(!empty($searchText)) {
-                    $searchText =  $_SESSION ['searchText' . $moduleName];
-                    foreach ( $focus->searchFields as $value ) {
-                        $where [$value] = array (
-                            'like',
-                            '%' . $searchText . '%'
-                        );
-                    }
-                    $where ['_logic'] = 'OR';
-                }
-            }
-
-            //$this->returnWhere($where);
-
-
 
             // 导入分页类
             import ( 'ORG.Util.Page' ); // 导入分页类

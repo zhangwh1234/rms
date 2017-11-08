@@ -1,0 +1,179 @@
+
+
+<script type="text/javascript">
+    //定义查询的订单数组
+    var searchOrderForm = new Array() ;
+
+    $(document).ready(function(){
+        $('#searchAcc').window({  
+            title:'查询',
+            width:800,  
+            height:200,
+            top: ($(window).height() - 320) * 0.5,
+            fit:false,
+            border:false,
+            inline:true,
+            shadow:true,
+            closable:true,
+
+            modal:true,
+            onClose:function(){
+                refreshStartOrStop = false; //关闭查询窗口，启动主刷新
+            } 
+        });
+
+        $('#searchAcc').window('close');
+
+
+        $('#searchTask').window({  
+            title:'查询处理',
+            width:1200,  
+            height:600,
+            top: ($(window).height() - 520) * 0.5,
+            fit:false,
+            border:false,
+            inline:true,
+            shadow:true,
+            closable:true,
+            collapsed:true,
+            modal:true,
+            onClose:function(){
+                refreshStartOrStop = false; //关闭查询窗口，启动主刷新
+            }  
+        });
+        $('#searchTask').window('close');
+
+        //显示查询窗口
+        $('#searchview').click(function(){
+            $('#searchAcc').show();
+            $('#searchAcc').window('open');
+            refreshStartOrStop = true;
+        });
+
+        //关闭查询窗口
+        $('#btngeneralcancel').click(function(){
+            $('#searchAcc').window('close');
+        })
+
+        //调用表单插件的'submit'方法提交 
+        submit_url = "__URL__/searchview/"; 
+
+
+        //查询确定
+        $('#btngeneralconfirm').click(function(){
+            
+            //var queryString = $('#generalSearchForm').formSerialize();
+            var search_text = $('#orderhandleSearchText').attr('value');
+            var queryString = '';
+            if(search_text){
+                queryString = 'search_text/'+search_text+'/searchOption/address';
+            }
+            updateTab('__URL__/searchview/'+queryString);
+        })
+
+
+
+
+
+
+    });
+
+    //移动光标，显示订单
+    function searchOrderMove(event,orderformid){
+        var event = event || window.event;
+        var grid = $("#task");  //缓存
+
+        switch (event.keyCode) {
+            case 38: // up
+            var selected = grid.datagrid('getSelected');
+            if (selected) {
+                var index = grid.datagrid('getRowIndex', selected);
+                grid.datagrid('selectRow', index - 1);
+            } else {
+                var rows = grid.datagrid('getRows');
+                grid.datagrid('selectRow', rows.length - 1);
+            }
+            input_index = index - 1;
+            $('#searchOrderTask'+input_index.toString()).focus(); //处理栏获得焦点
+            break;
+            case 40: // down
+            var selected = grid.datagrid('getSelected');
+            if (selected) {
+                var index = grid.datagrid('getRowIndex', selected);
+                grid.datagrid('selectRow', index + 1);
+            } else {
+                grid.datagrid('selectRow', 0);
+            }
+            input_index = index+1;
+            $('#searchOrderTask'+input_index.toString()).focus(); //处理栏获得焦点
+            break;
+            case 13: //回车
+                alert(obj.value);
+                obj.value = 'ddd';
+                break;
+            case 119: //F8打印
+                //测试打印
+                getPrintData(orderformid);               
+                break;
+        }
+    }
+
+    //处理栏活动焦点，开启从表显示
+    function searchOrderFocus(row){
+        //  alert(row);
+        rowFocus = row;
+        $('#task').datagrid('expandRow', row);
+    }
+
+    //处理栏失去焦点，关闭从表显示
+    function searchOrderClose(row){
+        $('#task').datagrid('collapseRow', row );
+    }
+
+
+
+
+</script>
+{//普通的搜索页面}
+<div id="searchAcc" style="width:300px;height:200px;padding:10px;display: none;">
+    <form id="generalSearchForm" name="generalSearchForm" action="__URL__/listview" method="post"  >
+        <table width="100%" cellpadding="5" cellspacing="0"  class="searchUIBasic small" align="center" border=0>
+            <tr>
+                <td class="searchUIName small" nowrap align="center" colspan="6" >
+                    <span class="moduleName" style="font-size:20px;">查询</span><br/><span class="small"></span>
+                </td>
+            </tr>
+
+            <tr>    
+
+
+                <td class="small" nowrap width="20%">
+
+                    <input type="hidden" name="searchtype" value="BasicSearch">
+                    <input type="hidden" name="module" value="{$MODULE}">
+                    <input type="hidden" name="parenttab" value="{$CATEGORY}">
+                    <input type="hidden" name="action" value="BaseSearch">
+                    <input type="hidden" name="date" value="{$DATE}">
+                    <input type="hidden" name="ajax" value="AJAX">
+                    <input type="hidden" name="start" value="1">
+
+                </td>
+
+                <td class="small" nowrap width="10%"><b>地址查询</b>&nbsp;</td>        
+                <td class="small" width="50%"><input id="orderhandleSearchText" type="text"  class="txtBox" style="width:340px" name="search_text" value=""></td>
+                <td class="small" nowrap width="20%">&nbsp;</td>
+
+            </tr>
+            <tr>
+                <td colspan="6">&nbsp;</td>
+            </tr>
+            <tr>           
+                <td class="small" nowrap width=20% colspan="6" align="center">
+                    <input id="btngeneralconfirm" name="submit" type="button" class="crmbutton small create"  value="确 定">&nbsp;
+                    <input id="btngeneralcancel" name="submit" type="button" class="simplemodal-cancel simplemodal-button simplemodal-close"  value="放 弃">&nbsp;
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+

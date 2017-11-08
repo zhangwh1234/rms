@@ -11,10 +11,27 @@
         telphoneHeigth =  30;
     </script>
     <!-- 开启来电显示，才启动百度地址帮助 -->
-    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=jLheOGOPRm4rZtnkii8ZOy7C"></script>
+    <!-- <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=jLheOGOPRm4rZtnkii8ZOy7C"></script> -->
     <if condition="$TelphoneType eq 'yeahdone'"> {// 亿宏达来电组件 }
         <OBJECT ID="YeahDone1" WIDTH=7 HEIGHT=3 CLASSID="CLSID:68E13FA4-E8E5-4719-986B-DE6A6476BF44"
                 CODEBASE="FR60.OCX"></OBJECT>
+        <SCRIPT LANGUAGE="JavaScript" FOR="window" EVENT="onLoad()">
+            //Form加载事件
+            if(YeahDone1.OpenCPE()>0)//取连接的设备个数
+            {
+                cpe_id = YeahDone1.GetPhoneHandle(0);        //取对设备的操作句柄
+                YeahDone1.RecordChannels = 1;
+                YeahDone1.RecordSample = 8000;
+                YeahDone1.RecordBits = 8;
+
+                //指定终端中的设备序列号；12字节长度
+                //100605000018:10是,06是月,05是日,00001是生产序列号,8是设备类型号:8/9/A/B
+            }
+            else
+            {
+                  alert("找不到指定的设备！\r\n");
+            }
+        </SCRIPT>
         <script LANGUAGE="JavaScript" FOR="YeahDone1" EVENT="OnPhoneIncoming(cpe_id, IncomingNum)">
             //在界面上显示号码
             $('#telphoneNumber').val(IncomingNum);
@@ -40,7 +57,6 @@
                     $("#telphoneAddress").combobox('showPanel');
                     $(document).unbind(".combo").bind("mousedown.combo", function (e) {
                     });  //固定Panle
-
 
                     if (data.telhistory) {
                         var telhistoryHtml = '';  //开始组装来电历史记录
@@ -161,4 +177,194 @@
         <script LANGUAGE="JavaScript" FOR="CCLink" Event="ExtEvent_OnDisconnected(ExtCode)">//分机挂机事件
         </script>
     </if>
+
+    {// 华旗呼叫中心(HTTP)来电显示部件}
+    <if condition="$TelphoneType eq 'CCLink2008'">
+        <load href=".__PUBLIC__/Js/CCLink2008.js"/>
+        <script>
+
+            var LinkHost = localStorage.cclinkHost;
+            var LinkPort = localStorage.cclinkPort;
+            var LinkExtCode = localStorage.cclinkExtCode;
+
+            function Link_ConnectServer() {
+                CCLink.Link_ConnectServer(LinkHost, LinkPort, 1); //建立客户端和服务器端连接
+            }
+
+            CCLink.LinkEvent_OnConnected = function () {
+
+                var Err = CCLink.Ext_Assign(LinkExtCode, LinkExtCode); //绑定到分机设备
+                if (Err != "") {
+                    alert('绑定分机失败,' + Err);
+                    return;
+                }
+
+
+                CCLink.Ext_CheckInQueue(LinkExtCode); //将分机签入队列
+                CCLink.Ext_SetExtName(LinkExtCode, '{$UserName}');
+                //CCLink.Other_ExtensionToolBar(LinkExtCode, 0xFFFF, 1);
+                //CCLink.Ext_SetExtWorkNo(LinkExtCode,'1001');
+            }
+
+            function Link_DisconnectServer() {
+                CCLink.Link_DisConnectServer(); //断开客户端和服务器端连接
+                return;
+            }
+
+
+            //连接CTI服务器
+            Link_ConnectServer();
+
+            CCLink.ExtEvent_OnCallIn = function (ExtCode, OtherCode, OtherRole, TransferCode, TransferRole, CallData) {
+                $('#telphoneNumber').val(OtherCode);
+                //查询电话地址
+                localStorage.telphoneNumber = OtherCode;  //缓存来电号码
+                //显示来电历史
+                $.ajax({
+                    type: "POST",
+                    url: "__APP__/Telcustomer/getAddressByPhone/telphone/" + OtherCode,
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.teladdress.length == 0) {
+                            $('#telphoneAddress').combobox('loadData', []);
+                            $('#telphoneAddress').combobox('setValue','');
+                            $("#telphoneAddress").combobox('hidePanel');
+                            teladdressObj = {};
+                            return false;
+                        }
+                        teladdressObj = data.teladdress; //缓存来电地址数据
+                        teladdressObjId = data.teladdress[0].teladdressid;     //缓存第一个来电的ID
+                        var teladdress = new Array();
+                        $.each(data.teladdress, function (key, value) {
+                            teladdress.push({
+                                'id': value.teladdressid,
+                                'teladdress': value.address
+                            });
+                        })
+                        $('#telphoneAddress').combobox('loadData', teladdress);
+                        $('#telphoneAddress').combobox('setValue',data.teladdress[0].address);
+                        $("#telphoneAddress").combobox('showPanel');
+                        //$(document).unbind(".combo").bind("mousedown.combo", function (e)  });  //固定Panle
+
+                        //来电历史的处理
+                        if (data.telhistory) {
+                            var telhistoryHtml = new Array();  //开始组装来电历史记录
+                            $.each(data.telhistory, function (key, value) {
+                                telhistoryHtml.push({
+                                    'id':value.telhistoryid,
+                                    'telhistory':value.teltime + ' ' + value.teltask
+                                })
+                            });
+                            $('#telphoneHistory').combobox('loadData',telhistoryHtml);
+                            $("#telphoneHistory").combobox('showPanel');
+                        }
+                    }
+                });
+            }
+        </script>
+
+    </if>
+
+    {// 华旗呼叫中心(HTTP)(2018版本)来电显示部件}
+    <if condition="$TelphoneType eq 'BJCCLink2019'">
+        <load href=".__PUBLIC__/Js/BjCCLink2008.js" />
+        <script>
+
+            var LinkHost = localStorage.cclinkHost;
+            var LinkPort = localStorage.cclinkPort;
+            var LinkExtCode = localStorage.cclinkExtCode;
+
+            function Link_ConnectServer() {
+                CCLink.Link_ConnectServer(LinkHost, LinkPort, 1); //建立客户端和服务器端连接
+            }
+
+            CCLink.LinkEvent_OnConnected = function () {
+
+                var Err = CCLink.Ext_Assign(LinkExtCode, LinkExtCode); //绑定到分机设备
+                if (Err != "") {
+                    alert('绑定分机失败,' + Err);
+                    return;
+                }
+
+
+                CCLink.Ext_CheckInQueue(LinkExtCode); //将分机签入队列
+                CCLink.Ext_SetExtName(LinkExtCode, '{$UserName}');
+                //CCLink.Other_ExtensionToolBar(LinkExtCode, 0xFFFF, 1);
+                //CCLink.Ext_SetExtWorkNo(LinkExtCode,'1001');
+            }
+
+            function Link_DisconnectServer() {
+                CCLink.Link_DisConnectServer(); //断开客户端和服务器端连接
+                return;
+            }
+
+
+            //连接CTI服务器
+            Link_ConnectServer();
+
+            CCLink.ExtEvent_OnCallIn = function (ExtCode, OtherCode, OtherRole, TransferCode, TransferRole, CallData) {
+                $('#telphoneNumber').val(OtherCode);
+                //查询电话地址
+                localStorage.telphoneNumber = OtherCode;  //缓存来电号码
+                //显示来电历史
+                $.ajax({
+                    type: "POST",
+                    url: "__APP__/Telcustomer/getAddressByPhone/telphone/" + OtherCode,
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.teladdress.length == 0) {
+                            $('#telphoneAddress').combobox('loadData', []);
+                            $('#telphoneAddress').combobox('setValue', '');
+                            $("#telphoneAddress").combobox('hidePanel');
+                            teladdressObj = {};
+                            return false;
+                        }
+                        teladdressObj = data.teladdress; //缓存来电地址数据
+                        teladdressObjId = data.teladdress[0].teladdressid;     //缓存第一个来电的ID
+                        var teladdress = new Array();
+                        $.each(data.teladdress, function (key, value) {
+                            teladdress.push({
+                                'id': value.teladdressid,
+                                'teladdress': value.address
+                            });
+                        })
+                        $('#telphoneAddress').combobox('loadData', teladdress);
+                        $('#telphoneAddress').combobox('setValue', data.teladdress[0].address);
+                        $("#telphoneAddress").combobox('showPanel');
+                        //$(document).unbind(".combo").bind("mousedown.combo", function (e)  });  //固定Panle
+
+                        //来电历史的处理
+                        if (data.telhistory) {
+                            var telhistoryHtml = new Array();  //开始组装来电历史记录
+                            $.each(data.telhistory, function (key, value) {
+                                telhistoryHtml.push({
+                                    'id': value.telhistoryid,
+                                    'telhistory': value.teltime + ' ' + value.teltask
+                                })
+                            });
+                            $('#telphoneHistory').combobox('loadData', telhistoryHtml);
+                            $("#telphoneHistory").combobox('showPanel');
+                        }
+                    }
+                });
+            }
+        </script>
+    
+    </if>
+
+    <!--将分公司的地图参数:送餐范围载入内存 -->
+    <script type="text/javascript">
+        var companyRegion = {};
+        $.ajax({
+            type: "POST",
+            url: "__APP__/CompanyMgr/getRegion",
+            dataType: "json",
+            success: function (data) {
+                companyRegion = data;
+            }
+        });
+
+    </script>
 </if>
+
+

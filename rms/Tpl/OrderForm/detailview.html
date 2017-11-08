@@ -1,5 +1,5 @@
 <style>
-    .moduleOperatert{
+    .moduleOperater{
         clear:both;
         margin:0px;
         padding: 0px;
@@ -20,6 +20,9 @@
         <li style="margin-left: 10px;"><a href="javascript:;" onclick="IndexIndexModule.updateOperateTab('__URL__/{$returnAction}/pagetype/{$pagetype}/rowIndex/{$rowIndex}');" ><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
         <li><a href="javascript:void(0);"  onclick="IndexIndexModule.updateOperateTab('__URL__/{$returnAction}/pagetype/{$pagetype}/rowIndex/{$rowIndex}');">返回列表<span>^4</span></a></li>
 
+        <li style="margin-left: 10px;"><a href="javascript:;" onclick="IndexIndexModule.updateOperateTab('__URL__/editview/record/{$record}/pagetype/{$pagetype}/rowIndex/{$rowIndex}/returnAction/{$returnAction}');" ><img src=".__PUBLIC__/Images/newBtn.gif" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);"  onclick="IndexIndexModule.updateOperateTab('__URL__/editview/record/{$record}/pagetype/{$pagetype}/rowIndex/{$rowIndex}/returnAction/{$returnAction}');">改单<span>^5</span></a></li>
+
 
         <li style="float: right;margin-right: 60px;"><a href="javascript:void(0);"   onclick="IndexIndexModule.closeOperateTab();" >关闭</a></li>
         <li style="float:right;"><a href="javascript:;" onclick="IndexIndexModule.closeOperateTab();"><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
@@ -34,7 +37,7 @@
     var OrderFormDetailviewModule = {
         //初始化
         init:function(){
-            $('.moduleOperatert').height(IndexIndexModule.operationHeight);
+            $('.moduleOperater').height(IndexIndexModule.operationHeight);
             this.quickKeyboardAction();
         },
 
@@ -57,7 +60,17 @@
                 var tab = $('#operation').tabs('getSelected');
                 var tabOptions = tab.panel('options');
                 //if (tabOptions.title == '订餐单' ) {
-                    IndexIndexModule.updateOperateTab("__URL__/{$returnAction}");
+                    IndexIndexModule.updateOperateTab("__URL__/{$returnAction}/pagetype/{$pagetype}/rowIndex/{$rowIndex}");
+                //};
+            });
+
+            // ctrl+4快捷键,放弃
+            Mousetrap.bind(['ctrl+5', 'ctrl+f5', 'f5'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                //if (tabOptions.title == '订餐单' ) {
+                IndexIndexModule.updateOperateTab("__URL__/editview/record/{$record}/pagetype/{$pagetype}/rowIndex/{$rowIndex}");
                 //};
             });
         }

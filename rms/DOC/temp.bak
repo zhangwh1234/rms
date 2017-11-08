@@ -1,0 +1,339 @@
+<?php
+//应该从装箱表中获得统计的产品名
+$zhuangxiangModel = D('Zhuangxiangform');
+$zhuangxiangproductsModel = D('Zhuangxiangproducts');
+
+$zhuangxiangproductsResult = $zhuangxiangproductsModel->distinct('shortname')->where($where)->select();
+$zhuangxiangproductsArray = array();
+foreach ($zhuangxiangproductsResult as $value) {
+    $zhuangxiangproductsArray[] = $value['shortname'];
+}
+
+// 产品装箱配送表
+$sendnameproductsModel = D('Sendnameproducts');
+// 查询装箱
+$listHeader = array();
+foreach ($zhuangxiangproductsResult as $value) {
+    $tongji ['装箱'] [$value ['shortname']] = 0;
+    $tongji ['已送'] [$value ['shortname']] = 0;
+    $tongji ['剩余'] [$value ['shortname']] = 0;
+    $listHeader [] = $value ['shortname'];
+}
+
+
+//显示查询窗口
+$('#{$module_name}search') . click(function () {
+
+    $('#{$module_name}searchAcc') . window('open');
+    $('#{$module_name}searchAcc') . window('expand');
+
+    $('#{$module_name}searchAcc') . show();
+    //输入框获得焦点
+    $('#{$module_name}search_text') . focus();
+});
+
+//关闭查询窗口
+$('#{$module_name}btngeneralcancel') . click(function () {
+    $('#{$module_name}searchAcc') . window('close');
+})
+
+    //调用表单插件的'submit'方法提交 
+    submit_url = "__URL__/listview/"; 
+
+
+
+    //查询确定
+    $('#{$module_name}btngeneralconfirm') . click(function () {
+
+        //var queryString = $('#generalSearchForm').formSerialize();
+        //alert(queryString);
+        var
+        search_text = $('#{$module_name}search_text') . attr('value');
+
+        var
+        searchOption = $('#{$module_name}searchOption') . attr('value');
+        queryString = 'searchOption/' + searchOption + '/search_text/' + search_text;
+
+        /*
+        $.ajax({
+        url : submit_url+queryString,
+        success : function(data){
+        $("#center").html(data);
+        }
+        })
+        */
+        updateTab(submit_url + queryString);
+        //location.href = submit_url+queryString;
+
+    })
+
+    </script >
+
+/* 返回编辑的区块信息  */
+        public function getCreateBlocks($moduleid)
+{
+    //var_dump($moduleid);
+    //var_dump('dd');
+    //返回区块信息
+    $block_model = D('blocks');
+    $blocks = $block_model->field('blockid,blocklabel')->where("moduleid='$moduleid'  and  visible = 0 ")->order('sequence asc')->select();
+
+    foreach ($blocks as $block_value) {
+        //返回模块的字段表
+        $fields_model = D('Fields');
+        $fields = $fields_model->where("moduleid=$moduleid and blockid=" . $block_value['blockid'] . " and presence=0")->order('sequence')->select();
+        //echo $fields_model->getLastSql();
+        $noofrows = count($fields);
+
+        $createview_arr[$block_value['blocklabel']] = array();
+        for ($i = 0; $i < $noofrows; $i++) {
+            $fields_array = array(); //定义字段集合
+            $field_arr = array();
+            $field_arr['lable'] = $fields[$i]['fieldname'];
+            $field_arr['name'] = $fields[$i]['fieldname'];
+            $field_arr['uitype'] = $fields[$i]['uitype'];
+            if ($fields[$i]['readonly'] == 1) {
+                $field_arr['readonly'] = 'readonly';
+            } else {
+                $field_arr['readonly'] = "";
+            }
+
+            $field_arr['length'] = $fields[$i]['length'];
+            //$block_s = $fields[$i]['block'];
+            $fields_array[] = $field_arr;
+            //$filed_arr[]= $this->getOutputHtml($uitype,$fieldname,$fieldname,100,'','','');
+            $i++;
+            if ($i < $noofrows)  //这里重复两遍
+            {
+                $field_arr = array();
+                $field_arr['lable'] = $fields[$i]['fieldname'];
+                $field_arr['name'] = $fields[$i]['fieldname'];
+                $field_arr['uitype'] = $fields[$i]['uitype'];
+                if ($fields[$i]['readonly'] == 1) {
+                    $field_arr['readonly'] = 'readonly';
+                } else {
+                    $field_arr['readonly'] = "";
+                }
+                $field_arr['length'] = $fields[$i]['length'];
+                $fields_array[] = $field_arr;
+                //$filed_arr[]=$this->getOutputHtml($uitype,$fieldname,$fieldname,100,'','','');
+            }
+            $createview_arr[$block_value['blocklabel']][] = $fields_array;
+        }
+    }
+
+    //dump($createview_arr);
+    return $createview_arr;
+
+}
+
+        //返回记录的详细的区块信息
+        public function getDetailBlocks($moduleid, $result)
+{
+    $block_model = D('blocks');
+    $blocks = $block_model->field('blockid,blocklabel')->where("moduleid='$moduleid'   ")->order('sequence asc')->select();
+
+    foreach ($blocks as $block_value) {
+        //返回模块的字段表
+        $fields_model = D('Fields');
+        $fields = $fields_model->where("moduleid=$moduleid and blockid=" . $block_value['blockid'])->order('sequence')->select();
+        //echo $fields_model->getLastSql();
+        $noofrows = count($fields);
+
+        $createview_arr[$block_value['blocklabel']] = array();
+        for ($i = 0; $i < $noofrows; $i++) {
+            $fields_array = array(); //定义字段集合
+            $field_arr = array();
+            $field_arr['lable'] = $fields[$i]['fieldname'];
+            $field_arr['name'] = $fields[$i]['fieldname'];
+            $field_arr['uitype'] = $fields[$i]['uitype'];
+            $field_arr['value'] = $result[$field_arr['name']];
+            if ($fields[$i]['readonly'] == 1) {
+                $field_arr['readonly'] = 'readonly';
+            } else {
+                $field_arr['readonly'] = "";
+            }
+
+            $field_arr['length'] = $fields[$i]['length'];
+            //$block_s = $fields[$i]['block'];
+            $fields_array[] = $field_arr;
+            //$filed_arr[]= $this->getOutputHtml($uitype,$fieldname,$fieldname,100,'','','');
+            $i++;
+            if ($i < $noofrows)  //这里重复两遍
+            {
+                $field_arr = array();
+                $field_arr['lable'] = $fields[$i]['fieldname'];
+                $field_arr['name'] = $fields[$i]['fieldname'];
+                $field_arr['uitype'] = $fields[$i]['uitype'];
+                $field_arr['value'] = $result[$field_arr['name']];
+                if ($fields[$i]['readonly'] == 1) {
+                    $field_arr['readonly'] = 'readonly';
+                } else {
+                    $field_arr['readonly'] = "";
+                }
+
+                $field_arr['length'] = $fields[$i]['length'];
+                $fields_array[] = $field_arr;
+                //$filed_arr[]=$this->getOutputHtml($uitype,$fieldname,$fieldname,100,'','','');
+            }
+            $createview_arr[$block_value['blocklabel']][] = $fields_array;
+        }
+    }
+
+    //dump($createview_arr);
+    return $createview_arr;
+
+}
+
+        //返回记录的详细的区块信息
+        public function getEditBlocks($moduleid, $result)
+{
+    $block_model = D('blocks');
+    $blocks = $block_model->field('blockid,blocklabel')->where("moduleid='$moduleid'  and  visible = 0 ")->order('sequence asc')->select();
+
+    foreach ($blocks as $block_value) {
+        //返回模块的字段表
+        $fields_model = D('Fields');
+        $fields = $fields_model->where("moduleid=$moduleid and blockid=" . $block_value['blockid'] . " and presence=0")->order('sequence')->select();
+        //echo $fields_model->getLastSql();
+        $noofrows = count($fields);
+
+        $createview_arr[$block_value['blocklabel']] = array();
+        for ($i = 0; $i < $noofrows; $i++) {
+            $fields_array = array(); //定义字段集合
+            $field_arr = array();
+            $field_arr['lable'] = $fields[$i]['fieldname'];
+            $field_arr['name'] = $fields[$i]['fieldname'];
+            $field_arr['uitype'] = $fields[$i]['uitype'];
+            $field_arr['value'] = $result[$field_arr['name']];
+            if ($fields[$i]['readonly'] == 1) {
+                $field_arr['readonly'] = 'readonly';
+            } else {
+                $field_arr['readonly'] = "";
+            }
+
+            $field_arr['length'] = $fields[$i]['length'];
+            //$block_s = $fields[$i]['block'];
+            $fields_array[] = $field_arr;
+            //$filed_arr[]= $this->getOutputHtml($uitype,$fieldname,$fieldname,100,'','','');
+            $i++;
+            if ($i < $noofrows)  //这里重复两遍
+            {
+                $field_arr = array();
+                $field_arr['lable'] = $fields[$i]['fieldname'];
+                $field_arr['name'] = $fields[$i]['fieldname'];
+                $field_arr['uitype'] = $fields[$i]['uitype'];
+                $field_arr['value'] = $result[$field_arr['name']];
+                if ($fields[$i]['readonly'] == 1) {
+                    $field_arr['readonly'] = 'readonly';
+                } else {
+                    $field_arr['readonly'] = "";
+                }
+
+                $field_arr['length'] = $fields[$i]['length'];
+                $fields_array[] = $field_arr;
+                //$filed_arr[]=$this->getOutputHtml($uitype,$fieldname,$fieldname,100,'','','');
+            }
+            $createview_arr[$block_value['blocklabel']][] = $fields_array;
+        }
+    }
+
+    //dump($createview_arr);
+    return $createview_arr;
+
+}
+
+        /* 处理字段的函数 */
+        function getOutputHtml($uitype, $fieldname, $fieldlabel, $maxlength, $fieldvalue, $generatedtype, $module_name, $mode = '', $typeofdata = null)
+        {
+            $final_arr = array();
+            $final_arr[] = $uitype;
+            $final_arr[] = $editview_label;
+            $final_arr[] = $fieldname;
+            $final_arr[] = $fieldvalue;
+            $type_of_data = explode('~', $typeofdata);
+            $final_arr[] = $type_of_data[1];
+            return $final_arr;
+
+        }
+
+        
+        //取得查询的where
+            $whereText = $_REQUEST['search_text'];
+            $searchOption = $_REQUEST['searchOption'];
+            //var_dump($whereText);
+            //var_dump($searchOption);
+            if ($whereText) {
+                if ($searchOption == '全部') {
+                    $count = count($focus->searchFields) - 1;
+                    foreach ($focus->searchFields as $key => $value) {
+                        $where .= " $value like '%$whereText%' ";
+                        if ($key < $count) {
+                            $where .= " or ";
+                        }
+
+                    }
+                } else {
+                    $where = $searchOption . " like '%$whereText%' ";
+                }
+            }
+            
+            
+            //这里修改是为了连接备份数据库
+        if (!empty($db_config) && is_string($db_config)) {
+            // 如果DSN字符串则进行解析
+            $db_config = $this->parseDSN($db_config);
+            $db_config['hostport'] = '3306';
+            $db_config['dsn'] = null;
+            $db_config['params'] = null;
+            return $db_config;
+        }
+        
+        //在这里修改了数据库的配置路径，改为按访问的url来取得
+        require APP_PATH . 'Conf/datapath.php';
+        $HTTP_POST = $_SERVER['HTTP_HOST'];
+        $dbConfig = $rmsDataPath[$HTTP_POST];
+        $db_config = array(
+            'db_type' => $dbConfig['DB_TYPE'],
+            'db_user' => $dbConfig['DB_USER'],
+            'db_pwd' => $dbConfig['DB_PWD'],
+            'db_host' => $dbConfig['DB_HOST'],
+            'db_port' => $dbConfig['DB_PORT'],
+            'db_name' => $dbConfig['DB_NAME'],
+        );
+
+<link rel = "stylesheet" type = "text/css" href = "__PUBLIC__/themes/bootstrap/easyui.css" >
+<link rel = "stylesheet" type = "text/css" href = "__PUBLIC__/Css/icon.css" >
+<load href = ".__PUBLIC__/Css/demo11.css" />
+
+
+    [2017 - 11 - 23T10:49:41 + 08:00 ] INFO: 获得百度外卖推送
+[2017 - 11 - 23T10:49:41 + 08:00 ] INFO: 数据：cmd = order . create & timestamp = 1511405381 & version = 3 & ticket = C630A5F6 - EE0B - 49AC - 0E7C - 9000F3FFCBB6 & source = 32622 & body ={
+    "order_id":"15114053783803"}&sign = CE99C92F07D37CC105713DDA90D21FAC & encrypt =
+    [2017 - 11 - 23T10:51:02 + 08:00 ] INFO: 获得百度外卖推送
+[2017 - 11 - 23T10:51:02 + 08:00 ] INFO: 数据：cmd = order . create & timestamp = 1511405462 & version = 3 & ticket = 96065AE6 - C657 - 3131 - 6BA6 - 69F4941D6109 & source = 32622 & body ={
+    "order_id":"15114053783803"}&sign = FAF577393663C8B92CFE354FFDEC55AE & encrypt =
+    [2017 - 11 - 23T10:54:02 + 08:00 ] INFO: 获得百度外卖推送
+[2017 - 11 - 23T10:54:02 + 08:00 ] INFO: 数据：cmd = order . create & timestamp = 1511405642 & version = 3 & ticket = 7D36548F - D10E - C5FB - EA39 - 91553175A431 & source = 32622 & body ={
+    "order_id":"15114053783803"}&sign = 05EB7E0992A395B12E7410629CB2A7BC & encrypt =
+    [2017 - 11 - 23T10:57:08 + 08:00 ] INFO: 获得百度外卖推送
+[2017 - 11 - 23T10:57:08 + 08:00 ] INFO: 数据：cmd = order . status . push & timestamp = 1511405828 & version = 3 & ticket = 63A11979 - DC6F - F016 - 4476 - 79C87ECE960A & source = 32622 & body ={
+    "order_id":"15114053783803","status":10,"type":"52","reason":"\u4e09\u6b21\u8ba2\u5355\u63a8\u9001order.create\u672a\u54cd\u5e94\u5bfc\u81f4\u8d85\u8fc78\u5206\u949f\u53d6\u6d88","responsible_party":"\u6682\u65e0"}&sign = 1605EE1A6B2B0679F194156C7BB7D880 & encrypt =
+    [2017 - 11 - 23T10:58:04 + 08:00 ] INFO: 获得百度外卖推送
+[2017 - 11 - 23T10:58:04 + 08:00 ] INFO: 数据：cmd = order . status . push & timestamp = 1511405884 & version = 3 & ticket = 5E5ECC0E - 4F6B - AEE5 - 7806 - 7B0AF8A71EDA & source = 32622 & body ={
+    "order_id":"15114053783803","status":10,"type":"52","reason":"\u4e09\u6b21\u8ba2\u5355\u63a8\u9001order.create\u672a\u54cd\u5e94\u5bfc\u81f4\u8d85\u8fc78\u5206\u949f\u53d6\u6d88","responsible_party":"\u6682\u65e0"}&sign = EA45B46969955DD9C2964AFC30518B36 & encrypt =
+    [2017 - 11 - 23T10:58:07 + 08:00 ] INFO: 获得百度外卖推送
+[2017 - 11 - 23T10:58:07 + 08:00 ] INFO: 数据：cmd = order . status . push & timestamp = 1511405887 & version = 3 & ticket = 4594FEEC - EE3A - 07F0 - B6E5 - 814A8419A355 & source = 32622 & body ={
+    "order_id":"15114053783803","status":10,"type":"52","reason":"\u4e09\u6b21\u8ba2\u5355\u63a8\u9001order.create\u672a\u54cd\u5e94\u5bfc\u81f4\u8d85\u8fc78\u5206\u949f\u53d6\u6d88","responsible_party":"\u6682\u65e0"}&sign = 8FF74C4CDBA112773ACEBF1F0ABD7CCA & encrypt =
+
+    <select id="invoicesearchcompany" style="width:70px;">
+                        <option></option>
+                        <foreach  name="companyselect" item="company">
+                            <option>{$company}</option>
+                        </foreach>
+                    </select>
+                    <select id="invoicesearchstate" style="width:70px;">
+                        <option>全部</option>
+                        <option>已开</option>
+                        <option>未开</option>
+                    </select>

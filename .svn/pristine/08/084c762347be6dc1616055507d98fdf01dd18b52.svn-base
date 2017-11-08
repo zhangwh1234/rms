@@ -1,0 +1,37 @@
+<?php
+/**
+ * 百度外卖平台管理；主要管理商户信息，菜单信息，订单信息，完成和百度平台的接口工作。
+ * 2015-03-18开始编制
+ */
+
+class BaiduWaimaiAction extends ModuleAction {
+	//显示管理主面板
+	public function index(){
+		$this->display('mainview');
+	}
+	
+	//显示管理主面板的菜单
+	public function mainviewmenu(){
+		$this->display('mainviewmenu');
+	}
+	
+	//显示左面板的菜单
+	public function westviewmenu(){
+		$this->display('westview');
+	}
+	
+	//显示平台说明
+	public function centerviewPlatformIntroduce(){
+		$this->display('centerviewplatformintroduce');
+	}
+	
+	//商店信息管理列表查看
+	public function shopmgrlistview(){
+		$this->display('shopmgrlistview');
+	}
+	
+	//新建商户
+	public function shopmgrCreateview(){
+		$this->display('shopmgrcreateview');
+	}
+}

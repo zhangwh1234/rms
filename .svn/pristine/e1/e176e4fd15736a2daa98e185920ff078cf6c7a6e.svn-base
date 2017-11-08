@@ -1,0 +1,12 @@
+<div class="moduleMenu">
+    <ul>
+        <li>{$Think.lang.$tabName}</li>
+        <li><a href="javascript:void(0);" class="moduleName" onclick="updateTab('__URL__/listview');">&nbsp;&gt;{$Think.lang.$moduleName}</a></li>
+        <li>&nbsp;&gt;查看操作</li>
+        <li style="width: 50px;">&nbsp;</li>
+        
+        <li style="margin-left: 10px;"><a href="javascript:;" onclick="updateTab('__URL__/listview');" ><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);"  onclick="updateTab(&apos;{:U('listview')}&apos;);">返回列表</a></li>
+        
+    </ul>
+</div>

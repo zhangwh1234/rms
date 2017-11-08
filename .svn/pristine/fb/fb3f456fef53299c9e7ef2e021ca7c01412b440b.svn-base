@@ -1,0 +1,68 @@
+<?php if (!defined('THINK_PATH')) exit();?><div class="moduleoperator" id="detailview<?php echo ($moduleName); ?>" style="border: 1px solid white;">
+	<input id="<?php echo ($moduleName); ?>Action" type="hidden" value="detailview" />
+	<input type="hidden" id="<?php echo ($moduleName); ?>record" value="<?php echo ($record); ?>">
+    <input type="hidden" id="<?php echo ($moduleName); ?>returnAction" value="<?php echo ($returnAction); ?>">
+    <table border="0" cellspacing="0" cellpadding="0" width="99%" align="0" bgcolor="">
+        <tr>
+            <td>
+                <table border="0" cellspacing="0" cellpadding="3" width="100%" class="small">
+                    <tr>
+                    <td class="dvtTabCache" style="width:20px" nowrap>&nbsp;</td>
+                    <td class="dvtSelectedCell" align="center" nowrap> 查看 </td>
+                    <td class="dvtTabCache" style="width:80%">&nbsp;</td>
+                    <tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td valign=top align="center" >
+                <div id="basicTab" style="border: 1px solid #e0dddd; background: white;">
+                    <table border=0 cellspacing=0 cellpadding=0 width="98%" class="small">
+                        <tr>
+                            <td width="25%"></td>
+                            <td width="25%" align="right">
+                                <input id="createsave" name="createsave" title="" accessKey="" class="crmbutton small save"    onclick="updateTab('__URL__/editview/?&record=<?php echo ($record); ?>')"   type="button"  value="<?php echo (L("Button_Edit")); ?> ^8 " style="width:70px;float:right;margin-right:2px;margin-top:2px;margin-bottom:2px;"></td>
+                            <td width="25%">
+                                <input title="" accessKey="" class="crmbutton small cancel" onclick="updateTab('__APP__/<?php echo ($moduleName); ?>/<?php echo ($returnAction); ?>')" type="button" name="button" value="  <?php echo (L("Button_Back")); ?> ^4 " style="width:70px;float:left;margin-left:2px;margin-top:2px;margin-bottom:2px;"></td>
+                            <td width="25%"> 
+                            </td>
+                        </tr>
+                        <!-- 这里显示具体的编辑 -->
+
+                        <?php if(is_array($blocks)): $i = 0; $__LIST__ = $blocks;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$data): $mod = ($i % 2 );++$i;?><tr>
+                                <td colspan=4 class="tabBlockViewHeader">
+                                    <?php echo (L("$key")); ?>
+                                </td>
+                            </tr>
+
+                            <!-- Here we should include the uitype handlings-->
+                            <?php if(is_array($data)): $label = 0; $__LIST__ = $data;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$subdata): $mod = ($label % 2 );++$label;?><tr style="height:30px;border: 1px solid black;background: #F0F0F0;">
+                                    <?php if(is_array($subdata)): $mainlabel = 0; $__LIST__ = $subdata;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$maindata): $mod = ($mainlabel % 2 );++$mainlabel; $label = L("$maindata[name]"); ?>        
+                                        <?php $uitype = $maindata[uitype]; ?>                
+                                        <?php $name = $maindata[name]; ?>                      
+                                        <?php $value = $maindata[value]; ?>                    
+                                        <?php $length = $maindata[length]; ?>                  
+                                        <?php $readonly = $maindata[readonly]; ?>                                                                <td width="20%" class="dvtCellLabel" align=right>
+                                            <?php echo ($label); ?> 
+                                        </td>
+                                        <td width="40%" align="left" class="dvtCellInfo" colspan="2">
+                                            <textarea class="detailedViewTextBox"  readonly="readonly"  rows="10" style="width:100%;"><?php echo ($value); ?></textarea>
+                                        </td><?php endforeach; endif; else: echo "" ;endif; ?>
+                                </tr><?php endforeach; endif; else: echo "" ;endif; ?>
+                            <tr style="line-height: 2px;"><td>&nbsp;</td></tr><?php endforeach; endif; else: echo "" ;endif; ?>
+                        <tr>
+                            <td></td>
+                            <td align="right">
+                                <input id="createsave" name="createsave" title="" accessKey="" class="crmbutton small save"    onclick="updateTab('__URL__/editview/?&record=<?php echo ($record); ?>')"   type="button"  value="<?php echo (L("Button_Edit")); ?> ^8" style="width:70px;float:right;margin-right:2px;margin-top:2px;margin-bottom:2px;"></td>
+                            <td> 
+                                <input title="" accessKey="" class="crmbutton small cancel" onclick="updateTab('__APP__/<?php echo ($moduleName); ?>/<?php echo ($returnAction); ?>')" type="button" name="button" value="  <?php echo (L("Button_Cancel")); ?> ^4 "  style="width:70px;float:left;margin-left:2px;margin-top:2px;margin-bottom:2px;"></td>
+                            <td> 
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>

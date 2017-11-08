@@ -1,0 +1,83 @@
+<script type="text/javascript">
+    //指定某个字段获得焦点
+    $(document).ready(function(){
+         $("#duplicateView{$moduleName} #{$fieldsFocus}").focus();  
+    });
+    
+</script>
+<div class="moduleoperator">
+    <form id="duplicateView{$moduleName}" name="duplicateView{$moduleName}" method="POST" style="border: 1px solid white;"  >
+        <input id="{$moduleName}Action" type="hidden" value="duplicateview" />
+        <input type="hidden" name="pagenumber" value="{$smarty.request.start}">
+        <input type="hidden" name="module" value="{$MODULE}">
+        <input type="hidden" name="record" value="{$record}">
+        <input type="hidden" name="returnAction" value="{$returnAction}">
+
+        <table border=0 cellspacing=0 cellpadding=0 width=99% align=center bgcolor="">
+            <tr>
+                <td>
+                    <table border=0 cellspacing=0 cellpadding=3 width=100% class="small">
+                        <tr>
+                        <td class="dvtTabCache" style="width:20px" nowrap>&nbsp;</td>
+                        <td class="dvtSelectedCell" align="center" nowrap> 复制 </td>
+                        <td class="dvtTabCache" style="width:80%">&nbsp;</td>
+                        <tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td valign=top align="center" >
+
+                    <!-- Basic Information Tab Opened -->
+                    <div id="basicTab" style="border: 1px solid #e0dddd; background: white;">
+                        <table border=0 cellspacing=0 cellpadding=0 width="98%" class="small">
+                            <tr>
+                               <td></td>
+                                <td align="right">
+                                    <input id="duplicatesave" name="duplicatesave" title="" accessKey="" class="crmbutton small save"   type="button"  value="{$Think.lang.Button_Save}" style="width:70px;float:right;margin-right:2px;margin-top:2px;margin-bottom:2px;"></td>
+                                <td>
+                                    <input title="" accessKey="" class="crmbutton small cancel" onclick="updateTab('__APP__/{$moduleName}/{$returnAction}');" type="button" name="button" value="  {$Think.lang.Button_Cancel}  "  style="width:70px;float:left;margin-left:2px;margin-top:2px;margin-bottom:2px;"></td>
+                                <td> 
+                                </td>
+                            </tr>
+                            <!-- 这里显示具体的编辑 -->
+
+                            <volist name="blocks"  id="data" >
+                                <tr>
+                                    <td colspan=4 class="tabBlockViewHeader">
+                                        {$Think.lang.$key}
+                                    </td>
+                                </tr>
+
+                                <!-- Here we should include the uitype handlings-->
+                                <volist key="label" id="subdata" name="data">
+                                    <tr style="height:35px;border: 1px solid black;background: #F0F0F0;">
+                                        <volist key="mainlabel" id="maindata" name="subdata">  
+                                            <include file='Module/editviewUI' />       
+                                        </volist>
+                                    </tr>
+                                </volist>
+                                <tr style="line-height: 2px;"><td>&nbsp;</td></tr>
+                            </volist>
+
+                            <tr>
+                                <td></td>
+                                <td align="right">
+                                    <input id="duplicatesave" name="duplicatesave" title="" accessKey="" class="crmbutton small save"   type="button"  value="{$Think.lang.Button_Save}" style="width:70px;float:right;margin-right:2px;margin-top:2px;margin-bottom:2px;"></td>
+                                <td>
+                                    <input title="" accessKey="" class="crmbutton small cancel" onclick="updateTab('__APP__/{$moduleName}/returnAction/{$returnAction}');" type="button" name="button" value="  {$Think.lang.Button_Cancel}  " style="width:70px;float:left;margin-left:2px;margin-top:2px;margin-bottom:2px;"></td>
+                                <td> 
+                                </td>
+                            </tr>
+                            </tr>
+                        </table>
+
+                    </div>
+
+
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+    

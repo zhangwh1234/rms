@@ -53,7 +53,7 @@ class SessionDb
         $this->lifeTime = C('SESSION_EXPIRE') ? C('SESSION_EXPIRE') : ini_get('session.gc_maxlifetime');
         $this->sessionTable = C('SESSION_TABLE') ? C('SESSION_TABLE') : C("DB_PREFIX") . "session";
         //分布式数据库
-        $host = explode(',', C('DB_HOST'));
+        $host = explode(',', C('DB_HOST'));      
         $port = explode(',', C('DB_PORT'));
         $name = explode(',', C('DB_NAME'));
         $user = explode(',', C('DB_USER'));

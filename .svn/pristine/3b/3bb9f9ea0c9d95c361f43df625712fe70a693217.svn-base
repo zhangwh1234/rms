@@ -1,0 +1,84 @@
+<?php
+    /***
+    * 发票管理系统，支持发票的查看，打印等功能
+    * 2014-05-30
+    */
+
+    class InvoiceMgrAction extends ModuleAction{
+        //定义列表的菜单路径
+        var $listviewMenuPath = false;
+        //定义列表的路径
+        var $listviewPath = false;
+        //定义发票打印的页面的菜单
+        var $createviewPath = false;
+
+
+        //取得发票的数据
+        public function getInvoiceMgrAll(){
+            //取得模块的名称
+            $moduleName = $this->getActionName();
+            $this->assign('moduleName',$moduleName);   //模块名称   
+
+            //启动当前模块的模型
+            $focus = D($moduleName);
+
+            //生成list字段列表
+            $listFields = $focus->listFields;
+            //模块的ID
+            $moduleId = strtolower($focus->getPk());
+
+
+            //取得显示页数
+            $pageNumber = $_REQUEST['pageNumber'];
+            if(empty($pageNumber)){
+                $pageNumber = 1;
+            }
+
+            //配送店（分公司）的信息
+            //分公司的名称
+            $company = $this->userInfo['department'];
+            $where = array();
+            $where['company'] = $company;
+            $where['_string'] = "length(trim(invoiceheader)) > 0";
+
+            //导入分页类
+            import('ORG.Util.Page');// 导入分页类
+            $total      = $focus->where($where)->count();// 查询满足要求的总记录数   
+            //log::write($focus->getLastSql(),'info');
+
+            //查session取得page的firstRos和listRows
+            if(isset($_SESSION[$moduleName.'firstRowlistview'])){
+                $Page->firstRow = $_SESSION[$moduleName.'firstRowlistview'];
+            }
+            $listMaxRows = C('LIST_MAX_ROWS'); //定义显示的列表函数
+            if(isset($listMaxRows)){
+                $Page->listRows = $listMaxRows;
+            }else{
+                $listMaxRows = 15;
+            } 
+
+            $Page = new Page($total,$listMaxRows);
+            //取得页数
+            $Page->nowPage = $pageNumber;
+
+            // 进行分页数据查询 注意limit方法的参数要使用Page类的属性
+
+            //查询模块的数据 
+            $selectFields = $listFields;
+            array_unshift($selectFields,$moduleId);
+
+            $listResult = $focus->where($where)->field($selectFields)->limit($Page->firstRow.','.$Page->listRows)->order('orderformid desc')->select();
+            //log::write($focus->getLastSql(),'info');
+            //var_dump($focus->getLastSql());
+            
+            $orderHandleArray['total'] = $total;
+            if(count($listResult) > 0){
+                $orderHandleArray['rows'] = $listResult;
+            }else{
+                $orderHandleArray['rows']= array();
+            }
+
+            $this->ajaxReturn($orderHandleArray,'JSON');
+        }
+    }
+?>

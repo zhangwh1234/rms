@@ -1,0 +1,98 @@
+<?php if (!defined('THINK_PATH')) exit();?><script type="text/javascript"> 
+    $(function(){   
+
+        //定义焦点
+        $('#searchViewForCompany<?php echo ($moduleName); ?> input[name=searchTextCompany]').focus(); 
+
+        //form提交程序
+        $('#searchViewForCompany<?php echo ($moduleName); ?> input[name=searchViewBtn]').bind('click',function(){   
+            //返回选项卡
+            var tab = $('#operation').tabs('getSelected');
+            var queryString = $('#searchViewForCompany<?php echo ($moduleName); ?>').serialize();
+            //提交表单 
+            url = '__URL__/searchviewForCompany/&'+queryString;
+            $('#operation').tabs('update',{  
+                tab:tab,
+                options:{href:url}                                                
+            });    
+        }) 
+
+
+        //按回车不自动提交
+        $('#searchViewForCompany<?php echo ($moduleName); ?> input[name=searchTextCompany]').keydown(function(e){
+
+            if(e.which == 13){
+                return false;
+            }
+        })
+
+        //按回车不自动提交
+        $('#searchViewForCompany<?php echo ($moduleName); ?> input[name=searchTextCompany]').keyup(function(e){
+            if(e.which == 13){
+                //返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                //var queryString = $('#searchViewForCompany<?php echo ($moduleName); ?>').serialize();
+                var searchCompany =  $('#searchViewForCompany<?php echo ($moduleName); ?> #searchTextCompany').val();
+                var searchAp = $('#searchViewForCompany<?php echo ($moduleName); ?> select[name=searchAp]').val();
+                //提交表单 
+                url = '__URL__/searchviewForCompany/searchTextCompany/'+searchCompany+'/searchAp/'+searchAp;
+                $('#operation').tabs('update',{  
+                    tab:tab,
+                    options:{href:url}                                                
+                });    
+                return false;
+            }
+            var inputCode = String.fromCharCode(e.which);
+            inputCode = inputCode.toLowerCase();
+            $.ajax({
+                type : "GET",
+                url : "__URL__/getCompanyByCode/code/"+inputCode,
+                dataType : "json",
+                success : function(returnData){                 
+                    if(returnData['error'] == 'error'){
+                        $.messager.show({
+                            title:'提示',
+                            msg:'输入代码输入有误!',
+                            height:70,
+                            timeout:5000,
+                            showType:'slide',
+                            style:{
+                                left:0,right:'',top:'',
+                                bottom:-document.body.scrollTop-document.documentElement.scrollTop
+                            }
+                        });
+                        return false;
+                    }
+
+                    if(returnData['success'] == 'success'){ 
+                        handleData = returnData['data'];
+                        //$('#searchViewForCompany<?php echo ($moduleName); ?> input[name=searchCompany]').val(handleData.company);   //为什么这个无效？
+                        $('#searchTextCompany').val(handleData.company);   
+                    }
+                }
+
+            });  
+
+        })
+
+
+    })
+</script>
+
+<div class="searchDiv">
+    <form id="searchViewForCompany<?php echo ($moduleName); ?>" name="searchViewForCompany<?php echo ($moduleName); ?>"  method="post"  style="border: 1px solid white;">
+        <ul class="searchOption">
+            <li>输入配送店代码</li>
+            <li>   <input id="searchTextCompany" name="searchTextCompany"  type="text"   style="width:100px"  value="<?php echo ($searchTextValue); ?>" AUTOCOMPLETE="off" /></li>
+            <li>&nbsp;</li>
+            <li><select name="searchAp">
+                    <?php if($searchAp): ?><option value="<?php echo ($searchAp); ?>"><?php echo ($searchAp); ?></option><?php endif; ?>
+                    <option value="上午">上午</option>
+                    <option value="下午">下午</option>
+                </select>
+            </li>
+            <li><input id="searchViewBtn" name="searchViewBtn" type="button" class="crmbutton small create"  value=" 查  询  " />&nbsp;</li>
+            <li>
+        </ul>  
+    </form>
+</div>

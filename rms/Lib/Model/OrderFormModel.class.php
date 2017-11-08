@@ -12,22 +12,23 @@ class OrderFormModel extends CRMEntityModel
         'telphone' => array('width' => 10, 'align' => 'left'),
         'totalmoney' => array('width' => 10, 'align' => 'center'),
         'custtime' => array('width' => 10, 'align' => 'center'),
-        'sendname' => array('width' => 10, 'align' => 'center'),
+        'sendname' => array('width' => 12, 'align' => 'center'),
         'company' => array('width' => 10, 'align' => 'center'),
         'state' => array('width' => 10, 'align' => 'center'),
         'telname' => array('width' => 10, 'align' => 'left'),
         'rectime' => array('width' => 10, 'align' => 'center'));
     //定义列表
     var $searchListFields = array(
-        'address' => array('width' => 50, 'align' => 'left', 'halign' => 'center'),
+        'address' => array('width' => 80, 'align' => 'left', 'halign' => 'center'),
         'ordertxt' => array('width' => 25, 'align' => 'left'),
         'telphone' => array('width' => 15, 'align' => 'left'),
         'totalmoney' => array('width' => 10, 'align' => 'center'),
         'custtime' => array('width' => 10, 'align' => 'center'),
         'sendname' => array('width' => 10, 'align' => 'center'),
         'company' => array('width' => 10, 'align' => 'center'),
-        'state' => array('width' => 6, 'align' => 'center'),
-        'telname' => array('width' => 10, 'align' => 'left')
+        'state' => array('width' => 10, 'align' => 'center'),
+        'telname' => array('width' => 10, 'align' => 'left'),
+        'ap' => array('width' => 10, 'align' => 'left'),
     );
 
     //定义来电列表
@@ -153,7 +154,7 @@ class OrderFormModel extends CRMEntityModel
         ),
         'LBL_INVOICE_INFORMATION' => array(
             array(  //发票抬头
-                'name' => 'invoiceheader', 'uitype' => 57, 'readonly' => 1, 'length' => 250
+                'name' => 'invoiceheader', 'uitype' => 2, 'readonly' => 1, 'length' => 250
             ),
             array(  //发票内容
                 'name' => 'invoicebody', 'uitype' => 9, 'readonly' => 1, 'length' => 100

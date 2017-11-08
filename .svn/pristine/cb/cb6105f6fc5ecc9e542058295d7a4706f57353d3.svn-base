@@ -1,0 +1,37 @@
+<?php if (!defined('THINK_PATH')) exit();?><div class="moduleMenu">
+    <ul>
+        <li><?php echo (L("$tabName")); ?></li>
+        <li><a href="javascript:void(0);"  onclick="updateTab('__URL__/listview');">&nbsp;&gt;<?php echo (L("$moduleName")); ?></a></li>
+        <li>&nbsp;&gt;<span style="background-color: #FF9797;font-size: 16px;"><?php echo ($operName); ?></span></li>
+        <li style="width: 50px;">&nbsp;</li>
+		
+		 <li style="width: 50px;">&nbsp;</li>
+        <li><a href="javascript:;" id="showSubMenu"  onMouseOver="" ><img src=".__PUBLIC__/Images/addressBtn.jpg" alt="" title="" border="0"></a></li>      
+        <li><a href="javascript:void(0);" class="moduleName" id="orderHandleSearchviewmenuAddressSearchAClick">地址查询<span>^5</span></a></li>      
+        <li style="width: 20px;">&nbsp;</li>        
+        <li style="float: right;margin-right: 60px;"><a href="javascript:void(0);"   onclick="orderHandleSearchviewAddresscloseTab();" >关闭</a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="orderHandleSearchviewAddresscloseTab();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
+    </ul>
+</div>
+<script>
+/* 关闭选项卡 */
+function orderHandleSearchviewAddresscloseTab(){
+    // 返回选项卡
+    var tab = $('#operation').tabs('getSelected');
+    // 返回选项卡的index
+    var index = $('#operation').tabs('getTabIndex',tab);
+    // 关闭选项卡
+    $('#operation').tabs('close',index);
+    //清理一下DOM
+    orderHandle.searchviewAddress.table.remove();
+    orderHandle.searchviewAddress.beizhuWindow.remove();
+    orderHandle.searchviewAddress.beizhuTable.remove();
+    orderHandle.searchviewAddress.companyWindow.remove();
+    orderHandle.searchviewAddress.companyTable.remove();
+    orderHandle.searchviewAddress.addressSearchWindow.remove();
+    orderHandle.searchviewAddress.addressSearchInput.remove();
+    orderHandle.searchviewAddress.secondPointWindow.remove();
+    orderHandle.searchviewAddress.secondPointTable.remove();
+
+}
+</script>

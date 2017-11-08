@@ -8,7 +8,7 @@
         }
 
         //定义列表
-        var $listFields = array('address','ordertxt','totalmoney','telphone','custtime','state','sendname','beizhu','telname','rectime','invoiceHeader');   
+        var $listFields = array('address','ordertxt','totalmoney','telphone','custtime','state','sendname','beizhu','telname','rectime','invoiceHeader','invoicetype');
 
 
         //返回列表字段
@@ -37,7 +37,6 @@
                 array(
                     'name'=>'custtime','uitype'=>1,'readonley'=>1,'length'=>24
                 ),
-                
                 array(
                     'name'=>'beizhu','uitype'=> 11,'readonley'=>1,'length'=>24
                 ),
@@ -58,6 +57,9 @@
                 ),
                 array(
                     'name'=>'state','uitype'=> 2,'readonley'=>1,'length'=>24
+                ),
+                array(
+                    'name'=>'invoiceheader','uitype'=> 2,'readonley'=>1,'length'=>24
                 )
              ),
              'LBL_PRODUCTS_INFORMATION' => array(

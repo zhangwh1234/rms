@@ -1,0 +1,27 @@
+<?php if (!defined('THINK_PATH')) exit();?><div>
+	<a id="btn" href="#" class="easyui-linkbutton"
+		data-options="iconCls:'icon-search'" style="width: 200px;">平台说明</a>
+	
+	<a id="btn" href="#" class="easyui-linkbutton"
+		data-options="iconCls:'icon-search'" style="width: 200px;"
+		onClick="shopmgrlistview();"
+		>商户管理</a>
+	
+	<a id="btn" href="#" class="easyui-linkbutton"
+		data-options="iconCls:'icon-search'" style="width: 200px;">菜单管理</a>
+	
+	<a id="btn" href="#" class="easyui-linkbutton"
+		data-options="iconCls:'icon-search'" style="width: 200px;">订单信息</a>
+	
+	<a id="btn" href="#" class="easyui-linkbutton"
+		data-options="iconCls:'icon-search'" style="width: 200px;">操作日志</a>
+</div>
+<script>
+//商户管理列表
+var shopmgrlistview = function(){
+	var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+	var regin =  baiduwaimaiMainviewLayout.layout('panel','center');
+	regin.panel('refresh','__URL__/shopmgrlistview');
+}
+
+</script>

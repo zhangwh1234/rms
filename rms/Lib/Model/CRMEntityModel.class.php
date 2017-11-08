@@ -2,12 +2,12 @@
     //定义系统的基类
     class CRMEntityModel extends Model{
 
+        var $otherListFields = array();
+
         /* 返回列表的表格头 */
         function ListViewHeader(){
 
         }
-
-
 
         /* 返回新建的区块信息  */ 
         public function createBlocks(){
@@ -29,8 +29,8 @@
                 }
             }
             return $createViewArray;
-
         }
+
         //返回浏览记录的详细的区块信息
         public function detailBlocks($result){
             //定义返回数组
@@ -130,6 +130,7 @@
             return $navName;
 
         }
+
     }
 
 ?>

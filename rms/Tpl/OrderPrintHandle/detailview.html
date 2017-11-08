@@ -34,6 +34,10 @@
 
     $(function () {
         OrderPrintHandleDetailviewModule.init();
+        //清除定时返回listview的任务
+        if(typeof(OrderPrintHandleListviewModule) != 'undefined'){
+            clearInterval(OrderPrintHandleListviewModule.orderprinttime);
+        }
     })
 
 </script>

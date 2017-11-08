@@ -95,6 +95,7 @@
                                     //显示备注
                                     $('#beizhuOrderHandle').linkbutton({text: '备注:' + data.beizhu});
                                     OrderHandleListviewModule.refreshOrder = true; //恢复刷新
+                                    OrderHandleListviewModule.orderHandleData = '';  //清理缓存输入量
                                 }
 
                                 //配送地址查询的处理
@@ -111,6 +112,7 @@
 
                                     $('#orderHandleSearchviewAddressOperation' + that.rowIndex).val(''); //输入框恢复空
                                     $('#orderHandleSearchviewAddressOperation' + that.rowIndex).focus(); //输入框恢复空
+
 
                                     //显示备注
                                     $('#orderHandleSearchviewAddressTb').linkbutton({text: '备注:' + data.beizhu});

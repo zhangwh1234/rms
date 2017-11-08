@@ -1,0 +1,63 @@
+
+//添加地址
+function addTelAddress(){
+    //取得表格行的长度
+    var rowNum = $("#telAddressTable tr").length;
+
+    var tableTrAppend =  "<tr style='height:25px;border: 1px solid black;background: #F0F0F0;' class='CaseRow' >";
+
+    tableTrAppend += "<td width='10%' align='center' class='dvtCellLabel'>"+rowNum+"</td>";
+
+    tableTrAppend += "<td width='70%' align='left' class='dvtCellLabel'><input id='telAddress_"+rowNum+"' name='telAddress_"+rowNum+"'   type='text' size='80' value='' /></td> ";
+    tableTrAppend += "<td width='10%' align='center' class='dvtCellLabel'><input id='telCompany_"+rowNum+"' name='telCompany_"+rowNum+"'   type='text' size='10' value='' /></td> ";
+
+    tableTrAppend += "<td width='10%' align='center' class='dvtCellLabel'><a href='#' onclick='clearTelAddress("+rowNum+")' >清空地址</a></td></tr>";               
+
+    $("#telAddressTable").append(tableTrAppend);
+    $("#addressLength").attr("value",rowNum+1);  //表格行数保存
+} 
+
+//删除来电地址最后一行
+function delTelAddress(){
+    //取得表格行的长度
+    var rowNum = $("#telAddressTable tr").length;
+    if(rowNum == 2){
+        alert("最后一行不能删除");
+        return;
+    }
+    $("#telAddressTable tr:last").remove();
+    $("#addressLength").attr("value",rowNum-1); //表格行数保存
+
+}
+
+
+//清空来电地址的内容
+function clearTelAddress(rowNum){
+    var telAddress = $("#telAddress_"+rowNum).attr("value");
+    alert(telAddress);
+    if(telAddress == ''){
+        return;
+    } 
+    if(confirm("是否要清空地址内容")){
+        $("#telAddress_"+rowNum).attr("value",'');
+    }
+}
+
+
+
+
+//计算加上送餐费的订单的总金额
+function addShippingMoney(obj){
+    var shippingMoney = $(obj).val();
+    alert(shippingMoney);
+    var totalMoney = $('#totalmoney').val();
+    totalMoney = totalMoney + shippingMoney;
+    $('#totalmoney').val(totalMoney);
+
+}
+
+
+
+
+
+   

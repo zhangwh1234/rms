@@ -1,0 +1,363 @@
+<div class="pages">{$page}</div>
+<div class="list" id="list{$moduleName}">
+	<table id="table{$actionName}" border="0" cellspacing="1"
+		cellpadding="3" width="100%" class="lvt" align="center">
+		<tr class="listHeader">
+			<td class=""><input class="listColCheck" type="checkbox"
+				name="selectall"></td>
+			<foreach name="listHeader" item="header">
+			<td class="listHeader">{$Think.lang.$header}</td>
+			</foreach>
+			<td class="listHeader">操作</td>
+		</tr>
+		<volist id="entity" name="listEntries" key='row'> <assign
+			name='record' value="$key" />
+		<tr bgcolor="white" onMouseOver="this.className='lvtColDataHover'"
+			onMouseOut="this.className='lvtColData'" ondblclick=""
+			id="row_{$entity_id}">
+
+			<volist name="entity" id="id"> <if
+				condition="$key eq $moduleId">
+			<td class="listColCheck" width="2%"><input type="checkbox"
+				name="selected_id" id="{$record}" value='{$record}'></td>
+			<elseif condition="$key eq $list_link_field" />
+			<td><a class="small" href="#"
+				onclick="updateTab('__URL__/detailview/record/{$record}/returnAction/{$returnAction}');">{$id}</a></td>
+			<else />
+			<td class="listColData">{$id}</td>
+			</if> </volist>
+			<td><center>
+					<input id="{$actionName}OrderHandle{$row}" class="easyui-numberbox"
+						value="" size="6" maxlength="6" style="font-size: 16px;"
+						onkeydown="{$actionName}OrderHandle(event,this,'{$record}','{$row}');" />
+					<a href="javascript:void(0);"
+						onclick="updateTab('__URL__/detailview/record/{$record}/returnAction/{$returnAction}');">查看</a>
+					<a href="javascript:void(0);"
+						onclick="searchOrderPrintData('{$record}','{$row}')">打印</a>
+				</center></td>
+		</tr>
+		</volist>
+	</table>
+</div>
+<div class="pages">{$page}</div>
+
+<input id="{$functionName}{$moduleName}Action" type="hidden" value="searchviewlist" />
+
+<div id="{$actionName}beizhuOrderhandleWin" class="easyui-window"
+	data-options="
+	minimizable:false,
+	maximizable:false,
+	collapsible:false,
+	title:'备注输入',
+	modal:true,
+	onClose:beizhuOrderhandleWinClose,
+	closed:true
+"
+	style="width: 500px; height: 400px;">
+	<input id="{$actionName}BeizhuOrderformid" value="" type="hidden" /> <input
+		id="{$actionName}BeizhuRowIndex" value="" type="hidden" />
+	<table id="{$actionName}beizhuOrderhandleTable" class="easyui-datagrid"
+		data-options="fitColumns:true,
+		singleSelect:true,
+		rownumbers:true,
+		singleSelect : true,
+		onDblClickRow:searchBeizhuOrderAction
+	">
+		<thead>
+			<tr>
+				<th data-options="field:'name',width:300,align:'center'"
+					align="center">备注名称</th>
+			</tr>
+		</thead>
+		<tbody>
+			<foreach name="beizhuOrderhandle" item="vo">
+			<tr>
+				<td>{$vo.name}</td>
+			</tr>
+			</foreach>
+		</tbody>
+	</table>
+</div>
+
+
+<script type="text/javascript">
+	$(function(){
+		$("#{$actionName}OrderHandle1").focus();
+	})
+	var {$actionName}beizhuOrderhandleTable = $("#{$actionName}beizhuOrderhandleTable").datagrid();
+	
+	var actionName = '{$actionName}';
+    //处理订单 ,根据送餐员编码
+    function {$actionName}OrderHandle(event,obj,orderformid,rowIndex){
+    	var focusRowIndex = parseInt(rowIndex);
+        //定义根据输入值，处理订单
+        var inputCode = $(obj).val();
+        //输入的键值 
+        var event = event || window.event;
+        var keyCode = event.which ? event.which : event.keyCode;    
+        if(keyCode == 13){   //订单处理  
+            var objValue = $(obj).val();
+            switch(objValue){
+                case '0':  //对退餐的处理
+                    searchCancelOrder(objValue,orderformid,rowIndex);
+                    break;
+                case '2':  //备注订单
+                	//beizhuOrderView(objValue,orderformid,rowIndex);
+                    searchBeizhuOrderView(orderformid,rowIndex);
+                	break;
+                case '7' :  //返回订单
+                    searchBackOrder(objValue,orderformid,rowIndex);
+                    break;
+                case '8' : //订单打印
+                    searchOrderPrintData(orderformid,rowIndex);
+                    break;
+                default:  //对订单处理到送餐员身上    
+                	if(inputCode.length < 2) break;
+                    $.ajax({
+                        type : "GET",
+                        url : "__URL__/orderHandleByCode/orderformid/"+orderformid+"/code/"+inputCode,
+                        dataType : "json",
+                        success : function(returnData){                 
+                            if(returnData['error'] == 'error'){
+                                $.messager.show({
+                                    title:'提示',
+                                    msg:'输入代码输入有误!',
+                                    height:70,
+                                    timeout:5000,
+                                    showType:'slide',
+                                    style:{
+                                        left:0,right:'',top:'',
+                                        bottom:-document.body.scrollTop-document.documentElement.scrollTop
+                                    }
+                                });
+                                return false;
+                            }
+
+                            if(returnData['success'] == 'success'){ 
+                                handleData = returnData['data'];
+                                rowIndex = rowIndex - 1;
+                                $("#table{$actionName} tr:gt(0):eq("+rowIndex+") td:eq(7)").html(handleData.sendname);
+                            }
+                        }
+
+                    });  
+            }
+        }  
+        //F8订单打印
+        if(keyCode == 119){
+            searchOrderPrintData(orderformid,rowIndex);  
+        }   
+        
+        if(keyCode == 38){ //上移动
+        	if(focusRowIndex == 1) return;
+           focusRowIndex = focusRowIndex - 1;
+          $("#{$actionName}OrderHandle"+focusRowIndex).focus();
+        }
+        if(keyCode == 40){  //下移动
+        	var tableRowLength = $("#table{$actionName} tr").length;
+        	if(focusRowIndex == tableRowLength) return;
+        	focusRowIndex = focusRowIndex + 1;
+            $("#{$actionName}OrderHandle"+focusRowIndex).focus();
+        }
+    }
+    
+    function searchBackOrder(objValue,orderformid,rowIndex) {
+    	$.messager.confirm('确认', '是否真的需要返回订单?', function(r){
+        if (r){
+            $.ajax({
+                type : "GET",
+                url : "__URL__/backOrderHandle/orderformid/"+orderformid,
+                dataType : "json",
+                success : function(returnData){                 
+                    if(returnData['error'] == 'error'){
+                        $.messager.show({
+                            title:'提示',
+                            msg:returnData['msg'],
+                            height:70,
+                            timeout:5000,
+                            showType:'slide',
+                            style:{
+                                left:0,right:'',top:'',
+                                bottom:-document.body.scrollTop-document.documentElement.scrollTop
+                            }
+                        });
+                        return false;
+                    }
+
+                    if(returnData['success'] == 'success'){ 
+                    	 $("#{$actionName}OrderHandle"+rowIndex).val('');	
+                    	 rowIndex = rowIndex -1 ;//两者相差1
+                    	 $("#table{$actionName} tr:gt(0):eq("+rowIndex+") td:eq(6)").html('已返回');              
+                    }
+                }
+        	    });
+     	   }else{
+ 				$("#{$actionName}OrderHandle"+rowIndex).val('');	
+        	}
+    	});
+	}
+    
+    //打印订单
+    function searchOrderPrintData(orderformid,rowIndex){
+    	orderPrintData(orderformid,rowIndex); 
+    	rowIndex = rowIndex -1;
+    	 $("#table{$actionName} tr:gt(0):eq("+rowIndex+") td:eq(6)").html('已打印');        
+    }
+    
+    //对订单备注，比如没有人要等等信息
+    function searchBeizhuOrderView(orderformid,rowIndex){
+    	{$actionName}beizhuOrderhandleTable.datagrid("reload",{});
+    	//保存订单号
+    	$("#{$actionName}BeizhuOrderformid").val(orderformid);
+    	//保存行号
+    	$("#{$actionName}BeizhuRowIndex").val(rowIndex);
+ 	   	//开始备注窗口
+    	$('#{$actionName}beizhuOrderhandleWin').window('open');	
+ 	   	//备注字段获得焦点
+ 	   	{$actionName}beizhuOrderhandleTable.datagrid('selectRow', 0);  //设置焦点
+ 	    {$actionName}beizhuOrderhandleTable.datagrid('getPanel').panel('panel').attr('tabindex', 1).focus();
+    	  	
+    }
+    
+  //定义备注栏的移动
+    {$actionName}beizhuOrderhandleTable.datagrid('getPanel').panel('panel').attr('tabindex', 1).bind('keydown', function (e) {
+    	//当前选择的行
+        var selectedRowObj = {$actionName}beizhuOrderhandleTable.datagrid('getSelected');
+        //当前选择行的number
+        var selectedRowIndex = {$actionName}beizhuOrderhandleTable.datagrid('getRowIndex', selectedRowObj);
+      
+        switch (e.keyCode) {
+            case 38: // up  上移动         
+                if(selectedRowIndex == 0) return false;//为0，就是到顶了，不用再移动了
+                selectedRowIndex -= 1;
+                {$actionName}beizhuOrderhandleTable.datagrid('selectRow', selectedRowIndex);
+                break;
+            case 40: // down 下移动
+                var rowsObj = {$actionName}beizhuOrderhandleTable.datagrid('getRows');  //返回当前页的记录
+                var rowLength = rowsObj.length - 1;
+                if(selectedRowIndex == rowLength) return;  //到表格尾部了，就不用再移动了
+                selectedRowIndex += 1;
+                {$actionName}beizhuOrderhandleTable.datagrid('selectRow', selectedRowIndex);
+                break;
+            case 13:  //回车，处理备注
+            	var focusRowIndex;
+            	console.info(selectedRowObj);
+            	var beizhuName = selectedRowObj.name;
+            	//获取订单号
+         		orderformid = $("#{$actionName}BeizhuOrderformid").val();
+            	//获取行号
+            	focusRowIndex = $("#{$actionName}BeizhuRowIndex").val();
+            	focusRowIndex = parseInt(focusRowIndex);
+                //备注写入数据库      
+            	$.ajax({
+                	type : "GET",
+                	url : APP+"/OrderHandle/setBeizhuOrder/orderformid/"+orderformid+
+                			'/beizhu/' + beizhuName ,
+                	dataType : "json",
+                	success : function(data){      	
+            		}
+            	 })
+            	focusRowIndex =focusRowIndex -1;   
+                
+            	$("#table{$actionName} tr:gt(0):eq("+focusRowIndex+") td:eq(6)").html('已备注'); 
+            	$("#table{$actionName} tr:gt(0):eq("+focusRowIndex+") td:eq(8)").html(beizhuName); 
+            	$("#table{$actionName} tr:gt(0):eq("+focusRowIndex+")").css("background-color","red");  //改变颜色  	
+        		$('#{$actionName}beizhuOrderhandleWin').window('close');	//关闭备注输入
+        		focusRowIndex = focusRowIndex + 1;
+        		$("#{$actionName}OrderHandle"+focusRowIndex).val(''); //输入框置空
+        		$("#{$actionName}OrderHandle"+focusRowIndex).focus();
+            	break;
+        }
+    });
+
+    
+    /**
+    * 订单备注操作
+    */
+    function searchBeizhuOrderAction(index,row){
+    	var focusRowIndex;
+    	//当前选择的行
+        var selectedRowObj = {$actionName}beizhuOrderhandleTable.datagrid('getSelected');
+    	var beizhuName = selectedRowObj.name;
+    	//获取订单号
+ 		orderformid = $("#{$actionName}BeizhuOrderformid").val();
+    	//获取行号
+    	focusRowIndex = $("#{$actionName}BeizhuRowIndex").val();
+    	focusRowIndex = parseInt(focusRowIndex);
+        //备注写入数据库      
+    	$.ajax({
+        	type : "GET",
+        	url : APP+"/OrderHandle/setBeizhuOrder/orderformid/"+orderformid+
+        			'/beizhu/' + beizhuName ,
+        	dataType : "json",
+        	success : function(data){      	
+    		}
+    	 })
+    	focusRowIndex =focusRowIndex -1;           
+    	$("#table{$actionName} tr:gt(0):eq("+focusRowIndex+") td:eq(6)").html('已备注'); 
+    	$("#table{$actionName} tr:gt(0):eq("+focusRowIndex+") td:eq(8)").html(beizhuName); 
+    	$("#table{$actionName} tr:gt(0):eq("+focusRowIndex+")").css("background-color","red");  //改变颜色  	
+		$('#{$actionName}beizhuOrderhandleWin').window('close');	//关闭备注输入
+		focusRowIndex = focusRowIndex + 1;
+		$("#{$actionName}OrderHandle"+focusRowIndex).val(''); //输入框置空
+		$("#{$actionName}OrderHandle"+focusRowIndex).focus();
+		
+    }
+    
+    //关闭备注窗口，触发的事件
+    function beizhuOrderhandleWinClose(){
+    	var focusRowIndex;
+    	//获取行号
+    	focusRowIndex = $("#{$actionName}BeizhuRowIndex").val();
+    	focusRowIndex = parseInt(focusRowIndex);
+    	$("#{$actionName}OrderHandle"+focusRowIndex).val(''); //输入框置空
+		$("#{$actionName}OrderHandle"+focusRowIndex).focus();
+    
+    }
+    
+    //键盘备注操作
+    function {$actionName}BeizhuOrderKey(event,obj,rowIndex){
+    	var beizhuFocusRowIndex = parseInt(rowIndex); //备注字段的焦点
+    	//输入的键值 
+        var event = event || window.event;
+        var keyCode = event.which ? event.which : event.keyCode;  
+      	//上移动
+        if(keyCode == 38){
+        	beizhuFocusRowIndex = beizhuFocusRowIndex - 1;
+        	$("#{$actionName}beizhuOrderhandleInput"+beizhuFocusRowIndex).focus();
+        	$("#{$actionName}beizhuOrderhandleTable").datagrid('selectRow', beizhuFocusRowIndex);
+        }
+        if(keyCode == 40) {  //下移动
+        	//if(beizhuFocusRowIndex == 1) return;
+        	$("#{$actionName}beizhuOrderhandleTable").datagrid('selectRow', beizhuFocusRowIndex);
+        	beizhuFocusRowIndex = beizhuFocusRowIndex + 1;
+        	$("#{$actionName}beizhuOrderhandleInput"+beizhuFocusRowIndex).focus();
+        }
+        if(keyCode == 13){   //订单处理
+   	    	beizhu = $(obj).val();
+   	
+    		//获取订单号
+ 			orderformid = $("#{$actionName}BeizhuOrderformid").val();
+    		//获取行号
+    		focusRowIndex = $("#{$actionName}BeizhuRowIndex").val();
+    		focusRowIndex = parseInt(focusRowIndex);
+        	//备注写入数据库      
+    		$.ajax({
+        		type : "GET",
+        		url : APP+"/OrderHandle/setBeizhuOrder/orderformid/"+orderformid+
+        				'/beizhu/' + beizhu ,
+        		dataType : "json",
+        		success : function(data){      	
+    			}
+    		 })
+    		focusRowIndex =focusRowIndex -1;    	
+    		$("#table{$actionName} tr:gt(0):eq("+focusRowIndex+") td:eq(6)").html('已备注'); 
+    		$("#table{$actionName} tr:gt(0):eq("+focusRowIndex+") td:eq(8)").html(beizhu); 
+    		$("#table{$actionName} tr:gt(0):eq("+focusRowIndex+")").css("background-color","red");  //改变颜色  	
+			$('#{$actionName}beizhuOrderhandleWin').window('close');	//关闭备注输入
+			focusRowIndex = focusRowIndex + 1;
+			$("#{$actionName}OrderHandle"+focusRowIndex).val(''); //输入框置空
+			$("#{$actionName}OrderHandle"+focusRowIndex).focus();
+        }
+    }
+</script>

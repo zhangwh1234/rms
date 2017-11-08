@@ -11,7 +11,7 @@
             $productsModel = D('Products');
             $where = array();
             $where['code'] = $code;
-            $where['domain'] = $_SERVER['HTTP_HOST'];
+            $where['domain'] = $this->getDomain();
             $products = $productsModel->field('name,shortname,price')->where($where)->find();
             $this->ajaxReturn($products,'JSON');
         }

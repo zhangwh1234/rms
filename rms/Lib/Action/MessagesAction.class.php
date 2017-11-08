@@ -23,7 +23,7 @@ class MessagesAction extends ModuleAction {
 		$where = array ();
 		$where ['status'] = 0;
 		$where ['sender'] = $this->userInfo ['name'];
-		$where ['domain'] = $_SERVER['HTTP_HOST'];
+		$where ['domain'] = $this->getDomain();
 		$newMsg = $focus->field ( $filed )->where ( $where )->limit ( 0, 1 )->select ();
 		if (count ( $newMsg )) {
 			$returnMsg = array (
@@ -52,12 +52,12 @@ class MessagesAction extends ModuleAction {
 		$userResult = $userModel->select ();
 		
 		foreach ( $userResult as $value ) {
-			$date = array ();
+			$data = array ();
 			$data ['sender'] = $value ['name'];
 			$data ['status'] = 0;
 			$data ['content'] = $_REQUEST ['content'];
 			$data ['time'] = date('H:i:s');
-			$data ['domain'] = $_SERVER['HTTP_HOST'];
+			$data ['domain'] = $this->getDomain();
 			// 保存主表
 			$result = $focus->create ();
 			if (! $result) {
@@ -93,9 +93,12 @@ class MessagesAction extends ModuleAction {
 		$userInfo = $_SESSION['userInfo'];
 		$username = $userInfo ['name'];
 		$where ['sender '] = $username;
-		$where ['domain'] = $_SERVER['HTTP_HOST'];
+		$where ['domain'] = $this->getDomain();
 		return $where;
 	}
+
+
+
 	
 
 }

@@ -1,0 +1,41 @@
+<?php if (!defined('THINK_PATH')) exit();?><style>
+    .moduleOperater{
+        clear:both;
+        margin:0px;
+        padding: 0px;
+        overflow:scroll;
+    }
+
+</style>
+<div class="moduleMenu">
+    <ul>
+        <li><?php echo (L("$navName")); ?></li>
+        <li><a href="javascript:void(0);" class="moduleName" onclick="IndexIndexModule.updateOperateTab('__URL__/<?php echo ($returnAction); ?>');">&nbsp;&gt;<?php echo (L("$moduleName")); ?></a></li>
+        <li>&nbsp;&gt;查看操作</li>
+        <li style="width: 50px;">&nbsp;</li>
+
+        <li style="margin-left: 10px;"><a href="javascript:;" onclick="IndexIndexModule.updateOperateTab('__URL__/<?php echo ($returnAction); ?>/pagetype/<?php echo ($pagetype); ?>/rowIndex/<?php echo ($rowIndex); ?>');" ><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);"  onclick="IndexIndexModule.updateOperateTab('__URL__/<?php echo ($returnAction); ?>/pagetype/<?php echo ($pagetype); ?>/rowIndex/<?php echo ($rowIndex); ?>');">返回列表<span>^4</span></a></li>
+
+
+        <li style="float: right;margin-right: 60px;"><a href="javascript:void(0);"   onclick="IndexIndexModule.closeOperateTab();" >关闭</a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="IndexIndexModule.closeOperateTab();"><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <div style="clear:both;"></div>
+    </ul>
+</div>
+<div class="moduleOperator" style="border: 1px solid lightsteelblue; font-size: 16px;line-height: 10px;">
+    <?php echo ($result); ?>
+</div>
+
+<script>
+    var RevparMgrResultviewModule = {
+        //初始化
+        init: function () {
+            $('.moduleOperator').height(IndexIndexModule.operationHeight);
+        }
+    };
+
+    $(function(){
+        RevparMgrResultviewModule.init();
+    })
+</script>

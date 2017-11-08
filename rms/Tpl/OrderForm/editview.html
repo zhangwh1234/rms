@@ -5,32 +5,33 @@
         <li>&nbsp;&gt;改单操作</li>
         <li style="width: 50px;">&nbsp;</li>
 
-        <li style="margin-left: 10px;"><a href="javascript:;" onclick="OrderFormEditviewModule.update();"><img
-                src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li style="margin-left: 10px;"><a href="javascript:;" onclick="OrderFormEditviewModule.update();"><img src=".__PUBLIC__/Images/newBtn.png"
+                    alt="" title="" border="0"></a></li>
         <li><a href="javascript:void(0);" onclick="OrderFormEditviewModule.update();">保存订单<span>^9</span></a></li>
 
-        <li style="margin-left: 15px;"><a href="javascript:;" id="showSubMenu"  onMouseOver="" ><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li style="margin-left: 15px;"><a href="javascript:;" id="showSubMenu" onMouseOver=""><img src=".__PUBLIC__/Images/newBtn.png"
+                    alt="" title="" border="0"></a></li>
         <li><a href="javascript:void(0);" class="moduleName" onclick="IndexIndexModule.updateOperateTab('__URL__/{$returnAction}/pagetype/{$pagetype}/rowIndex/{$rowIndex}');">返回列表</a><span>^4</span></li>
 
         <li style="margin-left: 30px;"><a href="javascript:;" onclick="OrderFormEditviewModule.showTodayMenuview();"><img
-                src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
-        <li><a href="javascript:void(0);"
-               onclick="OrderFormEditviewModule.showTodayMenuview();">查看今日菜单<span>^0</span></a></li>
+                    src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);" onclick="OrderFormEditviewModule.showTodayMenuview();">查看今日菜单<span>^0</span></a></li>
 
         <li style="float: right;margin-right: 40px;"><a href="javascript:void(0);" class="moduleName" onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
-        <li style="float:right;"><a href="javascript:;" onclick="IndexIndexModule.closeOperateTab();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="IndexIndexModule.closeOperateTab();"><img src=".__PUBLIC__/Images/closeBtn.png"
+                    alt="" title="" border="0"></a></li>
     </ul>
 </div>
 
 <include file="OrderForm/editviewUI" />
-<input id="OrderFormAction" type="hidden" value="Editview"/>
+<input id="OrderFormAction" type="hidden" value="Editview" />
 <script>
     var OrderFormEditviewModule = {
         dialog: '#globel-dialog-div',
-        checkSubmitFlg : false,
+        checkSubmitFlg: false,
 
         //初始化
-        init:function(){
+        init: function () {
             $('.moduleOperater').height(IndexIndexModule.operationHeight);
             this.quickKeyboardAction();
             this.keyboardMove();
@@ -39,9 +40,9 @@
         //保存记录
         update: function () {
             //防止重复提交
-            if(this.checkSubmitFlg == false){
+            if (this.checkSubmitFlg == false) {
                 this.checkSubmitFlg = true;
-            }else{
+            } else {
                 return;
             }
             $('#OrderFormEditviewForm').form('submit', {
@@ -50,16 +51,87 @@
                     //进行表单验证
                     if ($('#OrderFormEditviewForm  input[name=address]').val() == '') {
                         alert('地址不能为空!');
+                        OrderFormEditviewModule.checkSubmitFlg = false;
                         return false;
                     }
+
+                    var custtime_1 = $('#OrderFormEditviewForm input[name=custtime_1]').val();
+                    if (custtime_1 > 24 || custtime_1 < 0) {
+                        alert('时间输入不正确!请输入1-24之间的数字!');
+                        OrderFormEditviewModule.checkSubmitFlg = false;
+                        return false;
+                    };
+
+                    var custtime_1 = $('#OrderFormEditviewForm input[name=custtime_2]').val();
+                    if (custtime_1 > 60 || custtime_1 < 0) {
+                        alert('时间输入不正确!请输入1-60之间的数字!');
+                        OrderFormEditviewModule.checkSubmitFlg = false;
+                        return false;
+                    }
+
+                    //对金额进行校验
+                    productsMoney = $('#OrderFormEditviewproductsTotalMoney').val(); //产品金额
+                    if (!productsMoney) {
+                        productsMoney = 0;
+                    } else {
+                        productsMoney = parseFloat(productsMoney);
+                    }
+
+                    activityMoney = $('#OrderFormEditviewactivityTotalMoney').val(); //活动金额  
+                    if (!activityMoney) {
+                        activityMoney = 0;
+                    } else {
+                        activityMoney = parseFloat(activityMoney);
+                    }
+
+                    accountpaymentMoney = $("#OrderFormAccountPaymentTotalMoney").val(); //客户支付金额
+                    if (!accountpaymentMoney) {
+                        accountpaymentMoney = 0;
+                    } else {
+                        accountpaymentMoney = parseFloat(accountpaymentMoney);
+                    }
+
+                    if (accountpaymentMoney > 0) {
+                        checkactivitypaymentMoney = activityMoney + accountpaymentMoney;
+                        if (productsMoney !== checkactivitypaymentMoney) {
+                            alert('活动金额和支付金额不等于订餐金额，请检查！');
+                            OrderFormEditviewModule.checkSubmitFlg = false;
+                            return false;
+                        }
+                    }
+
+                    /**
+                    var invoice_invoicetype = $('#invoice_type').val();
+                    if(invoice_invoicetype == '电子票'){
+                        var telphone = $('#OrderFormEditviewForm input[name=telphone]').val();
+                        var telReg = !!telphone.match(/^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57]|19[0-9])[0-9]{8}$/);
+                        //如果手机号码不能通过验证
+                        if(telReg == false){
+                            alert('输入的不是电话号码');
+                            OrderFormEditviewModule.checkSubmitFlg = false;
+                            return false;
+                        }
+                    }
+
+                    var invoice_header = $('#invoice_header').val();
+                    if(invoice_header){
+                        var invoice_nsrsbh = $('#invoice_gmf_nsrsbh').val();
+                        if(!invoice_nsrsbh){
+                            alert('购买方纳税人识别号(税号)不能为空!');
+                            OrderFormEditviewModule.checkSubmitFlg = false;
+                            return false;
+                        }
+                    }
+                     **/
+
                 },
-                success : function(res){
+                success: function (res) {
                     var data = eval('(' + res + ')');
-                    if(!data.status){
+                    if (!data.status) {
                         $.app.method.tip('提示信息', data.info, 'error');
                         OrderFormEditviewModule.checkSubmitFlg = false;
                         return false;
-                    }else{
+                    } else {
                         $.app.method.tip('提示信息', data.info, 'info');
                         IndexIndexModule.updateOperateTab(data.url);
                     }
@@ -95,8 +167,7 @@
             //地址移动
             $('#OrderFormEditviewForm input[name=address]').bind('keydown', function (event) {
                 if ((event.which == 13) || (event.which == 40)) { //下移
-                    //$('#OrderFormEditviewForm input[name=custtime]').timespinner('textbox').focus();
-                    $('#OrderFormEditviewForm input[name=beizhu]').focus();
+                    $('#OrderFormEditviewForm input[name=custtime_1]').focus();
                 }
                 if (event.which == 38) { //上移
                     $('#OrderFormEditviewForm input[name=telphone]').focus();
@@ -104,19 +175,48 @@
 
             })
 
-            //要餐时间移动
-            $('#OrderFormEditviewForm input[name=custtime]').bind('keydown', function (event) {
+            //要餐时间1移动
+            $('#OrderFormEditviewForm input[name=custtime_1]').bind('keydown', function (event) {
                 if ((event.which == 13) || (event.which == 40)) { //下移
-                    $('#OrderFormEditviewForm input[name=beizhu]').focus();
+                    var custtime_1 = $('#OrderFormEditviewForm input[name=custtime_1]').val();
+                    if (custtime_1 > 24 || custtime_1 < 0) {
+                        alert('时间输入不正确!请输入1-24之间的数字!');
+                        return false;
+                    }
+                    $('#OrderFormEditviewForm input[name=custtime_2]').focus();
                 }
                 if (event.which == 38) { //上移
-                    var address = $('#address').val();
+                    var custtime_1 = $('#OrderFormEditviewForm input[name=custtime_1]').val();
+                    if (custtime_1 > 24 || custtime_1 < 0) {
+                        alert('时间输入不正确!请输入1-24之间的数字!');
+                        return false;
+                    }
+                    var address = $('#OrderFormEditviewForm input[name=address]').val();
                     $('#OrderFormEditviewForm input[name=address]').focus();
-                    $('#OrderFormEditviewForm input[name=address]').val();
+                    $('#OrderFormEditviewForm input[name=address]').val('');
                     $('#OrderFormEditviewForm input[name=address]').val(address);
                 }
             })
 
+            //要餐时间2移动
+            $('#OrderFormEditviewForm input[name=custtime_2]').bind('keydown', function (event) {
+                if ((event.which == 13) || (event.which == 40)) { //下移
+                    var custtime_1 = $('#OrderFormEditviewForm input[name=custtime_2]').val();
+                    if (custtime_1 > 60 || custtime_1 < 0) {
+                        alert('时间输入不正确!请输入1-60之间的数字!');
+                        return false;
+                    }
+                    $('#OrderFormEditviewForm input[name=beizhu]').focus();
+                }
+                if (event.which == 38) { //上移
+                    var custtime_1 = $('#OrderFormEditviewForm input[name=custtime_2]').val();
+                    if (custtime_1 > 60 || custtime_1 < 0) {
+                        alert('时间输入不正确!请输入1-60之间的数字!');
+                        return false;
+                    }
+                    $('#OrderFormEditviewForm input[name=custtime_1]').focus();
+                }
+            })
 
             //备注的移动
             $('#OrderFormEditviewForm input[name=beizhu]').bind('keydown', function (event) {
@@ -124,6 +224,14 @@
                     $('#OrderFormEditviewForm input[name=productsNumber_1]').focus();
 
                 }
+                if (event.which == 38) { //上移
+                    $('#OrderFormEditviewForm input[name=custtime_2]').focus();
+                }
+
+            })
+
+            //产品1的移动
+            $('#OrderFormEditviewForm input[name=productsNumber_1]').bind('keydown', function (event) {
                 if (event.which == 38) { //上移
                     $('#OrderFormEditviewForm input[name=beizhu]').focus();
                 }
@@ -139,21 +247,24 @@
                     var rowLength = $("#OrderFormEditviewproductsTable tr").length;
                     for (i = 1; i < rowLength; i++) {
                         if ($("#OrderFormEditviewproductsMoney_" + i).val() > 0) {
-                            totalMoney = totalMoney + parseFloat($("#OrderFormEditviewproductsMoney_" + i).val());
+                            totalMoney = totalMoney + parseFloat($(
+                                "#OrderFormEditviewproductsMoney_" +
+                                i).val());
                         }
                     }
 
                     //加上送餐费
                     var shippingmoney = 0;
-                    var shippingmoneyVal = $('#OrderFormEditviewForm input[name=shippingmoney]').val();
+                    var shippingmoneyVal = $('#OrderFormEditviewForm input[name=shippingmoney]')
+                        .val();
                     if (shippingmoneyVal) {
                         shippingmoney = parseFloat(shippingmoneyVal);
                     }
                     totalMoney = totalMoney + shippingmoney;
                     totalMoney = parseFloat(totalMoney).toFixed(2);
-                    $('#OrderFormEditviewFormTotalMoney').html(totalMoney + '元');  //订单总金额
+                    $('#OrderFormEditviewFormTotalMoney').html(totalMoney + '元'); //订单总金额
                     $('#OrderFormEditviewForm input[name=totalmoney]').val(totalMoney);
-                    $('#OrderFormEditviewFormShouldMoney').html(totalMoney + '元');    //应收金额
+                    $('#OrderFormEditviewFormShouldMoney').html(totalMoney + '元'); //应收金额
                     $('#OrderFormEditviewForm input[name=shouldmoney]').val(totalMoney);
                     //
                     $('#OrderFormEditviewForm input[name=productsNumber_1]').focus();
@@ -166,12 +277,12 @@
         //新建的快捷操作
         quickKeyboardAction: function () {
             // ctrl+9快捷键,新建公告
-            Mousetrap.bind(['ctrl+9','ctrl+f9','f9'], function(e) {
+            Mousetrap.bind(['ctrl+9', 'ctrl+f9', 'f9'], function (e) {
                 // 返回选项卡
                 var tab = $('#operation').tabs('getSelected');
                 var tabOptions = tab.panel('options');
                 //if (tabOptions.title == '订餐单' && ($('#OrderFormAction').val() == 'Editview')) {
-                    OrderFormEditviewModule.update();
+                OrderFormEditviewModule.update();
                 //};
             });
 
@@ -181,7 +292,7 @@
                 var tab = $('#operation').tabs('getSelected');
                 var tabOptions = tab.panel('options');
                 //if (tabOptions.title == '订餐单' && ($('#OrderFormAction').val() == 'Editview')) {
-                    IndexIndexModule.updateOperateTab("__URL__/{$returnAction}");
+                IndexIndexModule.updateOperateTab("__URL__/{$returnAction}");
                 //};
             });
 
@@ -191,7 +302,7 @@
                 var tab = $('#operation').tabs('getSelected');
                 var tabOptions = tab.panel('options');
                 //if (tabOptions.title == '订餐单' && ($('#OrderFormAction').val() == 'Duplicateview')) {
-                    OrderFormEditviewModule.showTodayMenuview();
+                OrderFormEditviewModule.showTodayMenuview();
                 //};
             });
         },
@@ -210,19 +321,18 @@
                 minimizable: false,
                 resizable: false,
                 maximizable: false,
-                buttons: [
-                    {
-                        text: '关闭',
-                        iconCls: 'icons-arrow-cross',
-                        handler: function () {
-                            $(that.dialog).dialog('close');
-                        }
-                    }]
+                buttons: [{
+                    text: '关闭',
+                    iconCls: 'icons-arrow-cross',
+                    handler: function () {
+                        $(that.dialog).dialog('close');
+                    }
+                }]
             });
         }
     }
 
-    $(function(){
+    $(function () {
         OrderFormEditviewModule.init();
     })
 </script>

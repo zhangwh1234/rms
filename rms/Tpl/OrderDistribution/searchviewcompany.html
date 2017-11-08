@@ -255,6 +255,7 @@
                     type: "POST",
                     url:  "{$url}",
                     dataType: "json",
+                    data:data,
                     success: function (data) {
                         if (data.rows.length > 0) {
                             //选择第一行焦点
@@ -280,11 +281,9 @@
             //定义根据输入的键，获得的分公司名称
             var event = event || window.event;
             var inputCode = event.which ? event.which : event.keyCode;
-            var inputValue = String.fromCharCode(inputCode);
-            if ((inputCode >= 48 && inputCode <= 57) || (inputCode >= 65 && inputCode <= 90) || (inputCode >= 96 && inputCode <= 105)) {
-                if(inputCode >= 96){
-                    inputValue = String.fromCharCode(inputCode - 48);
-                }
+            inputValue = $(obj).val();
+            inputValue = inputValue.substring(0,1);
+            if ((inputCode >= 48 && inputCode <= 57) || (inputCode >= 65 && inputCode <= 90) || (inputCode >= 96 && inputCode <= 220)) {
                 $(this.datagrid).datagrid('updateRow', {
                     index: rowIndex,    //定位行
                     row: {

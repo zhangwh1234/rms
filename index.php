@@ -7,9 +7,11 @@
     // 加载框架入口文件
     //require( "./ThinkPHP/ThinkPHP.php");
     require APP_PATH.'Conf/datapath.php';
+
+
     $HTTP_POST = $_SERVER['HTTP_HOST'];
     if(!isset($rmsDataPath[$HTTP_POST])){
-        print_r('route error!');
+        var_dump('route error!');
         exit;  
     } 
 

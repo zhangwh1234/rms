@@ -1,0 +1,63 @@
+<script type="text/javascript">
+    $(document).ready(function() { 
+        //新建表单提交
+        $('#createView{$moduleName}').form({  
+            url:'__URL__/insert',
+            onSubmit: function(){  
+                //进行表单验证  
+                //如果返回false阻止提交 
+                if($('#telphone').val() == ''){
+                    alert('电话号码不能为空!');
+                    return false;
+                }
+            },  
+            success:function(data){ 
+            	updateTab(data);
+            }  
+        }); 
+
+        //提交按钮
+        $('#createView{$moduleName} input[name=createsave]').bind('click',function(){
+            //提交表单  
+            $('#createView{$moduleName}').submit();
+        }) 
+
+
+        //编辑的提交
+        $('#editView{$moduleName}').form({  
+            url:'__URL__/update',
+            onSubmit: function(){  
+                //进行表单验证  
+                //如果返回false阻止提交 
+                if($('#telphone').val() == ''){
+                    alert('电话号码不能为空!');
+                    return false;
+                }
+            },  
+            success:function(data){ 
+            	updateTab(data);
+            }  
+        });
+
+
+        //form提交程序
+        $('#editView{$moduleName} input[name=editsave]').bind('click',function(){
+            //提交表单  
+            $('#editView{$moduleName}').submit();
+        }) 
+        
+        
+        //定制键盘移动方案
+        //电话输入移动
+        $('#telphone').bind('keydown',function(event){ //联系人
+            if((event.which == 13) || (event.which == 40)){ 
+                $('#name').focus();
+            }
+            if(event.which == 38){
+                
+            }
+        }) 
+
+    }); 
+
+</script>

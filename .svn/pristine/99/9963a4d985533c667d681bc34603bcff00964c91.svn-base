@@ -1,0 +1,152 @@
+<?php
+/**
+    * 备份数据到备份的目录中
+    */
+class BackupDatabaseAction extends Action {
+	public function index() {
+		// 备份的日期
+		$backDate = date ( 'Y-m-d', time () );
+		$backMonth = substr ( $backDate, 5, 2 );
+		$backYear = substr ( $backDate, 0, 4 );
+		// 连接备份数据库
+		$dns = array (
+				'db_type' => 'mysql',
+				'db_user' => 'root',
+				'db_pwd' => 'zhangwh0731',
+				'db_host' => 'localhost',
+				'db_port' => '3306',
+				'db_name' => 'rms_' . $backYear 
+		);
+		
+		// 连接备份数据库
+		$Model = M ( null, null, $dns );
+		
+		$dns = array (
+				'db_type' => 'mysql',
+				'db_user' => 'db625r43111537tc',
+				'db_pwd' => 'zhangwh0731',
+				'db_host' => 'rdsjj7vrrnaby2m.mysql.rds.aliyuncs.com',
+				'db_port' => '3306',
+				'db_name' => 'rms' 
+		);
+		
+		// 建立orderform的备份表
+		$orderformModel = M ( 'orderform', 'rms_', $dns );
+		$create = $orderformModel->query ( 'show create table rms_orderform' );
+		var_dump ( $create );
+		$createSql = $create [0] ['Create Table'];
+		$createSql = str_replace ( 'CREATE TABLE', 'CREATE TABLE IF NOT EXISTS', $createSql );
+		$createSql = str_replace ( 'rms_orderform', 'rms_orderform_' . $backMonth, $createSql );
+		$Model->query ( $createSql ); // 执行
+		var_dump ( $create );
+		
+		// 建立orderproducts的备份表
+		$orderproductsModel = D ( 'orderproducts' );
+		$create = $orderproductsModel->query ( 'show create table rms_orderproducts' );
+		$createSql = $create [0] ['Create Table'];
+		$createSql = str_replace ( 'CREATE TABLE', 'CREATE TABLE IF NOT EXISTS', $createSql );
+		$createSql = str_replace ( 'rms_orderproducts', 'rms_orderproducts_' . $backMonth, $createSql );
+		$Model->query ( $createSql ); // 执行
+		                           
+		// 建立orderacton的备份表
+		$orderactionModel = D ( 'orderaction' );
+		$create = $orderactionModel->query ( 'show create table rms_orderaction' );
+		$createSql = $create [0] ['Create Table'];
+		$createSql = str_replace ( 'CREATE TABLE', 'CREATE TABLE IF NOT EXISTS', $createSql );
+		$createSql = str_replace ( 'rms_orderaction', 'rms_orderaction_' . $backMonth, $createSql );
+		$Model->query ( $createSql ); // 执行
+		                           
+		// 活动备份的表的内容
+		$where = array ();
+		// $where['custdate'] = $backDate;
+		$orderformResult = $orderformModel->select ();
+		foreach ( $orderformResult as $row ) {
+			$sql = $this->insertsql ( 'rms_orderform_' . $backMonth, $row );
+			$Model->query ( $sql ); // 备份orderform的脚本
+			                     
+			// 备份orderproducts
+			$orderproductsModel = D ( 'orderproducts' );
+			$where = array ();
+			$where ['orderformid'] = $row ['orderformid'];
+			$orderproductsResult = $orderproductsModel->where ( $where )->select ();
+			foreach ( $orderproductsResult as $orderproductRow ) {
+				$sql = $this->insertsql ( 'rms_orderproducts_' . $backMonth, $orderproductRow );
+				$Model->query ( $sql ); // 备份orderproducts的脚本
+			}
+			
+			// 备份orderaction
+			$orderactionModel = D ( 'orderaction' );
+			$where = array ();
+			$where ['orderformid'] = $row ['orderformid'];
+			$orderactionResult = $orderactionModel->where ( $where )->select ();
+			foreach ( $orderactionResult as $orderactionRow ) {
+				$sql = $this->insertsql ( 'rms_orderaction_' . $backMonth, $orderactionRow );
+				$Model->query ( $sql ); // 备份orderaction的脚本
+			}
+		}
+		
+		// 建立ordermonit的备份表
+		$ordermonitModel = D ( 'ordermonit' );
+		$create = $orderactionModel->query ( 'show create table rms_ordermonit' );
+		$createSql = $create [0] ['Create Table'];
+		$createSql = str_replace ( 'CREATE TABLE', 'CREATE TABLE IF NOT EXISTS', $createSql );
+		$createSql = str_replace ( 'rms_ordermonit', 'rms_ordermonit_' . $backMonth, $createSql );
+		$Model->query ( $createSql ); // 执行
+		                           // 备份ordermonit的表
+		$ordermonitResult = $ordermonitModel->select ();
+		foreach ( $ordermonitResult as $row ) {
+			$sql = $this->insertsql ( 'rms_ordermonit_' . $backMonth, $row );
+			$Model->query ( $sql ); // 备份ordermonit的脚本
+		}
+		
+		// 建立smsmgr的备份表
+		$smsmgrModel = D ( 'smsMgr' );
+		$create = $orderactionModel->query ( 'show create table rms_smsmgr' );
+		$createSql = $create [0] ['Create Table'];
+		$createSql = str_replace ( 'CREATE TABLE', 'CREATE TABLE IF NOT EXISTS', $createSql );
+		$createSql = str_replace ( 'rms_smsmgr', 'rms_smsmgr_' . $backMonth, $createSql );
+		$Model->query ( $createSql ); // 执行
+		                           // 备份ordermonit的表
+		$smsmgrResult = $smsmgrModel->select ();
+		foreach ( $smsmgrResult as $row ) {
+			$sql = $this->insertsql ( 'rms_smsmgr_' . $backMonth, $row );
+			$Model->query ( $sql ); // 备份smsmgr的脚本
+		}
+		
+		// 建立备份messages
+		$messagesModel = D ( 'messages' );
+		$create = $orderactionModel->query ( 'show create table rms_messages' );
+		$createSql = $create [0] ['Create Table'];
+		$createSql = str_replace ( 'CREATE TABLE', 'CREATE TABLE IF NOT EXISTS', $createSql );
+		$createSql = str_replace ( 'rms_messages', 'rms_messages_' . $backMonth, $createSql );
+		$Model->query ( $createSql ); // 执行
+		                           // 备份ordermonit的表
+		$messagesResult = $messagesModel->select ();
+		foreach ( $messagesResult as $row ) {
+			$sql = $this->insertsql ( 'rms_messages_' . $backMonth, $row );
+			$Model->query ( $sql ); // 备份messages的脚本
+		}
+		
+		// 删除数据
+		$orderformModel->query ( 'delete from rms_orderform' );
+		$orderproductsModel->query ( 'delete from rms_orderproducts' );
+		$orderactionModel->query ( 'delete from rms_orderaction' );
+		$ordermonitModel->query ( 'delete from rms_ordermonit' );
+		$smsmgrModel->query ( 'delete from rms_smsmgr' );
+		$messagesModel->query ( 'delete from rms_messages' );
+		D ( 'session' )->query ( 'delete from rms_session' );
+	}
+	
+	// 生成SQL备份语句
+	function insertsql($table, $row) {
+		$sql = "INSERT INTO `{$table}` VALUES (";
+		$values = array ();
+		foreach ( $row as $value ) {
+			$values [] = "'" . mysql_real_escape_string ( $value ) . "'";
+		}
+		$sql .= implode ( ', ', $values ) . ");\n";
+		return $sql;
+	}
+}
+
+?>

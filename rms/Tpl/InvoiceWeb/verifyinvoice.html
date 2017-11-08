@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+    <link REL="SHORTCUT ICON" HREF=".__PUBLIC__/Images/lhkc/favicon.ico">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="keywords" content=""/>
+    <meta name="description" content=""/>
+    <title>丽华电子发票平台</title>
+    <link rel="stylesheet"
+          href=".__PUBLIC__/inv/css/showLoading.css"
+          type="text/css">
+    <!-- lee_solar modify 2016-07-06 修改样式 start  -->
+    <link rel="stylesheet"
+          href=".__PUBLIC__/inv/css/index.css?version=0.0.3"
+          type="text/css"/>
+
+    <link rel="stylesheet"
+          href=".__PUBLIC__/inv/css/jquery-ui.css"
+          type="text/css">
+    <!-- lee_solar modify 2016-07-06 修改样式 end  -->
+
+    <link rel="stylesheet" href=".__PUBLIC__/inv/css/xcConfirm.css" type="text/css">
+    <script
+            src=".__PUBLIC__/inv/js/jquery-1.9.1.min.js"></script>
+
+    <script
+            src=".__PUBLIC__/inv/js/jquery.qrcode.min.js"></script>
+
+    <script type="text/javascript"
+            src=".__PUBLIC__/inv/js/xcConfirm.js"></script>
+
+    <script type="text/javascript"
+            src=".__PUBLIC__/inv/js/alert.js"></script>
+
+    <script
+            src=".__PUBLIC__/inv/js/jquery.zclip.min.js"></script>
+    <script
+            src=".__PUBLIC__/inv/js/jquery.fileDownload.js"></script>
+    <script type="text/javascript"
+            src=".__PUBLIC__/inv/js/jquery.showLoading.js"></script>
+
+    <script type="text/javascript"
+            src=".__PUBLIC__/inv/js/jquery-ui.min.js"></script>
+
+    <script type="text/javascript">
+        var contextPath = "/inv.web";
+
+
+
+        function fleshVerify() {
+            var timenow = new Date().getTime();
+            $('#vCode').attr('src', '__URL__/verifyCode/' + timenow);
+        }
+
+
+    </script>
+
+</head>
+<body>
+
+<div id="invoice-body">
+    <!--发票请求开始-->
+    <div class="invoice-login" id="login-js" style="display: block">
+        <div id="ie10Id">
+            <span><font color="#BBBBBB">请使用IE10以上或最新Chrome浏览器访问！</font></span>
+        </div>
+
+        <div class="login-left">
+            <h4>发票请求</h4>
+            <span>发票提取码</span> <input id="invoicenumber" maxlength="50" value="118141123676897700"
+                                      type="number" placeholder="请输入发票提取码"> <span>验证码</span> <input
+                id="vCodeId" type="number" class="small" maxlength="4" placeholder="请输入验证码">
+            <font><img id="vCode" alt="验证码" src="__URL__/verifyCode/"  onclick="fleshVerify();"></font> <a
+                id="vCodeHref"
+                href="javascript:void(0);"
+                onclick="fleshVerify();"
+                class="replace">看不清，换一张</a>
+            <span id="showerror" style="height: 10px;font-size:14px;"></span>
+            <a id="apply" class="apply-b" onclick="applyinvoice();">发票请求</a>
+        </div>
+        <div class="login-right">
+            <span></span>
+        </div>
+        <script type="text/javascript">
+            function applyinvoice() {
+                var invoicenumber = $("#invoicenumber").val();
+                var vCodeId = $("#vCodeId").val();
+                $.ajax({
+                    url: "__URL__/verifynumber/invoicenumber/" + invoicenumber + "/vCodeId/" + vCodeId,
+                    type: 'get',
+                    error: function () {
+                        alert('系统错误!');
+                    },
+                    success: function (data) {
+                        //有错误，显示错误
+                        if(data.error === 1){
+                            $('#showerror').html(data.info);
+                        }else{
+                            //没有错误，跳转页面
+                            location.href = data.url;
+                        }
+                    }
+                })
+            }
+        </script>
+    </div>
+    <!--发票请求结束/-->
+
+</div>
+
+</body>
+</html>

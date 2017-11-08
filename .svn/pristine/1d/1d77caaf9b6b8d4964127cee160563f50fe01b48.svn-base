@@ -1,0 +1,151 @@
+<?php if (!defined('THINK_PATH')) exit();?><style type="text/css">
+    #wrap{
+        width:96%;
+        height:auto;
+        overflow:hidden;
+        margin:5px auto;
+        padding:4px 10px;
+        border:1px solid #ccc;
+        font-family: '黑体';
+    }
+
+    #wrap  strong{
+        font-size:16px;
+        color:#0b99d8;
+    }
+
+    #wrap input{
+        float: left;
+    }
+
+    #wrap dl{
+        clear:both;
+        margin:10px 0;
+        border:1px solid #dcdcdc;
+        height:auto;
+        overflow:hidden;
+    }
+
+    #wrap  dl dt{
+        display:block;
+        height:25px;
+        line-height:25px;
+        background:#e6e6fa;
+        text-indent:10px;
+    }
+
+    #wrap  dl dt strong{
+        font-size:14px;
+        color:#61;
+        float:left;
+    }
+
+    #wrap dl dt input{
+        font-size: 16px;
+        margin-top: 8px;
+        margin-left: 5px;
+    }
+
+    #wrap  dl dd{
+        padding:5px;
+        float:left;
+    }
+
+    #wrap dd span,a{
+        font-size: 14px;
+    }
+
+    #wrap dd span{
+        float: left;
+    }
+    #wrap dd input{
+        margin-top: -4px;
+        margin-left: 2px;
+        font-size: 6px;   
+    }
+</style>
+<script type="text/javascript">
+    $(function(){
+        $('input[level=1]').click(function(){
+            var inputs = $(this).parents('dl').find('input');
+            if($(this).is(":checked")){
+                inputs.attr('checked','checked');  
+            }else{
+                inputs.removeAttr('checked');   
+            }
+
+        });
+
+        $('#editviewForm<?php echo ($moduleName); ?>').form({  
+            url:'__URL__/editAccess',
+            onSubmit: function(){  
+                //进行表单验证  
+                //如果返回false阻止提交  
+            },  
+            success:function(data){                 
+                //返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                //更新一个选项卡面板 
+                $('#operation').tabs('update',{  
+                    tab:tab,
+                    options: {
+                        cache : false,
+                        content : data,
+                        href:''
+                    }
+                });                          
+            }  
+        }); 
+
+        //form提交程序
+        $('#editviewForm<?php echo ($moduleName); ?> input[name=createsave]').bind('click',function(){
+            //提交表单  
+            $('#editviewForm<?php echo ($moduleName); ?>').submit();
+        }) 
+    });
+
+
+
+</script>
+<div id="wrap">
+    <form id="editviewForm<?php echo ($moduleName); ?>" name="editviewForm<?php echo ($moduleName); ?>" method="post" >
+        <table border="0" cellspacing=0 cellpadding=0 width="98%" class="small">
+            <tr>
+                <td></td>
+                <td align="right">
+                    <input  name="createsave" title="" accessKey="" class="crmbutton small save"   type="button"   value="<?php echo (L("Button_Save")); ?>" style="width:70px;float:right;margin-right:2px;margin-top:2px;margin-bottom:2px;"></td>
+                <td>
+                    <input title="<?php echo (L("Button_Cancel")); ?>" accessKey="" class="crmbutton small cancel" onclick="updateTab('__APP__/<?php echo ($moduleName); ?>/<?php echo ($returnAction); ?>')" type="button" name="button" value="  <?php echo (L("Button_Cancel")); ?>  " style="width:70px;float:left;margin-left:2px;margin-top:2px;margin-bottom:2px;"></td>
+                <td> 
+                </td>
+            </tr>
+        </table>
+
+        <?php if(is_array($node)): foreach($node as $key=>$action): ?><dl>
+                <dt>
+                    <strong><?php echo ($action["title"]); ?></strong>
+                    <input type="checkbox" name="access[]" value="<?php echo ($action["id"]); ?>_1" level="1"  
+                    <?php if($action["access"]): ?>checked='checked'<?php endif; ?>
+                    />
+                </dt>
+                <?php if(is_array($action["child"])): foreach($action["child"] as $key=>$method): ?><dd>
+                        <span><?php echo ($method["title"]); ?></span>
+                        <input type="checkbox" name="access[]" value="<?php echo ($method["id"]); ?>_2"  level="2"
+                        <?php if($method["access"]): ?>checked='checked'<?php endif; ?>
+                        />                       
+                    </dd><?php endforeach; endif; ?>
+            </dl><?php endforeach; endif; ?>
+        <input type="hidden" name="rid" value="<?php echo ($rid); ?>" >
+        <table border="0" cellspacing=0 cellpadding=0 width="98%" class="small">
+            <tr>
+                <td></td>
+                <td align="right">
+                    <input  name="createsave" title="" accessKey="" class="crmbutton small save"   type="button"   value="<?php echo (L("Button_Save")); ?>" style="width:70px;float:right;margin-right:2px;margin-top:2px;margin-bottom:2px;"></td>
+                <td>
+                    <input title="<?php echo (L("Button_Cancel")); ?>" accessKey="" class="crmbutton small cancel" onclick="updateTab('__APP__/<?php echo ($moduleName); ?>/<?php echo ($returnAction); ?>')" type="button" name="button" value="  <?php echo (L("Button_Cancel")); ?>  " style="width:70px;float:left;margin-left:2px;margin-top:2px;margin-bottom:2px;"></td>
+                <td> 
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>

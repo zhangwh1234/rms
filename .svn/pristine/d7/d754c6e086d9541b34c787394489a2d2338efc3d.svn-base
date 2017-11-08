@@ -1,0 +1,32 @@
+<?php if (!defined('THINK_PATH')) exit();?><!-- 商户信息管理列表 -->
+<table id="baiduwaimaiShopmgrListviewTable" title="商户管理" class="easyui-datagrid" style="width:700px;height:250px"
+            url="get_users.php"
+            toolbar="#baiduwaimaiShopmgrListviewTableToolbar"
+            pagination="true"
+            rownumbers="true" 
+            fitColumns="true" 
+            singleSelect="true" 
+            fit="true">
+        <thead>
+            <tr>
+                <th field="firstname" width="50">商户名称</th>
+                <th field="lastname" width="50">Last Name</th>
+                <th field="phone" width="50">Phone</th>
+                <th field="email" width="50">Email</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="baiduwaimaiShopmgrListviewTableToolbar">
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="waimaiShopmgrListviewCreateShop()">新建商户</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="waimaiShopmgrListviewEditShop()">编辑商户</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="waimaiShopmgrListviewDeleteShop()">删除商户</a>
+    </div>
+    
+<script>
+	//新建商户
+	var waimaiShopmgrListviewCreateShop = function(){
+		var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+		var regin =  baiduwaimaiMainviewLayout.layout('panel','center');
+		regin.panel('refresh','__URL__/shopmgrCreateview');
+	}
+</script>

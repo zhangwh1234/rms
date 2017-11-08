@@ -18,7 +18,7 @@ class DiningReturnAction extends ModuleAction
         $companymgr_model = D('companymgr');
         $where = array();
        // $where['telphoneauto'] = '营业';
-       // $where['domain'] = $_SERVER['HTTP_HOST'];
+       // $where['domain'] = $this->getDomain();
         $companymgr = $companymgr_model->field('name')->where($where)->select();
         // 在company字段中写入值
         $this->assign('companymgr', $companymgr);
@@ -66,7 +66,7 @@ class DiningReturnAction extends ModuleAction
             ),
             array(
                 'domain',
-                $_SERVER['HTTP_HOST']
+                $this->getDomain()
             )
         );
     }
@@ -82,7 +82,7 @@ class DiningReturnAction extends ModuleAction
 
         //将金额保存到diningcollect表中
         $where = array();
-        $where ['domain'] = $_SERVER['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
         $where ['company'] = $company;
         $where ['date'] = date('H-m-d');
         $where ['ap'] = $ap;
@@ -91,7 +91,7 @@ class DiningReturnAction extends ModuleAction
         $diningcollectResult = $diningcollectModel->where($where)->find();
         if(empty($diningcollectResult)){
             $data = array();
-            $data['domain'] = $_SERVER['HTTP_HOST'];
+            $data['domain'] = $this->getDomain();
             $data['company'] = $company;
             $data['date'] = date('H-m-d');
             $data['ap'] = $ap;
@@ -107,4 +107,5 @@ class DiningReturnAction extends ModuleAction
 
     }
 
+    
 }

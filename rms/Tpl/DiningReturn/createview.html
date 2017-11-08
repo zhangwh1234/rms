@@ -1,0 +1,220 @@
+<div class="moduleMenu">
+    <ul>
+        <li>{$Think.lang.$navName}</li>
+        <li><a href="javascript:void(0);" class="moduleName"
+               onclick="IndexIndexModule.updateOperateTab('__URL__/listview');">&nbsp;&gt;{$Think.lang.$moduleName}</a>
+        </li>
+        <li>&nbsp;&gt;新建操作</li>
+        <li style="width: 50px;">&nbsp;</li>
+        <li style="margin-left: 10px;"><a href="javascript:;" onclick="DiningReturnCreateviewModule.insert();"><img
+                src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);" onclick="DiningReturnCreateviewModule.insert();">保存<span>^9</span></a></li>
+        <li style="width: 50px;">&nbsp;</li>
+        <li style="margin-left: 10px;"><a href="javascript:;"
+                                          onclick="IndexIndexModule.updateOperateTab('__URL__/listview');"><img
+                src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);"
+               onclick="IndexIndexModule.updateOperateTab('__URL__/listview');">放弃新建,返回列表<span>^4</span></a></li>
+        <li style="float: right;margin-right: 60px;"><a href="javascript:void(0);"
+                                                        onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="IndexIndexModule.closeOperateTab();"><img
+                src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
+    </ul>
+</div>
+<div class="moduleoperator" style="overflow:scroll;clear:both;">
+    <form id="DiningReturnCreateviewForm" method="post">
+        <table border="0" cellspacing="0" cellpadding="0" width="99%" align="center">
+            <tr>
+                <td>
+                    <table border="0" cellspacing="0" cellpadding="3" width="100%" class="small">
+                        <tr>
+                            <td class="dvtTabCache" style="width:20px" nowrap>&nbsp;</td>
+                            <td class="dvtSelectedCell" align="center" nowrap> 新建</td>
+                            <td class="dvtTabCache" style="width:80%">&nbsp;</td>
+                        <tr>
+                    </table>
+                </td>
+            </tr>
+
+            <tr>
+                <td valign="top" align="center">
+                    <div id="basicTab" style="border: 1px solid #e0dddd; background: white;">
+                        <table style="BORDER-COLLAPSE: collapse" borderColor="#A9A9A9" cellSpacing="0" width="100%"
+                               align="center" border="1">
+                            <tr>
+                                <td colspan="4" class="tabBlockViewHeader">
+                                    退单基本信息
+                                </td>
+                            </tr>
+                            <tr style="background: #FFFFFF;">
+                                <td width="15%" align="right" class="createFormLeftTd">
+                                    <span style="font-size:14px;margin-right:10px;">分公司:</span>
+                                </td>
+                                <td width="20%" align="left" class="createFormRightTd">
+                                    <select class="easyui-easyui-combobox" name="company"
+                                        data-options="required:true,validType:{length:[2,20]}"
+                                        style="width:50%;font-size:16px;">
+                                        <option></option>
+                                        <foreach name="companymgr" item="vo" >
+                                            <option value="{$vo.name}">{$vo.name}</option>
+                                        </foreach>
+                                    </select>
+                                </td>
+                                <td width="15%" align="right" class="createFormLeftTd">
+                                    <span style="font-size:14px;margin-right:10px;">退单序号:</span>
+                                </td>
+                                <td width="20%" align="left" class="createFormLeftTd">
+                                    <input type="text"  name="sequence" class="easyui-validatebox"
+                                           style="font-size:16px;width:150px;" value="{$info.clientname}" onkeydown="DiningReturnCreateviewModule.getMoney(event);
+                                           autocomplete='off' "/>
+                                </td>
+                            </tr>
+                            <tr style="background: #FFFFFF;">
+                                <td width="15%" align="right" class="createFormLeftTd">
+                                    <span style="font-size:14px;margin-right:10px;">退单金额:</span>
+                                </td>
+                                <td width="20%" align="left" class="createFormRightTd">
+                                    <input type="text"  name="money" readonly
+                                           style="font-size:16px;width:150px;" value=""/>
+                                </td>
+                                <td width="15%" align="right" class="createFormLeftTd">
+
+                                </td>
+                                <td width="20%" align="left" class="createFormLeftTd">
+
+                                </td>
+
+                            </tr>
+
+                            <tr style="line-height: 5px;">
+                                <td colspan="4" align="center">
+                                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-other-tick'"
+                                       onclick="DiningReturnCreateviewModule.insert();" style="width:100px;margin-right:40px;">确认</a>
+                                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-arrow-cross'"
+                                       onclick="IndexIndexModule.updateOperateTab('__URL__/listview');"
+                                       style="width:100px;">放弃</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<input id="DiningReturnAction" type="hidden" value="Createview"/>
+<script>
+    var DiningReturnCreateviewModule = {
+
+        //初始化
+        init :function(){
+            $('.moduleoperator').height(IndexIndexModule.operationHeight);
+            this.quickKeyboardAction();
+        },
+
+        //获取堂口销售的金额
+        getMoney: function(evt){
+            evt = evt ? evt : ((window.event) ? window.event : null);
+            var key = evt.keyCode ? evt.keyCode : evt.which;
+            if (key == 13) {
+
+                var sequence = $('#DiningReturnCreateviewForm input[name=sequence]').val();
+                if (!sequence) {
+                    alert('堂口退单序号不能为空!');
+                    return;
+                };
+                var company = $('#DiningReturnCreateviewForm select[name=company]').val();
+                if (!company) {
+                    alert('分公司不能为空!');
+                    return;
+                }
+
+                var  data = {
+                    'sequence': sequence,
+                    'company': company
+                };
+                $.ajax({
+                    type: "POST",
+                    url: "__URL__/getMoney",
+                    dataType: "json",
+                    data: data,
+                    success: function (data) {
+                        if(data){
+                            if(data.money  == 0){
+                                alert('没有查询到金额');
+                            }else{
+                                $('#DiningReturnCreateviewForm input[name=money]').val(data.money);
+                            }
+                        }else{
+                            alert('查询堂口金额异常');
+                        }
+                    }
+                });
+            }
+        },
+
+        //保存记录
+        insert: function () {
+            $('#DiningReturnCreateviewForm').form('submit', {
+                url: '__URL__/insert',
+                onSubmit: function () {
+                    var isValid = $(this).form('validate');
+                    var money = $('#DiningReturnCreateviewForm input[name=money]').val();
+                    if (!money) {
+                        alert('堂口退单金额不能为空，请检查！');
+                        return false;
+                    }
+
+                },
+                success: function (res) {
+                    var data = eval('(' + res + ')');
+                    if(!data.status){
+                        $.app.method.tip('提示信息', data.info, 'error');
+                    }else{
+                        $.app.method.tip('提示信息', data.info, 'info');
+                        IndexIndexModule.updateOperateTab(data.url);
+                    }
+                }
+            });
+        },
+
+        //放弃保存
+        cancel: function(){
+            var url = '__URL__/listview';
+            IndexIndexModule.updateOperateTab(url);
+        },
+
+        //新建的快捷操作
+        quickKeyboardAction: function () {
+            // ctrl+9快捷键,保存公告
+            Mousetrap.bind(['ctrl+9', 'ctrl+f9', 'f9'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '群发消息' && ($('#MessagesAction').val() == 'Createview')) {
+                    MessagesCreateviewModule.insert();
+                };
+            });
+
+            // ctrl+4快捷键,放弃
+            Mousetrap.bind(['ctrl+4', 'ctrl+f4', 'f4'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '群发消息' && ($('#MessagesAction').val() == 'Createview')) {
+                    IndexIndexModule.updateOperateTab('__URL__/listview');
+                };
+            });
+        }
+    }
+
+    $(function () {
+        DiningReturnCreateviewModule.init();
+        setTimeout(function(){
+           // $('#DiningReturnCreateviewForm select[name=company]').focus();
+        },100);
+
+    })
+</script>
+

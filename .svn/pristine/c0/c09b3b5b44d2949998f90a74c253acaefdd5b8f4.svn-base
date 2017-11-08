@@ -1,0 +1,9 @@
+<?php
+  return array(
+    'code' => '代码',
+    'name' => '姓名',
+    'telphone' => '号码',
+    'sendtype' => '消息类型',
+    'LBL_SENDNAMEMGR_INFOMATION' => '送餐员基本信息',
+  )
+?>

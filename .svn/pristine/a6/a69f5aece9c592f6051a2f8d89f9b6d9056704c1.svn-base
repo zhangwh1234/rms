@@ -1,0 +1,16 @@
+<?php if (!defined('THINK_PATH')) exit();?><div class="moduleMenu">
+    <ul>
+        <li><?php echo (L("$tabName")); ?></li>
+        <li><a href="javascript:void(0);"  onclick="updateTab('__URL__/listview');">&nbsp;&gt;<?php echo (L("$moduleName")); ?></a></li>
+        <li>&nbsp;&gt;添加模块功能操作</li>
+        <li style="width: 50px;">&nbsp;</li>
+        
+        <li style="margin-left: 10px;"><a href="javascript:;" onclick="updateTab('__APP__/<?php echo ($moduleName); ?>/createview');"><img src=".__PUBLIC__/Images/returnBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);"  onclick="updateTab(&apos;<?php echo U('User/listview');?>&apos;);">返回列表</a></li>
+       
+        
+        <li style="float: right;margin-right: 60px;"><a href="javascript:void(0);"   onclick="closeTab();" >关闭</a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="closeTab();"><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        
+    </ul>
+</div>

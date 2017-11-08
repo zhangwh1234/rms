@@ -1,0 +1,369 @@
+<?php
+  
+
+<div style="padding:5px;border:1px solid #ddd">
+    <volist name='MENU' id='tab' >
+        <a href="#" class="easyui-menubutton" data-options="menu:'#{$key}_sub'">{$Think.lang.$key}</a>      
+    </volist>
+</div>
+    
+
+
+{//下拉菜单}
+<volist name="MENU"  id="tab" >
+    <div  id="{$key}_sub" style="width:150px;" >
+       
+            <volist name="tab" id="sub">    
+                <div><a href="__APP__/{$sub}" >{$Think.lang.$sub}</a></div>
+            </volist>
+       
+    </div>
+</volist>
+?>
+
+
+//初始化customerview
+            $customView_model = D('Customview');
+            //返回初始的cvid
+            $cvid_arr = $customView_model->where("moduleid=$moduleid and viewname='All'")->field('cvid')->find();
+            $cvid = $cvid_arr['cvid'];
+            //var_dump($cvid);
+
+            //根据cvid取得cvcolumnlist中的字段列表
+            $cvcolumnlist_model = D('cvcolumnlist');
+            $list_fields_arr = $cvcolumnlist_model->where("cvid=$cvid")->field('fields')->order('columnindex')->select();
+            // var_dump($list_fields_arr);
+            
+{//系统头部}
+<div id="top" class="topBg">
+    <div id="logo"><img src="__PUBLIC__/Images/logo.gif" title="标志" /></div>
+    <div id="subject" align="center" >订餐管理系统</div>
+    <div id="topnav">
+        <ul>   
+            <if condition="$Think.session.userInfo.department eq '分公司'">             
+                <li  style="padding-left:10px;padding-right:5px">部门:{$Think.session.userInfo.department}</li>
+                <li  style="padding-left:5px;padding-right:5px">({$Think.session.userInfo.company})分公司</li>
+            </if>    
+            <if condition="$Think.session.userInfo.department eq '客服部'">             
+                <li  style="padding-left:10px;padding-right:5px">部门:{$Think.session.userInfo.department}</li>
+                <li  style="padding-left:5px;padding-right:5px">接线员</li>
+            </if>    
+            <li  style="padding-left:5px;padding-right:20px;"><span class="mobile"><a href="__APP__/Login/logout"><font style="vertical-align:top;">({$Think.session.userInfo.name})退出</font></a></span></li>            
+        </ul>
+    </div>
+</div>
+
+
+<style type="text/css">
+    a.l-btn-t {
+        background-position: right 0;
+        font-size: 16px;
+        text-decoration: none;
+        display: inline-block;
+        zoom: 1;
+        height: 24px;
+        padding-right: 18px;
+        cursor: pointer;
+        outline: none;
+    }
+
+
+
+    #submenu{
+        height:10px;
+    }
+
+
+</style>
+
+
+
+{//导航菜单}
+<div id="menu" style="padding-top:5px;padding-bottom: 5px; padding-left: 50px; background-image:url(__PUBLIC__/Images/nav_bg1.png);">
+    <volist name='MENU' id='tab' >
+        <a  id="mb" class="easyui-menubutton l-btn-t" data-options="menu:'#mm{$tab[0]}' " onclick="doit('__APP__/{$sub}','{$Think.lang.$sub}');" style="color: white;">{$Think.lang.$tab[0]}</a>
+        <div id="mm{$tab[0]}">
+            <volist name="tab" id="sub">
+                <div data-options="iconCls:'icon-redo'" class="l-btn-t"><a href="#" onclick="doit('__APP__/{$sub}','{$Think.lang.$sub}');" style="font-size: 16px;">{$Think.lang.$sub}</a></div> 
+            </volist>
+        </div>
+    </volist>    
+</div>
+<div id="submenu" class="" style="padding-left:35px;padding-top: 0px;margin-top: 0px;height: 25px;background-color: red;"> 
+    <volist name='MENU' id='tab' >
+        <if condition="trim($CATEGORY) eq trim($key)" >     
+            <volist name="tab" id="sub">  
+                <a href="#" class="easyui-linkbutton" data-options="plain:true">{$Think.lang.$sub}</a>
+            </volist>
+        </if>
+    </volist>
+</div>
+
+
+
+<script type="text/javascript">
+    $(function(){
+        $('#menu').panel({
+            border:false
+        });
+    })
+    function doit(url,title){ 
+
+        var t =  $('#operation').tabs('exists',title);
+        if(t){
+            $('#operation').tabs('select',title);
+            return;
+        }
+
+        //添加一个选项卡面板
+        $('#operation').tabs('add',{ 
+            closable:false, 
+            title:title,  
+            href:url,  
+            closable:false
+        }); 
+
+    }
+</script> 
+
+
+/* 下拉菜单 */
+    .drop_mnu{
+        position:absolute;
+        left:0px;
+        top:-5px;
+        z-index:1000000001;
+        border-left:1px solid #d3d3d3;
+        border-right:1px solid #d3d3d3;
+        border-bottom:1px solid #d3d3d3;
+        width:120px;
+        display:none;
+        padding:0px;
+        text-align:left;
+        overflow-x:hidden;
+        overflow-y:hidden;
+        background-color:#ffffcc;
+        margin-top: 0px; /* added */
+    }
+    a.drop_down{
+        width:150px;
+        text-align:left;
+        font-family:  Arial, Helvetica, sans-serif;
+        font-size: 14px;
+        line-height:20px;
+        font-weight:normal;
+        color:#33338c;
+        background-color:#fff;
+        padding:2px 5px 2px 5px;
+        border-top:1px solid #fafafa;
+        border-bottom:1px solid #d3d3d3;
+        display:block;
+    }
+
+    a.drop_down:Hover{
+        padding:2px 5px 2px 5px;
+        width:150px;
+        text-align:left;
+        color:#0070BA;
+        font-weight:normal;
+        text-decoration:underline;
+        background-color:#ffffcc;
+    }
+    
+    level2Bg
+    
+    <div id="{$MODULE}listmenu" style="background-color: white;">
+    <a class="easyui-linkbutton" data-options="plain:true">&nbsp;&gt;{$Think.lang.$tabName}</a>
+    <a href="#"  class="easyui-linkbutton" data-options="plain:true" 
+        onclick="updateTab('__URL__/listview');">&nbsp;&gt;{$Think.lang.$moduleName}</a>
+    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-reload',plain:true" 
+        onclick="updateTab('__URL__/listview');">列表(显示全部)</a>
+    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" 
+        onclick="updateTab('__APP__/{$moduleName}/createview');">新建</a>
+    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true" 
+        onclick="updateTab('__APP__/{$moduleName}/searchview');">查询</a>
+</div>
+
+
+{//顶部显示}
+<div>
+    <table border=0 cellspacing=0 cellpadding=0 width=100% height="0" class="hdrNameBg">
+        <tr>
+            <td valign=top><img src="__PUBLIC__/Images/logo.gif" alt="标志" title="标志" border=0></td> 
+            <td width=100% align="center">
+                <span>CRM系统</span>
+            </td>
+
+            <td class=small nowrap>
+                <table border=0 cellspacing=0 cellpadding=0>
+                    <tr>            
+                        <if condition="$IS_ADMIN eq 'on11' ">
+                            <td style="padding-left:10px;padding-right:10px" class=small nowrap>(系统管理员)</td>
+
+                        </if>  
+                        <if condition="$Think.session.userInfo.department eq '分公司'"> 
+                            <td style="padding-left:10px;padding-right:10px" class=small nowrap>部门:{$Think.session.userInfo.department}</td>
+                            <td style="padding-left:10px;padding-right:10px" class=small nowrap>({$Think.session.userInfo.company})分公司</td>
+                        </if>
+                        <if condition="$Think.session.userInfo.department eq '客服部'">  
+                            <td style="padding-left:10px;padding-right:10px" class=small nowrap>部门:{$Think.session.userInfo.department}</td>
+                            <td style="padding-left:10px;padding-right:10px" class=small nowrap>接线员</td>
+                        </if>
+
+                        <td style="padding-left:10px;padding-right:10px" class=small nowrap> <a href="__APP__/Login/logout">({$Think.session.userInfo.name})退出</a></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+
+
+
+<table border="0" cellspacing="0" cellpadding="0" width="100%" class="hdrTabBg" style="display: none;">
+    <tr>
+        <td  class=small width="20%"></td>    
+        <td class=small nowrap> 
+            <table border=0 cellspacing=0 cellpadding=0 >
+                <tr>
+                    <td class=tabSeperator><img src="__PUBLIC__/Images/lihua_nav_line.gif" width="2px" height="28px"></td>        
+                    <volist name='menu' id='tab' >
+                        <if condition="$key eq $category">
+                            <td class="tabSelected"  onmouseover="fnDropDown(this,'{$key}_bottomMenu');" onmouseout="fnHideDrop('{$key}_bottomMenu');" align="center" nowrap>
+                                <a href="#" onclick="clickTabMenu('__APP__/{$tab.0}','{$Think.lang.$key}','{$key}_bottomMenu');" >{$Think.lang.$key}</a>
+                                <img src="__PUBLIC__/Images/menuDnArrow.gif" border=0 style="padding-left:5px"></td>
+                            <td class="tabSeperator"><img class="tabSeperator"  src="__PUBLIC__/Images/lihua_nav_line.gif" width="2px" height="28px" /></td>
+                            <else/>
+                            <td class="tabUnSelected"  onmouseover="fnDropDown(this,'{$key}_bottomMenu');" onmouseout="fnHideDrop('{$key}_bottomMenu');" align="center" nowrap>
+                                <a href="#" onclick="clickTabMenu('__APP__/{$tab.0}','{$Think.lang.$key}','{$key}_bottomMenu');">{$Think.lang.$key}</a>
+                                <img src="__PUBLIC__/Images/menuDnArrow.gif" border=0 style="padding-left:5px"></td>
+                            <td class="tabSeperator"> <img class="tabSeperator"  src="__PUBLIC__/Images/lihua_nav_line.gif" width="2px" height="28px" /></td>
+                        </if>
+                    </volist>
+                </tr>
+            </table>
+        </td>
+        <td  class=small width="20%"></td>
+    </tr>
+</table>
+
+{//底部菜单}
+<table border="0" cellspacing="0" cellpadding="0" width="100%" class="level2Sel" style="display: none;">
+    <tr>
+        <td nowrap width="10%">子菜单：{$APP.$CATEGORY} </td>
+        <td>
+            <volist name='menu' id='tab' >
+                <if condition="$key eq $category">   
+                    <table id="{$key}_bottomMenu" border="0" cellspacing="0" cellpadding="0" style="display:yes;">
+                        <tr>
+                            <volist name="tab" id="sub">
+                                <if condition="$sub eq $currentModule">
+                                    <td class="level2SelTab" nowrap style="border: 1px solid red;" ><a href="#" onclick="clickSubMenu('__APP__/{$sub}','{$Think.lang.$sub}');"  >
+                                            <font color="red">{$Think.lang.$sub}</font></a></td>
+                                    <else/>
+                                    <td class="level2UnSelTab" nowrap> 
+                                    <a href="#" onclick="clickSubMenu('__APP__/{$sub}','{$Think.lang.$sub}');" >{$Think.lang.$sub}</a> </td>
+                                </if>  
+
+                            </volist>                      
+                        </tr>
+                    </table>
+                    <else/>
+                    <table id="{$key}_bottomMenu" border="0" cellspacing="0" cellpadding="0" style="display:none;">
+                        <tr>
+                            <volist name="tab" id="sub">
+                                <if condition="$sub eq $currentModule">
+                                    <td class="level2SelTab" nowrap style="border-right: 1px solid red;" ><a href="#" onclick="clickSubMenu('__APP__/{$sub}','{$Think.lang.$sub}','{$key}_bottomMenu');"  ><font color="red">{$Think.lang.$sub}</font></a></td>
+                                    <else/>
+                                    <td class="level2UnSelTab" nowrap> <a href="#" onclick="clickSubMenu('__APP__/{$sub}','{$Think.lang.$sub}');" >{$Think.lang.$sub}</a> </td>
+                                </if>  
+                            </volist>                      
+                        </tr>
+                    </table>
+                </if>   
+            </volist>
+        </td>
+    </tr>
+</table>        
+
+/*导航菜单背景*/
+.hdrTabBg {
+    background:#ffffff url('../../Public/Images/lihua_nav.gif') top repeat-x ;
+    background-color:#fff;
+    border: 1px solid red;    
+}  
+/*导航条选择项*/
+.tabSelected {
+    background: #fff url('../../Public/Images/buttonred.png') bottom repeat-x; 
+    background-color:#fff;
+    font-size: 11px;
+    padding-left:10px;
+    padding-right:9px;
+    padding-top:2px;
+    padding-bottom:2px;
+    border-bottom:0px solid #ffffff;
+}
+
+.tabSelected a{
+    color:white;
+    font-family: Arial, Helvetica, sans-serif;  
+    text-transform: uppercase;
+    text-decoration: underline;
+    font-size: 16px;
+}
+
+/* 导航条没选择项 */
+.tabUnSelected {    
+    background: #fff url('../../Public/Images/lihua_nav.gif') top repeat-x;
+    background-color:#fff; 
+    font-size: 11px;
+    padding-left:15px;
+    padding-right:15px;
+    padding-top:2px;
+    padding-bottom:2px;
+    border-bottom:0px solid #ffffff; 
+}
+
+.tabUnSelected a{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    color:white;
+
+}
+
+/* 导航分割  */
+.tabSeperator {
+    background: #fff url(__PUBLIC__/Images/toolbar-div.png) bottom no-repeat;
+    background-color:#fff;
+    width:2px;
+}
+
+
+        //读取来电的缓存号码
+        var telphonelocalStorage  = localStorage.telphoneNumber;
+        if(telphonelocalStorage !== null  || typeof(telphonelocalStorage) !== "undefined"){
+            $('#telphoneNumber').val(telphonelocalStorage);
+            $.ajax({
+                type : "POST",
+                url :  "__APP__/Telcustomer/getAddressByPhone/telphone/"+telphonelocalStorage,
+                dataType : "json",
+                success : function(data){  
+                    $('#telphoneAddress').empty();
+                    $.each(data.teladdress,function(key,value){
+                        var address = value.company + '  |  ' + value.address;
+                        $('#telphoneAddress').append('<option>'+address+'</option>');
+                    })
+                    if(data.telhistory){
+
+                        var telhistoryHtml = '';  //开始组装来电历史记录
+                        $.each(data.telhistory,function(key,value){
+                            telhistoryHtml += value.teltime+' '+value.teltask+"<br>";
+                        }) 
+                        $('#telhistoryWin').html(telhistoryHtml);
+                        $('#telhistoryWin').window('open');
+                    }else{
+                        $('#telhistoryWin').window('close');
+                    }  
+                }
+            });
+        }

@@ -390,7 +390,7 @@ class Image {
         $stringColor = imagecolorallocate($im, mt_rand(0, 200), mt_rand(0, 120), mt_rand(0, 120));
         // 干扰
         for ($i = 0; $i < 10; $i++) {
-            imagearc($im, mt_rand(-10, $width), mt_rand(-10, $height), mt_rand(30, 300), mt_rand(20, 200), 55, 44, $stringColor);
+            //imagearc($im, mt_rand(-10, $width), mt_rand(-10, $height), mt_rand(30, 300), mt_rand(20, 200), 55, 44, $stringColor);
         }
         for ($i = 0; $i < 25; $i++) {
             imagesetpixel($im, mt_rand(0, $width), mt_rand(0, $height), $stringColor);

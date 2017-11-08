@@ -1,0 +1,77 @@
+<script type="text/javascript">
+    //催送订单
+    function hurryRecordDetailview(url){     
+        if(confirm("是否真的要催送订单？")){
+            updateTab(url);
+        }  
+    }
+</script>
+<div class="moduleoperator" style="border: 1px solid white;">
+    <input id="{$moduleName}Action" type="hidden" value="detailview" />
+   	<input type="hidden" id="{$moduleName}record" value="{$record}">
+    <input type="hidden" id="{$moduleName}returnAction" value="{$returnAction}">
+    <table border="0" cellspacing="0" cellpadding="0" width="99%" align="0" bgcolor="">
+        <tr>
+            <td>
+                <table border=0 cellspacing=0 cellpadding=3 width=100% class="small">
+                    <tr>
+                    <td class="dvtTabCache" style="width:20px" nowrap>&nbsp;</td>
+                    <td class="dvtSelectedCell" align="center" nowrap> 查看 </td>
+                    <td class="dvtTabCache" style="width:80%">&nbsp;</td>
+                    <tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td valign=top align="center" >
+                <div id="basicTab" style="border: 1px solid #e0dddd; background: white;">
+                    <table border=0 cellspacing=0 cellpadding=0 width="98%" class="small">
+                        <tr>
+                            <td></td>
+                            <td align="right">
+                                <input id="createsave" name="createsave" title="" accessKey="" class="crmbutton small save"    onclick="updateTab('__URL__/editview&record={$record}&returnAction={$returnAction}')"   type="button"  value="改单 ^8" style="width:70px;float:right;margin-right:2px;margin-top:2px;margin-bottom:2px;"><input id="createsave" name="createsave" title="" accessKey="" class="crmbutton small save"    onclick="hurryRecordDetailview('__URL__/hurry/record/{$record}/returnAction/detailview');"   type="button"  value="催送" style="width:70px;float:right;margin-right:2px;margin-top:2px;margin-bottom:2px;"></td>
+                            <td>
+                                <input title="" accessKey="" class="crmbutton small cancel" onclick="updateTab('__APP__/{$moduleName}/{$returnAction}')" type="button" name="button" value="  {$Think.lang.Button_Return} ^4 " style="width:70px;float:left;margin-left:2px;margin-top:2px;margin-bottom:2px;"></td>
+                            <td> 
+                            </td>
+                        </tr>
+                        <!-- 这里显示具体的编辑 -->
+
+                        <volist name="blocks"  id="data" >
+                            <tr>
+                                <td colspan=4 class="tabBlockViewHeader">
+                                    {$Think.lang.$key}
+                                </td>
+                            </tr>
+
+                            <!-- Here we should include the uitype handlings-->
+                            <volist key="label" id="subdata" name="data">
+                                <tr style="height:30px;border: 1px solid black;background: #F0F0F0;">
+                                    <volist key="mainlabel" id="maindata" name="subdata">
+                                        <include file='Module/detailviewUI' />       
+                                    </volist>
+                                </tr>
+                            </volist>
+                            <tr style="line-height: 2px;"><td>&nbsp;</td></tr>
+                        </volist>
+
+                        <tr>
+                            <td></td>
+                            <td align="right">
+                                <input id="createsave" name="createsave" title="" accessKey="" class="crmbutton small save"    onclick="updateTab('__URL__/editview&record={$record}&returnAction={$returnAction}')"   type="button"  value="{$Think.lang.Button_Edit} ^8" style="width:70px;float:right;margin-right:2px;margin-top:2px;margin-bottom:2px;"><input id="createsave" name="createsave" title="" accessKey="" class="crmbutton small save"    onclick="hurryRecordDetailview('__URL__/hurry/record/{$record}/returnAction/detailview');"  type="button"  value="催送" style="width:70px;float:right;margin-right:2px;margin-top:2px;margin-bottom:2px;"></td>
+                            <td> 
+                                <input title="" accessKey="" class="crmbutton small cancel" onclick="updateTab('__APP__/{$moduleName}/{$returnAction}')" type="button" name="button" value=" {$Think.lang.Button_Return} ^4 "  style="width:70px;float:left;margin-left:2px;margin-top:2px;margin-bottom:2px;"></td>
+                            <td> 
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+
+
+            </td>
+        </tr>
+    </table>
+</div>
+
+ 

@@ -1,0 +1,325 @@
+{/*
+组件 1、文本
+2、数字
+3、百分比
+4、货币
+5、日期
+6、时间
+7、Email
+8、电话
+9、下拉框
+10、复选框
+11、文本域
+12、多选框
+*/}
+
+<style type="text/css">
+    .dvtCellLabel, .cellLabel {
+        background:#F7F7F7 url(./__PUBLIC__/Images/testsidebar.jpg) repeat-y scroll right center;
+        border-bottom:1px solid #DEDEDE;
+        border-left:1px solid #DEDEDE;
+        border-right:1px solid #DEDEDE;
+        color:#545454;
+        padding-left:10px;
+        padding-right:10px;
+        white-space:nowrap;
+        font-size: 15px;
+    }
+    .dvtCellInfo, .cellInfo {
+        background:#FFFFFF ;
+        padding-left:10px;
+        padding-right:10px;
+        border-bottom:1px solid #dedede;    
+        border-right:1px solid #dedede;
+        border-left:1px solid #dedede;
+        color: black;
+        font-size: 16px ;
+    }
+    
+    .dvtCellInfo span{
+        border: 0px solid ;
+        font-size: 14px ;
+    }
+</style>
+<assign name="label" value="$Think.lang.$maindata[name]" />        {//标题}
+<assign name="uitype"   value="$maindata[uitype]" />                {//类型}
+<assign name="name" value="$maindata[name]" />                      {//字段名称}
+<assign name="value" value="$maindata[value]" />                    {//字段的值}
+<assign name="length" value="$maindata[length]" />                  {//字段长度}
+<assign name="readonly" value="$maindata[readonly]" />              {//字段是否只读}
+
+
+{//自动产生值，不可编辑   }
+<if condition="($uitype eq 0)" >   
+<td width=20% class="dvtCellLabel" align=right><font color="red">{$mandatory_field}</font>{$label}             </td>
+<td width=30% align=left class="dvtCellInfo">{$value}
+</td>
+
+{// --1-- 文本输入框}
+<elseif condition="$uitype eq 1"  />                 
+    <td width=20% class="dvtCellLabel" align=right>
+        <font color="red">{$mandatory_field}</font>{$label}
+    </td>
+    <td width=30% align=left class="dvtCellInfo">
+        <span>{$value}</span>
+    </td>
+
+    {// --2-  数字输入框 }
+    <elseif condition="$uitype eq 2"  />
+    <td width=20% class="dvtCellLabel" align=right><font color="red">{$mandatory_field}</font>{$label}
+    </td>
+    <td width=30% align=left class="dvtCellInfo"><span>{$value}</span></td> 
+
+    {// --3-- 百分比输入框  }
+    <elseif condition="$uitype eq 3" />
+    <td width=20% class="dvtCellLabel" align=right><font color="red">{$mandatory_field}</font>{$label}
+    </td>
+    <td width=30% align=left class="dvtCellInfo">
+        {$value}
+    </td> 
+
+    {// --4-- 货币输入框 }        
+    <elseif condition="$uitype eq 4" />
+    <td width="20%" class="dvtCellLabel" align=right>
+        <font color="red">{$mandatory_field}</font>{$label} 
+    </td>
+    <td width="30%" align=left class="dvtCellInfo">                
+       {$value}
+    </td>
+
+    {// --5--  日期输入框 }
+    <elseif condition="$uitype eq 5" />
+    <td width="20%" class="dvtCellLabel" align=right>
+        <font color="red">{$mandatory_field}</font>{$label}
+    </td>
+    <td width="30%" align=left class="dvtCellInfo">
+        {$value}
+    </td>
+
+    {// --6--   时间输入框   }
+    <elseif condition="$uitype eq 6" />
+    <td width="20%" class="dvtCellLabel" align=right>
+        <font color="red">{$mandatory_field}ww</font>{$label}
+    </td>
+    <td width="30%" align=left class="dvtCellInfo">
+        {$value}
+    </td>  
+
+    {//--7-- Email输入 }
+    <elseif condition="$uitype eq 7" />   
+    <td width=20% class="dvtCellLabel" align=right><font color="red">{$mandatory_field}</font>{$label}
+    </td>
+        {$value}
+    </td>               
+
+   
+
+    {// --9-- 下拉框输入 } 
+    <elseif condition="$uitype eq 9" />
+    <td width="20%" class="dvtCellLabel" align=right>
+       
+        {$label}
+    </td>
+    <td width="30%" align=left class="dvtCellInfo">
+            {$value}
+    </td>   
+
+    {// --10-- 复选框 }
+    <elseif condition="$uitype eq 10" />                 
+    <td width=20% class="dvtCellLabel" align=right>
+       </font>{$label} 
+    </td>
+    <td width=30% align=left class="dvtCellInfo">
+        {$value}
+    </td>
+
+    {// --11-- 文本域输入  }       
+    <elseif condition="$uitype eq 11" />
+    <td width="20%" class="dvtCellLabel" align=right>
+        {$label} 
+    </td>
+    <td width="20%" align="left" class="dvtCellInfo">
+        <textarea class="detailedViewTextBox" style="border:0px;" readonly="readonly" cols="60" rows="2">{$value}</textarea>
+    </td>
+
+    {// --17--  网站地址输入框   }
+    <elseif condition="$uitype eq 17" />
+    <td width="20%" class="dvtCellLabel" align=right>
+        {$label} 
+    </td>
+    <td width="30%" align=left class="dvtCellInfo">
+       {$value}
+    </td>
+
+
+    {// --26--  上传文件输入框}
+    <elseif condition="$uitype eq 26" />
+    <td width="20%" class="dvtCellLabel" align=right>
+        {$label}
+    </td>
+    <td width="30%" align=left class="dvtCellInfo">
+        
+    </td>
+
+{//*******************************************************************************************}  
+{// --21-- 电话 }
+<elseif condition="$uitype eq 21" />                 
+<td width=15% class="dvtCellLabel" align=right>
+    </font>{$label} 
+</td>
+<td width=35% align=left class="dvtCellInfo">
+   {$value}
+</td>
+
+{// --22-- 送餐地址}    
+<elseif condition="$uitype eq 22" />                 
+<td width=15% class="dvtCellLabel" align=right>
+    {$label}
+    </td>
+    <td width=35% align=left class="dvtCellInfo">
+        {$value}
+    </td>   
+
+{// --23-- 送餐时间}    
+<elseif condition="$uitype eq 23" />                 
+    <td width=15% class="dvtCellLabel" align=right>
+        {$label}
+    </td>
+    <td width=35% align=left class="dvtCellInfo">
+        {$value}
+    </td>
+    
+    {// --50-- 来电地址编辑 }
+    <elseif condition="$uitype eq 50" />
+    <td width="100%" class="dvtCellLabel" align=center colspan="4">
+        <table id="teladdresstable" width="90%" border=0 style="border: 1px solid #e0dddd; margin-top: 2px;" class="small">
+            <tr class="detailedViewHeader">
+                <td width="10%" align="center">序号</td>
+                <td width="70%" align="center">地址</td>
+                <td width="10%" align="center">所属分公司</td>
+                
+            </tr>
+            <foreach item="vo" name="teladdress">         
+            <tr style="height:25px;border: 1px solid black;background: #F0F0F0;" class="CaseRow" >
+                <td width="10%" align="center" class="dvtCellLabel">{$key+1}</td>
+                <td width="70%" align="left" class="dvtCellLabel">{$vo.address}</td>
+                <td width="10%" align="left" class="dvtCellLabel">{$vo.company}</td> 
+            </tr>
+             </foreach>  
+        </table> 
+    </td>  
+    
+    {// --51-- 产品信息编辑 }
+    <elseif condition="$uitype eq 51" />
+    <td width="100%" class="dvtCellLabel" align=center colspan="4">
+        <table id="productsTable" width="90%" border=0 style="border: 1px solid #e0dddd; margin-top: 2px;" class="small">
+            <tr class="detailedViewHeader" style="border: 1px solid red;">
+                <td width="5%" align="center">序号</td>
+                <td width="10%" align="center">产品代码</td>
+                <td width="30%" align="center">产品名称</td>
+                <td width="15%" align="center">数量</td>
+                <td width="15%" align="center">单价</td>
+                <td width="15%" align="center">金额</td>
+            </tr>
+            <foreach name="orderproducts" item="vo">
+            <tr style="height:20px;border: 1px solid black;background: #F0F0F0;" class="CaseRow" >
+                <td width="5%" align="center" class="dvtCellLabel">{$key+1}</td>
+                <td width="10%" align="center" class="dvtCellLabel"> {//产品代码}
+                    <input id="productsCode_1" name="productsCode_1" type="text" size="10" readonly="readonly"  value="{$vo.code}" style="text-align:center;vertical-align:middle;"   />
+                </td>
+                <td width="30%" align="center" class="dvtCellLabel"> {//产品名称}
+                    <input id="productsName_1" name="productsName_1" type="text" size="30" readonly="readonly" value="{$vo.name}" />
+                </td>
+                <td width="15%" align="center" class="dvtCellLabel"> {//数量}
+                    <input id="productsNumber_1" name="productsNumber_1" type="text" size="5"  readonly="readonly" value="{$vo.number}" style="text-align:center;vertical-align:middle;" />
+                </td>
+                <td width="15%" align="center" class="dvtCellLabel"> {//单价}
+                    <input id="productsPrice_1" name="productsPrice_1" type="text" size="10" readonly="readonly"  value="{$vo.price}" style="text-align:center;vertical-align:middle;" />
+                </td>
+                <td width="15%" align="center" class="dvtCellLabel"> {//金额}
+                    <input id="productsMoney_1" name="productsMoney_1" type="text" size="10" readonly="readonly"   value="{$vo.money}" style="text-align:center;vertical-align:middle;" />
+                </td>
+            </tr>
+            </foreach>
+            <tr style="height:20px;border: 1px solid black;background: #F0F0F0;" class="CaseRow" >
+                <td width="" align="right" colspan="5">
+                    小计:
+                </td>  
+                <td class="dvtCellLabel"> {// 金额小计}
+                    <input id="productsTotalMoney" name="productsTotalMoney" type="text" size="10" readonly="readonly" style="border: 0px;" value="{$totalmoney}" />
+                </td> 
+             </tr>   
+        </table> 
+    </td>     
+    
+{// --52-- 订单运行日志 }    
+<elseif condition="$uitype eq 52" />                 
+    <td width="100%" class="dvtCellLabel" align=center colspan="4">
+        <table style="border: 1px solid #BEBEBE;" width="95%">
+        <foreach name="orderaction" item="vo">
+            <tr>
+                <td width="20%">{$vo.logtime}</td>
+                <td>{$vo.action}</td>
+            </tr>
+        </foreach>
+        </table>
+    </td>
+    
+{// --55--  今日菜单日期输入框 }
+    <elseif condition="$uitype eq 55" />
+    <td width="15%" class="dvtCellLabel" align=right>
+    <input value="上一个日期" type="button" style="" onclick="yesterdayMenuClick();">
+    <input value="下一个日期" type="button" style="float: right;" onclick="tomorrowMenuClick();"> 
+    </td>
+    <td width="35%" align="left" class="dvtCellInfo1">
+        <font color="red">{$mandatory_field}</font>{$label}
+    <input name="{$name}" tabindex="{$vt_tab}" id="todaymenudate" class="easyui-datebox" type="text" style="border:1px solid black;font-size:16px;" size="11" maxlength="10" value="{$todaymenudate}" data-options="onSelect:onTodaymenuSelect">
+    </td>
+    
+{// --56-- 今日菜单内容 }
+<elseif condition="$uitype eq 56" />
+<td width="100%" class="dvtCellLabel" align=center colspan="4"> 
+        <textarea class="detailedViewTextBox" style="border:1px solid blcak;width: 98%;" readonly="readonly"  rows="20">{$value}</textarea>
+</td>    
+
+{// -- 58 -- 订单状态图 }
+<elseif condition="$uitype eq 58" />
+<td width="100%" class="dvtCellLabel" align="left" colspan="4"> 
+    <include file='./rms/Tpl/ModuleUI/orderstateview.html' />
+</td> 
+
+{// --60-- 打印派单信息编辑 }
+<elseif condition="$uitype eq 60" />
+<td width="100%" class="dvtCellLabel" align=center colspan="4">
+        <table id="orderPrintTable" width="90%" border=0 style="border: 1px solid #e0dddd; margin-top: 2px;" class="small">
+            <tr class="detailedViewHeader">
+                <td width="10%" align="center">序号</td>
+                <td width="10%" align="center">订单号</td>
+                <td width="70%" align="center">打印内容</td>
+                
+            </tr>
+            <foreach item="vo" name="orderPrintHandle">         
+            <tr style="height:25px;border: 1px solid black;background: #F0F0F0;" class="CaseRow" >
+                <td width="10%" align="center" class="dvtCellLabel">{$key+1}</td>
+                <td width="10%" align="left" class="dvtCellLabel">{$vo.orderformid}</td>
+                <td width="70%" align="left" class="dvtCellLabel">{$vo.content}</td> 
+            </tr>
+             </foreach>  
+        </table> 
+    </td>  
+
+{// -- 61 -- 预订单日期}
+<elseif condition="$uitype eq 61" />
+<td width="100%" class="dvtCellLabel" align="left" colspan="4"> 
+    <div align="left">
+    <label>预订日期：</label></br>  
+        <div id="bookdatediv" style="float: left;width:980px;border: 0px solid red;" >
+          <foreach name="bookdate" item="vo">
+            <input  value="{$vo.bookdate}" readonly size="12" style="">
+          </foreach>   
+        </div>    
+    </div>
+</td>
+
+   
+</if>

@@ -1,0 +1,57 @@
+<style>
+    /*提示*/
+    .detailviewLableSpan {
+        font-size: 16px;
+        margin-right: 10px;
+    }
+
+    .detailviewForm {
+        background: white;
+    }
+
+    /*显示值*/
+    .detailviewInputSpan {
+        font-size: 16px;
+        margin-left: 4px;
+    }
+    
+</style>
+
+<table id="detailviewOrderFormBaseTable" style="BORDER-COLLAPSE: collapse" borderColor="#A9A9A9" cellSpacing="0"
+    width="100%" align="center" border="1">
+    <thead>
+        <td colspan="4" class="tabBlockViewHeader">
+            已支付信息
+        </td>
+    </thead>
+    <foreach name="payment[0]" item="vo" key="k">
+        <tr>
+            <td width="35%" align="right">
+                <span class="detailviewLableSpan">{$k}</span>
+            </td>
+            <td width="45%" align="left" style="background: #F5F5F5;">
+                <span class="detailviewInputSpan">{$vo}</span>
+            </td>
+        </tr>
+    </foreach>
+</table>
+</br>
+</br>
+<table id="detailviewOrderFormBaseTable" style="BORDER-COLLAPSE: collapse" borderColor="#A9A9A9" cellSpacing="0" width="100%" align="center" border="1">
+    <thead>
+        <td colspan="4" class="tabBlockViewHeader">
+            应交账信息
+        </td>
+    </thead>
+    <foreach name="payment[1]" item="vo" key="k">
+        <tr>
+            <td width="35%" align="right">
+                <span class="detailviewLableSpan">{$k}</span>
+            </td>
+            <td width="45%" align="left" style="background: #F5F5F5;">
+                <span class="detailviewInputSpan">{$vo}</span>
+            </td>
+        </tr>
+    </foreach>
+
+</table>

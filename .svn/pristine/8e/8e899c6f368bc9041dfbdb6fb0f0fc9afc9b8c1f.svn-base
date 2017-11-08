@@ -1,0 +1,338 @@
+<?php
+    /**
+    * 送餐员送餐情况显示
+    */
+
+    class  SendnameProductsAction extends  ModuleAction{
+
+        public function index(){            
+            $this->searchviewForSendname();
+        }
+
+        /**
+        *  送餐员条件查询
+        */
+        public function searchviewForSendname1(){
+            //如果是从listviewMenu进入的，必须删除session['where']
+            if(isset($_REQUEST['delsession'])){
+                unset($_SESSION['searchSendnameOrderHandle']);
+                unset($_SESSION['searchApOrderHandleSendname']);
+            }
+
+            //取得模块的名称
+            $moduleName =  $this->getActionName();
+            $this->assign('moduleName',$moduleName);   //模块名称  
+            $this->assign('actionName','searchviewForSendname');            //输出程序名称  
+
+            //启动当前模块
+            $focus = D($moduleName);
+
+            //取得对应的导航名称
+            $tabName = $focus->getTabName($moduleName);
+            $this->assign('tabName',$tabName);         //导航民
+
+            $this->assign('operName','送餐员查询操作');
+
+            //生成list字段列表
+            $listFields = $focus->listFields;
+            //模块的ID
+            $moduleId = $focus->getPk();
+            //加入模块id到listHeader中
+            //array_unshift($listFields,$moduleNameId); 
+            $listHeader = $listFields;
+            $this->assign("listHeader",$listHeader);   //列表头
+            $this->assign('returnAction','searchviewForAddress');  //定义返回的方法
+
+            //建立查询条件
+            $where = array();
+            $searchSendname = $_REQUEST['searchSendname'];  //查询地址
+            if(isset($searchSendname)){
+                $where['sendname'] = $searchSendname;
+                $this->assign('searchSendname',$searchSendname);
+                $_SESSION['searchSendnameOrderHandle'] = $searchSendname;
+            }else{
+                if(isset($_SESSION['searchSendnameOrderHandle'],$_SESSION['searchApOrderHandle'])){
+                    $where['Sendname'] = $_SESSION['searchSendnameOrderHandle'];
+                    $this->assign('searchSendname',$_SESSION['searchSendnameOrderHandle']);
+                }
+            }
+
+            //查询的午别
+            $searchAp = $_REQUEST['searchAp'];     
+            if(isset($searchAp)){
+                if($searchAp == '全天'){
+                }else{
+                    $where['ap'] = $searchAp;
+                    $_SESSION['searchApOrderHandleSendname'] = $searchAp; 
+                    $this->assign('searchAp', $searchAp);
+                }                
+            }else{
+                if(isset($_SESSION['searchApOrderHandleSendname'])){
+                    $where['ap'] = $_SESSION['searchApOrderHandleSendname'];
+                    $this->assign('searchAp',$_SESSION['searchApOrderHandleSendname']);
+                }else{ //如果没有指定上午或者下午，那取当前时间的上午和下午
+                    $this->assign('searchAp',$this->getAp()); 
+                }
+            }
+
+
+            //获取分公司
+            $company = $this->userInfo['department']; 
+            $where['company'] = $company;
+
+            //导入分页类
+            import('ORG.Util.NewPage');// 导入分页类
+            $total      = $focus->where($where)->count();// 查询满足要求的总记录数   
+            //查session取得page的firstRos和listRows
+            if(isset($_SESSION[$moduleName.'firstRowSearchview'])){
+                $Page->firstRow = $_SESSION[$moduleName.'firstRowSearchview'];
+            }
+            $listMaxRows = C('LIST_MAX_ROWS'); //定义显示的列表函数
+            if(isset($listMaxRows)){
+                $Page->listRows = $listMaxRows;
+            }else{
+                $listMaxRows = 15;
+            } 
+
+            $Page = new NewPage($total,$listMaxRows);
+            $show = $Page->show();
+
+            //查询模块的数据 
+            $selectFields = $listFields;
+            array_unshift($selectFields,$moduleId);
+            $listResult = $focus->field($selectFields)->where($where)->limit($Page->firstRow.','.$Page->listRows)->order("$moduleId desc")->select();
+            //var_dump($focus->getLastSql());
+            // 从数据中列出列表的数据
+            $listviewEntries = $this->getListviewEntity($listResult,$moduleId);
+
+            $this->assign('moduleId',$moduleId);
+            $this->assign('listEntries',$listviewEntries);
+            $this->assign('page',$show);// 赋值分页输出
+
+            $this->display('SendnameProducts/searchviewmenu');
+            $this->display('SendnameProducts/searchview');  //查询的结果显示
+        }
+
+
+        /**根据输入的编码处理订单
+        *  code 输入的编码
+        */
+        public function orderHandleByCode(){
+            //取得模块的名称
+            $moduleName = $this->getActionName();
+            $this->assign('moduleName',$moduleName);   //模块名称   
+
+            //启动当前模块的模型
+            $focus = D($moduleName);
+
+            //分公司的名称
+            $userInfo = $_SESSION['userInfo'];
+            $company = $this->userInfo['department'];   
+
+            //获得处理过了的编码
+            $code = $_REQUEST['code'];
+
+            //定义返回的数组
+            $returnInfo = array();
+
+            /** 先编辑送餐员的编码 ***/
+            //根据编码取得送餐员姓名
+            $sendnameMgrModel = D('Sendnamemgr');
+            $sendnameWhere['code'] = $code; //送餐员的编号
+            //$sendnameWhere['company'] = $company;
+            $sendnameResult = $sendnameMgrModel->field('name,telphone')->where($sendnameWhere)->find();
+            //var_dump($sendnameMgrModel->getLastSql());
+            if($sendnameResult){
+                $sendname = $sendnameResult['name'];
+                $telphone = $sendnameResult['telphone'];
+                $sendtype = $sendnameResult['sendtype'];
+            }else{
+                $returnInfo['error'] = 'error';
+                $returnInfo['msg']  = '没有查到信息';
+                $this->ajaxReturn($returnInfo);
+            }
+            //根据送餐员信息，处理订单
+            $orderformid = $_REQUEST['orderformid'];
+            $orderformData['sendname'] = $sendname;
+            $orderformData['state'] = '已处理';
+            $orderformWhere['orderformid'] = $orderformid;
+            $focus->where($orderformWhere)->save($orderformData);
+
+            //var_dump($telphone);
+            //输入短信表中，如果要发短信的话
+            if(!empty($telphone) and (strlen($telphone) == 11)){
+
+                $orderform = $focus->where("orderformid='$orderformid'")->find();
+                // echo $focus->getLastSql();
+                $smsString = $orderform['address'].'|'.$orderform['ordertxt'].'|'.$orderform['custtime'].'|'.$orderform['telphone'];
+                //计算已经发生的信息量
+                $smsmgr_model = D('Smsmgr');
+                $smscount = $smsmgr_model->where("telphone='$telphone'")->count();
+                if($smscount){
+                    $smscount += 1;
+                }else{
+                    $smscount = 1;
+                }
+                $smsString = $smscount.'|'.$smsString;
+
+                $smsData['telphone'] = $telphone;
+                $smsData['content'] = $smsString;
+                $smsData['firstdate'] = date('Y-m-d H:i:s');
+                $smsData['company'] = $company;
+                $smsData['sendtype'] = '短信';
+                $smsData['sendname'] = $sendname;
+                $smsData['orderformid'] = $orderformid;
+                //var_dump($smsData);
+                //$smsmgr_model->create();
+                $smsmgr_model->add($smsData);
+                //echo $smsmgr_model->getLastSql();
+            }
+
+            //同时写入日志中
+            //记入操作到action中
+            $orderactionModel = D('Orderaction');
+            $orderactionData['orderformid'] = $orderformid;  //订单号
+            $company = $data['company'];
+            $orderactionData['action'] = "订单配给给$$sendname送餐员";
+            $orderactionData['logtime'] = date('H:i:s');
+            //$orderactionModel->create();
+            $result = $orderactionModel->add($orderactionData);
+
+            //定义返回
+            $returnInfo['success'] = 'success';
+            $returnInfo['data'] = $orderformData;
+            $this->ajaxReturn($returnInfo,'JSON');
+
+
+        } 
+
+
+        //根据代码获取送餐员名字
+        public function getSendnameByCode(){
+            //取得模块的名称
+            $moduleName = $this->getActionName();
+            $this->assign('moduleName',$moduleName);   //模块名称   
+
+            //启动当前模块的模型
+            $focus = D($moduleName);
+
+            //取得对应的导航名称
+            $tabName = $focus->getTabName($moduleName);
+            $this->assign('tabName',$tabName);         //导航
+
+            $this->assign('operName','送餐员查询操作');
+
+            //分公司的名称
+            $userInfo = $_SESSION['userInfo'];
+            $company = $userInfo['department'];
+
+            //获得处理过了的编码
+            $code = $_REQUEST['code'];
+
+            //定义返回的数组
+            $returnInfo = array();
+
+            /** 先编辑送餐员的编码 ***/
+            //根据编码取得送餐员姓名
+            $sendnameMgrModel = D('Sendnamemgr');
+            $where['code'] = $code; //送餐员的编号
+            $where['company'] = $company;
+            $sendnameResult = $sendnameMgrModel->field('name,telphone')->where($where)->find();
+            //var_dump($sendnameMgrModel->getLastSql());
+            if($sendnameResult){
+                $sendname = $sendnameResult['name'];
+                $telphone = $sendnameResult['telphone'];
+            }else{
+                $returnInfo['error'] = 'error';
+                $returnInfo['msg']  = '没有查到信息';
+                $this->ajaxReturn($returnInfo);
+            }
+            //根据送餐员信息，处理订单
+            $orderformData['sendname'] = $sendname;
+
+
+            //定义返回
+            $returnInfo['success'] = 'success';
+            $returnInfo['data'] = $orderformData;
+            $this->ajaxReturn($returnInfo,'JSON');
+
+
+        }
+
+        /***
+        * 根据送餐员，查询送餐员的餐的情况
+        */
+        public function searchviewForSendname(){
+
+            //取得模块的名称
+            $moduleName = $this->getActionName();
+            $this->assign('moduleName',$moduleName);   //模块名称   
+
+            //启动当前模块的模型
+            $focus = D($moduleName);
+
+            //取得对应的导航名称
+            $tabName = $focus->getTabName($moduleName);
+            $this->assign('tabName',$tabName);         //导航
+            $this->assign('operName','送餐员送餐情况显示');  
+
+
+            $this->display('SendnameProducts/searchviewmenu');
+            $this->display('SendnameProducts/searchview');  //查询的结果显示
+
+        }
+
+        //根据送餐员，显示送餐员的送餐情况
+        public function getSendnameproductsByName(){
+            //取得模块的名称
+            $moduleName = $this->getActionName();
+            $this->assign('moduleName',$moduleName);   //模块名称   
+
+            //启动当前模块的模型
+            $focus = D($moduleName);
+            
+            $sendname = $_REQUEST['name']; //送餐员姓名
+            $userInfo = $this->userInfo;
+            $company = $userInfo['department'];
+
+            //定义统计表
+            $tongji = array();
+            $productsResult = $focus->Distinct(True)->field('productsname')->select();
+
+            //查询装箱
+            $listHeader = array();
+            foreach($productsResult as $value){
+                $tongji['装箱'][$value['productsname']] = 0;
+                $tongji['已送'][$value['productsname']] = 0;
+                $tongji['剩余'][$value['productsname']] = 0;
+                $listHeader[] = $value['productsname'];
+            }
+            $this->listHeader = $listHeader;
+
+            //查询
+            $where = array();
+            $where['sendname'] = $sendname;
+            $where['company']  = $company;
+            $sendnameProductsResult = $focus->where($where)->select();
+            foreach($sendnameProductsResult as $key => $value){             
+                if($value['type'] == '装箱'){
+                    $tongji['装箱'][$value['productsname']] += $value['number'];
+                }
+                if($value['type'] == '已送'){
+                    $tongji['已送'][$value['productsname']] += $value['number'];
+                }
+            }
+
+
+            //计算剩余
+            foreach($listHeader as $value){
+                $tongji['剩余'][$value] = $tongji['装箱'][$value] - $tongji['已送'][$value]; 
+            }
+
+            $this->tongji = $tongji;
+            $this->display('SendnameProducts/searchviewresult');
+        }
+
+
+    }
+?>

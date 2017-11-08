@@ -19,7 +19,7 @@
             $this->assign('navName',$navName);         //导航名称
 
             $where = array();
-            $where['domain'] = $_SERVER['HTTP_HOST'];
+            $where['domain'] = $this->getDomain();
             //读取节点
             $field = array('id','name','pid');
             $organization = D('organization')->field($field)->where($where)->select();
@@ -86,7 +86,7 @@
             $this->assign('navName',$navName);         //导航名称
 
             $where = array();
-            $where['domain'] = $_SERVER['HTTP_HOST'];
+            $where['domain'] = $this->getDomain();
             //读取节点
             $field = array('id','name','pid');
             $organization = D('organization')->field($field)->where($where)->select();
@@ -170,7 +170,7 @@
             }
             //返回所有的角色
             $where = array();
-            $where['domain'] = $_SERVER['HTTP_HOST'];
+            $where['domain'] = $this->getDomain();
             $this->role = $roleModle->where($where)->select();
 
         }

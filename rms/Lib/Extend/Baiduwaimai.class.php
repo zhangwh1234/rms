@@ -14,25 +14,13 @@ class Baiduwaimai
     private $secret = "";  //'983269a9ba70f146';
     private $url = "http://api.waimai.baidu.com";
 
-    public function __construct(){
+    public function __construct($info){
         //获得百度接入参数
-        $info = $this->baiduwaimaiInfo();
+        $info = $info;
         $this->source = $info['source'];
         $this->secret = $info['secret'];
     }
 
-    //获得百度接入参数
-    public function baiduwaimaiInfo(){
-        $where = array();
-        $where['domain'] = $_SERVER['HTTP_HOST'];
-        $baiduwaimaiModel = D('baiduwaimai');
-        $baiduwaimaiResult = $baiduwaimaiModel->where($where)->find();
-        if($baiduwaimaiResult){
-            return $baiduwaimaiResult;
-        }else{
-            return array();
-        }
-    }
 
     //创建商户的接口
     public function shopinfoCreate($info)
@@ -40,7 +28,7 @@ class Baiduwaimai
         $body = array();
         $body['shop_id'] = $info['shopinfoid'];
         $body['name'] = $info['name'];
-        $body['shop_logo'] = $info['shop_logo'];
+        //$body['shop_logo'] = $info['shop_logo'];
         $body['province'] = $info['province'];
         $body['city'] = $info['city'];
         $body['county'] = $info['county'];
@@ -263,7 +251,7 @@ class Baiduwaimai
         $body = array();
         $body['shop_id'] = $info['shopinfoid'];
         $body['name'] = $info['name'];
-        $body['shop_logo'] = $info['shop_logo'];
+        //$body['shop_logo'] = $info['shop_logo'];
         $body['province'] = $info['province'];
         $body['city'] = $info['city'];
         $body['county'] = $info['county'];
@@ -280,7 +268,7 @@ class Baiduwaimai
         $delivery_region_region_arr = explode(',', $info['delivery_region_region']);
         for ($i = 0; $i < count($delivery_region_region_arr); $i++) {
             $delivery_region_region_tmp['longitude'] = $delivery_region_region_arr[$i];
-                $i=$i +1;
+            $i=$i +1;
             $delivery_region_region_tmp['latitude'] = $delivery_region_region_arr[$i];
             $delivery_region_region_t1[] = $delivery_region_region_tmp;
         }
@@ -882,12 +870,12 @@ class Baiduwaimai
                 '*' =>
                     array(
                         array(
-                            'start' => '10:00',
-                            'end' => '13:00'
+                            'start' => '08:00',
+                            'end' => '13:30'
                         ),
                         array(
-                            'start' => '14:00',
-                            'end' => '19:00'
+                            'start' => '13:31',
+                            'end' => '19:30'
                         )
                     )
             );
@@ -1213,50 +1201,50 @@ class Baiduwaimai
 
     //订单完成操作
     public function ordermgrComplete($info){
-            $body = array();
-            $body['order_id'] =   $info['orderid'];
+        $body = array();
+        $body['order_id'] =   $info['orderid'];
 
-            $signArray = array();
-            //数据体
-            $signArray['body'] = $body;
-            //创建商户命令
-            $signArray['cmd'] = "order.complete";
-            //时间戳
-            $signArray['timestamp'] = time();
-            //版本号
-            $signArray['version'] = 2;
-            //请求唯一标示
-            $signArray['ticket'] = "8C7D975C-9E9B-F8A8-0D8A-D1B5E3ECF786";
-            //合作方账号
-            $signArray['source'] = $this->source;
-            //秘钥
-            $signArray['secret'] = $this->secret;
+        $signArray = array();
+        //数据体
+        $signArray['body'] = $body;
+        //创建商户命令
+        $signArray['cmd'] = "order.complete";
+        //时间戳
+        $signArray['timestamp'] = time();
+        //版本号
+        $signArray['version'] = 2;
+        //请求唯一标示
+        $signArray['ticket'] = "8C7D975C-9E9B-F8A8-0D8A-D1B5E3ECF786";
+        //合作方账号
+        $signArray['source'] = $this->source;
+        //秘钥
+        $signArray['secret'] = $this->secret;
 
 
-            //创建命令
-            $cmdArray = array();
-            //创建商户命令
-            $cmdArray['cmd'] = "order.complete";
-            //时间戳
-            $cmdArray['timestamp'] = $signArray['timestamp'];
-            //版本号
-            $cmdArray['version'] = 2;
-            //请求唯一标示
-            $cmdArray['ticket'] = "8C7D975C-9E9B-F8A8-0D8A-D1B5E3ECF786";
-            //合作方账号
-            $cmdArray['source'] = $this->source;
-            //数据体
-            $cmdArray['body'] = $body;
+        //创建命令
+        $cmdArray = array();
+        //创建商户命令
+        $cmdArray['cmd'] = "order.complete";
+        //时间戳
+        $cmdArray['timestamp'] = $signArray['timestamp'];
+        //版本号
+        $cmdArray['version'] = 2;
+        //请求唯一标示
+        $cmdArray['ticket'] = "8C7D975C-9E9B-F8A8-0D8A-D1B5E3ECF786";
+        //合作方账号
+        $cmdArray['source'] = $this->source;
+        //数据体
+        $cmdArray['body'] = $body;
 
-            //生成签名
-            $cmdArray['sign'] = $this->getSign($signArray);
-            //执行返回的结果
-            $resp = curl_post($this->url, json_encode($cmdArray));
+        //生成签名
+        $cmdArray['sign'] = $this->getSign($signArray);
+        //执行返回的结果
+        $resp = curl_post($this->url, json_encode($cmdArray));
 
-            //将结果转化成数组
-            $returnArray = json_decode($resp, true);
-            $returnData[] = $returnArray['body']['errno'];
-            $returnData[] = $returnArray['body']['error'];
+        //将结果转化成数组
+        $returnArray = json_decode($resp, true);
+        $returnData[] = $returnArray['body']['errno'];
+        $returnData[] = $returnArray['body']['error'];
 
 
         $data = array();

@@ -10,7 +10,8 @@
             'code'=>array('width'=>20),
             'name'=>array('width'=>20),
             'telphone'=>array('width'=>20),
-            'weixin'=>array('width'=>30)
+            'weixin'=>array('width'=>30),
+            'assistantlogin' =>  array('width' => 20)
         );
         //定义查询字段
         var $searchFields = array('name','telphone');
@@ -34,18 +35,48 @@
                     array(
                         'name'=>'weixin','uitype' => 1,'readonly' => 1,'length' => 30
                         ),
-                    ) 
+                    ) ,
+                'LBL_SENDNAMEMGR_ASSISTANT' => array(
+                    array(
+                        'name'=>'assistantpwd','uitype' => 2,'readonly' => 1,'length' => 20
+                    )
+
+                )
         );
         
          //改单的字段
     var $editFields =  array();
         
-    var $detailFields = array();
+    var $detailFields = array(
+        'LBL_SENDNAMEMGR_INFOMATION' => array(
+            array(
+                'name'=>'code','uitype' => 2,'readonly' => 1,'length' => 10
+            ),
+            array(
+                'name'=>'name','uitype' => 1,'readonly' => 1,'length' => 24
+            ),
+            array(
+                'name'=>'telphone','uitype' => 2,'readonly' => 1,'length' => 24
+            ),
+            array(
+                'name'=>'weixin','uitype' => 1,'readonly' => 1,'length' => 30
+            ),
+        ) ,
+        'LBL_SENDNAMEMGR_ASSISTANT' => array(
+            array(
+                'name'=>'assistantpwd','uitype' => 2,'readonly' => 1,'length' => 20
+            ),
+            array(
+                'name'=>'assistantlogin','uitype' => 2,'readonly' => 0,'length' => 20
+            ),
+
+        )
+    );
         
     // 回调方法 ，初始化
     protected function _initialize() {
         $this->editFields = $this->createFields; //编辑字段
-        $this->detailFields = $this->createFields; //浏览字段
+
     }
         
     }

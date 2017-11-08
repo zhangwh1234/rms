@@ -1,0 +1,20 @@
+<?php
+    /**
+    * 发票管理模型
+    * 2014-05-30
+    */
+
+    class InvoiceMgrModel extends CRMEntityModel{
+        protected $trueTableName = 'rms_orderform';
+
+        //定义列表
+        var $listFields = array('invoiceheader','invoicebody','address','ordertxt','telphone','totalmoney','custtime','sendname','company','state','telname','rectime');
+
+
+        //返回主键的名称
+        public function getPk(){
+            return 'orderformid';
+        }
+
+    }
+?>

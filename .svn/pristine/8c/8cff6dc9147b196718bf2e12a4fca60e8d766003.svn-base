@@ -1,0 +1,94 @@
+<?php if (!defined('THINK_PATH')) exit();?><script type="text/javascript"> 
+
+    $(function(){  
+        $('#searchViewForSendname<?php echo ($moduleName); ?> input[name=searchSendcode]').focus();
+
+        //form提交程序
+        $('#searchViewForSendname<?php echo ($moduleName); ?> input[name=searchViewBtn]').bind('click',function(){   
+            //返回选项卡
+            var tab = $('#operation').tabs('getSelected');
+            //var queryString = $('#searchViewForSendname<?php echo ($moduleName); ?>').serialize();
+            var code = $('#searchViewForSendname<?php echo ($moduleName); ?> input[name=searchSendcode]').val();
+            var sendname = $('#searchViewForSendname<?php echo ($moduleName); ?> input[name=searchSendname]').val();
+            //提交表单 
+            url = '__URL__/searchviewForSendname/searchSendcode/'+code+'/searchSendname/'+encodeURI(sendname);
+            $('#operation').tabs('update',{  
+                tab:tab,
+                options:{href:url}                                                
+            });    
+        }) 
+        
+        //按回车不自动提交
+        $('#searchViewForSendname<?php echo ($moduleName); ?> input[name=searchSendcode]').keyup(function(event){
+            if(event.which == 13){
+            	var inputCode = $(this).val();
+                var sendname = $('#searchViewForSendname<?php echo ($moduleName); ?> input[name=searchSendname]').val();
+                var sendnametwo = $('#searchViewForSendname<?php echo ($moduleName); ?> input[name=sendnametwo]').val();
+                if(sendnametwo.length == 0 ){
+                    $.ajax({
+                        type : "GET",
+                        url : "__URL__/orderHandleByCode/code/"+inputCode,
+                        dataType : "json",
+                        success : function(returnData){                 
+                            if(returnData['error'] == 'error'){
+                                $.messager.show({
+                                    title:'提示',
+                                    msg:'输入代码输入有误!',
+                                    height:70,
+                                    timeout:5000,
+                                    showType:'slide',
+                                    style:{
+                                        left:0,right:'',top:'',
+                                        bottom:-document.body.scrollTop-document.documentElement.scrollTop
+                                    }
+                                });
+                                return false;
+                            }
+
+                            if(returnData['success'] == 'success'){ 
+                                handleData = returnData['data'];
+                                $('#searchSendname').attr('value',handleData.sendname);
+                                //判断输入的标准
+                                $('#sendnametwo').attr('value',handleData.sendname);
+                            }
+                        }
+
+                    }); 
+                    return false;
+                }
+                //返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var code = inputCode;
+                var sendname = $('#searchViewForSendname<?php echo ($moduleName); ?> input[name=searchSendname]').val();
+                //提交表单 
+                url = '__URL__/searchviewForSendname/searchSendcode/'+code+'/searchSendname/'+encodeURI(sendname);
+                $('#operation').tabs('update',{  
+                    tab:tab,
+                    options:{href:url}                                                
+                }); 
+                $('#sendnametwo').attr('value','');
+            }
+        })
+    })
+</script>
+
+<div class="searchDiv" style="">
+    <form id="searchViewForSendname<?php echo ($moduleName); ?>" name="searchViewForSendname<?php echo ($moduleName); ?>"  method="post"  style="border: 1px solid white;">
+        <ul class="searchOption" style="height: 10px;">
+            <li>送餐员代码</li>
+            <li><input id="searchSendcode" name="searchSendcode"  class="easyui-numberbox"   style="width:140px"  value="<?php echo ($searchSendcode); ?>" AUTOCOMPLETE="off" /></li>
+            <li>查询送餐员</li>
+            <li><input id="searchSendname" name="searchSendname"  type="text" readonly="readonly"   style="width:240px"  value="<?php echo ($searchSendname); ?>" />
+            	<input id="sendnametwo" name="sendnametwo" value="" type="hidden">
+            </li>
+            <li>&nbsp;</li>
+            <li><select name="searchAp">
+                    <?php if($searchAp): ?><option value="<?php echo ($searchAp); ?>"><?php echo ($searchAp); ?></option><?php endif; ?>
+                    <option value="上午">上午</option>
+                    <option value="下午">下午</option>
+                </select>
+            </li>
+            <li><input id="searchViewBtn" name="searchViewBtn" type="button" class="crmbutton small create"  value=" 查  询  " />&nbsp;</li>
+        </ul>  
+    </form>
+</div>

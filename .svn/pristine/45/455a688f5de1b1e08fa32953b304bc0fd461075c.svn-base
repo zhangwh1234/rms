@@ -1,0 +1,127 @@
+<style type="text/css">
+
+    /*定义备注字段大小*/
+    #beizhuOrderHandle .l-btn-text{
+        font-size: 16px;
+        color: #33338c;
+        margin-top: 2px;
+    }
+
+    .orderHandleCls{
+        font-size: 14px;
+        float:left;
+    }
+
+    .orderHandleDetailview{
+        float:left;
+        font-size: 16px;
+        margin-left: 5px;
+        line-height: 28px;
+    }
+
+    #otherInfoOrderHandle{
+        height: 18px;
+        padding-left: 20px;
+        margin-top: 2px;
+        font-size: 16px;
+        border-bottom: 1px solid black;
+    }
+
+    #orderHandleMonit{
+        height: 18px;
+        padding-left: 20px;
+        margin-top: 2px;
+        font-size: 16px;
+    }
+
+    /*显示总金额*/
+    #totalMoney{
+        font-size: 14px;
+        margin-top: 4px;
+    }
+</style>
+
+
+<script type="text/javascript">
+
+    //定义订单Orderform处理表
+    var invoiceMgrGrid = $('#InvoiceMgrTable').datagrid({ 
+        nowrap:"true",  
+        fitColumns:"true",
+        singleSelect:"true",
+        autoRowHeight:"true",
+        striped:"true",        
+        border:"false", 
+        rownumbers:"false",  //显示行号
+        showFooter:'true',
+        pagination:true,
+        pagePosition:'bottom', 
+        toolbar:'#tb',  
+        url : "__URL__/getInvoiceMgrAll",   
+        columns:[[  
+        {field:'orderformid',title:'id',hidden:'true',width:100},  
+        {field:'invoiceheader',title:'发票抬头',width:100,align:'left'},
+        {field:'invoicebody',title:'发票内容',width:40,align:'left'},
+        {field:'address',title:'地址',width:100,align:'left'},  
+        {field:'ordertxt',title:'数量规格',width:80,align:'center'},          
+        {field:"totalmoney",width:30,title:'金额'},
+        {field:"rectime", width:30,title:'录入时间'},
+        {field:"operation", width:50,title:'操作',align:'center',formatter: function(value,rowData,rowIndex){
+                var operation; 
+                operation = "<a href='javascript:void(0);' onclick='updateTab(&apos;__URL__/createview/record/"+rowData.orderformid+"/returnAction/listview&apos;)' class='orderHandleDetailview' >开票</a>&nbsp;"; 
+                return operation;
+            }
+        }
+        ]],
+        //onSelect:selectDataGridRow,   //选择行事件
+        //onClickRow:clickDataGridRow   //单击行的处理事件
+    });
+
+    //定义订单分页表
+    var pager = $('#InvoiceMgrTable').datagrid().datagrid('getPager') 
+    pager.pagination({
+        showRefresh:false,
+        layout:['first','links','last'],
+        buttons:[{
+            id:'beizhuOrderHandle',
+            text:'备注:'
+
+        }]
+    }); 
+
+
+    //启动启动，取得订单
+    function GetInvoiceMgr(){   
+        $.ajax({
+            type : "GET",
+            url : "__URL__/getInvoiceMgrAll",
+            dataType : "json",
+            success : function(data){ 
+                invoiceMgrGrid.datagrid('loadData', data); 
+            }
+        }) 
+    } 
+
+    //*******************************************
+    //通讯服务器，取得订单数据
+    setTimeout(function(){
+        GetInvoiceMgr();             
+    },500);
+
+    //定时更新订单
+    var refreshInvoiceMgr = setInterval(function(){
+        GetInvoiceMgr();
+    },50000);
+   
+</script>
+
+<div id="orderHandle" class="easyui-layout" fit="true" border="false">
+    <div data-options="region:'center',border:false" style="padding:0px;background:#eee;">
+        <table id="InvoiceMgrTable" fit="true"></table>
+    </div>
+</div>
+
+
+
+
+

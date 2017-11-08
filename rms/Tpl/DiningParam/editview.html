@@ -1,0 +1,198 @@
+<style>
+    .moduleOperater {
+        clear: both;
+        margin: 0px;
+        padding: 0px;
+        overflow: scroll;
+    }
+</style>
+<div class="moduleMenu">
+    <ul>
+        <li>{$Think.lang.$navName}</li>
+        <li><a href="javascript:void(0);" class="moduleName" onclick="IndexIndexModule.updateOperateTab('__URL__/listview');">&nbsp;&gt;{$Think.lang.$moduleName}</a></li>
+        <li>&nbsp;&gt;编辑操作</li>
+        <li style="width: 50px;">&nbsp;</li>
+        <li style="margin-left: 10px;"><a href="javascript:;" onclick="{$moduleName}EditviewModule.update();"><img
+                src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);" onclick="{$moduleName}EditviewModule.update();">保存<span></span></a></li>
+        <li style="width: 50px;">&nbsp;</li>
+        <li style="margin-left: 1px;"><a href="javascript:void(0);" onclick="IndexIndexModule.updateOperateTab('__URL__/detailview')" ><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);" class="moduleName" onclick="IndexIndexModule.updateOperateTab('__URL__/detailview');">返回查看 </a></li>
+
+        <li style="float: right;margin-right: 40px;"><a href="javascript:void(0);" class="moduleName" onclick="IndexIndexModule.closeOperateTab('__URL__/listview');">关闭</a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="IndexIndexModule.closeOperateTab();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
+    </ul>
+</div>
+<div class="moduleOperater">
+    <form id="OrderFormEditviewForm" method="post">
+        <input type="hidden" name="returnAction" value="{$returnAction}"/>
+        <input type="hidden" name="record" value="{$record}"/>
+        <table border="0" cellspacing="0" cellpadding="0" width="99%" align="center">
+            <tr>
+                <td>
+                    <table border="0" cellspacing="0" cellpadding="3" width="100%" class="small">
+                        <tr>
+                            <td class="dvtTabCache" style="width:20px" nowrap>&nbsp;</td>
+                            <td class="dvtSelectedCell" align="center" nowrap> 编辑 </td>
+                            <td class="dvtTabCache" style="width:80%">&nbsp;</td>
+                        <tr>
+                    </table>
+                </td>
+            </tr>
+
+            <tr>
+                <td valign="top" align="center">
+                    <div class="BaseForm" style="border: 1px solid #e0dddd; background: white;">
+                        <table style="BORDER-COLLAPSE: collapse;font-size:16px;" borderColor="#CCCCCC" cellSpacing="0"
+                               width="100%"
+                               align="center" border="1">
+                            <tr>
+                                <td colspan="4" class="tabBlockViewHeader">
+                                    支付设置信息
+                                </td>
+                            </tr>
+                            <tr style="background: #FFFFFF;">
+                                <td width="15%" align="right" class="createFormLeftTd">
+                                    <span style="font-size:14px;margin-right:10px;">支付类型:</span>
+                                </td>
+                                <td width="50%" align="left" class="createFormRightTd">
+                                    &nbsp;&nbsp;&nbsp;
+                                    <label>现金</label>
+                                    <input type="checkbox" name="paytype" style="font-size:16px;"  />
+                                    &nbsp;&nbsp;&nbsp;
+                                    <label>扫码</label>
+                                    <input type="checkbox" name="paytype" style="font-size:16px;"  />
+                                    &nbsp;&nbsp;&nbsp;
+                                    <label>赠券</label>
+                                    <input type="checkbox" name="paytype" style="font-size:16px;"  />
+                                </td>
+                            </tr>
+
+                        </table>
+
+                        <tr style="line-height: 5px;">
+                            <td>&nbsp;</td>
+                        </tr>
+
+                        <tr style="line-height: 5px;">
+                            <td colspan="4" align="center">
+                                <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-other-tick'"
+                                   onclick="OrderFormEditviewModule.update();"
+                                   style="width:100px;margin-right:40px;">确认</a>
+                                <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-arrow-cross'"
+                                   onclick="IndexIndexModule.updateOperateTab('__URL__/{$returnAction}');"
+                                   style="width:100px;">放弃</a>
+                            </td>
+                        </tr>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<script>
+    var DiningParamEditviewModule = {
+
+        //初始化
+        init :function(){
+            this.quickKeyboardAction();
+        },
+
+        //保存记录
+        update: function () {
+            $('#ProductsEditviewForm').form('submit', {
+                url: '__URL__/update',
+                onSubmit: function () {
+                    var isValid = $(this).form('validate');
+                    if (!isValid) {
+                        return false;
+                    }
+                },
+                success: function (res) {
+                    var data = eval('(' + res + ')');
+                    if(!data.status){
+                        $.app.method.tip('提示信息', data.info, 'error');
+                    }else{
+                        $.app.method.tip('提示信息', data.info, 'info');
+                        IndexIndexModule.updateOperateTab(data.url);
+                    }
+                }
+            });
+        },
+
+        //新建的快捷操作
+        quickKeyboardAction: function () {
+            // ctrl+9快捷键,新建公告
+            Mousetrap.bind(['ctrl+9','ctrl+f9','f9'], function(e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '产品' && ($('#ProductsAction').val() == 'Editview')) {
+                    ProductsEditviewModule.update();
+                };
+            });
+
+            // ctrl+4快捷键,放弃
+            Mousetrap.bind(['ctrl+4', 'ctrl+f4', 'f4'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '产品' && ($('#ProductsAction').val() == 'Editview')) {
+                    IndexIndexModule.updateOperateTab('__URL__/listview');
+                };
+            });
+
+            //定制键盘移动方案
+            $('#code').bind('keydown',function(event){ //联系人
+                if((event.which == 13) || (event.which == 40)){
+                    $('#name').focus();
+                }
+                if(event.which == 38){
+
+                }
+            })
+
+            //定制键盘移动方案
+            $('#name').bind('keydown',function(event){ //联系人
+                if((event.which == 13) || (event.which == 40)){
+                    $('#shortname').focus();
+                }
+                if(event.which == 38){
+                    $('#code').focus();
+                }
+            })
+
+            //定制键盘移动方案
+            $('#shortname').bind('keydown',function(event){ //联系人
+                if((event.which == 13) || (event.which == 40)){
+                    $('#price').focus();
+                }
+                if(event.which == 38){
+                    $('#name').focus();
+                }
+            })
+
+            //定制键盘移动方案
+            $('#price').bind('keydown',function(event){ //联系人
+                if((event.which == 13) || (event.which == 40)){
+                    $('#brief').focus();
+                }
+                if(event.which == 38){
+                    $('#shortname').focus();
+                }
+            })
+
+        }
+    }
+
+    $(function () {
+
+        DiningParamEditviewModule.init();
+        setTimeout(function(){
+            //$('#DiningParamEditviewForm input[name=code]').focus();
+        },100);
+
+    })
+</script>
+

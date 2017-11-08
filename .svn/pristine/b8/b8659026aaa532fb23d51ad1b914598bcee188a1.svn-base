@@ -1,0 +1,256 @@
+<?php
+    /**
+    * 装箱单模块
+    * 2014-5-25开发
+    */
+
+    class ZhuangxiangAction extends ModuleAction{
+        //定义listview执行路径
+        var $listviewPath = false;
+        //定义listview的菜单路径
+        var $listviewMenuPath = true;  
+
+        //定义一个空的函数，用于返回主程序需要的一些参数
+        public function returnMainFnPara(){
+            //引入js
+            $this->display('Zhuangxiang/js');
+        }
+
+        //根据代码获取送餐员名字
+        public function getSendnameByCode(){
+
+            //分公司的名称
+            $userInfo = $_SESSION['userInfo'];
+            $company = $userInfo['department'];
+
+            //获得处理过了的编码
+            $code = $_REQUEST['code'];
+
+            //定义返回的数组
+            $returnInfo = array();
+
+            /** 先编辑送餐员的编码 ***/
+            //根据编码取得送餐员姓名
+            $sendnameMgrModel = D('Sendnamemgr');
+            $where['code'] = $code; //送餐员的编号
+            $where['company'] = $company;
+            $sendnameResult = $sendnameMgrModel->field('name,telphone')->where($where)->find();
+            //var_dump($sendnameMgrModel->getLastSql());
+            if($sendnameResult){
+                $sendname = $sendnameResult['name'];
+                $telphone = $sendnameResult['telphone'];
+            }else{
+                $returnInfo['error'] = 'error';
+                $returnInfo['msg']  = '没有查到信息';
+                $this->ajaxReturn($returnInfo);
+            }
+            //根据送餐员信息，处理订单
+            $orderformData['sendname'] = $sendname;
+
+
+            //定义返回
+            $returnInfo['success'] = 'success';
+            $returnInfo['data'] = $orderformData;
+            $this->ajaxReturn($returnInfo,'JSON');
+        }
+
+        //保存产品数据等其他数据
+        function  save_slave_table($record){
+            //订单号
+            $moduleId = 'zhuangxiangid';
+
+            $zhuangxiangproductsModel = D('Zhuangxiangproducts');
+            //先清掉数据
+            $zhuangxiangproductsModel->where("zhuangxiangid=$record")->delete();
+
+            $zhuangxiangTxt = '';
+            $totalmoney = 0;
+            //保存地址的数量
+            $productsLength = $_REQUEST['productsLength'];
+            for($i=1;$i<= $productsLength;$i++){
+                $code = $_REQUEST['productsCode_'.$i];
+                $name = $_REQUEST['productsName_'.$i];
+                $shortname = $_REQUEST['productsShortName_'.$i];
+                $price = $_REQUEST['productsPrice_'.$i];
+                $number = $_REQUEST['productsNumber_'.$i];
+                $money = $_REQUEST['productsMoney_'.$i]; 
+                $data = array();                
+                $data['code'] = $code;
+                $data['name'] = $name;
+                $data['shortname'] = $shortname;
+                $data['price'] = $price;
+                $data['number'] = $number;
+                $data['money'] = $money;
+                $data['zhuangxiangid'] = $record;
+                if( !empty($name) and  !empty($number)){
+                    $zhuangxiangproductsModel->create();
+                    $zhuangxiangproductsModel->add($data);
+                    $zhuangxiangTxt .= $number . '×' . $shortname. ' ';
+                    $totalmoney += $number * $price; 
+                }   
+            }  
+
+            //接线员的姓名
+            $userInfo = $_SESSION['userInfo'];
+            $name = $userInfo['truename'];
+
+            //记入操作到action中
+            $orderactionModel = D('Zhuangxiangaction');
+            $action['zhuangxiangid'] = $record;  //订单号
+            $action['action'] = $name . ' 新建 装箱单 '.$orderTxt;
+            $action['logtime'] = date('H:i:s');
+            $orderactionModel->create();
+            $result = $orderactionModel->add($action);
+            // echo $orderaction_model->getLastSql();
+
+            //保存数量规格
+            $data = array();
+            $data['zhuangxiangtxt'] = $zhuangxiangTxt;
+            $data['totalmoney'] = $totalmoney;
+            $zhuangxiangModel = D('Zhuangxiangform');
+            $where = array();
+            $where[$moduleId] = $record;
+            $result = $zhuangxiangModel->where($where)->save($data);
+
+            //取得分公司名称
+            $company = $this->userInfo['department'];
+            //保存到送餐员餐售情况
+            $sendnameproductsModel = D('Sendnameproducts');
+            $where = array();
+            $where['extid'] = $record;
+            $sendnameproductsModel->where($where)->delete();
+            $productsLength = $_REQUEST['productsLength'];
+            for($i=1;$i<= $productsLength;$i++){
+                $code = $_REQUEST['productsCode_'.$i];
+                $name = $_REQUEST['productsName_'.$i];
+                $shortname = $_REQUEST['productsShortName_'.$i];
+                $price = $_REQUEST['productsPrice_'.$i];
+                $number = $_REQUEST['productsNumber_'.$i];
+                $money = $_REQUEST['productsMoney_'.$i]; 
+                $data = array();                
+                $data['productsname'] = $name;
+                $data['shortname'] = $shortname;
+                $data['type'] = '装箱';
+                $data['number'] = $number;
+                $data['extid'] = $record;
+                $data['sendname'] = $_REQUEST['name']; //送餐员
+                $data['company'] = $company;
+                $data['date'] = date('Y-m-d');
+                $data['ap'] = $this->getAp();
+                if( !empty($name) and  !empty($number)){
+                    $sendnameproductsModel->create();
+                    $sendnameproductsModel->add($data);
+                }   
+            } 
+
+        }
+
+        //保存产品数据等其他数据
+        function  update_slave_table($record){
+            $this->save_slave_table($record);
+        }
+
+        //插入，补充数据的回调函数
+        public function autoParaInsert(){
+            $apTime = date('H'); 
+            if($apTime > 15){
+                $ap = '下午';
+            }else{
+                $ap = '上午';
+            }
+            //接线员的姓名
+            $userInfo = $this->userInfo;
+            $name = $userInfo['truename'];
+            $company = $userInfo['department'];
+            $auto = array ( 
+            array('recdate',date('Y-m-d')),  //录入日期
+            array('rectime',date('H:i:s')), // 对录入时间
+            array('inputname',$name),   //输入者
+            array('company',$company),   //分公司
+            array('ap',$ap),
+            array('state','装箱')                
+            );
+
+            return $auto;
+
+        }
+
+        public function get_slave_table($record){
+            //取得产品信息
+            $zhuangxiangproductsModel = D('Zhuangxiangproducts');
+            $zhuangxiangproducts = $zhuangxiangproductsModel->field('zhuangxiangid,code,name,shortname,price,number,money')->where("zhuangxiangid=$record")->select();
+            //dump($orderproducts);
+            $this->assign('orderproducts',$zhuangxiangproducts);   
+
+            //取得订单日志
+            $zhuangxiangactionModel =D('Zhuangxiangaction');
+            $zhuangxiangaction = $zhuangxiangactionModel->where("zhuangxiangid=$record")->select();
+            $this->assign('orderaction',$zhuangxiangaction);
+
+            //单独取得订单金额 
+            $orderform_model = D('Orderform');
+            $orderform = $orderform_model->field('totalmoney')->where("orderformid=$record")->select();
+            $totalmoney = $orderform[0]['totalmoney'];
+            $this->assign('totalmoney',$totalmoney);  
+
+
+        }
+
+
+        /*取得打印需要的数据*/
+        function getPrintOrder(){
+            //取得订单号
+            $record = $_REQUEST['zhuangxiangid'];
+            //查询订单
+            $zhuangxiangformModel = D('Zhuangxiangform');
+            $where = array();
+            $where['zhuangxiangid'] = $record;
+            $zhuangxiangResult = $zhuangxiangformModel->where($where)->find();
+            //查询订货
+            $zhuangxiangproductsModel = D('Zhuangxiangproducts');
+            $zhuangxiangproducts = $zhuangxiangproductsModel->where($where)->select();
+
+            $order['zhuangxiangform'] = $zhuangxiangResult;
+            $order['zhuangxiangproducts'] = $zhuangxiangproducts;
+            $this->ajaxReturn($order,'JSON');
+
+        }
+
+
+        /* 设定订单已打印状态*/
+        function setOrderPrinted(){
+            //取得订单号
+            $record = $_REQUEST['zhuangxiangid'];
+            //查询订单
+            $zhuangxiangformModel = D('Zhuangxiangform');
+            $data = array();
+            $data['state'] = '已打印';
+            $where = array();
+            $where['zhuangxiangid'] = $record;
+            $result  = $zhuangxiangformModel->where($where)->save($data);
+
+            //同时写入日志中
+            //记入操作到action中
+            $zhuangxiangactionModel = D('Zhuangxiangaction');
+            $action = array();
+            $action['zhuangxiangid'] = $record;  //订单号
+            //$company = $data['company'];
+            $action['action'] = "装箱单打印:"+$record;
+            $action['logtime'] = date('H:i:s');
+            $zhuangxiangactionModel->create();
+            $result = $zhuangxiangactionModel->add($action);
+            $this->ajaxReturn(array());
+
+        }
+        
+        /**
+        * 返回listview的where
+        */
+        public function returnWhere(){
+            $company = $this->userInfo['department'];
+            $where = array();
+            $where['company'] = $company;
+            return $where;
+        }
+    }
+?>

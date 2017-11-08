@@ -1,0 +1,48 @@
+<?php
+  
+  class CompanyMgrModel extends CRMEntityModel{
+      
+      //定义表
+        protected $tableName = 'companymgr';
+        //定义列表焦点
+        var $fieldsFocus  = 'name';
+        //定义列表字段
+        var $listFields = array('name','distributionCode');
+               
+        //新建的字段
+        var $createFields = array(
+                'LBL_COMPANYMGR_INFORMATION' => array(
+                    array(
+                        'name'=>'name','uitype' => 1,'readonly' => 1,'length' => 24
+                        ),
+                    array(
+                        'name'=>'distributionCode','uitype' => 1,'readonly' => 1,'length' => 24
+                        ),
+                    ) 
+        );
+        
+        //浏览的字段
+        var $detailFields = array(
+                'LBL_COMPANYMGR_INFORMATION' => array(
+                    array(
+                        'name'=>'name','uitype' => 1,'readonly' => 1,'length' => 24
+                        ),
+                    array(
+                        'name'=>'distributionCode','uitype' => 1,'readonly' => 1,'length' => 24
+                        ),
+                    ) 
+        );
+        
+        //编辑的字段
+        var $editFields = array(
+                'LBL_COMPANYMGR_INFORMATION' => array(
+                    array(
+                        'name'=>'name','uitype' => 1,'readonly' => 1,'length' => 24
+                        ),
+                    array(
+                        'name'=>'distributionCode','uitype' => 1,'readonly' => 1,'length' => 24
+                        ),
+                    ) 
+        );
+  }
+?>

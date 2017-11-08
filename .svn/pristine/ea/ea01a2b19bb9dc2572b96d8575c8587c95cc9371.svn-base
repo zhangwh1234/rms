@@ -1,0 +1,16 @@
+<div class="errorInfoCls">
+    <div class="system-message">
+        <present name="message">
+            <h1>:)</h1>
+            <p class="success">{$message}</p>
+            <else/>
+            <h1>:(</h1>
+            <p class="error">{$error}</p>
+        </present>
+        <p class="detail"></p>
+        <p class="jump" style="font-size: 16px;">
+            页面 <a id="href" href="javascript:;" onclick="updateTab('{$jumpUrl}');" style="color: red;font-size: 16px;">返回</a> 
+        </p>
+    </div>
+</div>
+

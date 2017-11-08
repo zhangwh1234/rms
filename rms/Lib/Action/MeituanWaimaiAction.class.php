@@ -31,7 +31,7 @@ class MeituanWaimaiAction extends ModuleAction{
     // 商店信息管理列表查看
     public function shopinfoListview() {
         $where = array ();
-        $where ['domain'] = $_SERVER ['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
         $meituanshopinfoModel = D ( 'meituanshopinfo' );
         $total = $meituanshopinfoModel->where ( $where )->count ();
         $meituanshopinfoResult = $meituanshopinfoModel->where ( $where )->select ();
@@ -101,7 +101,7 @@ class MeituanWaimaiAction extends ModuleAction{
         $data ['takeout_number'] = $_REQUEST ['takeout_number'];
         $data ['org_code'] = $_REQUEST ['org_code'];
         $data ['order_threshold'] = $_REQUEST ['order_threshold'];
-        $data ['domain'] = $_SERVER ['HTTP_HOST'];
+        $data ['domain'] = $this->getDomain();
         $data ['uploadstate'] = 1;
 
         $elemeshopinfoModel = D ( 'elemeshopinfo' );
@@ -296,7 +296,7 @@ class MeituanWaimaiAction extends ModuleAction{
     public function categorymgrListview(){
         $meituancategorymgrModel = D ( 'meituancategorymgr' );
         $where = array();
-        $where['domain'] = $_SERVER['HTTP_HOST'];
+        $where['domain'] = $this->getDomain();
         $total = $meituancategorymgrModel->count ();
         $meituancategorymgrResult = $meituancategorymgrModel->select ();
         // 从数据中列出列表的数据
@@ -316,7 +316,7 @@ class MeituanWaimaiAction extends ModuleAction{
      */
     public function categorymgrCreateview(){
         $where = array ();
-        $where ['domain'] = $_SERVER ['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
 
         $meituanshopinfoModel = D ( 'meituanshopinfo' );
         $shopinfoResult = $meituanshopinfoModel->where ( $where )->select ();
@@ -330,7 +330,7 @@ class MeituanWaimaiAction extends ModuleAction{
     public function categorymgrSave(){
         $data = array ();
         $data = $_REQUEST;
-        $data ['domain'] = $_SERVER ['HTTP_HOST'];
+        $data ['domain'] = $this->getDomain();
         $data['app_poi_code'] =  0;
         $meituancategorymgrModel = D ( 'meituancategorymgr' );
         $meituancategorymgrModel->create ();
@@ -376,7 +376,7 @@ class MeituanWaimaiAction extends ModuleAction{
     public function categorymgrEditUpdate(){
         $data = array ();
         $data = $_REQUEST;
-        $data ['domain'] = $_SERVER ['HTTP_HOST'];
+        $data ['domain'] = $this->getDomain();
         $where = array();
         $where['categoryid'] = $_REQUEST['categoryid'];
         $meituancategorymgrModel = D ( 'meituancategorymgr' );
@@ -421,7 +421,7 @@ class MeituanWaimaiAction extends ModuleAction{
     public function menumgrListview(){
         $meituanmenumgrModel = D ( 'meituanmenumgr' );
         $where = array();
-        $where['domain'] = $_SERVER ['HTTP_HOST'];
+        $where['domain'] = $this->getDomain();
         $total = $meituanmenumgrModel->where($where)->count ();
         $meituanmenumgrResult = $meituanmenumgrModel->where($where)->select ();
         // 从数据中列出列表的数据
@@ -441,7 +441,7 @@ class MeituanWaimaiAction extends ModuleAction{
      */
     public function menumgrCreateview(){
         $where = array ();
-        $where ['domain'] = $_SERVER ['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
         $meituanshopinfoModel = D ( 'meituanshopinfo' );
         $shopinfoResult = $meituanshopinfoModel->where ( $where )->select ();
         $this->assign ( 'shopinfo', $shopinfoResult );
@@ -480,7 +480,7 @@ class MeituanWaimaiAction extends ModuleAction{
             }
         }
 
-        $data ['domain'] = $_SERVER ['HTTP_HOST'];
+        $data ['domain'] = $this->getDomain();
         $meituanmenumgrModel = D ( 'meituanmenumgr' );
         $meituanmenumgrModel->create ();
         $meituanmenumgrResult = $meituanmenumgrModel->add ( $data );
@@ -517,7 +517,7 @@ class MeituanWaimaiAction extends ModuleAction{
         $meituanmenumgrResult = $meituanmenumgrModel->where ( $where )->select ();
         // 取得shopid的商户名称
         $where = array ();
-        $where ['domain'] = $_SERVER ['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
         $where ['shopinfoid'] = $meituanmenumgrResult [0] ['shop_id'];
         $fields = array (
             'shopinfoid',
@@ -528,7 +528,7 @@ class MeituanWaimaiAction extends ModuleAction{
         $this->assign ( 'shopinfoid_poi_name', $shopinfoResult [0] ['poi_name'] );
         // 取得所有商户号和名称
         $where = array ();
-        $where ['domain'] = $_SERVER ['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
 
         $meituanshopinfoModel = D ( 'meituanshopinfo' );
         $shopinfoResult = $meituanshopinfoModel->where ( $where )->find ();

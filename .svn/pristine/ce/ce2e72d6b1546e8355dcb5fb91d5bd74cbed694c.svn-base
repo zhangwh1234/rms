@@ -1,0 +1,190 @@
+
+<script type="text/javascript">
+    //定义当前的导航名
+    var category = '#{$category}_subnav';
+</script>
+<style type="text/css">
+
+</style>
+{//导航菜单}
+<div id="nav">
+    <div id="mainnav">
+        <ul>
+            <volist name='navmenu' id='tab' >
+                <if condition="$key eq $category">
+                    <li> <a class="select" href="javascript:void(0);" onclick="clickTabMenu('{$Think.lang.$key}','{$key}_subnav',this);" >{$Think.lang.$key}</a></li>
+                    <else/>
+                    <li> <a href="javascript:void(0);"  onclick="clickTabMenu('{$Think.lang.$key}','{$key}_subnav',this);" >{$Think.lang.$key}</a></li>
+                </if>
+            </volist>
+        </ul>
+    </div>
+    <div id="subnav">
+        <span>子菜单:</span>
+        <volist name='navmenu' id='tab'>
+            <if condition="$key eq $category">
+                <ul id="{$key}_subnav">
+                    <volist name="tab" id="sub">
+                        <li><a  href="javascript:void(0);" onclick="clickSubMenu('__APP__/{$sub}','{$Think.lang.$sub}','{$key}_subnav',this);">{$Think.lang.$sub}</a></li>
+                    </volist>
+                </ul>
+                <else/>
+                <ul id="{$key}_subnav" style="display: none;">
+                    <volist name="tab" id="sub">
+                        <li><a href="javascript:void(0);" onclick="clickSubMenu('__APP__/{$sub}','{$Think.lang.$sub}','{$key}_subnav',this);">{$Think.lang.$sub}</a></li>
+                    </volist>
+                </ul>
+            </if>
+        </volist>
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+
+
+    $(function(){
+        $('#menu').panel({
+            border:false
+        });
+
+
+    })
+
+    //点击导航菜单
+    function clickTabMenu(title,bottomMenu,obj){   //       
+        var t =  $('#operation').tabs('exists',title);
+        if(t){
+            $('#operation').tabs('select',title);
+            return;
+        }
+
+        //选中，改变颜色
+        $("#mainnav a").removeClass("select");
+        $(obj).addClass('select');  
+
+
+
+        //显得当前的模块
+        $(category).hide();
+        //显示底部菜单
+        $('#'+bottomMenu).show();
+        //设置当前的底部菜单
+        category = '#'+ bottomMenu;
+    }
+
+    //点击子菜单
+    function clickSubMenu(url,title,bottomMenu,obj){
+        var t =  $('#operation').tabs('exists',title);
+        if(t){
+            $('#operation').tabs('select',title);
+            return;
+        }
+
+        //选中，改变颜色
+        $("#subnav a").removeClass("select");
+        $(obj).addClass('select');  
+
+        //添加一个选项卡面板
+        $('#operation').tabs('add',{ 
+            closable:false, 
+            title:title,  
+            href:url,  
+            closable:false
+        });
+
+    }
+</script> 
+
+<script type="text/javascript">
+
+    var startModuleString = '{$startModule}';  //模块名称
+    var startModuleTitleString = '{$startModuleTitle}';  //模块标题
+    var startModule = explode(startModuleString,',');  //分割
+    var startModuleTitle = explode(startModuleTitleString,',');
+    $(function(){
+        //定义tab
+        $('#operation').tabs({  
+            scrollIncrement:200,
+            height:850,
+            fit:true,
+            border:false
+
+        }); 
+
+        if(!startModuleString){
+            $('#operation').tabs('add',{  
+                title:'公告',            
+                href:'__APP__/Notice',  
+                closable:false  
+            });
+            return;
+        }   
+
+        $.each(startModule,function(key,value){
+            //添加一个选项卡面板  
+            $('#operation').tabs('add',{  
+                title:startModuleTitle[key],            
+                href:'__APP__/'+value,  
+                closable:false  
+            });
+        })
+        return;
+
+        //添加一个选项卡面板  
+        $('#operation').tabs('add',{  
+            title:'公告',            
+            href:'__APP__/'+startModule[moduleName],  
+            closable:false  
+        });
+
+
+        return;
+
+        $('#operation').tabs('add',{  
+            title:'角色管理',            
+            href:'__APP__/User',  
+            closable:false  
+        });
+    })
+
+    //分割函数
+    function explode(inputstring, separators, includeEmpties) {
+        inputstring = new String(inputstring);
+        separators = new String(separators);
+
+        if(separators == "undefined") {
+            separators = " :;";
+        }
+
+        fixedExplode = new Array(1);
+        currentElement = "";
+        count = 0;
+
+        for(x=0; x < inputstring.length; x++) {
+            str = inputstring.charAt(x);
+            if(separators.indexOf(str) != -1) {
+                if ( ( (includeEmpties <= 0) || (includeEmpties == false)) && (currentElement == "")) {
+                }
+                else {
+                    fixedExplode[count] = currentElement;
+                    count++;
+                    currentElement = "";
+                }
+            }
+            else {
+                currentElement += str;
+            }
+        }
+
+        if (( ! (includeEmpties <= 0) && (includeEmpties != false)) || (currentElement != "")) {
+            fixedExplode[count] = currentElement;
+        }
+        return fixedExplode;
+    }
+
+
+</script>
+
+

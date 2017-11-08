@@ -1,0 +1,19 @@
+<div class="moduleMenu">
+    <ul>
+        <li>{$Think.lang.$tabName}</li>
+        <li><a href="javascript:void(0);" class="moduleName" onclick="updateTab('__URL__/listview');">&nbsp;&gt;{$Think.lang.$moduleName}</a></li>
+        <li>&nbsp;&gt;查看操作</li>
+        <li style="width: 50px;">&nbsp;</li>
+        
+        <li style="margin-left: 10px;"><a href="javascript:void(0);" onclick="updateTab('__APP__/{$moduleName}/createview');"><img src=".__PUBLIC__/Images/newBtn.gif" alt="" title="" border="0"></a></li>
+        <li><a id="create{$moduelName}" href="javascript:void(0);"  onclick="updateTab('__APP__/{$moduleName}/createview');">新建<span>^1</span></a></li>
+        
+        <li style="margin-left: 10px;"><a href="javascript:;" onclick="updateTab('__URL__/{$returnAction}');" ><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);"  onclick="updateTab('__URL__/{$returnAction}');">返回列表<span>^4</span></a></li>
+        
+
+        <li style="float: right;margin-right: 60px;"><a href="javascript:void(0);"   onclick="closeTab();" >关闭</a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="closeTab();"><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <div style="clear:both;"></div>
+    </ul>
+</div>

@@ -1,0 +1,104 @@
+<?php
+/**
+    * 群发消息系统
+    */
+class MessagesAction extends ModuleAction {
+	// 定义列表的操作
+	var $listviewPath = false;
+	// 定义查看的操作
+	var $detailviewPath = false;
+	
+	// 返回消息
+	public function getMessages() {
+		// 取得模块的名称
+		$moduleName = $this->getActionName ();
+		$this->assign ( 'moduleName', $moduleName ); // 模块名称
+		                                             
+		// 启动当前模块的模型
+		$focus = D ( $moduleName );
+		
+		// 查询当前是否有最新的消息
+		$filed = array (
+				'messagesid',
+				'content',
+				'sender',
+				'time' 
+		);
+		$where = array ();
+		$where ['status'] = 0;
+		$where ['sender'] = $this->userInfo ['name'];
+		$where ['domain'] = $_SERVER['HTTP_HOST'];
+		$newMsg = $focus->field ( $filed )->where ( $where )->limit ( 0, 1 )->select ();
+		if (count ( $newMsg )) {
+			$returnMsg = array (
+					$newMsg [0] ['content'] 
+			);
+			$focus->create ();
+			$data ['status'] = 1;
+			$where ['messagesid'] = $newMsg [0] ['messagesid'];
+			$focus->where ( $where )->save ( $data );
+			$this->ajaxReturn ( $returnMsg );
+		} else {
+			$returnMsg = array ();
+		}
+	}
+	
+	/* 一般顺序表记录的保存 */
+	public function insert() {
+		// 返回当前的模块名
+		$moduleName = $this->getActionName ();
+		
+		$focus = D ( $moduleName );
+		$this->assign ( 'moduleName', $moduleName );
+		
+		// 启动用户表
+		$userModel = D ( 'User' );
+		$userResult = $userModel->select ();
+		
+		foreach ( $userResult as $value ) {
+			$date = array ();
+			$data ['sender'] = $value ['name'];
+			$data ['status'] = 0;
+			$data ['content'] = $_REQUEST ['content'];
+			$data ['domain'] = $_SERVER['HTTP_HOST'];
+			// 保存主表
+			$result = $focus->create ();
+			if (! $result) {
+				exit ( $focus->getError () );
+			}
+			$result = $focus->add ( $data );
+		}
+		if (! $result) {
+			$this->error ( '保存数据不成功！' );
+		}
+		
+		// 取得保存的主键
+		$record = $result;
+		// 如果保存订单都成功，就跳转到查看页面
+		$return ['record'] = $record;
+			
+		//生成查看的url
+		$detailviewUrl = U("$moduleName/detailview",array('record'=>$record));
+		$return = $detailviewUrl;
+		$this->ajaxReturn($return,'EVAL');
+	}
+	
+	/**
+	 * 返回listview的where
+	 */
+	public function returnWhere() {
+		$where = array ();
+		$userInfo = $this->userInfo;
+		$username = $userInfo ['name'];
+		$where ['sender '] = $username;
+		$where['domain'] = $_SERVER['HTTP_HOST'];
+		return $where;
+	}
+	
+	// 定义一个空的函数，用于返回主程序需要的一些参数
+	public function returnMainFnPara() {
+		// 引入js
+		$this->display ( 'Messages/js' );
+	}
+}
+?>

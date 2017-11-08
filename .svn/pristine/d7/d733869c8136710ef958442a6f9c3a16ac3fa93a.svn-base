@@ -1,0 +1,141 @@
+<script type="text/javascript">
+    var APP = '__APP__';
+    var focusNumber = 0 ;  //定义光标
+    var refreshOrder = true;  //定义刷新标志，默认是开启刷新 
+    var refreshNumberVal = 0;
+
+
+    //定义订单Orderform处理表
+    var orderFormHandleGrid = $('#OrderFormHandleTable').datagrid({ 
+        nowrap:"true",  
+        fitColumns:"true",
+        singleSelect:"true",
+        autoRowHeight:"true",
+        striped:"true",        
+        border:"false", 
+        rownumbers:"false",  //显示行号
+        showFooter:'true',
+        pagination:true,
+        pagePosition:'bottom', 
+        toolbar:'#tb',     
+        columns:[[  
+        {field:'orderformid',title:'id',hidden:'true',width:100},  
+        {field:'address',title:'地址',width:100,align:'left'},  
+        {field:'ordertxt',title:'数量规格',width:80,align:'center'},          
+        {field:"totalmoney",width:30,title:'金额'},
+        {field:"telphone",width:50,title:'电话',align:'center'},
+        {field:"custtime", width:30,title:'要餐时间'},
+        {field:"state", width:40,title:'状态'},
+        {field:"operation", width:50,title:'操作',formatter: function(value,rowData,rowIndex){
+                var operation; 
+                operation = "<input id='orderTask"+rowIndex+"' name='orderTask"+rowIndex+"' type='text'  size='10' onkeyup='orderHandleKeyUp(&apos;"+rowIndex+"&apos;)' >"+"</br>";
+                operation += "<a href='#' onclick='updateTab(&apos;__URL__/detailview/record/"+rowData.orderformid+"/returnAction/listview&apos;)' >查看</a>&nbsp;"; 
+                operation += "<a href='#' onclick='getPrintData(&apos;"+rowData.orderformid+"&apos;)'>打印</a>&nbsp;";
+                return operation;
+            }
+        }
+        ]],
+        onSelect:selectDataGridRow,   //选择行事件
+        onClickRow:clickDataGridRow   //单击行的处理事件
+    });
+    
+    //定义订单分页表
+    var pager = $('#OrderFormHandleTable').datagrid().datagrid('getPager') 
+    pager.pagination({
+        showRefresh:false,
+        layout:['first','links','last'],
+        buttons:[{
+            id:'testHandle',
+            text:'备注:的圣诞节来看范德萨asj的技术的了解发拉沙德'
+
+        }]
+    }); 
+
+
+
+    ///定义订货OrderGoods显示表
+    var orderProductsHandleGrid = $('#OrderProductsHandleTable').datagrid({
+        nowrap:false,
+        columns:[[
+        {field:'number',title:'数量',width:30},
+        {field:'name',title:'名称',width:50}
+        ]]
+    })
+
+    //布局计算
+    var screenHeight = $(document).height();   //浏览器时下窗口文档的高度
+    var screenWidth =  $(document).width();//浏览器时下窗口文档对于象宽度  
+
+
+   
+
+    //订单表格行选择事件的处理函数
+    function selectDataGridRow(rowIndex,rowData){
+        //显示当前行订单的订货的内容
+        if(rowData){ //初始化的时候，可能没有数据
+            orderProductsShow(rowData.orderformid);
+            //显示备注
+            //$('#beizhu').html('备注:'+rowData.beizhu);
+            console.info(rowData.beizhu);
+            $('#testid').linkbutton({text:'备注:'+rowData.beizhu});
+        }
+    }
+
+    //单击订单表格一行
+    function clickDataGridRow(rowIndex,rowData){
+        //当前行输入框获得焦点
+        $('#orderTask'+rowIndex).focus();
+        //缓存光标位置
+        focusNumber = rowIndex;  
+    }
+
+
+  
+ $(function(){ 
+
+        orderFormHandleGrid.datagrid({
+            onClickRow : function(rowIndex, rowData){
+                //显示产品内容
+                orderProductsShow(rowData.orderformid);
+                //处理栏获得焦点
+                $('#orderTask'+rowIndex).focus();
+
+                var selected = orderFormHandleGrid.datagrid('getSelected');
+
+                focusNumber = rowIndex;
+            }
+
+        });
+    });
+
+  
+
+   
+
+</script>
+
+<div id="orderHandle" class="easyui-layout" fit="true" border="false">
+    <div data-options="region:'west',split:true,border:true" style="width:100px;">
+        <div id="goods" class="easyui-layout" fit="true">
+            <div data-options="region:'center',border:false" style="padding:0px;background:#eee;">
+                <table id="OrderProductsHandleTable" style="width: 100px;"> </table>
+            </div>
+            <div data-options="region:'south',split:true,border:false" style="height: 30px;">
+                <div>总金额</div>
+            </div>
+        </div>
+    </div>
+    <div data-options="region:'center',border:false" style="padding:0px;background:#eee;">
+        <table id="OrderFormHandleTable" fit="true"></table>
+    </div>
+    <div data-options="region:'south',split:false,border:false" style="height:80px;">
+        <div class="pagestop">
+            <div id="other" style="height: 22px;font-size: 14px;">接线：</div>
+            <div id="ordermonit" style="height: 22px;border: 1px solid red;font-size: 14px;"></div>
+        </div>
+    </div>
+</div>
+
+
+
+

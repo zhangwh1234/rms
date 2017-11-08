@@ -1,0 +1,214 @@
+/* 闂傚倷绀侀幖顐ょ矓閹绢喖搴婇柤纰卞墯椤洟鏌嶉妷褍浠洪柨鐔剁矙閺屾稑鈽夊Ο鍏兼喖缂備椒绶ら幏锟�--------------------------------------- */
+body{ margin: 0; padding: 0;}
+div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, textarea, p, blockquote, th, td, address { margin: 0; padding: 0; font-size: 100%; font-weight: normal;}
+pre{ vertical-align:top; margin: 0; padding: 0;}
+button{ border:none; outline:0;}
+ol, ul { list-style: none;}
+a { text-decoration: none; cursor: pointer; outline:0; overflow:hidden;}
+a:hover{ text-decoration:none;}
+input { background: none; border: none; font-family:"Microsoft YaHei", Arial, Helvetica, sans-serif;}
+*{ margin:0; padding:0}
+img{ cursor:pointer; border:0;}
+.no-dis{ display:none;}
+.left{ float:left;}
+.right{ float:right;}
+
+/******************************************
+ * 这个是小屏幕的css
+ *
+ ********************************************/
+/* <!-- lee_solar modify 2016-07-06 濞ｅ浂鍠楅弫濂稿冀瀹勬壆纭�start  --> */
+@media screen and (max-width:600px){
+    /* <!-- lee_solar modify 2016-07-06 濞ｅ浂鍠楅弫濂稿冀瀹勬壆纭�end  --> */
+    /* body ---------------------------------------- */
+    body{ width:100%; height:100%; float:left; font-family:"Microsoft YaHei", Arial, Helvetica, sans-serif; text-align:center; background-color:#FFF;}
+    a.apply-b{ width:90%; height:40px; line-height:40px; float:left; text-align:center; border-bottom:3px solid #ab0426; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px; margin:50px 0px 0px 5%; background-color:#ca0a31; font-size:20px; color:#FFF;}
+    span{ width:100%; float:left; font-size:14px; color:#646464; text-align:center; margin:22px 0px 0px 0px;}
+
+    /* 闂傚倷绀侀幉锟犳偡閿曞倸鍨傜憸鐗堝笒鍥撮梺闈浤涢崟顐ゅ酱闂傚倷绀侀悘婵嬵敄閸パ嶈�闁跨噦鎷�---------------------------------------- */
+    .invoice-login{ display:none; width:100%; height:100%; float:left; background-color:#FFF; overflow:hidden;}
+    .login-left{ width:100%; float:left; margin:0px}
+    .login-left h4{ width:100%; height:55px; line-height:55px; text-align:center; float:left; border-bottom:1px solid #dfdfdf; background:url(../images/logo.gif) no-repeat 0px center; background-size:100px 30px; margin:0px; font-size:19px; color:#e10c1a;}
+    .login-left span{ width:90%; float:left; font-size:16px; color:#4b4b4b; text-align:left; text-indent:2px; margin:23px 0px 0px 5%;}
+    .login-left input{ width:90%; height:46px; float:left; border:2px solid #e3e4e8; background-color:#FFF; font-size:16px; color:#adadad; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px; margin:10px 0px 0px 4%; text-indent:20px;}
+    .login-left input.small{ width:50%; height:46px; float:left; border:2px solid #e3e4e8; background-color:#FFF; font-size:16px; color:#adadad; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px; margin:10px 0px 5px 0px; text-indent:20px; margin:10px 0px 0px 4%;}
+    .login-left font{ width:115px; height:42px; float:right; background-color:#e3e4e8; margin:10px 5% 5px 0px; border:2px solid #e3e4e8; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px; position:relative;}
+    .login-left font img{ width:94px; height:28px; position:absolute; left:50%; top:50%; margin:-14px 0px 0px -47px;}
+    .login-left a.replace{ float:right; font-size:14px; color:#d0143a; text-decoration:underline; margin:0px 5% 0px 0px; width:100%; text-align:right;}
+    .login-left a.apply-b{ width:90%; height:40px; line-height:40px; float:left; text-align:center; border-bottom:3px solid #ab0426; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px; margin:30px 0px 0px 5%; background-color:#ca0a31; font-size:18px; color:#FFF;}
+    .login-left .logo{ width:100%; height:47px; background:url(../images/logo.png) no-repeat center center; background-size:291px 47px; text-indent:-999px; float:left; margin:20px 0px 0px 0px;}
+    .login-right{ display:none;}
+
+
+    /* 闂傚倷绀侀幉锟犳偡閿曞倸鍨傜憸鐗堝笒鍥撮梺闈浤涢崟顐ゅ酱闂傚倷绀侀悘婵嬵敄閸パ嶈�闁圭虎鍠楅悡鐔镐繆椤栨氨浠㈤柣鎾村姍閺屻劑鎮ら崒娑橆伓
+    ---------------------------------------- */
+    .state-box{ width:100%; height:270px; line-height:360px; float:left; margin:35px 0px 0px 0px; font-size:18px; color:#5d5d5d; text-align:center;}
+    .state-box.success{ background:url(../images/icon01.png) no-repeat center top; background-size:172px 269px;}
+    .state-box.fail{ background:url(../images/icon02.png) no-repeat center top; background-size:172px 269px;}
+
+    /* 闂傚倷绀侀幉锟犳偡閿曞倸鍨傜憸鐗堝笒鍥撮梺闈浥堥弲婊堝磻閵娾晜鍊甸柛锔诲幖椤庡矂鏌涢妶蹇斿
+    ---------------------------------------- */
+    .invoice-apply{ display:yes; width:100%; height:100%; float:left; }
+    .invoice-apply .head{ width:100%; height:55px; line-height:55px; text-align:center; float:left; border-bottom:1px solid #dfdfdf; background:url(../images/logo.gif) no-repeat 10px center;  background-size:100px 30px; margin:0px; font-size:19px; color:#e10c1a;}
+    .invoice-apply .box{ width:98%; float:left; background-color:#FFF; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px; -webkit-box-shadow:0 0 5px #666; -moz-box-shadow:0 0 5px #666; box-shadow:0 0 5px #666; margin:10px 0px 0px 1%;}
+    .invoice-apply .box h4{ width:100%; height:38px; float:left; background:#dfe0e3 url(../images/til04.png) no-repeat center center; background-size:108px 36px; border-bottom:2px solid #cdd0d5; -webkit-border-radius:5px 5px 0px 0px; -moz-border-radius:5px 5px 0px 0px; border-radius:5px 5px 0px 0px; overflow:hidden; text-indent:-999px;}
+    .invoice-apply .box .input-box{ width:100%; height:43px; float:left; text-align:left; margin:0px 0px 0px 0px;}
+    .invoice-apply .box .input-box.mrr{ margin:0px 0px 15px 0px;}
+    .invoice-apply .box .input-box span{ width:auto; height:43px; line-height:43px; float:left; font-size:16px; color:#ca0a31; margin:0px 0px 0px 2%; text-align:left;}
+    .invoice-apply .box .input-box a{ width:auto; height:43px; line-height:43px; float:left; font-size:16px; color:#ca0a31; margin:0px 0px 0px 5%; text-align:left; background:url(../images/a-un.png) no-repeat left center; background-size:20px; text-indent:25px;}
+    .invoice-apply .box .input-box a.on{ width:auto; height:43px; line-height:43px; float:left; font-size:16px; color:#ca0a31; margin:0px 0px 0px 5%; text-align:left; background:url(../images/a-on.png) no-repeat left center; background-size:20px; text-indent:25px;}
+    /* <!-- lee_solar modify 2016-07-06 濞ｅ浂鍠楅弫濂稿冀瀹勬壆纭�start  --> */
+    /*lee_solar modify 2016-07-08 闁告挸绉磋ぐ瀛樸亜閹屽悅鐎殿噯鎷烽妶銊ッ规担琛℃煠濞村吋锚鐎碉拷start*/
+    .invoice-apply .box .input-box input{ width:78%; height:33px; float:left; border:1px solid #c6c6c6; background-color:#FFF; font-size:12px; color:#919191; margin:5px  0px 0px 1%; text-indent:1px;}
+    /**lee_solar modify 2016-07-08 闁告挸绉磋ぐ瀛樸亜閹屽悅鐎殿噯鎷烽妶銊ッ规担琛℃煠濞村吋锚鐎碉拷start*/
+    /* <!-- lee_solar modify 2016-07-06 濞ｅ浂鍠楅弫濂稿冀瀹勬壆纭�end  --> */
+    .invoice-apply .box .input-box input.small{ display:none; width:51%; height:33px; float:left; border:1px solid #c6c6c6; background-color:#FFF; font-size:14px; color:#919191; margin:5px 5%; text-indent:10px;}
+    .invoice-apply .box .input-box font{ display:none; width:auto; height:53px; line-height:53px; float:left; font-size:20px; color:#ca0a31; margin:0px 0px 0px 0px; background:url(../images/icon03.png) no-repeat left center; background-size:7px 7px; text-indent:10px;}
+    .invoice-apply .box ul li.header{ display:none; width:100%; height:45px; float:left; background-color:#dfe0e3;}
+    .invoice-apply .box ul li.header span{ width:33.3%; height:45px; line-height:45px; float:left; font-size:14px; color:#333; text-align:center; margin:0px;}
+    .invoice-apply .box ul li.wap-header{ width:100%; height:30px; float:left; background-color:#dfe0e3;}
+    .invoice-apply .box ul li.wap-header span{ width:auto; height:30px; line-height:30px; float:left; font-size:12px; color:#333; text-align:left; text-indent:5px; margin:0px;}
+    .invoice-apply .box ul li.wap-header span.textr{ text-align:right; float:right; margin:0px 5px 0px 0px;}
+    .invoice-apply .box ul li.th{ width:100%; height:33px; float:left; background-color:#a1a2a4; border-bottom:3px solid #929395;}
+    .invoice-apply .box ul li.th span{ width:33.3%; height:35px; line-height:35px; float:left; font-size:14px; color:#FFF; text-align:center; margin:0px;}
+    .invoice-apply .box ul li.td{ width:96%; height:40px; float:left; margin:0px 0px 0px 2%; border-bottom:1px dashed #d1d4d6;}
+    .invoice-apply .box ul li.td span{ width:33.3%; height:40px; line-height:40px; float:left; font-size:14px; color:#333; margin:0px;}
+    .invoice-apply .box ul li.td .til{ text-align:left; text-indent:0px;}
+    .invoice-apply .box ul li.td .con{ text-align:center;}
+    .invoice-apply .box ul li.footer{ width:100%; height:40px; float:left; margin:0px; background-color:#dfe0e3; -webkit-border-radius:0px 0px 5px 5px; -moz-border-radius:0px 0px 5px 5px; border-radius:0px 0px 5px 5px;}
+    .invoice-apply .box ul li.footer span{ width:auto; line-height:40px; float:left; font-size:14px; color:#333; margin:0px;}
+    .invoice-apply .box ul li.footer .til{ text-align:left; text-indent:3%;}
+    .invoice-apply .box ul li.footer .con{ text-align:center; text-indent:2%;}
+    .invoice-apply a.apply-b{ width:90%; height:45px; line-height:45px; float:left; text-align:center; border-bottom:3px solid #ab0426; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px; margin:10px 0px 10px 5%; background-color:#ca0a31; font-size:18px; color:#FFF;}
+
+    /* 闂傚倷绀侀幉锟犳偡閿曞倸鍨傜憸鐗堝笒鍥撮梺闈涱煭婵″洭鍩炲澶嬬厓闁宠桨绀侀弳鏇犵磼閹插瀚�	---------------------------------------- */
+    .invoice-info{ display:block; width:100%; height:100%; float:left; position:relative;}
+    .invoice-info .head{ display:none;width:100%; height:55px; line-height:55px; text-align:center; float:left; border-bottom:1px solid #dfdfdf;  background-size:100px 30px; margin:0px; font-size:19px; color:#e10c1a;}
+    .invoice-info .box{ width:90%; float:left; background-color:#FFF; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px; -webkit-box-shadow:0 0 5px #666; -moz-box-shadow:0 0 5px #666; box-shadow:0 0 5px #666; margin:10px 0px 0px 5%;}
+    .invoice-info .box h4{ width:100%; height:38px; float:left; background:#dfe0e3 url(../images/til04.png) no-repeat center center; background-size:108px 36px; border-bottom:2px solid #cdd0d5; -webkit-border-radius:5px 5px 0px 0px; -moz-border-radius:5px 5px 0px 0px; border-radius:5px 5px 0px 0px; overflow:hidden; text-indent:-999px;}
+    .invoice-info ul{ width:90%; float:left; margin:0px 0px 0px 5%;}
+    .invoice-info ul li{ width:100%; height:40px; line-height:40px; border-bottom:1px dashed #d1d1d1; float:left; margin:0px; text-align:left; text-indent:5px; font-size:14px; color:#464646;}
+    .invoice-info ul li.mrr{ height:135px; line-height:135px;}
+    .invoice-info ul li span{ width:auto; float:right; margin:0px; font-size:14px; color:red; margin:0px 5px 0px 0px;}
+    .invoice-info ul li span img{ width:50px; margin:5px auto auto auto}
+    .invoice-info .tips{ width:100%; float:left; height:45px; line-height:20px; font-size:13px; color:#ca0a31; text-align:center;}
+    .invoice-info a.url-b{ display:none; width:30%; height:40px; line-height:40px; float:left; text-align:center; border-bottom:3px solid #ab0426; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px; margin:10px 2% 10px 2%; background:#ca0a31 url(../images/til10.png) no-repeat center center; background-size:80px; text-indent:-999px;}
+    .invoice-info a.mail-b{ width:40%; height:40px; line-height:40px; float:right; text-align:center; border-bottom:3px solid #ab0426; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px; margin:10px 7% 10px 0px; background:#ca0a31 url(../images/til11.png) no-repeat center center; background-size:70px; text-indent:-999px;}
+    .invoice-info a.aspect-left{ width:26px; height:65px; position:absolute; left:1%; top:45%; margin:-32px 0px 0px 0px; text-indent:-999px;}
+    .invoice-info a.aspect-right{ width:26px; height:65px; position:absolute; right:1%; top:45%; margin:-32px 0px 0px 0px; text-indent:-999px;}
+    /**add by li_minghui 婢х偛濮炲ǎ璇插閼疯櫕鏁禒妯虹杺閸欐垹銈ㄧ粻鈥愁啀閸旂喕鍏�*/
+    .invoice-info a.pdf-b{ width:40%; height:40px; line-height:40px; float:left; text-align:center; border-bottom:3px solid #ab0426; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px; margin:10px 0px 10px 7%; background:#ca0a31  no-repeat center center; background-size:80px; color:white;
+    font-size:14px;}
+    .invoice-info a.fapiao-b{ width:40%; height:40px; line-height:40px; float:right; text-align:center; border-bottom:3px solid #0e729e; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px; margin:10px 7% 10px 0; background:#01a9f2  no-repeat center center; background-size:80px; color:white;}
+    .invoice-info .lihualogo { position:absolute;left:130px;top:250px;opacity: 0.5;  }
+
+
+    /* 闂傚倷绀侀幉锟犳偡閿曞倸鍨傜憸鐗堝笒鍥撮梺闈浥堥弲娑㈡儗濡ゅ懏鐓欓弶鍫熷礃椤撴椽鏌熼崙銈嗗
+    ---------------------------------------- */
+    .invoice-send{ display:none;    width: 90%;  height: 230PX; /* float: left; */  position: absolute; LEFT: 5%; top: 50%;  z-index: 99; background-color: #e0e0e0; MARGIN-TOP: -100PX;}
+    .invoice-send .head{ width:100%; height:55px; line-height:55px; text-align:center; float:left; border-bottom:1px solid #dfdfdf; background:url(../images/head-back.png) no-repeat 10px center; background-size:12px 22px; margin:0px; font-size:19px; color:#e10c1a;}
+    .invoice-send span{ width:90%;cursor:pointer; float:left; font-size:16px; color:#4b4b4b; text-align:left; text-indent:2px; margin:23px 0px 0px 5%;}
+    .invoice-send .input-box{ width:100%; height:74px; float:left;}
+    .invoice-send .input-box input{ width:90%; height:40px; float:left; border:2px solid #e3e4e8; background-color:#FFF; font-size:14px; color:#adadad; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px; margin:10px 0px 0px 4%; text-indent:20px;}
+    .invoice-send a.send-b{ width:90%; height:40px; line-height:40px; float:left; text-align:center; border-bottom:3px solid #ab0426; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px; margin:10px 0px 0px 5%; background-color:#ca0a31; color:#FFF; font-size:16px;}
+
+
+}
+
+/******************************************
+ *  大屏幕的CSS
+ *******************************************/
+@media screen and (min-width:600px){
+    /* 濠电姷顣介崜婵嬨�濠婂吘娑樷枎閹炬潙锟介梺璺ㄥ櫐閹凤拷---------------------------------------- */
+    body{ width:100%; height:100%; float:left; font-family:"Microsoft YaHei", Arial, Helvetica, sans-serif; text-align:center; background-color:#CCC; overflow:auto;}
+    a.apply-b{ width:354px; height:50px; line-height:50px; float:left; text-align:center; border-bottom:3px solid #ab0426; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px; margin:50px 0px 0px 223px; background-color:#ca0a31; font-size:20px; color:#FFF;}
+    span{ width:100%; float:left; font-size:14px; color:#646464; text-align:center; margin:22px 0px 0px 0px;}
+
+    /* 闂傚倷绀侀幉锟犳偡閿曞倸鍨傜憸鐗堝笒鍥撮梺闈浤涢崟顐ゅ酱闂傚倷绀侀悘婵嬵敄閸パ嶈�闁跨噦鎷�---------------------------------------- */
+    .invoice-login{ display:none; width:800px; height:520px; position:absolute; left:50%; top:50%; margin:-250px 0px 0px -400px; z-index:2; background-color:#FFF; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px; -webkit-box-shadow:0 0 5px #666; -moz-box-shadow:0 0 5px #666; box-shadow:0 0 5px #666; overflow:hidden;}
+    .login-left{ width:360px; float:left; margin:55px 0px 0px 220px;}
+    .login-left h4{ width:100%; height:55px; line-height:55px; text-align:center; float:left; border-bottom:1px solid #dfdfdf; background:url(../images/logo.gif) no-repeat 0px center; background-size:100px 30px; margin:0px; font-size:19px; color:#e10c1a;}
+    .login-left span{ width:100%; float:left; font-size:16px; color:#4b4b4b; text-align:left; text-indent:2px;}
+    .login-left input{ width:350px; height:46px; float:left; border:2px solid #e3e4e8; background-color:#FFF; font-size:16px; color:#adadad; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px; margin:10px 0px 25px 0px; text-indent:20px;}
+    .login-left input.small{ width:235px; height:46px; float:left; border:2px solid #e3e4e8; border-right:0px; background-color:#FFF; font-size:16px; color:#adadad; -webkit-border-radius:5px 0px 0px 5px; -moz-border-radius:5px 0px 0px 5px; border-radius:5px 0px 0px 5px; margin:10px 0px 5px 0px; text-indent:20px;}
+    .login-left font{ width:115px; height:42px; float:left; background-color:#e3e4e8; margin:10px 0px 5px 0px; border:2px solid #e3e4e8; border-right:0px; -webkit-border-radius:0px 5px 5px 0px; -moz-border-radius:0px 5px 5px 0px; border-radius:0px 5px 5px 0px; position:relative;}
+    .login-left font img{ width:94px; height:28px; position:absolute; left:50%; top:50%; margin:-14px 0px 0px -47px;}
+    .login-left a.replace{ float:right; font-size:14px; color:#d0143a; text-decoration:underline; margin:0px 10px 0px 0px;}
+    .login-left a.apply-b{ width:354px; height:50px; line-height:50px; float:left; text-align:center; border-bottom:3px solid #ab0426; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px; margin:10px 0px 0px 0px;  background-color:#ca0a31; font-size:20px; color:#FFF;}
+    .login-right{ display:none; width:340px; height:100%; float:right; background:#dee2e8 url(../images/example.png) no-repeat 45px 35px; background-size:275px 380px; position:relative;}
+    .login-right span{ width:100%; height:50px; position:absolute; left:0px; bottom:20px; background:url(../images/logo.png) no-repeat center center; background-size:292px 46px;}
+
+    /* 闂傚倷绀侀幉锟犳偡閿曞倸鍨傜憸鐗堝笒鍥撮梺闈浤涢崟顐ゅ酱闂傚倷绀侀悘婵嬵敄閸パ嶈�闁圭虎鍠楅悡鐔镐繆椤栨氨浠㈤柣鎾村姍閺屻劑鎮ら崒娑橆伓
+    ---------------------------------------- */
+    .state-box{ width:100%; height:270px; line-height:360px; float:left; margin:65px 0px 0px 0px; font-size:18px; color:#5d5d5d; text-align:center;}
+    .state-box.success{ background:url(../images/icon01.png) no-repeat center top; background-size:172px 269px;}
+    .state-box.fail{ background:url(../images/icon02.png) no-repeat center top; background-size:172px 269px;}
+
+    /* 闂傚倷绀侀幉锟犳偡閿曞倸鍨傜憸鐗堝笒鍥撮梺闈浥堥弲婊堝磻閵娾晜鍊甸柛锔诲幖椤庡矂鏌涢妶蹇斿
+    ---------------------------------------- */
+    .invoice-apply{ display:none; width:640px; height:710px; position:absolute; left:50%; top:50%; margin:-385px 0px 0px -320px; z-index:2;}
+    .invoice-apply .head{ display:none;}
+    .invoice-apply .box{ width:100%; float:left; background-color:#FFF; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px; -webkit-box-shadow:0 0 5px #666; -moz-box-shadow:0 0 5px #666; box-shadow:0 0 5px #666;margin-top:80px;}
+    .invoice-apply .box h4{ width:100%; height:87px; float:left; background:#dfe0e3 url(../images/til04.png) no-repeat center center; background-size:215px 71px; border-bottom:3px solid #cdd0d5; -webkit-border-radius:5px 5px 0px 0px; -moz-border-radius:5px 5px 0px 0px; border-radius:5px 5px 0px 0px; overflow:hidden; text-indent:-999px;}
+    .invoice-apply .box .input-box{ width:100%; height:43px; float:left; text-align:left; margin:15px 0px 0px 0px;}
+    .invoice-apply .box .input-box.mrr{ margin:0px 0px 15px 0px;}
+    .invoice-apply .box .input-box span{ width:auto; height:46px; line-height:46px; float:left; font-size:20px; color:#ca0a31; margin:0px 0px 0px 20px; text-align:left;}
+    .invoice-apply .box .input-box a{ width:120px; height:53px; line-height:53px; float:left; font-size:20px; color:#ca0a31; margin:0px 0px 0px 40px; text-align:left; background:url(../images/a-un.png) no-repeat left center; text-indent:30px;}
+    .invoice-apply .box .input-box a.on{ width:120px; height:53px; line-height:53px; float:left; font-size:20px; color:#ca0a31; margin:0px 0px 0px 40px; text-align:left; background:url(../images/a-on.png) no-repeat left center; text-indent:30px;}
+    /**lee_solar modify 2016-07-08 闁告挸绉磋ぐ瀛樸亜閹屽悅鐎殿噯鎷烽妶銊ッ规担琛℃煠濞村吋锚鐎碉拷start*/
+    .invoice-apply .box .input-box input{ width:370px; height:35px; float:left; border:1px solid #c6c6c6; background-color:#FFF; font-size:16px; color:#919191; margin:5px 15px; text-indent:20px;}
+    /**lee_solar modify 2016-07-08 闁告挸绉磋ぐ瀛樸亜閹屽悅鐎殿噯鎷烽妶銊ッ规担琛℃煠濞村吋锚鐎碉拷end*/
+    .invoice-apply .box .input-box input.small{ display:none; width:380px; height:43px; float:left; border:1px solid #c6c6c6; background-color:#FFF; font-size:18px; color:#919191; margin:5px 15px; text-indent:20px;}
+    .invoice-apply .box .input-box font{ width:auto; height:46px; line-height:46px; float:left; font-size:20px; color:#ca0a31; margin:0px 0px 0px 0px; background:url(../images/icon03.png) no-repeat left center; background-size:7px 7px; text-indent:10px;}
+    .invoice-apply .box ul li.header{ width:100%; height:45px; float:left; background-color:#dfe0e3;}
+    .invoice-apply .box ul li.header span{ width:33.3%; height:45px; line-height:45px; float:left; font-size:14px; color:#333; text-align:center; margin:0px;}
+    .invoice-apply .box ul li.wap-header{ display:none;}
+    .invoice-apply .box ul li.th{ width:100%; height:43px; float:left; background-color:#a1a2a4; border-bottom:3px solid #929395;}
+    .invoice-apply .box ul li.th span{ width:33.3%; height:45px; line-height:45px; float:left; font-size:16px; color:#FFF; text-align:center; margin:0px;}
+    .invoice-apply .box ul li.td{ width:90%; height:37px; float:left; margin:0px 0px 0px 5%; border-bottom:1px dashed #d1d4d6;}
+    .invoice-apply .box ul li.td span{ width:33.3%; height:45px; line-height:45px; float:left; font-size:16px; color:#333; margin:0px;}
+    .invoice-apply .box ul li.td .til{ text-align:left; text-indent:10px;}
+    .invoice-apply .box ul li.td .con{ text-align:center;}
+    .invoice-apply .box ul li.footer{ width:100%; height:49px; float:left; margin:0px; background-color:#dfe0e3; -webkit-border-radius:0px 0px 5px 5px; -moz-border-radius:0px 0px 5px 5px; border-radius:0px 0px 5px 5px;}
+    .invoice-apply .box ul li.footer span{ width:33.3%; height:45px; line-height:45px; float:left; font-size:16px; color:#333; margin:0px;}
+    .invoice-apply .box ul li.footer .til{ text-align:left; text-indent:40px;}
+    .invoice-apply .box ul li.footer .con{ text-align:center;}
+    .invoice-apply a.apply-b{ width:354px; height:50px; line-height:50px; float:left; text-align:center; border-bottom:3px solid #ab0426; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px; margin:30px 0px 0px 143px; background-color:#ca0a31; font-size:20px; color:#FFF;margin-top:20px;}
+
+    /* 闂傚倷绀侀幉锟犳偡閿曞倸鍨傜憸鐗堝笒鍥撮梺闈涱煭婵″洭鍩炲澶嬬厓闁宠桨绀侀弳鏇犵磼閹插瀚�	---------------------------------------- */
+    .invoice-info{ display:block; width:640px; height:660px; position:absolute; left:50%; top:50%; margin:-330px 0px 0px -320px; z-index:2;}
+    .invoice-info .head{ display:none;}
+    .invoice-info .box{ width:100%; float:left; background-color:#FFF; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px; -webkit-box-shadow:0 0 5px #666; -moz-box-shadow:0 0 5px #666; box-shadow:0 0 5px #666;}
+    .invoice-info .box h4{ width:100%; height:87px; float:left; background:#dfe0e3 url(../images/til04.png) no-repeat center center; background-size:215px 71px; border-bottom:3px solid #cdd0d5; -webkit-border-radius:5px 5px 0px 0px; -moz-border-radius:5px 5px 0px 0px; border-radius:5px 5px 0px 0px; overflow:hidden; text-indent:-999px;}
+    .invoice-info ul{ width:90%; float:left; margin:0px 0px 0px 5%;}
+    .invoice-info ul li{ width:100%; height:35px; line-height:35px; border-bottom:1px dashed #d1d1d1; float:left; margin:0px; text-align:left; text-indent:10px; font-size:18px; color:#464646;}
+    .invoice-info ul li.mrr{ height:130px; line-height:110px;}
+    .invoice-info ul li span{ width:auto; float:right; margin:0px; font-size:18px; color:#464646; margin:0px 10px 0px 0px; }
+    .invoice-info ul li span img{ width:100px; margin:5px auto auto auto;}
+    .invoice-info .tips{ width:100%; float:left; height:75px; line-height:25px; font-size:16px; color:#ca0a31; text-align:center;}
+    .invoice-info a.pdf-b{ width:290px; height:44px; line-height:44px; float:left; text-align:center; border-bottom:3px solid #ab0426; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px; margin:30px 0px 0px 0px; background:#ca0a31  no-repeat center center; background-size:204px 19px; color:white;margin-top:12px;}
+    .invoice-info a.url-b{ width:290px; height:44px; line-height:44px; float:left; text-align:center; border-bottom:3px solid #ab0426; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px; margin:30px 15px 0px 15px; background:#ca0a31 url(../images/til07.png) no-repeat center center; background-size:165px 19px; text-indent:-999px;float: right;margin-top:12px;}
+    .invoice-info a.mail-b{ width:160px; height:50px; line-height:50px; float:left; text-align:center; border-bottom:3px solid #ab0426; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px; margin:30px 0px 0px 0px; background:#ca0a31 url(../images/til08.png) no-repeat center center; background-size:99px 19px; text-indent:-999px;display:none;}
+    .invoice-info a.aspect-left{ width:26px; height:65px; position:absolute; left:-50px; top:45%; margin:-32px 0px 0px 0px; text-indent:-999px;}
+    .invoice-info a.aspect-left.on{ background:url(../images/aspect-icon.png) no-repeat left top;}
+    .invoice-info a.aspect-left.un{ background:url(../images/aspect-icon.png) no-repeat left -65px;}
+    .invoice-info a.aspect-right{ width:26px; height:65px; position:absolute; right:-50px; top:45%; margin:-32px 0px 0px 0px; text-indent:-999px;}
+    .invoice-info a.aspect-right.on{ background:url(../images/aspect-icon.png) no-repeat right top;}
+    .invoice-info a.aspect-right.un{ background:url(../images/aspect-icon.png) no-repeat right -65px;}
+    .invoice-info a.fapiao-b{ width:240px; height:45px; line-height:50px; float:left; text-align:center; border-bottom:3px solid #0e729e; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px; margin:13px 0px 0px 10px; background:#01a9f2  no-repeat center center; background-size:204px 19px; color:white;}
+    .invoice-info .lihualogo { position:absolute;left:180px;top:260px;opacity: 0.5;
+    }
+
+    /* 闂傚倷绀侀幉锟犳偡閿曞倸鍨傜憸鐗堝笒鍥撮梺闈浥堥弲娑㈡儗濡ゅ懏鐓欓弶鍫熷礃椤撴椽鏌熼崙銈嗗
+    ---------------------------------------- */
+    .invoice-send{ display:none; width:712px; height:180px; position:absolute; left:50%; top:50%; margin:-90px 0px 0px -356px; z-index:2; background-color:#FFF; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px; -webkit-box-shadow:0 0 5px #666; -moz-box-shadow:0 0 5px #666; box-shadow:0 0 5px #666; overflow:hidden;}
+    .invoice-send .head{ display:none;}
+    .invoice-send span{ width:113px; height:74px;cursor:pointer; line-height:74px; float:left; background-color:#a1a2a4; border-bottom:3px solid #919293; text-align:center; font-size:18px; color:#FFF; -webkit-border-radius:5px 0px 0px 5px; -moz-border-radius:5px 0px 0px 5px; border-radius:5px 0px 0px 5px; margin:50px 0px 0px 50px;}
+    .invoice-send .input-box{ width:383px; height:74px; float:left; background-color:#dfe0e3; border-bottom:3px solid #d3d4d7; margin:50px 0px 0px 0px;}
+    .invoice-send .input-box input{ width:350px; height:45px; line-height:45px; float:left; background-color:#FFF; border:0px; margin:16px 0px 0px 16px; font-size:16px; color:#000; text-align:left; text-indent:20px;}
+    .invoice-send a.send-b{ width:113px; height:74px; line-height:74px; float:left; background-color:#ca0a31; border-bottom:3px solid #ab0426; text-align:center; font-size:18px; color:#FFF; -webkit-border-radius:0px 5px 5px 0px; -moz-border-radius:0px 5px 5px 0px; border-radius:0px 5px 5px 0px; margin:50px 0px 0px 0px;}
+
+    .popup-box{ width:100%; height:270px; line-height:360px; float:left; margin:35px 0px 0px 0px; font-size:18px; color:#5d5d5d; text-align:center;}
+
+
+}

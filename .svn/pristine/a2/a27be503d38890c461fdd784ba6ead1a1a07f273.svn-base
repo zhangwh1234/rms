@@ -1,0 +1,38 @@
+<!--打印驱动 -->
+<load href="__PUBLIC__/Js/LodopFuncs.js" />
+<object id="LODOP" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width=0 height=0>
+    <embed id="LODOP_EM" type="application/x-print-lodop" width=0 height=0></embed>
+</object>
+
+
+<script language="JavaScript">
+    //定义打印机编号
+    var print_index=0;
+
+    var LODOP=getLodop(document.getElementById('LODOP'),document.getElementById('LODOP_EM'));
+    //显示所先的打印机名称
+    LODOP.SET_LICENSES("北京龙城丽华快餐有限公司","653625970697469919278901905623","",""); 
+    if(localStorage.printIndex){       
+        var print_index = localStorage.printIndex;
+
+    }else{
+
+        alert('请设置打印机');
+    }
+
+    //打印机设置
+    function SetupPrint(){
+        var tmp_index;
+        tmp_index = LODOP.SELECT_PRINTER();
+        if(tmp_index != -1){
+            print_index = tmp_index ;
+            printname = LODOP.GET_PRINTER_NAME(print_index);
+            //$jq("#print_name").attr("value",'所选打印机:'+printname);
+            //保存选择的设置
+            localStorage['printIndex'] = print_index;
+        }    
+    };   
+
+
+
+        </script>

@@ -1,0 +1,90 @@
+<div id="checkSendnameDiv" style="border: 0px solid blue;height:500px;background-color: #FFFAF0;">
+    <table id="checkSendnameTable"></table>
+</div>
+<script type="text/javascript">
+    var checkSendnameTable;
+    $(function(){
+        checkSendnameTable = $('#checkSendnameTable').datagrid({
+            fitColumns:true,
+            title :"送餐订单显示",
+            border:false,
+            closable:true,
+            columns:[[
+                {field:'name',title:'名称',width:50},
+                {
+                    field: "online", width: 25, title: '在线',
+                    formatter: function(value,row,index){
+                        if (value == 1){
+                            return '在线' ;
+                        } else {
+                            return '离线';
+                        }
+                    },
+                    styler: function (value, row, index) {
+                        if (value == 1){
+
+                        } else {
+                            return 'background-color:#ffee00;color:#FF0000;';
+                        }
+                    }
+                },
+                {field:'ontime',title:'在线时间',width:50,align:'center'},
+                {field:'noreceive',title:'未收到',width:30,align:'center'},
+                {field:'noread',title:'未看',width:30,align:'center'},
+                {field:'nocomplete',title:'未完成',width:30,align:'center'},
+                {field:'alreadycomplete',title:'已送完',width:50,align:'center'},
+                {field:'totalorder',title:'全部订单',width:50,align:'center'},
+                {
+                    field: "operation",
+                    width: 40,
+                    title: '操作',
+                    align: 'center',
+                    formatter: function (value, rowData, rowIndex) {
+                        var operation;
+                        operation = "<a href='javascript:void(0);' onclick='checksendnameorderview(" + rowData.checksendnameid  + ");' class='orderHandleDetailview'  style='margin-left:4px;'>查看</a>";
+                        return operation;
+                    }
+                },
+            ]],
+            onClose:function(){
+                $('#operation').tabs('close','送餐订单查看');
+            }
+        });
+    });
+
+    //已启动，就显示
+    setTimeout(function(){
+        //设置div的高度
+        $('#checkSendnameDiv').height(IndexIndexModule.operationHeight + 20);
+
+        $.ajax({
+            type : "POST",
+            url : "__URL__/getCheckSendname",
+            dataType : "json",
+            success : function(data){
+                checkSendnameTable.datagrid('loadData', data);
+            }
+        });
+    },300);
+
+    //定时显示
+    var checksendnameGetDataInterval = setInterval(function(){
+        $.ajax({
+            type : "POST",
+            url : "__URL__/getCheckSendname",
+            dataType : "json",
+            success : function(data){
+                checkSendnameTable.datagrid('loadData', data);
+            }
+        });
+    },10000);
+
+    //送餐员,订单查看
+    function checksendnameorderview(checksendnameid){
+        url = "__URL__/orderview/checksendnameid/"+checksendnameid;
+        IndexIndexModule.updateOperateTab(url);
+        //关闭定时任务
+        clearInterval(checksendnameGetDataInterval);
+    };
+
+</script>

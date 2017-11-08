@@ -84,7 +84,7 @@
                 $data['zhuangxiangid'] = $record;
                 $data['sendname'] = trim($_REQUEST['sendname']);
                 $data['company'] = $company;
-                $data['domain'] = $_SERVER['HTTP_HOST'];
+                $data['domain'] = $this->getDomain();
                 if( !empty($name) and  !empty($number)){
                     $zhuangxiangproductsModel->create();
                     $zhuangxiangproductsModel->add($data);
@@ -119,7 +119,7 @@
             $sendnameproductsModel = D('Sendnameproducts');
             $where = array();
             $where['extid'] = $record;
-            $where['domain'] = $_SERVER['HTTP_HOST'];
+            $where['domain'] = $this->getDomain();
             $where['company'] = $company;
             $sendnameproductsModel->where($where)->delete();
             $productsLength = $_REQUEST['productsLength'];
@@ -140,7 +140,7 @@
                 $data['company'] = $company;
                 $data['date'] = date('Y-m-d');
                 $data['ap'] = $this->getAp();
-                $data['domain'] = $_SERVER['HTTP_HOST'];
+                $data['domain'] = $this->getDomain();
                 if( !empty($name) and  !empty($number)){
                     $sendnameproductsModel->create();
                     $sendnameproductsModel->add($data);
@@ -171,7 +171,7 @@
             array('rectime',date('H:i:s')), // 对录入时间
             array('inputname',$name),   //输入者
             array('company',$company),   //分公司
-            array('domain',$_SERVER['HTTP_HOST']),
+            array('domain',$this->getDomain()),
             array('ap',$ap),
             array('state','装箱')                
             );
@@ -256,7 +256,7 @@
             $company = $this->userInfo['department'];
             //查询条件
             $where['company'] = $company;
-            $where['domain'] = $_SERVER['HTTP_HOST'];
+            $where['domain'] = $this->getDomain();
         }
 
         /* 弹出选择窗口 */
@@ -297,7 +297,7 @@
                 $this->assign('returnAction', 'listview'); // 定义返回的方法
 
                 $where = array();
-                $where['domain'] = $_SERVER['HTTP_HOST'];
+                $where['domain'] = $this->getDomain();
 
                 // 导入分页类
                 import('ORG.Util.Page'); // 导入分页类

@@ -21,37 +21,40 @@
 
 <style type="text/css">
     .dvtCellLabel, .cellLabel {
-        background:#F7F7F7 url(./__PUBLIC__/Images/testsidebar.jpg) repeat-y scroll right center;
-        border-bottom:1px solid #DEDEDE;
-        border-left:1px solid #DEDEDE;
-        border-right:1px solid #DEDEDE;
-        color:#545454;
-        padding-left:10px;
-        padding-right:10px;
-        white-space:nowrap;
+        background: #F7F7F7 url(./__PUBLIC__/Images/testsidebar.jpg) repeat-y scroll right center;
+        border-bottom: 1px solid #DEDEDE;
+        border-left: 1px solid #DEDEDE;
+        border-right: 1px solid #DEDEDE;
+        color: #545454;
+        padding-left: 10px;
+        padding-right: 10px;
+        white-space: nowrap;
         font-size: 14px;
     }
+
     .dvtCellInfo, .cellInfo {
-        background:#FFFFFF ;
-        padding-left:10px;
-        padding-right:10px;
-        border-bottom:1px solid #dedede;    
-        border-right:1px solid #dedede;
-        border-left:1px solid #dedede;
+        background: #FFFFFF;
+        padding-left: 10px;
+        padding-right: 10px;
+        border-bottom: 1px solid #dedede;
+        border-right: 1px solid #dedede;
+        border-left: 1px solid #dedede;
     }
-    .detailedViewTextBox{
+
+    .detailedViewTextBox {
         font-size: 16px;
     }
-    .detailedViewTextBoxOn{
+
+    .detailedViewTextBoxOn {
         font-size: 16px;
     }
-    
-    lable{
-        font-size:16px;
+
+    lable {
+        font-size: 16px;
     }
-    
+
     /*对RBAC节点状态的设置*/
-    .nodestatus{
+    .nodestatus {
         float: left;
         font-size: 16px;
         line-height: 28px;
@@ -61,365 +64,484 @@
 <script language="JavaScript">
     //指定当前组模块URL地址
     var URL = '__URL__';
-    var APP     =  '__APP__';
+    var APP = '__APP__';
     var PUBLIC = '__PUBLIC__';
     var MODULE_NAME = '{$module_name}';
 </script>
 
-<assign name="label" value="$Think.lang.$maindata[name]" />        {//标题}
-<assign name="uitype"   value="$maindata[uitype]" />                {//类型}
-<assign name="name" value="$maindata[name]" />                      {//字段名称}
-<assign name="value" value="$maindata[value]" />                    {//字段的值}
-<assign name="length" value="$maindata[length]" />                  {//字段长度}
+<assign name="label" value="$Think.lang.$maindata[name]"/>        {//标题}
+<assign name="uitype" value="$maindata[uitype]"/>                {//类型}
+<assign name="name" value="$maindata[name]"/>                      {//字段名称}
+<assign name="value" value="$maindata[value]"/>                    {//字段的值}
+<assign name="length" value="$maindata[length]"/>                  {//字段长度}
 <if condition="$maindata[readonly] eq 0">
-    <assign name="readonly" value="readonly" />              {//字段是否只读}
-<else/>
-    <assign name="readonly" value="" />
+    <assign name="readonly" value="readonly"/>
+    {//字段是否只读}
+    <else/>
+    <assign name="readonly" value=""/>
 </if>
 
 {//自动产生值，不可编辑   }
-<if condition="($uitype eq 0)" >   
-<td width=20% class="dvtCellLabel" align=right><font color="red">{$mandatory_field}</font>{$label}             </td>
-<td width=30% align=left class="dvtCellInfo"><input  type="text"  name="{$name}" id ="{$name}" {$readonly} value="{$fldvalue}"  class=detailedViewTextBox onFocus="this.className='detailedViewTextBoxOn'" onBlur="this.className='detailedViewTextBox'" AUTOCOMPLETE="off">
-</td>
-
-{// --1-- 文本输入框}    
-<elseif condition="$uitype eq 1" />                 
-<td width=15% class="dvtCellLabel" align=right>
-    <font color="red">{$mandatory_field}*</font>{$label}
-</td>
-<td width=35% align=left class="dvtCellInfo">
-    <input type="text"  name="{$name}" id="{$name}" value="{$value}"  {$readonly} size="{$length}" class="detailedViewTextBox" onFocus="this.className='detailedViewTextBoxOn'" onBlur="this.className='detailedViewTextBox'" AUTOCOMPLETE="off">
+<if condition="($uitype eq 0)">
+    <td width=20% class="dvtCellLabel" align=right><font color="red">{$mandatory_field}</font>{$label}</td>
+    <td width=30% align=left class="dvtCellInfo"><input type="text" name="{$name}" id="{$name}" {$readonly}
+                                                        value="{$fldvalue}" class=detailedViewTextBox
+                                                        onFocus="this.className='detailedViewTextBoxOn'"
+                                                        onBlur="this.className='detailedViewTextBox'"
+                                                        AUTOCOMPLETE="off">
     </td>
 
-    {// --2-  数字输入框 }
-    <elseif condition="$uitype eq 2"  />
-    <td width=15% class="dvtCellLabel" align=right><font color="red">{$mandatory_field}</font>{$label}
-    </td>
-    <td width=35% align=left class="dvtCellInfo">
-    <input type="text"  class="easyui-numberbox" name="{$name}" id="{$name}" value="{$value}"  {$readonly} size="{$length}" class=detailedViewTextBox onFocus="this.className='detailedViewTextBoxOn'" onBlur="this.className='detailedViewTextBox'" AUTOCOMPLETE="off"></td> 
-
-    {// --3-- 百分比输入框  }
-    <elseif condition="$uitype eq 3" />
-    <td width=15% class="dvtCellLabel" align=right><font color="red">{$mandatory_field}</font>{$label}
-    </td>
-    <td width=35% align=left class="dvtCellInfo">
-    <input type="text" name="{$name}" id ="{$name}" value="{$value}" {$readonly} size="{$length}" class=detailedViewTextBox onFocus="this.className='detailedViewTextBoxOn'" onBlur="this.className='detailedViewTextBox'" AUTOCOMPLETE="off" />
-    </td> 
-
-    {// --4-- 货币输入框 }        
-    <elseif condition="$uitype eq 4" />
-    <td width="15%" class="dvtCellLabel" align=right>
-    <font color="red">{$mandatory_field}</font>{$label} 
-    </td>
-    <td width="35%" align=left class="dvtCellInfo">                
-    <input  type="text" name="{$name}" id ="{$name}" value="{$value}" {$readonly} size="{$length}" class="detailedViewTextBox" onFocus="this.className='detailedViewTextBoxOn'" onBlur="this.className='detailedViewTextBox'"  onkeyup="" AUTOCOMPLETE="off" />
-    </td>
-
-    {// --5--  日期输入框 }
-    <elseif condition="$uitype eq 5" />
-    <td width="15%" class="dvtCellLabel" align=right>
-    <font color="red">{$mandatory_field}</font>{$label}
-    </td>
-    <td width="35%" align=left class="dvtCellInfo">
-    <input name="{$name}" tabindex="{$vt_tab}" id="{$name}" class="easyui-datebox" type="text" style="border:1px solid #bababa;" size="11" maxlength="10" value="{$value}">
-    </td>
-
-    {// --6--   时间输入框   }
-    <elseif condition="$uitype eq 6" />
-    <td width="15%" class="dvtCellLabel" align=right>
-    <font color="red">{$mandatory_field}</font>{$label}
-    </td>
-    <td width="35%" align=left class="dvtCellInfo">
-    <input name="{$fldname}" id="jscal_field_{$fldname}" type="text" style="border:1px solid #bababa;" size="11" maxlength="10" value="{$time_val}">
-    <img src="{'btnL3Calendar.gif'|@vtiger_imageurl:$THEME}" id="jscal_trigger_{$fldname}">                              <br><font size=1><em old="(hh:ii:ss)">({$dateStr})</em></font>
-    </td>  
-
-    {//--7-- Email输入 }
-    <elseif condition="$uitype eq 7" />   
-    <td width=15% class="dvtCellLabel" align=right><font color="red">{$mandatory_field}</font>{$label}
-    </td>
-    <td width=35% align=left class="dvtCellInfo"><input type="text"  name="{$name}" id ="{$name}" value="{$value}"  {$readonly} size="{$length}" class=detailedViewTextBox onFocus="this.className='detailedViewTextBoxOn'" onBlur="this.className='detailedViewTextBox'" AUTOCOMPLETE="off">
-    </td>               
-
-    {// --9-- 下拉框输入 } 
-    <elseif condition="$uitype eq 9" />
-    <td width="15%" class="dvtCellLabel" align=right>
-    <font color="red">{$mandatory_field}</font>
-    {$label}
-    </td>
-    <td width="35%" align=left class="dvtCellInfo">
-    <assign name="select" value="$company[select]" />                    {//字段的值}
-    <select name="{$name}" id="{$name}"  class="detailedViewTextBox"  style="width:{$length}px">
-        <assing name="ccc" value="$currentName" />
-        <if condition="$value">
-            <option value="{$value}">{$value}</option>
-        <else />
-            <option value="  ">&nbsp;</option>
-        </if>
-        <foreach name="$name" item="pick">
-            <option value="{$pick.name}">{$pick.name}</option>
-       </foreach>
-    </select>
-    </td>   
-
-    {// --10-- 复选框 }
-    <elseif condition="$uitype eq 10" />                 
-    <td width=10% class="dvtCellLabel" align=right>
-    <font color="red">{$mandatory_field}</font>{$label} 
-    </td>
-    <td width=40% align=left class="dvtCellInfo">
-    <input type="text" name="{$name}"  id ="{$name}" value="{$value}" {$readonly} size="{$length}" tabindex="{$vt_tab}" class="detailedViewTextBox" onFocus="this.className='detailedViewTextBoxOn'" onBlur="this.className='detailedViewTextBox'" />
-    </td>
-
-    {// --11-- 文本域输入  }       
-    <elseif condition="$uitype eq 11" />
-    <td width="15%" class="dvtCellLabel" align=right>
-    <font color="red">{$mandatory_field}</font> {$label}
-    </td>
-    <td width="35%" align="left" class="dvtCellInfo">
-    <textarea  name="{$name}" id="{$name}" {$readonly} data-options='required:true' class="detailedViewTextBox" onFocus="this.className='detailedViewTextBoxOn'"   onBlur="this.className='detailedViewTextBox'"  rows="2" style="width:100%;">{$value}</textarea>
-    </td>
-    
-    {// --12-  数字输入框 }
-    <elseif condition="$uitype eq 12"  />
-    <td width=15% class="dvtCellLabel" align=right><font color="red">{$mandatory_field}</font>{$label}
-    </td>
-    <td width=35% align=left class="dvtCellInfo"><input type="password"   name="{$name}" id="{$name}" value="{$value}"  {$readonly} size="{$length}" class=detailedViewTextBox onFocus="this.className='detailedViewTextBoxOn'" onBlur="this.className='detailedViewTextBox'" ></td> 
-
-    {// --17--  网站地址输入框   }
-    <elseif condition="$uitype eq 17" />
-    <td width="20%" class="dvtCellLabel" align=right>
-    <font color="red">{$mandatory_field}</font>{$label} 
-    </td>
-    <td width="30%" align=left class="dvtCellInfo">
-    &nbsp;&nbsp;http://
-    <input style="width:74%;" class = 'detailedViewTextBox' type="text" tabindex="{$vt_tab}" name="{$fldname}" style="border:1px solid #bababa;" size="27" onFocus="this.className='detailedViewTextBoxOn'"onBlur="this.className='detailedViewTextBox'" onkeyup="validateUrl('{$fldname}');" value="{$fldvalue}" />
-    </td>
-
-    {// --26--  上传文件输入框}
-    <elseif condition="$uitype eq 26" />
-    <td width="20%" class="dvtCellLabel" align=right>
-    <font color="red">{$mandatory_field}</font>{$label}
-    </td>
-    <td width="30%" align=left class="dvtCellInfo">
-    <select name="{$fldname}" tabindex="{$vt_tab}" class="small">
-    <foreach name="fldvaluee" item="v" key="k" >  
-    </foreach>   
-    <option value="{$k}">{$v}</option> 
-
-    </select>
-    </td>
-
-    {//*******************************************************************************************}  
-    {// --21-- 电话 }
-    <elseif condition="$uitype eq 21" />                 
-    <td width=15% class="dvtCellLabel" align=right>
-    <font color="red">{$mandatory_field}</font>{$label} 
-    </td>
-    <td width=35% align=left class="dvtCellInfo">
-    <input type="text" name="{$name}"  value="{$value}" id ="{$name}" value="{$value}"  size="{$length}"  onFocus="this.className='detailedViewTextBoxOn'" onBlur="this.className='detailedViewTextBox'" onkeyup="$(this).val($(this).val().replace(/[^0-9]/g,''));" AUTOCOMPLETE="off" />
-</td>
-
-{// --22-- 送餐地址}    
-<elseif condition="$uitype eq 22" />                 
-<td width=15% class="dvtCellLabel" align=right>
-    <font color="red">{$mandatory_field}*</font>{$label}
-</td>
-<td width=35% align=left class="dvtCellInfo">
-    <input type="text"  name="{$name}" id="{$name}" value="{$value}"   class="detailedViewTextBox mousetrap" data-options="
-	required:true" size="{$length}" AUTOCOMPLETE="off" />
-    <div id="searchResultPanel" style="border:0px solid #C0C0C0;width:50px;height:auto; display:none;"></div>
-</td>   
-
-{// --23-- 送餐时间}    
-<elseif condition="$uitype eq 23" />                 
-<td width=15% class="dvtCellLabel" align=right>
-<font color="red">{$mandatory_field}</font>{$label}
-</td>
-<td width=35% align=left class="dvtCellInfo">
-<input type="text" name="{$name}_1"  id ="{$name}_1" value="{$custtime_1}"  size="2" maxlength="2" tabindex="{$vt_tab}" class="detailedViewTextBox" AUTOCOMPLETE="off" />
-<input type="text" name="{$name}_2"  id ="{$name}_2" value="{$custtime_2}" size="2"  maxlength="2" tabindex="{$vt_tab}" class="detailedViewTextBox" AUTOCOMPLETE="off"  />
-<em>*</em>
-</td>
-
-{//送餐方式的描述}
-<elseif condition="$uitype eq 30" />                 
-<td width=15% class="dvtCellLabel" align=right>
-    <font color="red">{$mandatory_field}*</font>{$label}
-</td>
-<td width=35% align=left class="dvtCellInfo">
-    <input type="text"  name="{$name}" id="{$name}" value="{$shippingname}"  size="{$length}" readonly class="detailedViewTextBox" onFocus="this.className='detailedViewTextBoxOn'" onBlur="this.className='detailedViewTextBox'" />
-    </td>
-{//送餐费}
-<elseif condition="$uitype eq 30" />                 
-<td width=15% class="dvtCellLabel" align=right>
-    <font color="red">{$mandatory_field}*</font>{$label}
-</td>
-<td width=35% align=left class="dvtCellInfo">
-    <input type="text"  name="{$name}" id="{$name}" value="{$shippingmoney}11"  size="{$length}" readonly class="detailedViewTextBox" onFocus="this.className='detailedViewTextBoxOn'" onBlur="this.className='detailedViewTextBox'" onKeydown="alert('ik');" />
-    </td>    
-
-{// --50-- 来电地址编辑 }
-<elseif condition="$uitype eq 50" />
-<td width="100%" class="dvtCellLabel" align=center colspan="4">
-<table id="telAddressTable" width="90%" border=0 style="border: 1px solid #e0dddd; margin-top: 2px;" class="small">
-<tr class="detailedViewHeader">
-<td width="10%" align="center">序号</td>
-<td width="70%" align="center">地址</td>
-<td width="10%" align="center">所属分公司</td>   
-<td width="10%" align="center">操作</td>
-</tr>
-<foreach name="teladdress" item="vo" >
-<tr style="height:25px;border: 1px solid black;background: #F0F0F0;" class="CaseRow" >
-<td width="10%" align="center" class="dvtCellLabel">{$key+1}</td>
-<td width="70%" align="left" class="dvtCellLabel"><input id="telAddress_{$key+1}" name="telAddress_{$key+1}" type="text" size="80" value="{$vo.address}" /></td>
-<td width="1%" align="center" class="dvtCellLabel"><input id="telCompany_{$key+1}" name="telCompany_{$key+1}" type="text" size="10" value="{$vo.company}" /></td>
-<td width="10%" align="center" class="dvtCellLabel"><a href="javascript:void(0);" onclick="clearTelAddress('{$key+1}');" >清空地址</a></td>
-</tr>
-</foreach>
-<empty name="teladdress">
-<for start="1" end="4" name="key">
-<tr style="height:25px;border: 1px solid black;background: #F0F0F0;" class="CaseRow" >
-<td width="10%" align="center" class="dvtCellLabel">{$key}</td>
-<td width="70%" align="left" class="dvtCellLabel"><input id="telAddress_{$key}" name="telAddress_{$key}" type="text" size="80" value="{$vo.address}" /></td>
-<td width="70%" align="center" class="dvtCellLabel"><input id="telCompany_{$key}" name="telCompany_{$key}" type="text" size="10" value="{$vo.company}" /></td>
-<td width="10%" align="center" class="dvtCellLabel"><a href="#" onclick="clearTelAddress('{$key}');" >清空地址</a></td>
-</tr>
-</for>
-</empty>
-</table> 
-<table  width="90%" >
-<tr>
-<td>    
-<input type="button" value="添加地址行" class="crmbutton small save" style="width:100px;margin-right: 10px;" onclick="addTelAddress();">
-<input type="button" value="删除最后一行"  class="crmbutton small save"  onclick="delTelAddress();">  
-<input id="addressLength" name="addressLength" type="hidden" value="{$key+1}" />
-</td>
-</tr>
-</table>     
-</td>
-
-{// --51-- 产品信息编辑 }
-<elseif condition="$uitype eq 51" />
-<td width="100%" class="dvtCellLabel" align=center colspan="4">
-<include file='ModuleUI:goodseditview' />
-</td>   
-
-{// --52-- 订单运行日志 }    
-<elseif condition="$uitype eq 52" />                 
-    <td width="100%" class="dvtCellLabel" align=center colspan="4">
-        <table style="border: 1px solid #BEBEBE;" width="95%">
-        <foreach name="orderaction" item="vo">
-            <tr>
-                <td width="20%">{$vo.logtime}</td>
-                <td>{$vo.action}</td>
-            </tr>
-        </foreach>
-        </table>
-    </td>
-
-{//RBAC节点的开启和关闭}
-<elseif condition="$uitype eq 53" />
-<td width=10% class="dvtCellLabel" align=right>
-    <font color="red">{$mandatory_field}</font>是否开启 
-</td>
-    <td width=40% align="left" class="dvtCellInfo" id="nodestatus">
-    <input type="radio" name="{$name}"   value="1" checked='checked' class="nodestatus" /><label class="nodestatus">&nbsp;开启&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-    <input type="radio" name="{$name}"   value="0" class="nodestatus" /><label class="nodestatus">&nbsp;关闭&nbsp;</label>
-</td>
-
-{//用户角色管理 } 
-    <elseif condition="$uitype eq 54" />
-    <td width="15%" class="dvtCellLabel" align=right>
-    <font color="red">{$mandatory_field}</font>
-    {$label}
-    </td>
-    <td width="35%" align=left class="dvtCellInfo">
-    <assign name="select" value="$company[select]" />                    {//字段的值}
-    <select name="role_id" id="{$name}"  class="detailedViewTextBox" style="width:200px">
-        <if condition="$roleCurrent">
-         <option value="{$roleCurrent.id}">{$roleCurrent.name}({$roleCurrent.remark})</option>
-         <else />
-        <option value="  ">请选择用户的角色</option>
-       </if>
-        <foreach name="role" item="vo">
-            <option value="{$vo['id']}">{$vo.name}({$vo.remark})</option>
-       </foreach>
-    </select>
-    </td> 
-    
-   {// --55--  今日菜单日期输入框 }
-    <elseif condition="$uitype eq 55" />
-    <td width="15%" class="dvtCellLabel" align=right>
-        <font color="red">{$mandatory_field}</font>{$label}
-    </td>
-    <td width="35%" align="left" class="dvtCellInfo1">
-    <input name="{$name}" tabindex="{$vt_tab}" id="todaymenudate" class="easyui-datebox" type="text" style="border:1px solid black;font-size:16px;" size="11" maxlength="10" value="{$todaymenudate}" data-options="onSelect:onTodaymenuSelect">
-    </td>
-    
-{// --56-- 今日菜单内容 }
-<elseif condition="$uitype eq 56" />
-<td width="100%" class="dvtCellLabel" align=center colspan="4"> 
-        <textarea name="{$name}" class="detailedViewTextBox" style="border:1px solid blcak;width: 98%;"   rows="20">{$value}</textarea>
-</td>  
-
-{// --57-- 发票下拉框输入 } 
-    <elseif condition="$uitype eq 57" />
-    <td width="15%" class="dvtCellLabel" align=right>
-    <font color="red">{$mandatory_field}</font>
-    {$label}
-    </td>
-    <td width="35%" align=left class="dvtCellInfo">
-    <select id="invoiceheaderselect"  class="detailedViewTextBox" style="width:200px">
-            <option value="  ">&nbsp;</option>
-    </select>
-    <input name="{$name}" id="{$name}" type="text" value="" size="35" style="margin-left: 10px;" />
-    </td>
-    <script type="text/javascript">
-      //select的选择发票
-      $('#invoiceheaderselect').click(function(){
-          var header = $("option:selected",this);
-          $('#invoiceheader').val(header.text());
-      })
-    </script>   
-{// --58-- 订单流程图 }
-<elseif condition="$uitype eq 58" />
-<td width="100%" class="dvtCellLabel" align=center colspan="4"> 
-</td>
-
-{// --60-- 打印派单信息编辑 }
-<elseif condition="$uitype eq 60" />
-<td width="100%" class="dvtCellLabel" align=center colspan="4"> 
-<include file='./rms/Tpl/ModuleUI/orderprinthandle.html' />
-</td>
-{// --61-- 预订日期}
-<elseif condition="$uitype eq 61" />
-<td width="100%" class="dvtCellLabel" align=center colspan="4"> 
-<include file='./rms/Tpl/ModuleUI/bookorderview.html' />
-</td>
-
-{// --62-- 在订单表中显示今日菜单的按钮}
-<elseif condition="$uitype eq 62" />
-<td width="100%" class="dvtCellLabel" align="left" colspan="2"> 
-<label style="float:left;font-size: 14px;line-height: 30px;margin-left: 100px;">按F10快捷键</label><input id="todaymenu" type="button" value="今日菜单" style="" />
-</td>
-
-    {// --63-- 文本输入框}
-    <elseif condition="$uitype eq 63" />
+    {// --1-- 文本输入框}
+    <elseif condition="$uitype eq 1"/>
     <td width=15% class="dvtCellLabel" align=right>
         <font color="red">{$mandatory_field}*</font>{$label}
     </td>
     <td width=35% align=left class="dvtCellInfo">
-        <input type="text"  name="{$name}"  value="{$value}"  {$readonly} size="{$length}" class="detailedViewTextBox"  AUTOCOMPLETE="off">
-        <img id="{$moduleName}{$Think.ACTION_NAME|ucfirst}searchIcon1" title="产品选择" src="./__PUBLIC__/Images/products.gif" style="cursor: pointer;"
+        <input type="text" name="{$name}" id="{$name}" value="{$value}" {$readonly} size="{$length}"
+               class="detailedViewTextBox" onFocus="this.className='detailedViewTextBoxOn'"
+               onBlur="this.className='detailedViewTextBox'" AUTOCOMPLETE="off">
+    </td>
+
+    {// --2- 数字输入框 }
+    <elseif condition="$uitype eq 2"/>
+    <td width=15% class="dvtCellLabel" align=right><font color="red">{$mandatory_field}</font>{$label}
+    </td>
+    <td width=35% align=left class="dvtCellInfo">
+        <input type="text" class="easyui-numberbox" name="{$name}" id="{$name}" value="{$value}" {$readonly}
+               size="{$length}" class=detailedViewTextBox onFocus="this.className='detailedViewTextBoxOn'"
+               onBlur="this.className='detailedViewTextBox'" AUTOCOMPLETE="off"></td>
+
+    {// --3-- 百分比输入框 }
+    <elseif condition="$uitype eq 3"/>
+    <td width=15% class="dvtCellLabel" align=right><font color="red">{$mandatory_field}</font>{$label}
+    </td>
+    <td width=35% align=left class="dvtCellInfo">
+        <input type="text" name="{$name}" id="{$name}" value="{$value}" {$readonly} size="{$length}"
+               class=detailedViewTextBox onFocus="this.className='detailedViewTextBoxOn'"
+               onBlur="this.className='detailedViewTextBox'" AUTOCOMPLETE="off"/>
+    </td>
+
+    {// --4-- 货币输入框 }
+    <elseif condition="$uitype eq 4"/>
+    <td width="15%" class="dvtCellLabel" align=right>
+        <font color="red">{$mandatory_field}</font>{$label}
+    </td>
+    <td width="35%" align=left class="dvtCellInfo">
+        <input type="text" name="{$name}" id="{$name}" value="{$value}" {$readonly} size="{$length}"
+               class="detailedViewTextBox" onFocus="this.className='detailedViewTextBoxOn'"
+               onBlur="this.className='detailedViewTextBox'" onkeyup="" AUTOCOMPLETE="off"/>
+    </td>
+
+    {// --5-- 日期输入框 }
+    <elseif condition="$uitype eq 5"/>
+    <td width="15%" class="dvtCellLabel" align=right>
+        <font color="red">{$mandatory_field}</font>{$label}
+    </td>
+    <td width="35%" align=left class="dvtCellInfo">
+        <input name="{$name}" tabindex="{$vt_tab}" id="{$name}" class="easyui-datebox" type="text"
+               style="border:1px solid #bababa;" size="20" maxlength="10" value="{$value}">
+    </td>
+
+    {// --6-- 时间输入框 }
+    <elseif condition="$uitype eq 6"/>
+    <td width="15%" class="dvtCellLabel" align=right>
+        <font color="red">{$mandatory_field}</font>{$label}
+    </td>
+    <td width="35%" align=left class="dvtCellInfo">
+        <input name="{$fldname}" id="jscal_field_{$fldname}" type="text" style="border:1px solid #bababa;" size="11"
+               maxlength="10" value="{$time_val}">
+        <img src="{'btnL3Calendar.gif'|@vtiger_imageurl:$THEME}" id="jscal_trigger_{$fldname}"> <br><font size=1><em
+            old="(hh:ii:ss)">({$dateStr})</em></font>
+    </td>
+
+    {//--7-- Email输入 }
+    <elseif condition="$uitype eq 7"/>
+    <td width=15% class="dvtCellLabel" align=right><font color="red">{$mandatory_field}</font>{$label}
+    </td>
+    <td width=35% align=left class="dvtCellInfo"><input type="text" name="{$name}" id="{$name}" value="{$value}"
+                                                        {$readonly} size="{$length}" class=detailedViewTextBox
+                                                        onFocus="this.className='detailedViewTextBoxOn'"
+                                                        onBlur="this.className='detailedViewTextBox'"
+                                                        AUTOCOMPLETE="off">
+    </td>
+
+    {// --9-- 下拉框输入 }
+    <elseif condition="$uitype eq 9"/>
+    <td width="15%" class="dvtCellLabel" align=right>
+        <font color="red">{$mandatory_field}</font>
+        {$label}
+    </td>
+    <td width="35%" align=left class="dvtCellInfo">
+        <assign name="select" value="$company[select]"/>
+        {//字段的值}
+        <select name="{$name}" id="{$name}" class="detailedViewTextBox" style="width:120px;">
+            <assing name="ccc" value="$currentName"/>
+            <if condition="$value">
+                <option value="{$value}">{$value}</option>
+                <else/>
+                <option value="  ">&nbsp;</option>
+            </if>
+            <foreach name="$name" item="pick">
+                <option value="{$pick.name}">{$pick.name}</option>
+            </foreach>
+        </select>
+    </td>
+
+    {// --10-- 复选框 }
+    <elseif condition="$uitype eq 10"/>
+    <td width=10% class="dvtCellLabel" align=right>
+        <font color="red">{$mandatory_field}</font>{$label}
+    </td>
+    <td width=40% align=left class="dvtCellInfo">
+        <input type="text" name="{$name}" id="{$name}" value="{$value}" {$readonly} size="{$length}"
+               tabindex="{$vt_tab}" class="detailedViewTextBox" onFocus="this.className='detailedViewTextBoxOn'"
+               onBlur="this.className='detailedViewTextBox'"/>
+    </td>
+
+    {// --11-- 文本域输入 }
+    <elseif condition="$uitype eq 11"/>
+    <td width="15%" class="dvtCellLabel" align=right>
+        <font color="red">{$mandatory_field}</font> {$label}
+    </td>
+    <td width="35%" align="left" class="dvtCellInfo">
+        <textarea name="{$name}" id="{$name}" {$readonly} data-options='required:true' class="detailedViewTextBox"
+                  onFocus="this.className='detailedViewTextBoxOn'" onBlur="this.className='detailedViewTextBox'"
+                  rows="2" style="width:100%;">{$value}</textarea>
+    </td>
+
+    {// --12- 数字输入框 }
+    <elseif condition="$uitype eq 12"/>
+    <td width=15% class="dvtCellLabel" align=right><font color="red">{$mandatory_field}</font>{$label}
+    </td>
+    <td width=35% align=left class="dvtCellInfo"><input type="password" name="{$name}" id="{$name}" value="{$value}"
+                                                        {$readonly} size="{$length}" class=detailedViewTextBox
+                                                        onFocus="this.className='detailedViewTextBoxOn'"
+                                                        onBlur="this.className='detailedViewTextBox'"></td>
+
+    {// --17-- 网站地址输入框 }
+    <elseif condition="$uitype eq 17"/>
+    <td width="20%" class="dvtCellLabel" align=right>
+        <font color="red">{$mandatory_field}</font>{$label}
+    </td>
+    <td width="30%" align=left class="dvtCellInfo">
+        &nbsp;&nbsp;http://
+        <input style="width:74%;" class='detailedViewTextBox' type="text" tabindex="{$vt_tab}" name="{$fldname}"
+               style="border:1px solid #bababa;" size="27" onFocus="this.className='detailedViewTextBoxOn'"
+               onBlur="this.className='detailedViewTextBox'" onkeyup="validateUrl('{$fldname}');" value="{$fldvalue}"/>
+    </td>
+
+    {// --26-- 上传文件输入框}
+    <elseif condition="$uitype eq 26"/>
+    <td width="20%" class="dvtCellLabel" align=right>
+        <font color="red">{$mandatory_field}</font>{$label}
+    </td>
+    <td width="30%" align=left class="dvtCellInfo">
+        <select name="{$fldname}" tabindex="{$vt_tab}" class="small">
+            <foreach name="fldvaluee" item="v" key="k">
+            </foreach>
+            <option value="{$k}">{$v}</option>
+
+        </select>
+    </td>
+
+    {//*******************************************************************************************}
+    {// --21-- 电话 }
+    <elseif condition="$uitype eq 21"/>
+    <td width=15% class="dvtCellLabel" align=right>
+        <font color="red">{$mandatory_field}</font>{$label}
+    </td>
+    <td width=35% align=left class="dvtCellInfo">
+        <input type="text" name="{$name}" value="{$value}" id="{$name}" value="{$value}" size="{$length}"
+               onFocus="this.className='detailedViewTextBoxOn'" onBlur="this.className='detailedViewTextBox'"
+               onkeyup="$(this).val($(this).val().replace(/[^0-9]/g,''));" AUTOCOMPLETE="off"/>
+    </td>
+
+    {// --22-- 送餐地址}
+    <elseif condition="$uitype eq 22"/>
+    <td width=15% class="dvtCellLabel" align=right>
+        <font color="red">{$mandatory_field}*</font>{$label}
+    </td>
+    <td width=35% align=left class="dvtCellInfo">
+        <input type="text" name="{$name}" id="{$name}" value="{$value}" class="detailedViewTextBox mousetrap"
+               data-options="
+	required:true" size="{$length}" AUTOCOMPLETE="off"/>
+
+        <div id="searchResultPanel" style="border:0px solid #C0C0C0;width:50px;height:auto; display:none;"></div>
+    </td>
+
+    {// --23-- 送餐时间}
+    <elseif condition="$uitype eq 23"/>
+    <td width=15% class="dvtCellLabel" align=right>
+        <font color="red">{$mandatory_field}</font>{$label}
+    </td>
+    <td width=35% align=left class="dvtCellInfo">
+        <input type="text" name="{$name}_1" id="{$name}_1" value="{$custtime_1}" size="2" maxlength="2"
+               tabindex="{$vt_tab}" class="detailedViewTextBox" AUTOCOMPLETE="off"/>
+        <input type="text" name="{$name}_2" id="{$name}_2" value="{$custtime_2}" size="2" maxlength="2"
+               tabindex="{$vt_tab}" class="detailedViewTextBox" AUTOCOMPLETE="off"/>
+        <em>*</em>
+    </td>
+
+    {//送餐方式的描述}
+    <elseif condition="$uitype eq 30"/>
+    <td width=15% class="dvtCellLabel" align=right>
+        <font color="red">{$mandatory_field}*</font>{$label}
+    </td>
+    <td width=35% align=left class="dvtCellInfo">
+        <input type="text" name="{$name}" id="{$name}" value="{$shippingname}" size="{$length}" readonly
+               class="detailedViewTextBox" onFocus="this.className='detailedViewTextBoxOn'"
+               onBlur="this.className='detailedViewTextBox'"/>
+    </td>
+    {//送餐费}
+    <elseif condition="$uitype eq 30"/>
+    <td width=15% class="dvtCellLabel" align=right>
+        <font color="red">{$mandatory_field}*</font>{$label}
+    </td>
+    <td width=35% align=left class="dvtCellInfo">
+        <input type="text" name="{$name}" id="{$name}" value="{$shippingmoney}11" size="{$length}" readonly
+               class="detailedViewTextBox" onFocus="this.className='detailedViewTextBoxOn'"
+               onBlur="this.className='detailedViewTextBox'" onKeydown="alert('ik');"/>
+    </td>
+
+    {// --50-- 来电地址编辑 }
+    <elseif condition="$uitype eq 50"/>
+    <td width="100%" class="dvtCellLabel" align=center colspan="4">
+        <table id="telAddressTable" width="90%" border=0 style="border: 1px solid #e0dddd; margin-top: 2px;"
+               class="small">
+            <tr class="detailedViewHeader">
+                <td width="10%" align="center">序号</td>
+                <td width="70%" align="center">地址</td>
+                <td width="10%" align="center">所属分公司</td>
+                <td width="10%" align="center">操作</td>
+            </tr>
+            <foreach name="teladdress" item="vo">
+                <tr style="height:25px;border: 1px solid black;background: #F0F0F0;" class="CaseRow">
+                    <td width="10%" align="center" class="dvtCellLabel">{$key+1}</td>
+                    <td width="70%" align="left" class="dvtCellLabel"><input id="telAddress_{$key+1}"
+                                                                             name="telAddress_{$key+1}" type="text"
+                                                                             size="80" value="{$vo.address}"/></td>
+                    <td width="1%" align="center" class="dvtCellLabel"><input id="telCompany_{$key+1}"
+                                                                              name="telCompany_{$key+1}" type="text"
+                                                                              size="10" value="{$vo.company}"/></td>
+                    <td width="10%" align="center" class="dvtCellLabel"><a href="javascript:void(0);"
+                                                                           onclick="clearTelAddress('{$key+1}');">清空地址</a>
+                    </td>
+                </tr>
+            </foreach>
+            <empty name="teladdress">
+                <for start="1" end="4" name="key">
+                    <tr style="height:25px;border: 1px solid black;background: #F0F0F0;" class="CaseRow">
+                        <td width="10%" align="center" class="dvtCellLabel">{$key}</td>
+                        <td width="70%" align="left" class="dvtCellLabel"><input id="telAddress_{$key}"
+                                                                                 name="telAddress_{$key}" type="text"
+                                                                                 size="80" value="{$vo.address}"/></td>
+                        <td width="70%" align="center" class="dvtCellLabel"><input id="telCompany_{$key}"
+                                                                                   name="telCompany_{$key}" type="text"
+                                                                                   size="10" value="{$vo.company}"/>
+                        </td>
+                        <td width="10%" align="center" class="dvtCellLabel"><a href="#"
+                                                                               onclick="clearTelAddress('{$key}');">清空地址</a>
+                        </td>
+                    </tr>
+                </for>
+            </empty>
+        </table>
+        <table width="90%">
+            <tr>
+                <td>
+                    <input type="button" value="添加地址行" class="crmbutton small save"
+                           style="width:100px;margin-right: 10px;" onclick="addTelAddress();">
+                    <input type="button" value="删除最后一行" class="crmbutton small save" onclick="delTelAddress();">
+                    <input id="addressLength" name="addressLength" type="hidden" value="{$key+1}"/>
+                </td>
+            </tr>
+        </table>
+    </td>
+
+    {// --51-- 产品信息编辑 }
+    <elseif condition="$uitype eq 51"/>
+    <td width="100%" class="dvtCellLabel" align=center colspan="4">
+        <include file='ModuleUI:goodseditview'/>
+    </td>
+
+    {// --52-- 订单运行日志 }
+    <elseif condition="$uitype eq 52"/>
+    <td width="100%" class="dvtCellLabel" align=center colspan="4">
+        <table style="border: 1px solid #BEBEBE;" width="95%">
+            <foreach name="orderaction" item="vo">
+                <tr>
+                    <td width="20%">{$vo.logtime}</td>
+                    <td>{$vo.action}</td>
+                </tr>
+            </foreach>
+        </table>
+    </td>
+
+    {//RBAC节点的开启和关闭}
+    <elseif condition="$uitype eq 53"/>
+    <td width=10% class="dvtCellLabel" align=right>
+        <font color="red">{$mandatory_field}</font>是否开启
+    </td>
+    <td width=40% align="left" class="dvtCellInfo" id="nodestatus">
+        <input type="radio" name="{$name}" value="1" checked='checked' class="nodestatus"/><label class="nodestatus">
+        &nbsp;开启&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+        <input type="radio" name="{$name}" value="0" class="nodestatus"/><label class="nodestatus">
+        &nbsp;关闭&nbsp;</label>
+    </td>
+
+    {//用户角色管理 }
+    <elseif condition="$uitype eq 54"/>
+    <td width="15%" class="dvtCellLabel" align=right>
+        <font color="red">{$mandatory_field}</font>
+        {$label}
+    </td>
+    <td width="35%" align=left class="dvtCellInfo">
+        <assign name="select" value="$company[select]"/>
+        {//字段的值}
+        <select name="role_id" id="{$name}" class="detailedViewTextBox" style="width:200px">
+            <if condition="$roleCurrent">
+                <option value="{$roleCurrent.id}">{$roleCurrent.name}({$roleCurrent.remark})</option>
+                <else/>
+                <option value="  ">请选择用户的角色</option>
+            </if>
+            <foreach name="role" item="vo">
+                <option value="{$vo['id']}">{$vo.name}({$vo.remark})</option>
+            </foreach>
+        </select>
+    </td>
+
+    {// --55-- 今日菜单日期输入框 }
+    <elseif condition="$uitype eq 55"/>
+    <td width="15%" class="dvtCellLabel" align=right>
+        <font color="red">{$mandatory_field}</font>{$label}
+    </td>
+    <td width="35%" align="left" class="dvtCellInfo1">
+        <input name="{$name}" tabindex="{$vt_tab}" id="todaymenudate" class="easyui-datebox" type="text"
+               style="border:1px solid black;font-size:16px;" size="11" maxlength="10" value="{$todaymenudate}">
+    </td>
+
+    {// --56-- 今日菜单内容 }
+    <elseif condition="$uitype eq 56"/>
+    <td width="100%" class="dvtCellLabel" align=center colspan="4">
+        <textarea name="{$name}" class="detailedViewTextBox" style="border:1px solid blcak;width: 98%;" rows="20">{$value}</textarea>
+    </td>
+
+    {// --57-- 发票下拉框输入 }
+    <elseif condition="$uitype eq 57"/>
+    <td width="15%" class="dvtCellLabel" align=right>
+        <font color="red">{$mandatory_field}</font>
+        {$label}
+    </td>
+    <td width="35%" align=left class="dvtCellInfo">
+        <select id="invoiceheaderselect" class="detailedViewTextBox" style="width:200px">
+            <option value="  ">&nbsp;</option>
+        </select>
+        <input name="{$name}" id="{$name}" type="text" value="" size="35" style="margin-left: 10px;"/>
+    </td>
+    <script type="text/javascript">
+        //select的选择发票
+        $('#invoiceheaderselect').click(function () {
+            var header = $("option:selected", this);
+            $('#invoiceheader').val(header.text());
+        })
+    </script>
+    {// --58-- 订单流程图 }
+    <elseif condition="$uitype eq 58"/>
+    <td width="100%" class="dvtCellLabel" align=center colspan="4">
+    </td>
+
+    {// --60-- 打印派单信息编辑 }
+    <elseif condition="$uitype eq 60"/>
+    <td width="100%" class="dvtCellLabel" align=center colspan="4">
+        <include file='./rms/Tpl/ModuleUI/orderprinthandle.html'/>
+    </td>
+    {// --61-- 预订日期}
+    <elseif condition="$uitype eq 61"/>
+    <td width="100%" class="dvtCellLabel" align=center colspan="4">
+        <include file='./rms/Tpl/ModuleUI/bookorderview.html'/>
+    </td>
+
+    {// --62-- 在订单表中显示今日菜单的按钮}
+    <elseif condition="$uitype eq 62"/>
+    <td width="100%" class="dvtCellLabel" align="left" colspan="2">
+        <label style="float:left;font-size: 14px;line-height: 30px;margin-left: 100px;">按F10快捷键</label><input
+            id="todaymenu" type="button" value="今日菜单" style=""/>
+    </td>
+
+    {// --63-- 文本输入框}
+    <elseif condition="$uitype eq 63"/>
+    <td width=15% class="dvtCellLabel" align=right>
+        <font color="red">{$mandatory_field}*</font>{$label}
+    </td>
+    <td width=35% align=left class="dvtCellInfo">
+        <input type="text" name="{$name}" value="{$value}" {$readonly} size="{$length}" class="detailedViewTextBox"
+               AUTOCOMPLETE="off">
+        <img id="{$moduleName}{$Think.ACTION_NAME|ucfirst}searchIcon1" title="产品选择"
+             src="./__PUBLIC__/Images/products.gif" style="cursor: pointer;"
              align="absmiddle"
              onclick="OrderPrintHandleViewModule.sendnamePickList('__URL__/popupSendnameview');"/><a
             href="javascript:OrderPrintHandleViewModule.sendnamePickList('__URL__/popupSendnameview');">选择</a>
 
     </td>
 
- 
+    {// --64-- 下拉框输入 }
+    <elseif condition="$uitype eq 64"/>
+    <td width="15%" class="dvtCellLabel" align=right>
+        <font color="red">{$mandatory_field}</font>
+        {$label}
+    </td>
+    <td width="35%" align=left class="dvtCellInfo">
+        <assign name="select" value="$company[select]"/>
+        {//字段的值}
+        <select name="{$name}" id="{$name}" class="detailedViewTextBox" style="width:120px;">
+            <assing name="ccc" value="$currentName"/>
+            <if condition="$name">
+                <option value="{$value}">{$value}</option>
+                <else/>
+                <option value="  ">&nbsp;</option>
+            </if>
+            <foreach name="$name" item="pick">
+                <option value="{$pick.name}">{$pick.name}</option>
+            </foreach>
+        </select>
+    </td>
+
+    {// --65-- 工作餐地址}
+    <elseif condition="$uitype eq 65"/>
+    <td width=15% class="dvtCellLabel" align=right>
+        <font color="red">{$mandatory_field}*</font>{$label}
+    </td>
+    <td width=35% align=left class="dvtCellInfo">
+        <input type="text" name="worklunchcode" id="worklunchcode"  {$readonly} size="{$length}"
+               class="detailedViewTextBox" onFocus="this.className='detailedViewTextBoxOn'"
+               onBlur="this.className='detailedViewTextBox'"
+               onkeydown="YingshouWorklunchCreateviewModule.getWorklunchByCode(event,this);"
+               AUTOCOMPLETE="off">
+        <img id="YingshouRoomServicesearchIcon1" title="选择" src="./__PUBLIC__/Images/products.gif"
+             style="cursor: pointer;"
+             align="absmiddle"
+             onclick="YingshouWorklunchCreateviewModule.worklunchPickList('__URL__/popupWorklunchview/module/Accounts/row/{$key+1}');"/><a
+            href="javascript:YingshouWorklunchCreateviewModule.worklunchPickList('__URL__/popupWorklunchview/module/Accounts/row/{$key+1}')">选择</a>
+    </td>
+
+    {// --66-- 支付客户}
+    <elseif condition="$uitype eq 66"/>
+    <td width=15% class="dvtCellLabel" align=right>
+        <font color="red">{$mandatory_field}*</font>{$label}
+    </td>
+    <td width=35% align=left class="dvtCellInfo">
+        <input type="text" name="paymentcode" id="paymentcode"  {$readonly} size="{$length}"
+               class="detailedViewTextBox" onFocus="this.className='detailedViewTextBoxOn'"
+               onBlur="this.className='detailedViewTextBox'"
+               onkeydown="YingshouIncomeMgrListviewModule.getAccountsByCode(event,this,'{$module}');"
+               AUTOCOMPLETE="off">
+        <img id="YingshouRoomServicesearchIcon1" title="选择" src="./__PUBLIC__/Images/products.gif"
+             style="cursor: pointer;"
+             align="absmiddle"
+             onclick="YingshouIncomeMgrListviewModule.accountsPickList('__URL__/popupAccountsview/module/Accounts/row/{$key+1}');"/><a
+            href="javascript:YingshouIncomeMgrListviewModule.accountsPickList('__URL__/popupAccountsview/module/Accounts/row/{$key+1}')">选择</a>
+    </td>
+
 
 </if>
 

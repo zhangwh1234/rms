@@ -1,0 +1,69 @@
+<script type="text/javascript">
+    //判断是否是从index开始执行的
+    if(typeof indexFromGo === 'undefined'){
+        window.location.href = '__APP__/Index/index';
+    }
+
+    function deleteRecord(url){
+        // 
+
+        if(confirm("是否真的要删除？")){
+            updateTab(url);
+            //updateTab("__APP__/{$module_name}/hurry?&record="+record);
+        }
+    }
+
+    //快捷键的操作
+    $(function(){
+        $("#list{$moduleName}").attr("tabindex",0);
+        $("#list{$moduleName}").focus(); 
+        $("#list{$moduleName}").keydown(function(e){ 
+            if(e.which == 112){  //新建F1快捷键
+                //返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if(tabOptions.title == '{$Think.Lang.$moduleName}' ){
+                    updateTab('__APP__/{$moduleName}/createview');         
+                }     
+                e.preventDefault(); 
+            }
+        })
+
+    })  
+
+</script>
+<div class="pages" align="center">{$page}</div>
+<div class="list" id="list{$moduleName}">   
+    <input id="{$moduleName}Action" type="hidden" value="listview" />    
+    <table  border="0" cellspacing="1" cellpadding="3" width="100%" class="lvt"   align="center">
+        <tr class="listHeader">
+            <td class=""><input class="listColCheck" type="checkbox"  name="selectall" ></td>
+            <foreach name="listHeader" item="header">
+                <td class="listHeader">{$Think.lang.$header}</td>
+            </foreach>
+            <td class="listHeader" >操作</td>
+        </tr>
+        <volist id="entity"  name="listEntries" key='ad'>
+            <assign name='record' value="$key" />
+            <tr bgcolor="white" onMouseOver="this.className='lvtColDataHover'" onMouseOut="this.className='lvtColData'" ondblclick="updateTab('__URL__/detailview/record/{$record}/returnAction/{$returnAction}');" id="row_{$entity_id}">
+
+                <volist name="entity" id="id">
+                    <if condition="$key eq $moduleId">
+                        <td class="listColCheck" width="2%"><input  type="checkbox" name="selected_id" id="{$record}" value= '{$record}'></td> 
+                        <elseif condition="$key eq $list_link_field" />
+                        <td><a class="small" href="#" onclick="updateTab('__URL__/detailview/record/{$record}/returnAction/listview');">{$id}</a></td>
+                        <else />                  
+                        <td class="listColData">{$id}</td>                   
+                    </if>
+                </volist>               
+                <td><center><a href="javascript:void(0);" onclick="updateTab('__URL__/detailview/record/{$record}/returnAction/{$returnAction}');">查看</a><span >&nbsp&nbsp|&nbsp&nbsp</span>
+                        <a href="javascript:void(0);" onclick="updateTab('__URL__/editview/record/{$record}/returnAction/listview');">编辑</a>&nbsp&nbsp|&nbsp&nbsp</span>
+                        <a href="javascript:void(0);" onclick="deleteRecord('__URL__/delete/record/{$record}/returnAction/{$returnAction}');">删除</a>&nbsp&nbsp|&nbsp&nbsp
+                        <a href="javascript:void(0);" onclick="updateTab('__URL__/editviewUserOrganization/uid/{$record}/returnAction/listview');">设置部门</a></center></td>
+            </tr>
+        </volist>
+    </table>
+</div>
+<div class="pages">{$page}</div>
+
+

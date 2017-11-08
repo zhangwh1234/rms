@@ -1,0 +1,19 @@
+<?php
+  /**
+  * 装箱语言表
+  */
+  return array(
+    'code' => '代码',
+    'name' => '送餐员姓名',
+    'totalmoney' => '总金额',
+    'state' => '状态',
+    'ap' => '午别',
+    'rectime' => '录入时间',
+    'changtime' => '修改时间',
+    'zhuangxiangtxt' => '数量规格',
+    'company' => '分公司',
+    'LBL_ZHUANGXIANG_INFORMATION' => '送餐员信息',
+    'LBL_PRODUCTS_INFORMATION' => '装箱内容信息',
+    'LBL_ORDERACTION_INFORMATION' =>'日志信息',
+  )
+?>

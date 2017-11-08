@@ -1,0 +1,33 @@
+<?php if (!defined('THINK_PATH')) exit();?><div class="moduleMenu">
+    <ul>
+        <li><?php echo (L("$tabName")); ?></li>
+        <li><a href="#" class="moduleName" onclick="updateTab('__URL__/listview');">&nbsp;&gt;<?php echo (L("$moduleName")); ?></a></li>
+        <li>&nbsp;&gt;列表操作</li>
+        <li style="width: 50px;">&nbsp;</li>
+        <li style="margin-left: 10px;"><a href="javascript:;" id="showSubMenu"  onMouseOver="" ><img src=".__PUBLIC__/Images/addressBtn.jpg" alt="" title="" border="0"></a></li>
+        <li><a href="#" class="moduleName" onclick="openNewTab('分配地址查询','__URL__/searchviewForAddress/delsession/1');">地址查询<span>⌃6</span></a></li>
+        <li style="margin-left: 10px;"><a href="javascript:;" id="showSubMenu"  onMouseOver="" ><img src=".__PUBLIC__/Images/sendnameBtn.jpg" alt="" title="" border="0"></a></li>
+        <li><a href="#" class="moduleName" onclick="openNewTab('分配配送店查询','__URL__/searchviewForCompany/delsession/1');">配送店查询<span>⌃7</span></a></li>
+        <li style="width: 20px;">&nbsp;</li> 
+        <li><input id="searchother" name="searchother"  class="easyui-searchbox" data-options="prompt:'请输入查询内容',searcher:doSearchOtherDistribution" style="width: 300px;" /></li>
+        <li style="float: right;margin-right: 40px;"><a href="javascript:;" class="moduleName" onclick="closeTabOrderDistribution();">关闭</a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="closeTabOrderDistribution();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
+    </ul>
+</div>
+<script type="text/javascript">
+    function doSearchOtherDistribution(value){
+        openNewTab('分配查询','__URL__/searchviewForOther/searchText/'+value);
+    }
+    /*关闭选项卡*/
+    function closeTabOrderDistribution(){
+        //关闭定时显示订单状态的定时器
+        //clearInterval(refreshOrderHandleMonit);
+        //返回选项卡
+        var tab = $('#operation').tabs('getSelected');
+        //返回选项卡的index
+        var index = $('#operation').tabs('getTabIndex',tab);
+        //关闭选项卡
+        $('#operation').tabs('close',index);
+
+    }
+</script>

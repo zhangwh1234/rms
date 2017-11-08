@@ -1,0 +1,50 @@
+<style type="text/css">
+    html {
+        height: 100%
+    }
+
+    body {
+        height: 100%;
+        margin: 0px;
+        padding: 0px
+    }
+
+    #container {
+        height: 100%
+    }
+</style>
+<div id="container"></div>
+<script type="text/javascript">
+    //建立地图模型
+    var map = new BMap.Map("container");
+
+    map.addControl(new BMap.MapTypeControl());   //添加地图类型控件
+    map.setCurrentCity("{$city}");          // 设置地图显示的城市 此项是必须设置的
+    map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+
+
+    var point = new BMap.Point({$longitude}, {$latitude});
+    map.centerAndZoom(point, 15);
+    var marker = new BMap.Marker(point);  // 创建标注
+    map.addOverlay(marker);               // 将标注添加到地图中
+    marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
+
+    var orderlabel = new BMap.Label("{$address}", {offset: new BMap.Size(18, 10)});
+    marker.setLabel(orderlabel);
+
+    //初始化MARKER，并设置坐标
+    var sendpoint = new BMap.Point({$sendlongitude}, {$sendlatitude});
+    var sendmarker = new BMap.Marker(sendpoint);
+    map.addOverlay(sendmarker);
+    //显示送餐员的图，和坐标位置
+    var sendmanIcon = new BMap.Icon(".__PUBLIC__/Images/sendman.png", new BMap.Size(28, 28));
+    sendmarker.setIcon(sendmanIcon);
+
+    //加入lable
+    var sendlabel = new BMap.Label("{$sendname} ", {offset: new BMap.Size(18, -16)});
+    sendmarker.setLabel(sendlabel);
+
+    $(function () {
+        //初始化地图
+    });
+</script>

@@ -1,0 +1,54 @@
+<div id="popupviewproducts_div" class="easyui-layout" data-options="fit:true" style="overflow: hidden;">
+    <div data-options="region:'center'">
+        <tagLib name="easyui"/>
+        <easyui:datagrid options="datagrid.options" fields="datagrid.fields"/>
+    </div>
+</div>
+<input id="popupviewproductstable_row" name="popupviewproductstable_row"  hidden value="{$row}" />
+
+<script type="text/javascript">
+
+    var YingshouWorklunchPopupAccountsviewModule = {
+
+        init: function () {
+            //设置div的高度
+            $('#OrderFormListviewDiv').height(IndexIndexModule.operationHeight);
+        },
+
+        //操作格式化
+        operate: function (val, rowData, rowIndex) {
+            var btn = [];
+            btn.push('<a href="javascript:void(0);" onclick="YingshouWorklunchPopupAccountsviewModule.selectProducts(' + rowData.productsid+','+rowData.code+',\''
+                + rowData.name+'\','+ rowData.price +')">选择</a>');
+            return btn.join(' | ');
+        },
+
+        //单选产品
+        selectProducts:function (productsid,code,name,price){
+            row = $('#popupviewproductstable_row').val();
+
+            //首先检查父窗口表格是否有存在输入的代码和产品
+            var rowLength = $("#productsTable tr").length;
+            for (i = 1; i < rowLength; i++) {
+                var productsName = $("#{$returnModule}productsName_" + i).attr('value');
+                if (productsName == name) {
+                    alert('产品已经存在');
+                    return;
+                }
+            }
+
+
+            $("#{$returnModule}productsCode_" + row).val(code);
+            $("#{$returnModule}productsName_" + row).val(name); //返回产品名称
+            $("#{$returnModule}productsPrice_" + row).val(price); //返回产品单价
+            //计算所有的金额
+
+            $('#globel-dialog-div').dialog('close');
+
+        }
+    }
+
+</script>
+
+
+

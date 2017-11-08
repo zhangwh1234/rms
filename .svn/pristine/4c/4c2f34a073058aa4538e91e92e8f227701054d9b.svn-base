@@ -1,0 +1,1305 @@
+<?php
+  <div class="pagestop">
+    <span id="distributionOrderMonit"></span>
+</div>
+?>
+
+
+<style type="text/css">
+    .pagestop{
+        background-color: #F4F4F4;
+        text-align: center;
+    }
+    .pagesbot{
+        border:0px solid red;
+        margin-bottom: 1px ;
+        margin-top: 0px;
+        width:100%;
+        height: 25px;
+        background-color: #F4F4F4;
+        border-bottom: 1px solid #EAEAEA;
+        height: 27px;
+        line-height: 27px;
+        text-align: center;
+
+    }
+    .other{
+        border:1px solid red;
+        margin-bottom: 1px ;
+        margin-top: 0px;
+        width:100%;
+        height: 25px;
+        background-color: #F4F4F4;
+        border-top: 1px solid #EAEAEA;
+        height: 27px;
+        line-height: 27px;
+    }
+
+</style>
+
+<script type="text/javascript">
+    //定义分公司分配数组
+    var companyMgr = new Array();
+
+    $('#OrderFormDistributionTable').datagrid({ 
+        nowrap:"true",  
+        fitColumns:"true",
+        singleSelect:"true",
+        autoRowHeight:"true",
+        title:"订单配送",
+        striped:"true",        
+        border:"false", 
+        rownumbers:"true",
+        columns:[[  
+        {field:'orderformid',title:'id',hidden:'true',width:100},  
+        {field:'address',title:'地址',width:100,align:'left'},  
+        {field:'ordertxt',title:'数量规格',width:80,align:'center'},          
+        {field:"totalmoney",width:30,title:'金额'},
+        {field:"telphone",width:50,title:'电话',align:'center'},
+        {field:"custtime", width:30,title:'要餐时间'},
+        {field:"state", width:40,title:'状态'},
+        {field:"beizhu", width:80,title:'备注'},
+        {field:"operation", width:50,title:'操作'}
+        ]]  
+    });  
+   //键盘移动
+   $("#OrderFormDistributionTable").datagrid({}).datagrid("keyCtr");
+   
+   ///定义订货OrderGoods显示表
+    var orderProductsDistributionTable = $('#OrderProductsDistributionTable').datagrid({
+        nowrap:false,
+        columns:[[
+        {field:'number',title:'数量',width:30},
+        {field:'name',title:'名称',width:50}
+        ]]
+    })
+
+    var pager = $('#OrderFormHandleTable').datagrid().datagrid('getPager') 
+    pager.pagination({
+        showRefresh:false,
+        layout:['first','links','last'],
+        buttons:[{
+            id:'testid',
+            text:'备注:的圣诞节来看范德萨asj的技术的了解发拉沙德'
+
+        }]
+    }); 
+    
+    //启动启动，取得订单
+    function firstGetOrderFrom(){   
+        //orderForm = new Array();         
+        $.ajax({
+            type : "GET",
+            url : APP+"/OrderDistribution/alllistjson",
+            dataType : "json",
+            success : function(data){   
+                $.each(data,function(key,value){
+                    okey = key ;
+                    value.operation = "<input id='distriOrderTask"+value.orderformid+"' name='distriOrderTask"+value.orderformid+"' type='text' onkeypress='distributionOrder(this,"+value.orderformid+");' onkeydown='moveOrder(this,event,"+value.orderformid+");' onfocus='orderFocus(this);' onblur='orderClose(this)' value='' size=20>";
+
+                    $('#distributionTable').datagrid('appendRow',value);
+                    // $('#dg').datagrid('insertRow',{index:okey,row:value});
+                    //  $('#dg').datagrid('detailFormatter');
+                })
+                //选择第一行焦点
+                $('#distributionTable').datagrid('selectRow', 0); 
+                $('#orderTask0').focus();
+            }
+        }) 
+    } 
+
+    //*******************************************
+    //通讯服务器，取得订单数据
+    setTimeout(function(){
+        firstGetOrderFrom();        
+    },500);
+
+
+    //刷新取得订单
+    function refreshGetOrderFrom(){   
+
+        //alert("__APP__/OrderDistribution/refreshlistjson");
+        $.ajax({
+            type : "GET",
+            url : "__APP__/OrderDistribution/refreshlistjson",
+            dataType : "json",
+            success : function(data){ 
+
+                if(!data) return; 
+                //返回表格中的数据
+                // var griddata = $('#distributionTable').datagrid('getData');
+                $.each(data,function(key,value){
+                    //返回的订单数据，保存到订单数值中
+
+                    //var rows = $('#distributionTable').datagrid('getRows');
+                    //okey = rows.length + 1;
+                    value.operation = "<input id='distriOrderTask"+value.orderformid+"' name='distriOsrderTask"+value.orderformid+"' type='text' onkeypress='distributionOrder(this,"+value.orderformid+");'  onkeydown='moveOrder(this,event,"+value.orderformid+");' onfocus='orderFocus(this);' onblur='orderClose(this)' value='' size=20>";
+                    $('#distributionTable').datagrid('appendRow',value); 
+
+                    // $('#dg').datagrid('insertRow',{index:okey,row:value});
+                    //  $('#dg').datagrid('detailFormatter');
+                })
+
+            }
+        }) 
+    }  
+
+
+    //定时更新订单
+    setInterval(function(){
+        refreshGetOrderFrom();
+
+        //$grid = $('#distributionTable');
+        //重新定位光标
+        //$grid.datagrid('selectRow',rowFocus);
+        //$('#orderTask'+rowFocus).focus();
+    },4000);
+
+
+    //定期检查，如果状态改成已，就删除订单
+    //定时更新订单
+    setInterval(function(){   
+        var rows  =  $('#distributionTable').datagrid('getSelected'); 
+        //console.info(rows);  
+        //console.info(companyMgr);        
+        var gridData = $('#distributionTable').datagrid('getData');
+        //刷新前的焦点位置
+        var selected = $('#distributionTable').datagrid('getSelected'); 
+        var index =  $('#distributionTable').datagrid('getRowIndex', selected);
+        var orderformid;  //订单号
+        var company='';    //分公司名称
+        var deleteIndex = -1;
+        var gridRows = gridData.rows;
+
+        $.each(gridRows,function(key,value){
+            orderformid = value.orderformid;
+            //alert(orderformid);
+            company = $('#distriOrderTask'+orderformid).val();
+            company = trim(company);
+            if(company !=  ''){
+                $.each(companyMgr,function(companykey,companyvalue){
+                    //alert(companyvalue.name);
+                    //alert(company);
+                    if(companyvalue.name == company){
+                        //如果分公司名称相同，删除保存删除的索引
+                        deleteIndex = key;
+                        //console.info(deleteIndex);
+                    }
+                })
+            }
+        })
+        //删除行
+        //console.info(deleteIndex);
+        if(deleteIndex >= 0){
+            $('#distributionTable').datagrid('deleteRow',deleteIndex); 
+        }  
+
+        //设定焦点
+        var selectRows = $('#distributionTable').datagrid('getSelected');
+        if(!selectRows){
+            //表格行
+            $('#distributionTable').datagrid('selectRow', index ); 
+            //输入框焦点
+            //$('#distriOrderTask'+selectRows.orderformid).focus();
+
+        }else{
+            $('#distributionTable').datagrid('selectRow', 0 );
+            var selectRows = $('#distributionTable').datagrid('getSelected');  
+             $('#distriOrderTask'+selectRows.orderformid).focus();  
+        }    
+
+    },3000);
+
+    //返回所有分公司的名称和分配代码
+    $.ajax({
+        type : "POST",
+        url : '__APP__/OrderDistribution/getCompanyMgr',
+        dataType : "json",
+        success : function(data){
+            if(!data)  return;
+            companyMgr = data;
+            $.each(data,function(key,value){
+
+            })
+        }
+    })
+
+    //定时刷新显示订单情况
+    setInterval(function(){
+        return;
+        $.ajax({
+            type : "POST",
+            url : "__APP__/Orderdistribution/getordermonit",
+            dataType : "json",
+            success : function(data){ 
+                if(!data) return;  //data为null,返回                
+                ordermonit = "订单量:"+data[0].totalnumber+'      ';
+                ordermonit += "已处理:"+data[0].task+ '     ';  
+                ordermonit += "未处理:"+data[0].notask+ '     ';   
+                ordermonit += "催餐:"+data[0].fast+ '     ';   
+                ordermonit += "总金额:"+data[0].totalmoney;    
+                $('#distributionOrderMonit').html(ordermonit);    
+            }
+        });                       
+    },10000);
+
+
+    //处理订单 ,key为送餐员编码
+    function updateOrder(sendcode,orderformid){
+        $.ajax({
+            type : "GET",
+            url : APP+"/Orderdistribution/updateorder?&orderformid="+orderformid+"&sendcode="+sendcode,
+            dataType : "json",
+            success : function(data){                 
+                if(data == 'error'){
+                    alert('输入送餐员编码错误');
+                    return false;
+                }
+
+                //将订单状态改成已经打印
+                gridData = $('#distributionTable').datagrid('getData');
+
+                $.each(gridData.rows,function(key,value){
+                    if(value.orderformid == orderformid){
+                        value.state = '已处理';
+                        var input = value.operation;
+                        var input_id = $(input).attr('id');
+                        input_id = '#'+input_id;
+
+                        $('#distributionTable').datagrid('updateRow',{index : key,row : value})
+                        $(input_id).attr('value',data.custname);
+                    }
+                })
+
+            }
+        });                       
+    }
+
+    //分配订单
+    function distributionOrder(element,orderformid){
+        //定义根据输入的键，获得的分公司名称
+        var companyName = '';
+        var event = event || window.event;
+        var keyCode = event.which ? event.which : event.keyCode;
+        var grid = $("#distributionTable");  //缓存
+        var inputCode = String.fromCharCode(keyCode);
+        //console.info(inputCode);
+        $.each(companyMgr,function(key,value){
+            if(inputCode == value.distributionCode){
+                //取得分公司名称
+                companyName = value.name;
+                companyName = trim(companyName); 
+                //alert("__APP__/OrderDistribution/distributionOrder?&orderformid="+orderformid+"&company="+companyName);
+                $.ajax({
+                    type : 'GET',
+                    url : "__APP__/OrderDistribution/distributionOrder?&orderformid="+orderformid+"&company="+encodeURI(companyName),
+                    dataType : "json",
+                    success : function(data){  
+                        $(element).attr('value',value.name);
+                        // event.returnValue=false;  
+                        //alert(data);                       
+                    }               
+                })
+            }
+        })
+        //没有分配名
+        if(companyName == ''){
+            alert('分配名称没有');
+        }
+        //event.returnValue=false;
+    }
+
+    //移动光标，显示订单
+    function moveOrder(element,event,orderformid){
+        var event = event || window.event;
+        var grid = $("#distributionTable");  //缓存
+
+        switch (event.keyCode) {
+            case 38: // 向上移动
+            var selected = grid.datagrid('getSelected');
+            if (selected) {
+                var index = grid.datagrid('getRowIndex', selected);
+                grid.datagrid('selectRow', index - 1);
+            } else {
+                //var rows = grid.datagrid('getRows');
+                // grid.datagrid('selectRow', rows.length - 1);
+                grid.datagrid('selectRow', 0); 
+                //index = 0;
+            }
+
+            var selected = grid.datagrid('getSelected');
+            $('#distriOrderTask'+selected.orderformid).focus(); //处理栏获得焦点
+
+            break;
+            case 40: // 向下移动
+            var rows = grid.datagrid('getRows');
+            var selected = grid.datagrid('getSelected');
+            if (selected) {
+
+                var index = grid.datagrid('getRowIndex', selected);
+                grid.datagrid('selectRow', index + 1);
+            } else {
+                var rows = grid.datagrid('getRows');
+                grid.datagrid('selectRow', rows.length - 1); 
+
+            }
+
+            //定义输入框的焦点
+            var selected = grid.datagrid('getSelected');
+            $('#distriOrderTask'+selected.orderformid).focus(); //处理栏获得焦点
+            //grid.datagrid('selectRow',input_index);  
+
+            break;
+            case 13: //回车
+                var value = $(element).val();
+                updateOrder(value,orderformid);
+                //obj.value = 'ddd';
+                break;
+            case 119: //F8打印
+                //测试打印
+                getPrintData(orderformid);               
+                break;
+            case 121: //F10处理订单
+                taskOrderform(orderformid);
+
+                break;
+        }
+    }
+
+    //处理栏活动焦点，开启从表显示
+    function orderFocus(element){
+
+        //$('#dg').datagrid('expandRow', row);
+        //如果是F8，就取消F8打印的字符
+        if($(element).val() == '' ){    
+            $(element).attr('value','');
+        }
+
+    }
+
+    //处理栏失去焦点，关闭从表显示
+    function orderClose(element){
+        //$('#dg').datagrid('collapseRow', row );
+        //如果为空，说明有送餐员，不需要写出F8打印提示
+        if($(element).val() == '' ){
+            // $(element).attr('value','F8打印');   
+        }
+    }
+
+    $(function(){ 
+        //单击表格一行
+        $('#distributionTable').datagrid({
+            onClickRow : function(rowIndex, rowData){
+                //显示从表
+                //$('#dg').datagrid('expandRow', rowIndex ); 
+                var input = rowData.operation;
+                var input_id = $(input).attr('id');
+                input_id = '#'+input_id;
+                //alert(input_id);
+                //处理栏获得焦点
+                $(input_id).focus();
+
+            }
+
+        });
+    });
+
+
+    function gridClickRow(rowIndex, rowData){
+        alert(rowIndex);
+    }
+
+    //如果订单是 改单或者是催餐的，用F10处理订单
+    function taskOrderform(orderformid){ 
+        //将订单状态改成已经打印
+        var gridData = $('#distributionTable').datagrid('getData');
+        $.each(gridData.rows,function(key,value){
+            if(value.orderformid == orderformid){
+                if((value.state == "改单") || (value.state == "催送")){
+                    value.state = '已处理';
+                    $('#dg').datagrid('updateRow',{index : key,row : value}) ;
+                    //输入回数据库
+                    $.ajax({
+                        type : "POST",
+                        url : APP + "/Orderdistribution/taskorder?&orderformid="+orderformid,
+                        dataType : "json",
+                        success : function(data){    
+                        }
+
+                    })
+                }
+            }
+        })  
+
+
+    }
+
+    //打印测试程序
+    function getPrintData(orderformid){
+        // alert( url+"/getPrintOrder?&orderformid="+orderformid);
+        //取得打印的内容
+        $.ajax({
+            type : "POST",
+            url : APP + "/Orderdistribution/getPrintOrder?&orderformid="+orderformid,
+            dataType : "json",
+            success : function(data){  
+                printOrderForm(data);
+                //将订单状态改成已经打印
+                gridData = $('#dg').datagrid('getData');
+                $.each(gridData.rows,function(key,value){
+                    if(value.orderformid == orderformid){
+                        value.state = '已打印';
+                        $('#dg').datagrid('updateRow',{index : key,row : value})
+                    }
+                })
+            }
+
+        })
+    }  
+
+    //实际打印
+    function printOrderForm(data){       
+        if('{$printtype}' ==  '60hot'){
+            print_60(data);
+        }
+        if('{$printtype}' ==  '30lian'){
+            print_ht(data);
+        }
+
+        // if(printtype == '60hot'){
+        //     print_60(data);
+        // }
+    }
+
+
+    //60宽热敏的打印代码
+    function print_60(data){
+        //if(localStorage.printIndex){       
+        //   var print_index = localStorage.printIndex;
+        //
+        //      }else{
+
+        //            alert('请设置打印机');
+        //       }
+        //定义行号
+        var linespacing = 14;
+        var row = 0;  //循环变量
+        //重新设置打印机的设备  
+        LODOP.SET_PRINTER_INDEX(print_index);
+        LODOP.SET_PRINT_PAGESIZE(3,"58mm","10mm",'ORDER');
+        LODOP.PRINT_INIT("打印订单");
+        //送餐单标题
+        LODOP.SET_PRINT_STYLEA(0,"FontSize",20);
+        row = row +1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row,40,644,62,'送餐单');            
+
+        //订单号
+        orderformid = data['orderform'].recdate+'-' + data['orderform'].orderformid;
+        LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+        row = row+1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,orderformid);
+        //地址
+        address = '地址:'+data['orderform'].address;
+        address1 = address.subCHStr(0,30);
+        address2 = address.subCHStr(30,30);
+        address3 = address.subCHStr(60,30);
+
+        // alert(cutstr("新加文本1桑德菲杰来撒机房的阿萨德房间爱塑料袋件发生的房间里圣诞节来看阿萨德乐尽哀生",26))
+        if(address1.length > 0){
+            row = row +1;
+            LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,address1);            
+        }
+        if(address2.length > 0){
+            row = row +1;
+            LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,address2);
+        }
+        if(address3.length > 0){
+            row = row +1;
+            LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,address3);
+        }
+
+
+        LODOP.SET_PRINT_STYLEA(0,"FontSize",10);
+        //电话
+        telphone = '电话:'+data['orderform'].telphone;
+        //客户
+        clientname = '客户:'+data['orderform'].clientname;
+        //要餐时间
+        custtime = '要餐时间:'+data['orderform'].custtime;
+        row = row +1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,telphone+'  '+clientname);
+        row = row +1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,custtime);
+        //备注
+        beizhu = '备注:'+data['orderform'].beizhu;
+        beizhu1 = beizhu.subCHStr(0,30);
+        beizhu2 = beizhu.subCHStr(30,30);
+        beizhu3 = beizhu.subCHStr(60,30);
+        if(beizhu1.length > 0){
+            row = row +1;
+            LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,beizhu1);
+        }
+        if(beizhu2.length > 0){
+            row = row +1;
+            LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,beizhu2);
+        }
+        if(beizhu3.length > 0){
+            row = row +1;
+            LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,beizhu3);
+        }
+        //商品打印
+        productsTitle = '名称      数量   单价    金额';
+        row = row +1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,productsTitle);
+        if(data['orderproducts']){
+            $.each(data['orderproducts'],function(key,value){
+                row = row +1;
+                //产品名称
+                LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,value.name);
+                //产品数量
+                LODOP.ADD_PRINT_TEXT(linespacing * row,70,644,62,value.number);
+                //单价
+                LODOP.ADD_PRINT_TEXT(linespacing * row,100,644,62,value.price);
+                //金额
+                LODOP.ADD_PRINT_TEXT(linespacing * row,145,644,62,value.money);
+            })
+        }
+        //总金额
+        totalmoney = '总金额:'+data['orderform'].totalmoney;
+        row = row +1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,totalmoney);
+
+
+        //送餐单标题
+        LODOP.SET_PRINT_STYLEA(0,"FontSize",20);
+        row = row +1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row,40,644,62,'领餐单');            
+
+        //订单号
+        orderformid = data['orderform'].recdate+'-' + data['orderform'].orderformid;
+        LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+        row = row+1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,orderformid);
+        //地址
+        address = '地址:'+data['orderform'].address;
+        address1 = address.subCHStr(0,30);
+        address2 = address.subCHStr(30,30);
+        address3 = address.subCHStr(60,30);
+
+        // alert(cutstr("新加文本1桑德菲杰来撒机房的阿萨德房间爱塑料袋件发生的房间里圣诞节来看阿萨德乐尽哀生",26))
+        if(address1.length > 0){
+            row = row +1;
+            LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,address1);            
+        }
+        if(address2.length > 0){
+            row = row +1;
+            LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,address2);
+        }
+        if(address3.length > 0){
+            row = row +1;
+            LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,address3);
+        }
+
+
+        LODOP.SET_PRINT_STYLEA(0,"FontSize",10);
+        //电话
+        telphone = '电话:'+data['orderform'].telphone;
+        //客户
+        clientname = '客户:'+data['orderform'].clientname;
+        //要餐时间
+        custtime = '要餐时间:'+data['orderform'].custtime;
+        row = row +1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,telphone+'  '+clientname);
+        row = row +1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,custtime);
+        //备注
+        beizhu = '备注:'+data['orderform'].beizhu;
+        beizhu1 = beizhu.subCHStr(0,30);
+        beizhu2 = beizhu.subCHStr(30,30);
+        beizhu3 = beizhu.subCHStr(60,30);
+        if(beizhu1.length > 0){
+            row = row +1;
+            LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,beizhu1);
+        }
+        if(beizhu2.length > 0){
+            row = row +1;
+            LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,beizhu2);
+        }
+        if(beizhu3.length > 0){
+            row = row +1;
+            LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,beizhu3);
+        }
+        //商品打印
+        productsTitle = '名称      数量   单价    金额';
+        row = row +1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,productsTitle);
+        if(data['orderproducts']){
+            $.each(data['orderproducts'],function(key,value){
+                row = row +1;
+                //产品名称
+                LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,value.name);
+                //产品数量
+                LODOP.ADD_PRINT_TEXT(linespacing * row,70,644,62,value.number);
+                //单价
+                LODOP.ADD_PRINT_TEXT(linespacing * row,100,644,62,value.price);
+                //金额
+                LODOP.ADD_PRINT_TEXT(linespacing * row,145,644,62,value.money);
+            })
+        }
+        //总金额
+        totalmoney = '总金额:'+data['orderform'].totalmoney;
+        row = row +1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row,0,644,62,totalmoney);
+
+
+        //LODOP.PREVIEW();
+        LODOP.PRINT();
+
+        //设定订单状态为已打印
+        $.ajax({
+            type : "GET",
+            url : APP+"/Orderdistribution/setOrderPrinted?&orderformid="+data['orderform'].orderformid,
+            dataType : "json",
+            success : function(data){  
+
+            }
+        })
+
+
+    }
+
+    //横式针打订单
+    function print_ht(data){
+        LODOP.PRINT_INITA(2,2,1522,382,"打印控件功能演示_Lodop功能_空白练习");
+        LODOP.SET_PRINT_PAGESIZE(1,2400,700,"lihua");
+        //订单号
+        orderformid = data['orderform'].recdate+'-' + data['orderform'].orderformid;
+        LODOP.ADD_PRINT_TEXT(6,29,187,24,orderformid);
+        //地址
+        address = data['orderform'].address;
+        address1 = address.subCHStr(0,22);
+        LODOP.SET_PRINT_STYLEA(0,"FontSize",11);
+        LODOP.ADD_PRINT_TEXT(34,390,182,36,address1);
+        LODOP.SET_PRINT_STYLEA(0,"FontSize",11);
+
+        LODOP.ADD_PRINT_TEXT(35,612,206,37,address);
+        LODOP.SET_PRINT_STYLEA(0,"FontSize",11);
+        LODOP.ADD_PRINT_TEXT(35,27,301,40,address1);
+        LODOP.SET_PRINT_STYLEA(0,"FontSize",12);
+        //数量规格
+        ordertxt = data['orderform'].ordertxt;  
+        LODOP.ADD_PRINT_TEXT(79,393,180,48,ordertxt);
+        LODOP.SET_PRINT_STYLEA(0,"FontSize",10);
+        LODOP.ADD_PRINT_TEXT(77,611,213,30,ordertxt);
+        //要餐时间
+        custtime = data['orderform'].custtime;  
+        LODOP.ADD_PRINT_TEXT(113,56,121,19,"12:00");
+        //来电时间
+        teltime = data['orderform'].teltime;
+        LODOP.ADD_PRINT_TEXT(113,210,113,19,"12:00:12");
+        //电话号码
+        telphone = data['orderform'].telphone;  
+        LODOP.ADD_PRINT_TEXT(137,54,125,22,telphone);
+        //接线员
+        telname = data['orderform'].telname;
+        LODOP.ADD_PRINT_TEXT(136,210,115,22,telname);
+        //备注
+        beizhu = data['orderform'].beizhu;  
+        LODOP.ADD_PRINT_TEXT(136,393,182,74,"beizhu");
+        LODOP.ADD_PRINT_TEXT(119,613,219,79,"beizhu");
+        LODOP.ADD_PRINT_TEXT(165,34,296,37,"beizhu");
+
+        LODOP.ADD_PRINT_TEXT(81,55,271,28,ordertxt); 
+
+        //打印
+        LODOP.PRINT();
+
+        //设定订单状态为已打印
+        $.ajax({
+            type : "GET",
+            url : APP+"/Orderdistribution/setOrderPrinted?&orderformid="+data['orderform'].orderformid,
+            dataType : "json",
+            success : function(data){  
+
+            }
+        })
+
+    }
+
+    //计算字符串长度
+    String.prototype.strLen = function() {
+        var len = 0;
+        for (var i = 0; i < this.length; i++) {
+            if (this.charCodeAt(i) > 255 || this.charCodeAt(i) < 0) len += 2; else len ++;
+        }
+        return len;
+    }
+
+    //将字符串拆成字符，并存到数组中
+    String.prototype.strToChars = function(){
+        var chars = new Array();
+        for (var i = 0; i < this.length; i++){
+            chars[i] = [this.substr(i, 1), this.isCHS(i)];
+        }
+        String.prototype.charsArray = chars;
+        return chars;
+    }
+
+    //判断某个字符是否是汉字
+    String.prototype.isCHS = function(i){
+        if (this.charCodeAt(i) > 255 || this.charCodeAt(i) < 0)
+            return true;
+        else
+            return false;
+    }
+
+    //截取字符串（从start字节到end字节）
+    String.prototype.subCHString = function(start, end){
+        var len = 0;
+        var str = "";
+        this.strToChars();
+        for (var i = 0; i < this.length; i++) {
+            if(this.charsArray[i][1])
+                len += 2;
+            else
+                len++;
+            if (end < len)
+                return str;
+            else if (start < len)
+                str += this.charsArray[i][0];
+        }
+        return str;
+    }
+
+    //截取字符串（从start字节截取length个字节）
+    String.prototype.subCHStr = function(start, length){
+        return this.subCHString(start, start + length);
+    }
+
+    function trim(str) {
+        return str.replace(/(^\s+)|(\s+$)/g, "");
+    }
+
+</script>
+
+<div id="distributionTable" class="easyui-layout" fit="true" border="false">
+    <div data-options="region:'west',split:true,border:true" style="width:100px;">
+        <div id="goods" class="easyui-layout" fit="true">
+            <div data-options="region:'center',border:false" style="padding:0px;background:#eee;">
+                <table id="orderProductsDistributionTable" style="width: 100px;"> </table>
+            </div>
+            <div data-options="region:'south',split:true,border:false" style="height: 30px;">
+                <div>总金额</div>
+            </div>
+        </div>
+    </div>
+    <div data-options="region:'center',border:false" style="padding:0px;background:#eee;">
+        <table id="orderFormDistributionTable" fit="true"></table>
+    </div>
+    <div data-options="region:'south',split:false,border:false" style="height:80px;">
+        <div class="pagestop">
+            <div id="other" style="height: 22px;font-size: 14px;">接线：</div>
+            <div id="ordermonit" style="height: 22px;border: 1px solid red;font-size: 14px;"></div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript"> 
+    $(function(){ 
+        $('#searchViewForm{$moduleName}Other input[name=searchText]').focus();
+
+        //form提交程序
+        $('#searchViewForm{$moduleName}Other input[name=searchViewBtn]').bind('click',function(){   
+            //返回选项卡
+            var tab = $('#operation').tabs('getSelected');
+            var queryString = $('#searchViewForm{$moduleName}Other').serialize();
+            //提交表单 
+            url = '__URL__/searchviewForOther/&'+queryString;
+            $('#operation').tabs('update',{  
+                tab:tab,
+                options:{href:url}                                                
+            });    
+        }) 
+
+        //按回车不自动提交
+        $('#searchViewForm{$moduleName}Other input[name=searchText]').keydown(function(event){
+            if(event.which == 13){
+                //返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var queryString = $('#searchViewForm{$moduleName}Other').serialize();
+                //提交表单 
+                url = '__URL__/searchviewForOther/&'+queryString;
+                $('#operation').tabs('update',{  
+                    tab:tab,
+                    options:{href:url}                                                
+                });    
+                return false;
+            }
+        })
+
+    })
+</script>
+
+<div class="searchDiv">
+    <form id="searchViewForm{$moduleName}Other" name="searchViewForm{$moduleName}Other"  method="post"  style="border: 1px solid white;">
+        <ul class="searchOption">
+        <ul class="searchOption">
+            <li>查询选项</li>
+            <li><select name="searchOption" id="searchOption" class="txtBox" style="width:150px">
+                    <if condition='$searchOptionValue'>
+                        <option value="{$searchOptionValue}">{$Think.lang.$searchOptionValue}</option>
+                        <else/>
+                        <option>全部</option>
+                    </if>
+                    <foreach name="searchOption" item="value">
+                        <option value="{$value}">{$Think.lang.$value}</option>
+                    </foreach>
+                </select>
+            </li>
+            <li>   <input id="searchText" name="searchText"  type="text"   style="width:240px"  value="{$searchTextValue}" AUTOCOMPLETE="off" /></li>
+            <li>&nbsp;</li>
+            <li><select name="searchAp">
+                    if condition="$searchAp">
+                    <option value="{$searchAp}">{$searchAp}</option>
+                    </if>
+                    <option value="上午">上午</option>
+                    <option value="下午">下午</option>
+                </select>
+            </li>
+            <li><input id="searchViewBtn" name="searchViewBtn" type="button" class="crmbutton small create"  value=" 查  询  " />&nbsp;</li>
+            <li>
+        </ul>  
+    </form>
+</div>
+
+ public function searchviewForOther(){
+
+            //取得模块的名称
+            $moduleName = $this->getActionName();
+            $this->assign('moduleName',$moduleName);   //模块名称   
+
+            //如果是从listview进入的，必须删除session['where']
+            if(isset($_REQUEST['delsession'])){
+                unset($_SESSION['searchOption'.$moduleName]);
+                unset($_SESSION['searchText'.$moduleName]);
+            }
+
+            //启动当前模块
+            $focus = D($moduleName);
+
+            //取得对应的导航名称
+            $tabName = $focus->getTabName($moduleName);
+            $this->assign('tabName',$tabName);
+            $this->assign('operName','其他查询操作');  
+
+
+            //生成list字段列表
+            $listFields = $focus->listFields;
+            //模块的ID
+            $moduleId = $focus->getPk();
+
+            //加入模块id到listHeader中
+            //array_unshift($listFields,$moduleNameId); 
+            $listHeader = $listFields;
+            $this->assign("listHeader",$listHeader);   //列表头
+            $this->assign('returnAction','searchview');  //定义返回的方法
+
+
+
+            //建立查询条件
+            $where = array();
+            $searchOption = $_REQUEST['searchOption'];  //查询项目
+            $searchText = $_REQUEST['searchText'];      //查询内容
+            if(isset($searchOption) && isset($searchText)){
+                if($searchOption == '全部'){ //如果是全部，那么全都要查询
+                    foreach($focus->searchFields as $value){
+                        $where[$value] =  array('like','%'.$searchText.'%');                       
+                    }
+                    $where['_logic'] = 'OR';
+                    $_SESSION['searchOption'.$moduleName] = $searchOption;
+                    $_SESSION['searchText'.$moduleName] = $searchText;
+                }else{
+                    $where[$searchOption] = array('like','%'.$searchText.'%');
+                    $this->assign('searchOptionValue',$searchOption);
+                    $this->assign('searchTextValue',$searchText);
+                    $_SESSION['searchOption'.$moduleName] = $searchOption;
+                    $_SESSION['searchText'.$moduleName] = $searchText; 
+                }
+            }else{
+                if(isset($_SESSION['searchOption'.$moduleName],$_SESSION['searchText'.$moduleName])){
+                    $where[$_SESSION['searchOption'.$moduleName]] = array('like','%'.$_SESSION['searchText'].$moduleName.'%');
+                    $this->assign('searchOptionValue',$_SESSION['searchOption'.$moduleName]);
+                    $this->assign('searchTextValue',$_SESSION['searchText'.$moduleName]);
+                }
+            }
+
+
+            //查询的午别
+            $searchAp = $_REQUEST['searchAp'];     
+            if(isset($searchAp)){
+                if($searchAp == '全天'){
+                }else{
+                    $where['ap'] = $searchAp;
+                    $_SESSION['searchApOrderHandleOther'] = $searchAp; 
+                    $this->assign('searchAp', $searchAp);
+                }                
+            }else{
+                if(isset($_SESSION['searchApOrderHandleOther'])){
+                    $where['ap'] = $_SESSION['searchApOrderHandleOther'];
+                    $this->assign('searchAp',$_SESSION['searchApOrderHandleOther']);
+                }else{ //如果没有指定上午或者下午，那取当前时间的上午和下午
+                    $this->assign('searchAp',$this->getAp()); 
+                }
+            }
+
+            //获取分公司
+            $company = $this->userInfo['department']; 
+            $where['company'] = $company;
+
+            //导入分页类
+            import('ORG.Util.Page');// 导入分页类
+            $total      = $focus->where($where)->count();// 查询满足要求的总记录数   
+            //查session取得page的firstRos和listRows
+            if(isset($_SESSION[$moduleName.'firstRowSearchview'])){
+                $Page->firstRow = $_SESSION[$moduleName.'firstRowSearchview'];
+            }
+            $listMaxRows = C('LIST_MAX_ROWS'); //定义显示的列表函数
+            if(isset($listMaxRows)){
+                $Page->listRows = $listMaxRows;
+            }else{
+                $listMaxRows = 15;
+            } 
+
+            $Page = new Page($total,$listMaxRows);
+            $show = $Page->show();
+
+            //查询模块的数据 
+            $selectFields = $listFields;
+            array_unshift($selectFields,$moduleId);
+            $listResult = $focus->field($selectFields)->where($where)->limit($Page->firstRow.','.$Page->listRows)->order("$moduleId desc")->select();
+            //var_dump($listResult);
+            //var_dump($focus->getLastSql());
+            // 从数据中列出列表的数据
+            $listviewEntries = $this->getListviewEntity($listResult,$moduleId);
+
+            $this->assign('moduleId',$moduleId);
+            $this->assign('listEntries',$listviewEntries);
+            $this->assign('page',$show);// 赋值分页输出
+
+            $searchOption = $focus->searchFields;           
+            $this->assign('searchOption',$searchOption);
+            $this->assign('returnAction','searchview');  //定义返回的方法
+
+            $this->display('OrderForm/searchviewmenu');
+            $this->display('OrderHandle/searchviewoptionother');  //查询参数选择
+            $this->display('OrderHandle/searchviewlist');  //查询的结果显示
+        }
+
+
+                public function searchviewForOther(){
+            //取得模块的名称
+            $moduleName = $this->getActionName();
+            $this->assign('moduleName',$moduleName);   //模块名称   
+
+            //如果是从listview进入的，必须删除session['where']
+            if(isset($_REQUEST['delsession'])){
+                unset($_SESSION['searchOption'.$moduleName.'Other']);
+                unset($_SESSION['searchText'.$moduleName.'Other']);
+                unset($_SESSION['searchApOrderDistributionOther']);
+            }
+
+            //启动当前模块
+            $focus = D($moduleName);
+
+            //取得对应的导航名称
+            $tabName = $focus->getTabName($moduleName);
+            $this->assign('tabName',$tabName);
+            $this->assign('operName','其他查询操作');  
+
+
+            //生成list字段列表
+            $listFields = $focus->listFields;
+            //模块的ID
+            $moduleId = $focus->getPk();
+
+            //加入模块id到listHeader中
+            //array_unshift($listFields,$moduleNameId); 
+            $listHeader = $listFields;
+            $this->assign("listHeader",$listHeader);   //列表头
+            $this->assign('returnAction','searchview');  //定义返回的方法
+
+
+
+            //建立查询条件
+            $where = array();
+            $searchOption = $_REQUEST['searchOption'];  //查询项目
+            $searchText = $_REQUEST['searchText'];      //查询内容
+            if(isset($searchOption) && isset($searchText)){
+                if($searchOption == '全部'){ //如果是全部，那么全都要查询
+                    foreach($focus->searchFields as $value){
+                        $where[$value] =  array('like','%'.$searchText.'%');                       
+                    }
+                    $where['_logic'] = 'OR';
+                    $this->assign('searchOptionValue',$searchOption);
+                    $this->assign('searchTextValue',$searchText);
+                    $_SESSION['searchOption'.$moduleName.'Other'] = $searchOption;
+                    $_SESSION['searchText'.$moduleName.'Other'] = $searchText;
+                }else{
+                    $where[$searchOption] = array('like','%'.$searchText.'%');
+                    $this->assign('searchOptionValue',$searchOption);
+                    $this->assign('searchTextValue',$searchText);
+                    $_SESSION['searchOption'.$moduleName.'Other'] = $searchOption;
+                    $_SESSION['searchText'.$moduleName.'Other'] = $searchText; 
+                }
+            }else{
+                if(isset($_SESSION['searchOption'.$moduleName.'Other'],$_SESSION['searchText'.$moduleName.'Other'])){
+                    $where[$_SESSION['searchOption'.$moduleName.'Other']] = array('like','%'.$_SESSION['searchText'].$moduleName.'Other'.'%');
+                    $this->assign('searchOptionValue',$_SESSION['searchOption'.$moduleName.'Other']);
+                    $this->assign('searchTextValue',$_SESSION['searchText'.$moduleName.'Other']);
+                }
+            }
+
+            $map['_complex'] = $where;
+
+            //查询的午别
+            $searchAp = $_REQUEST['searchAp'];     
+            if(isset($searchAp)){
+                if($searchAp == '全天'){
+                }else{
+                    $map['ap'] = $searchAp;
+                    $_SESSION['searchApOrderDistributionOther'] = $searchAp; 
+                    $this->assign('searchAp', $searchAp);
+                }                
+            }else{
+                if(isset($_SESSION['searchApOrderDistributionOther'])){
+                    $map['ap'] = $_SESSION['searchApOrderDistributionOther'];
+                    $this->assign('searchAp',$_SESSION['searchApDistributionOther']);
+                }else{ //如果没有指定上午或者下午，那取当前时间的上午和下午
+                    $this->assign('searchAp',$this->getAp()); 
+                }
+            }
+
+            //导入分页类
+            import('ORG.Util.Page');// 导入分页类
+            $total      = $focus->where($map)->count();// 查询满足要求的总记录数   
+            //查session取得page的firstRos和listRows
+            if(isset($_SESSION[$moduleName.'firstRowSearchview'])){
+                $Page->firstRow = $_SESSION[$moduleName.'firstRowSearchview'];
+            }
+            $listMaxRows = C('LIST_MAX_ROWS'); //定义显示的列表函数
+            if(isset($listMaxRows)){
+                $Page->listRows = $listMaxRows;
+            }else{
+                $listMaxRows = 15;
+            } 
+
+            $Page = new Page($total,$listMaxRows);
+            $show = $Page->show();
+
+            //查询模块的数据 
+            $selectFields = $listFields;
+            array_unshift($selectFields,$moduleId);
+            $listResult = $focus->field($selectFields)->where($map)->limit($Page->firstRow.','.$Page->listRows)->order("$moduleId desc")->select();
+            //var_dump($listResult);
+            //var_dump($focus->getLastSql());
+            // 从数据中列出列表的数据
+            $listviewEntries = $this->getListviewEntity($listResult,$moduleId);
+
+            $this->assign('moduleId',$moduleId);
+            $this->assign('listEntries',$listviewEntries);
+            $this->assign('page',$show);// 赋值分页输出
+
+            $searchOption = $focus->searchFields;           
+            $this->assign('searchOption',$searchOption);
+            $this->assign('returnAction','searchview');  //定义返回的方法
+
+            $this->display('OrderForm/searchviewmenu');
+            $this->display('OrderDistribution/searchviewoptionother');  //查询参数选择
+            $this->display('OrderDistribution/searchviewlist');  //查询的结果显示
+        }
+        
+        
+        //定义表格移动的键盘处理
+    orderFormDistribution.datagrid('getPanel').panel('panel').attr('tabindex', 1).bind('keydown', function (e) {
+        var selectFocusTemp; //定义临时处理的光标
+        //当前选择的行
+        var selectedRowObj = orderFormDistribution.datagrid('getSelected');
+        
+        //当前选择行的number
+        var indexNumberVal = orderFormDistribution.datagrid('getRowIndex', selectedRowObj);
+
+        //处理输入框的值
+        var sendCode = $('#orderTask'+indexNumberVal).val();
+
+        switch (e.keyCode) {
+            case 13:  //处理订单，将订单上面输入送餐员的名字
+                break;
+            case 38: // up  上移动
+            if (selectedRowObj) {
+                if(indexNumberVal == 0) return;  //为0，就是到顶了，不用再移动了
+                orderFormDistribution.datagrid('selectRow', indexNumberVal - 1);
+                selectFocusTemp = indexNumberVal -1;
+            } else {   //如果没有选择的行，直接到顶
+                indexNumberVal = 0 ;
+                orderFormDistribution.datagrid('selectRow', 0);
+                selectFocusTemp = 0;
+            }
+            //$('#orderTask'+indexNumberVal).value('');  //清除上一级的input里面的字符
+            $('#orderTask'+selectFocusTemp).focus();
+            //缓存光标
+            focusNumberOD = selectFocusTemp; 
+            focusOrderformidOD = selectedRowObj.orderformid;
+            break;
+            case 40: // down 下移动
+            var rowsObj = orderFormDistribution.datagrid('getRows');  //返回当前页的记录
+            if (selectedRowObj) {
+                if((indexNumberVal+1) == rowsObj.length) return;   //到表格尾部了，就不用再移动了
+                orderFormDistribution.datagrid('selectRow', indexNumberVal + 1);
+                selectFocusTemp = indexNumberVal + 1;
+            } else {
+                orderFormDistribution.datagrid('selectRow', rowsObj.length);
+                indexNumberVal =  rowsObj.length;
+                selectFocusTemp = rowsObj.length;
+            }
+            //$('#orderTask'+indexNumberVal).val('');  //清除上一级的input里面的字符     
+            //光标定位处理
+            $('#orderTask'+selectFocusTemp).focus();
+            //缓存光标
+            focusNumberOD = selectFocusTemp;
+            focusOrderformidOD = selectedRowObj.orderformid;
+            break;
+        }
+    });
+
+    
+    $.each(data.rows,function(key,value){
+                    value.operation = "<input id='orderTask"+value.orderformid+"' name='orderTask"+value.orderformid+"' type='text' onkeydown='orderMove(this,event,"+value.orderformid+");' onfocus='orderFocus(this);' onblur='orderClose(this)' value='F8打印' size=20>";
+
+                })
+                
+                    //处理栏活动焦点，开启从表显示
+    function orderFocus(element){
+        return;
+        var grid = $("#handleTable");  //缓存
+        var selected = grid.datagrid('getSelected');
+        var index = grid.datagrid('getRowIndex', selected);
+        focusNumberOD = index;
+        //alert(focusNumber);
+        //  alert(row);
+        // rowFocus = row;
+        //$('#dg').datagrid('expandRow', row);
+        //如果是F8，就取消F8打印的字符
+        if($(element).val() == 'F8打印' ){    
+            $(element).attr('value','');
+        }
+        //显示订货内容
+        //orderProductsShow();
+
+    }
+
+    
+    //表格的分页事件
+    orderFormDistribution.datagrid('getPager').pagination({ 
+        onSelectPage:function(pageNumber,pageSize){  
+            //alert(pageNumber);  
+            //alert(pageSize);  
+            orderformDatagridPageChange = true;
+            console.info('select');
+        }  
+    });
+
+    
+        //处理栏失去焦点，关闭从表显示
+    function orderClose(element){
+        //$('#dg').datagrid('collapseRow', row );
+        //如果为空，说明有送餐员，不需要写出F8打印提示
+        if($(element).val() == '' ){
+            $(element).attr('value','F8打印');   
+        }
+    }
+    
+     //数据载入成功
+    function loadDataSuccess(data){
+        //如果是分页，才重新定位光标
+        if(orderformDatagridPageChange == true){
+            focusNumberOD = 0;  //初始定位
+            //缓存订单号
+            focusOrderformidOD = data.rows[0].orderformid;                           
+            //行选中
+            orderFormDistribution.datagrid('selectRow',focusNumberOD);
+            //显示焦点
+            $('#orderTask'+focusNumberOD).focus();
+            console.info('load');
+            orderformDatagridPageChange = false;  //恢复标志
+        }
+    }
+
+   //当输入代码的时候，同时选择表格行，防止由于单击表格，让表格行失去焦点
+    function  orderHandleKeyUp(index){
+        orderFormDistribution.datagrid('selectRow',index);
+    }
+    if((inputCode >= 48 && inputCode <= 57) || (inputCode >= 65 && inputCode <= 87) || (inputCode >= 96 && inputCode <= 105)){
+            if(inputCode <=87){
+                var keyCode = String.fromCharCode(inputCode);
+            }else{
+                switch(inputCode){
+                    case 96 : keyCode = '0'; break;
+                    case 97 : keyCode = '1'; break;
+                    case 98 : keyCode = '2'; break;
+                    case 99 : keyCode = '3'; break;
+                    case 100 : keyCode = '4';  break; 
+                    case 101 : keyCode = '5';  break;
+                    case 102 : keyCode = '6';  break; 
+                    case 103 : keyCode = '7';  break; 
+                    case 104 : keyCode = '8';  break;
+                    case 105 : keyCode = '9';  break;  
+
+                }
+            }
+            
+    $.each(data.rows,function(key,value){
+                    return;
+                    //返回的订单数据，保存到订单数值中
+                    if(focusOrderformidOD == value.orderformid){
+                        value.operation = "<input id='orderTask"+value.orderformid+"' name='orderTask"+value.orderformid+"' type='text' onkeydown='orderMove(this,event,"+value.orderformid+");' onfocus='orderFocus(this);' onblur='orderClose(this)' value='"+focusValue+"' size=20>";
+                    }else{
+                        value.operation = "<input id='orderTask"+value.orderformid+"' name='orderTask"+value.orderformid+"' type='text' onkeydown='orderMove(this,event,"+value.orderformid+");' onfocus='orderFocus(this);' onblur='orderClose(this)' value='F8打印' size=20>";
+                    }
+                })
+                
+                
+  var findCompanyName = false;  //是否有分配名
+        //定义根据输入的键，获得的分公司名称
+        var event = event || window.event;
+        var inputCode = event.which ? event.which : event.keyCode; 
+        var inputValue = $(obj).val();
+        if((inputCode >= 48 && inputCode <= 57) || (inputCode >= 65 && inputCode <= 90) || (inputCode >= 96 && inputCode <= 105)){
+            $.each(companyMgr,function(key,value){
+                if(value.distributionCode == inputValue){
+                    $(obj).val(value.name); 
+                    //var rowIndex = $(obj).attr('tabindex');
+                    rowIndex += 1;
+                    $('#orderTask'+rowIndex).focus();
+                    taskOrderNumber = taskOrderNumber - 1;  //为了启动快速刷新，减1  
+                    findCompanyName = true;  //分配名称存在
+                    //*********************/
+                    $.ajax({
+                        type : 'GET',
+                        url : "__URL__/orderDistributionByCode/orderformid/"+orderformid+"/code/"+inputValue,
+                        dataType : "json",
+                        success : function(data){                          
+                        }               
+                    })
+                    //*********************/
+                    return false;
+                }              
+            });
+            
+                	var startTime,endTime; 
+    	 var d=new Date(); 
+    	 startTime=d.getTime(); 
+    	  			d=new Date();
+					endTime=d.getTime();
+					var t = (endTime-startTime)/1000;
+					console.info(t);

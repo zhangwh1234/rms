@@ -39,6 +39,7 @@
                             IndexIndexModule.openOperateTab(url, '配送地址查询');
                             $(dialog).dialog('close');
                             OrderHandleListviewModule.setRefresh();
+                            OrderHandleListviewModule.orderHandleData = '';  //清理缓存输入量
                             return false;
                         }
                     });

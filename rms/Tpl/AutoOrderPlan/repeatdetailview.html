@@ -1,0 +1,92 @@
+<table width="100%" style="border: 1px solid beige;">
+    <tr>
+        <td width="20%">
+            <span style="font-size: 14px;color:blue;">{$repeattype}</span>
+        </td>
+        <td width="80%">
+            <table width="80%">
+                <tr>
+                    <td>开始日期:</td>
+                    <td><input value="{$startdate}" readonly="readonly" /></td>
+                    <td width="10%"></td>
+                    <td>结束日期:</td>
+                    <td><input value="{$enddate}" readonly="readonly" /></td>
+                    <td width="5%"></td>
+                    <td>周六不送<input type="checkbox" {$saturday} readonly="readonly" /></td>
+                    <td>周日不送<input type="checkbox" {$sunday} readonly="readonly" /></td>
+                </tr>
+            </table>
+
+        </td>
+    </tr>
+</table>
+<if condition="$repeattype eq '按月重复'">
+<div id="autoorderplan_dateselectdiv">
+    <table style="border: 1px solid #b2b2b2;" width="100%">
+        <tr><td><span style="font-size: 14px;">抄单日期选择:</span></td></tr>
+        <tr>
+            <td>
+                <table  style="font-size: 12px;">
+                    <tr>
+                        <td><input type="checkbox"  {$day1}  /><span>1号 </span></td>
+                        <td><input type="checkbox"  {$day2}  /><span>2号 </span></td>
+                        <td><input type="checkbox"  {$day3}  /><span>3号 </span></td>
+                        <td><input type="checkbox"  {$day4}  /><span>4号 </span></td>
+                        <td><input type="checkbox"  {$day5}  /><span>5号 </span></td>
+                        <td><input type="checkbox"  {$day6}  /><span>6号 </span></td>
+                        <td><input type="checkbox"  {$day7}  /><span>7号 </span></td>
+                        <td><input type="checkbox"  {$day8}  /><span>8号 </span></td>
+                        <td><input type="checkbox"  {$day9}  /><span>9号 </span></td>
+                        <td><input type="checkbox"  {$day10}  /><span>10号 </span></td>
+                        <td><input type="checkbox"  {$day11}  /><span>11号 </span></td>
+                        <td><input type="checkbox"  {$day12}  /><span>12号 </span></td>
+                        <td><input type="checkbox"  {$day13}  /><span>13号 </span></td>
+                        <td><input type="checkbox"  {$day14}  /><span>14号 </span></td>
+                        <td><input type="checkbox"  {$day15}  /><span>15号 </span></td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox"  {$day16}  /><span>16号 </span></td>
+                        <td><input type="checkbox"  {$day17}  /><span>17号 </span></td>
+                        <td><input type="checkbox"  {$day18}  /><span>18号 </span></td>
+                        <td><input type="checkbox"  {$day19}  /><span>19号 </span></td>
+                        <td><input type="checkbox"  {$day20}  /><span>20号 </span></td>
+                        <td><input type="checkbox"  {$day21}  /><span>21号 </span></td>
+                        <td><input type="checkbox"  {$day22}  /><span>22号 </span></td>
+                        <td><input type="checkbox"  {$day23}  /><span>23号 </span></td>
+                        <td><input type="checkbox"  {$day24}  /><span>24号 </span></td>
+                        <td><input type="checkbox"  {$day25}  /><span>25号 </span></td>
+                        <td><input type="checkbox"  {$day26}  /><span>26号 </span></td>
+                        <td><input type="checkbox"  {$day27}  /><span>27号 </span></td>
+                        <td><input type="checkbox"  {$day28}  /><span>28号 </span></td>
+                        <td><input type="checkbox"  {$day29}  /><span>29号 </span></td>
+                        <td><input type="checkbox"  {$day30}  /><span>30号 </span></td>
+                        <td><input type="checkbox"  {$day31}  /><span>31号 </span></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+</if>
+<if condition="$repeattype eq '按周重复'">
+<div id="autoorderplan_weekselectdiv">
+    <table style="border: 1px solid #b2b2b2;" width="100%">
+        <tr><td><span style="font-size: 14px;">抄单星期选择:</span></td></tr>
+        <tr>
+            <td>
+                <table  style="font-size: 12px;">
+                    <tr>
+                        <td width="10%"><input type="checkbox"  {$week1}  /><span>星期一 </span></td>
+                        <td width="10%"><input type="checkbox"  {$week2}  /><span>星期二 </span></td>
+                        <td width="10%"><input type="checkbox"  {$week3}  /><span>星期三 </span></td>
+                        <td width="10%"><input type="checkbox"  {$week4}  /><span>星期四 </span></td>
+                        <td width="10%"><input type="checkbox"  {$week5}  /><span>星期五 </span></td>
+                        <td width="10%"><input type="checkbox"  {$week6}  /><span>星期六 </span></td>
+                        <td width="10%"><input type="checkbox"  {$week7}  /><span>星期天 </span></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+</if>

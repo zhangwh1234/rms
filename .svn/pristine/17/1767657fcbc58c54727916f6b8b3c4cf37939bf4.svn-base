@@ -1,0 +1,53 @@
+<?php
+    /**
+    * 短信管理
+    */
+    class SmsMgrAction extends ModuleAction{
+        //定义列表的路径
+        var $listviewPath = false;
+
+        //回调自动完成的函数
+        //插入，补充数据的回调函数
+        public function autoParaInsert(){
+        	$userInfo = $_SESSION['userInfo'];
+        	$company = $userInfo['department'];
+            $auto = array ( 
+            	array('firstdate',date('Y-m-d H:i:s')),  //录入日期
+            	array('issend',0), // 状态
+            	array('company',$company),
+            	array('domain',$_SERVER['HTTP_HOST']),
+            );
+
+            return $auto;
+        }
+
+        public function getUser(){
+            $sms_model = D('Smsmgr');
+            $smscount = $sms_model->query("select count(*) as c  from users");
+            //dump($smscount);
+            $result["total"] = $smscount[0]['c'];
+            $smsuser = $sms_model->query("select * from users limit 0,10");
+            $result['rows'] = $smsuser;
+            $this->ajaxReturn($result,'JSON');
+        }
+
+        /**
+        * 返回listview的查询条件
+        */
+        public function returnWhere(){
+            $userInfo = $_SESSION['userInfo'];  
+            $company = $userInfo['department'];
+            //查询条件
+            $where =array();
+            $where['company'] = $company;
+            $where['domain'] = $_SERVER['HTTP_HOST'];
+            return $where;
+        }
+
+        //定义一个空的函数，用于返回主程序需要的一些参数
+        public function returnMainFnPara(){
+            //引入js
+            $this->display('SmsMgr/js');
+        }
+    }
+?>

@@ -6,7 +6,7 @@ $arr = array(
     'DB_HOST' => 'localhost',
     'DB_NAME' => 'rms',
     'DB_USER' => 'root',
-    'DB_PWD' => '',
+    'DB_PWD' => 'root',
     'DB_PORT' => '3306',
     'DB_PREFIX' => 'rms_',
     'SHOW_RUN_TIME' => false,
@@ -38,7 +38,7 @@ $arr = array(
     'SESSION_OPTIONS' => array('expire' => 443600),  //SESSION参数设置
     'ncmqServer' => '115.29.43.18',
     'ncmqPort' => '1818',
-    'RMS_CONNECT' => 'mysql://root:@localhost/rms#utf8',
+    'RMS_CONNECT' => 'mysql://root:root@localhost/rms#utf8',
 );
 //return $arr;
 $array = array(

@@ -1,0 +1,13 @@
+<?php if (!defined('THINK_PATH')) exit();?><div class="errorInfoCls">
+    <div class="system-message">
+        <?php if(isset($message)): ?><h1>:)</h1>
+            <p class="success"><?php echo ($message); ?></p>
+            <?php else: ?>
+            <h1>:(</h1>
+            <p class="error"><?php echo ($error); ?></p><?php endif; ?>
+        <p class="detail"></p>
+        <p class="jump" style="font-size: 16px;">
+            页面 <a id="href" href="javascript:;" onclick="updateTab('<?php echo ($jumpUrl); ?>');" style="color: red;font-size: 16px;">返回</a> 
+        </p>
+    </div>
+</div>

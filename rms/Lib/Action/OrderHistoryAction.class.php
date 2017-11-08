@@ -143,7 +143,7 @@ class OrderHistoryAction extends ModuleAction
                     $this->assign('searchAp', $this->getAp());
                 }
             }
-            $map ['domain'] =  $_SERVER['HTTP_HOST'];
+            $map ['domain'] =  $this->getDomain();
 
             $userInfo = $this->userInfo;
             if($userInfo['rolename'] == '调度员'){
@@ -155,8 +155,7 @@ class OrderHistoryAction extends ModuleAction
             // 取得表的连接信息
             import('COM.Db.SystemDb');
             $systemDb = new SystemDb ();
-            $connectConfig = $systemDb->getHistoryDbConnection($name);
-
+            $connectConfig = $systemDb->getHistoryDbConnection($name,$this->getDomain());
 
             $db_type = 'mysql';
             $db_user = trim($connectConfig ['db_user']);
@@ -170,8 +169,22 @@ class OrderHistoryAction extends ModuleAction
             // 连接历史数据库
             $orderformModel = M("orderform", "rms_", $connectionDns);
 
+            //先处理历史数据表，如果是跨月查询，就执行跨月逻辑，把查询记录保存到orderform表中，如果当月查询，就按照原来的逻辑查询
+            // 查询开始日期
+            $startMonth = substr($_REQUEST ['startDate'],5,2);
+            $startMonth = (integer)$startMonth;
+            // 查询结束日期
+            $endMonth = substr($_REQUEST ['endDate'],5,2);
+            $endMonth = (integer)$endMonth;
 
-            $dbNameTableName = 'rms_orderform_'.substr($startDate, 5, 2);
+            if($startMonth == $endMonth ){
+                //跨月查询
+                $dbNameTableName = 'rms_orderform_'.substr($startDate, 5, 2);
+            }else{
+                //相同月份
+                $dbNameTableName = 'rms_orderform';
+            }
+
             $total = $orderformModel->table("$dbNameTableName")->where($map)->count(); // 查询满足要求的总记录数
 
             //使用cookie读取rows
@@ -244,7 +257,7 @@ class OrderHistoryAction extends ModuleAction
 
                 )
             );
-            $data = array('total' => $total, 'rows' => $listResult,'footer'=>$footer);
+            $data = array('total' => $total, 'rows' => $listResult,'footer'=>$footer ,'sql' => $startMonth . $endMonth );
             $this->ajaxReturn($data);
         } else {
 
@@ -330,7 +343,7 @@ class OrderHistoryAction extends ModuleAction
         // 取得表的连接信息
         import('COM.Db.SystemDb');
         $systemDb = new SystemDb ();
-        $connectConfig = $systemDb->getHistoryDbConnection($name);
+        $connectConfig = $systemDb->getHistoryDbConnection($name,$this->getDomain());
         $db_type = 'mysql';
         $db_user = trim($connectConfig ['db_user']);
         $db_pwd = trim($connectConfig ['db_pwd']);
@@ -369,7 +382,7 @@ class OrderHistoryAction extends ModuleAction
         // 取得表的连接信息
         import('COM.Db.SystemDb');
         $systemDb = new SystemDb ();
-        $connectConfig = $systemDb->getHistoryDbConnection($name);
+        $connectConfig = $systemDb->getHistoryDbConnection($name,$this->getDomain());
         $db_type = 'mysql';
         $db_user = trim($connectConfig ['db_user']);
         $db_pwd = trim($connectConfig ['db_pwd']);
@@ -429,7 +442,7 @@ class OrderHistoryAction extends ModuleAction
         // 取得表的连接信息
         import('COM.Db.SystemDb');
         $systemDb = new SystemDb ();
-        $connectConfig = $systemDb->getHistoryDbConnection($name);
+        $connectConfig = $systemDb->getHistoryDbConnection($name,$this->getDomain());
         $db_type = 'mysql';
         $db_user = trim($connectConfig ['db_user']);
         $db_pwd = trim($connectConfig ['db_pwd']);

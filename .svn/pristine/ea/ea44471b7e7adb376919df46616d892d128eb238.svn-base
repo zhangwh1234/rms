@@ -1,0 +1,23 @@
+<?php if (!defined('THINK_PATH')) exit();?><!-- 百度外卖管理主面板 -->
+<div id="cc" class="easyui-layout" data-options="fit:true,title:'百度外卖'">
+	<div data-options="region:'north',title:'百度外卖'
+	" style="height:1px;"></div>
+	<div data-options="region:'west',split:true"
+		style="width: 180px"></div>
+	<div data-options="region:'center'"></div>
+</div>
+<script>
+$('#cc').layout({
+    region: 'north',
+    width: 180,
+    title: 'West Title',
+    split: true,
+    tools: [{
+		iconCls:'icon-add',
+		handler:function(){alert('add')}
+    },{
+		iconCls:'icon-remove',
+		handler:function(){alert('remove')}
+    }]
+});
+</script>

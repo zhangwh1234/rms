@@ -1,23 +1,86 @@
-<include file="Module/editview" />
+<div class="moduleMenu">
+    <ul>
+        <li>{$Think.lang.$navName}</li>
+        <li><a href="javascript:void(0);" class="moduleName" onclick="IndexIndexModule.updateOperateTab('__URL__/listview');">&nbsp;&gt;{$Think.lang.$moduleName}</a></li>
+        <li>&nbsp;&gt;改单操作</li>
+        <li style="width: 50px;">&nbsp;</li>
+
+        <li style="margin-left: 10px;"><a href="javascript:;" onclick="BookOrderEditviewModule.update();"><img
+                src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);" onclick="BookOrderEditviewModule.update();">保存订单<span>^9</span></a></li>
+
+        <li style="margin-left: 15px;"><a href="javascript:;" id="showSubMenu"  onMouseOver="" ><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);" class="moduleName" onclick="IndexIndexModule.updateOperateTab('__URL__/{$returnAction}/pagetype/{$pagetype}/rowIndex/{$rowIndex}');">返回列表</a><span>^4</span></li>
+
+        <li style="margin-left: 30px;"><a href="javascript:;" onclick="OrderFormEditviewModule.showTodayMenuview();"><img
+                src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);"
+               onclick="BookOrderEditviewModule.showTodayMenuview();">查看今日菜单<span>^0</span></a></li>
+
+        <li style="float: right;margin-right: 40px;"><a href="javascript:void(0);" class="moduleName" onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="IndexIndexModule.closeOperateTab();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
+    </ul>
+</div>
+
+<include file="BookOrder/editviewUI" />
+<input id="BookOrderAction" type="hidden" value="Editview"/>
 <script>
     var BookOrderEditviewModule = {
+        dialog: '#globel-dialog-div',
+        checkSubmitFlg : false,
 
         //初始化
         init :function(){
-            $('.moduleOperatert').height(IndexIndexModule.operationHeight);
-
+            $('.moduleOperater').height(IndexIndexModule.operationHeight);
+            this.keyboardMove();
         },
 
         //保存记录
         update: function () {
+            //防止重复提交
+            if(this.checkSubmitFlg == false){
+                this.checkSubmitFlg = true;
+            }else{
+                return;
+            }
+
+            var that = this;
             $('#BookOrderEditviewForm').form('submit', {
                 url: '__URL__/update',
                 onSubmit: function () {
-                    alert('ee');
-                    var isValid = $(this).form('validate');
-                    if (!isValid) {
+                    var bookdate = $("#BookOrderEditviewForm input[name^='bookorderdate']").val();
+                    if(typeof bookdate == 'undefined'){
+                        alert('预订日期不能为空!');
+                        BookOrderEditviewModule.checkSubmitFlg = false;
                         return false;
                     }
+
+                    if ($('#BookOrderEditviewForm input[name=address]').val() == '') {
+                        alert('地址不能为空!');
+                        BookOrderEditviewModule.checkSubmitFlg = false;
+                        return false;
+                    }
+
+                    var custtime_1 = $('#BookOrderEditviewForm input[name=custtime_1]').val();
+                    if(custtime_1 == ''){
+                        alert('预订时间不能为空!');
+                        BookOrderEditviewModule.checkSubmitFlg = false;
+                        return false;
+                    }
+                    if(custtime_1 > 24 || custtime_1 < 0 ){
+                        alert('时间输入不正确!请输入1-24之间的数字!');
+                        BookOrderEditviewModule.checkSubmitFlg = false;
+                        return false;
+                    };
+
+                    var custtime_1 = $('#BookOrderEditviewForm input[name=custtime_2]').val();
+                    if(custtime_1 > 60 || custtime_1 < 0 ){
+                        alert('时间输入不正确!请输入1-60之间的数字!');
+                        BookOrderEditviewModule.checkSubmitFlg = false;
+                        return false;
+                    }
+
+
                 },
                 success: function (res) {
                     var data = eval('(' + res + ')');
@@ -31,10 +94,204 @@
             });
         },
 
+        //新建的快捷操作
+        quickKeyboardAction: function () {
+            // ctrl+9快捷键,保存公告
+            Mousetrap.bind(['ctrl+9', 'ctrl+f9', 'f9'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '订餐单' && ($('#OrderFormAction').val() == 'Editview')) {
+                    OrderFormEditviewModule.insert();
+                };
+            });
+
+            // ctrl+4快捷键,放弃
+            Mousetrap.bind(['ctrl+4', 'ctrl+f4', 'f4'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '订餐单' && ($('#OrderFormAction').val() == 'Editview')) {
+                    IndexIndexModule.updateOperateTab('__URL__/listview');
+                };
+            });
+
+            // ctrl+0快捷键,查看今日菜单
+            Mousetrap.bind(['ctrl+0', 'ctrl+f10', 'f10'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '订餐单' && ($('#OrderFormAction').val() == 'Createview')) {
+                    OrderFormCreateviewModule.showTodayMenuview();
+                };
+            });
+        },
+
+
+        //键盘移动方案
+        keyboardMove: function () {
+            //定制键盘移动方案
+            $('#BookOrderEditviewForm input[name=clientname]').bind('keydown', function (event) { //联系人
+                if ((event.which == 13) || (event.which == 40)) {
+                    $('#BookOrderEditviewForm input[name=telphone]').focus();
+                }
+                if (event.which == 38) {
+
+                }
+            })
+            //电话移动
+            $('#BookOrderEditviewForm input[name=telphone]').bind('keydown', function (event) {
+                if ((event.which == 13) || (event.which == 40)) { //下移
+                    var address = $('#address').val();
+                    $('#BookOrderEditviewForm input[name=address]').focus();
+                    $('#BookOrderEditviewForm input[name=address]').val();
+                    $('#BookOrderEditviewForm input[name=address]').val(address);
+
+                }
+                if (event.which == 38) { //上移
+                    $('#BookOrderEditviewForm input[name=clientname]').focus();
+                }
+            })
+
+            //地址移动
+            $('#BookOrderEditviewForm input[name=address]').bind('keydown', function (event) {
+                if ((event.which == 13) || (event.which == 40)) { //下移
+                    $('#BookOrderEditviewForm input[name=custtime_1]').focus();
+                }
+                if (event.which == 38) { //上移
+                    $('#BookOrderEditviewForm input[name=telphone]').focus();
+                }
+
+            })
+
+            //要餐时间1移动
+            $('#BookOrderEditviewForm input[name=custtime_1]').bind('keydown', function (event) {
+                if ((event.which == 13) || (event.which == 40)) { //下移
+                    var custtime_1 = $('#BookOrderEditviewForm input[name=custtime_1]').val();
+                    if(custtime_1 > 24 || custtime_1 < 0 ){
+                        alert('时间输入不正确!请输入1-24之间的数字!');
+                        return false;
+                    }
+                    $('#BookOrderEditviewForm input[name=custtime_2]').focus();
+                }
+                if (event.which == 38) { //上移
+                    var custtime_1 = $('#BookOrderEditviewForm input[name=custtime_1]').val();
+                    if(custtime_1 > 24 || custtime_1 < 0 ){
+                        alert('时间输入不正确!请输入1-24之间的数字!');
+                        return false;
+                    }
+                    var address = $('#BookOrderEditviewForm input[name=address]').val();
+                    $('#BookOrderEditviewForm input[name=address]').focus();
+                    $('#BookOrderEditviewForm input[name=address]').val('');
+                    $('#BookOrderEditviewForm input[name=address]').val(address);
+                }
+            })
+
+            //要餐时间2移动
+            $('#BookOrderEditviewForm input[name=custtime_2]').bind('keydown', function (event) {
+                if ((event.which == 13) || (event.which == 40)) { //下移
+                    var custtime_1 = $('#BookOrderEditviewForm input[name=custtime_2]').val();
+                    if(custtime_1 > 60 || custtime_1 < 0 ){
+                        alert('时间输入不正确!请输入1-60之间的数字!');
+                        return false;
+                    }
+                    $('#BookOrderEditviewForm input[name=beizhu]').focus();
+                }
+                if (event.which == 38) { //上移
+                    var custtime_1 = $('#BookOrderEditviewForm input[name=custtime_2]').val();
+                    if(custtime_1 > 60 || custtime_1 < 0 ){
+                        alert('时间输入不正确!请输入1-60之间的数字!');
+                        return false;
+                    }
+                    $('#BookOrderEditviewForm input[name=custtime_1]').focus();
+                }
+            })
+
+
+
+
+            //备注的移动
+            $('#BookOrderEditviewForm input[name=beizhu]').bind('keydown', function (event) {
+                if ((event.which == 13) || (event.which == 40)) { //下移
+                    $('#BookOrderEditviewForm input[name=productsNumber_1]').focus();
+
+                }
+                if (event.which == 38) { //上移
+                    $('#BookOrderEditviewForm input[name=custtime_2]').focus();
+                }
+
+            });
+
+            //产品1的移动
+            $('#BookOrderEditviewForm input[name=productsNumber_1]').bind('keydown', function (event) {
+                if (event.which == 38) { //上移
+                    $('#BookOrderEditviewForm input[name=beizhu]').focus();
+                }
+
+            });
+
+
+            //送餐费的计算
+            $('#BookOrderEditviewForm input[name=shippingmoney]').bind('keydown', function (event) {
+                if (event.which == 13) {
+                    //计算全部的金额
+                    var totalMoney = 0;
+                    //取得表格行的长度
+                    var rowLength = $("#BookOrderEditviewproductsTable tr").length;
+                    for (i = 1; i < rowLength; i++) {
+                        if ($("#BookOrderEditviewproductsMoney_" + i).val() > 0) {
+                            totalMoney = totalMoney + parseFloat($("#BookOrderEditviewproductsMoney_" + i).val());
+                        }
+                    }
+
+                    //加上送餐费
+                    var shippingmoney = 0;
+                    var shippingmoneyVal = $('#BookOrderEditviewForm input[name=shippingmoney]').val();
+                    if (shippingmoneyVal) {
+                        shippingmoney = parseFloat(shippingmoneyVal);
+                    }
+                    totalMoney = totalMoney + shippingmoney;
+                    totalMoney = parseFloat(totalMoney).toFixed(2);
+                    $('#BookOrderEditviewFormTotalMoney').html(totalMoney + '元');  //订单总金额
+                    $('#BookOrderEditviewForm input[name=totalmoney]').val(totalMoney);
+                    $('#BookOrderEditviewFormShouldMoney').html(totalMoney + '元');    //应收金额
+                    $('#BookOrderEditviewForm input[name=shouldmoney]').val(totalMoney);
+                    //
+                    $('#BookOrderEditviewForm input[name=productsNumber_1]').focus();
+
+                }
+            })
+        },
+
         //放弃保存
         cancel: function(){
             var url = '__URL__/listview';
             IndexIndexModule.updateOperateTab(url);
+        },
+
+        showTodayMenuview: function () {
+            var that = this;
+            $(that.dialog).dialog({
+                title: '今日菜单查询',
+                iconCls: 'icons-application-application_add',
+                width: 600,
+                height: 540,
+                cache: false,
+                href: "{:U('OrderForm/showToaymenuview')}",
+                modal: true,
+                collapsible: false,
+                minimizable: false,
+                resizable: false,
+                maximizable: false,
+                buttons: [
+                    {
+                        text: '关闭',
+                        iconCls: 'icons-arrow-cross',
+                        handler: function () {
+                            $(that.dialog).dialog('close');
+                        }
+                    }]
+            });
         }
     }
 
@@ -42,7 +299,7 @@
 
         BookOrderEditviewModule.init();
         setTimeout(function(){
-            $('#BookOrderEditviewForm textarea[name=content]').focus();
+            $('#BookOrderEditviewForm input[name=address]').focus();
         },100);
 
     })

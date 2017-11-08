@@ -9,7 +9,7 @@
         <li style="margin-left: 10px;"><a href="javascript:void(0);"
                                           onclick="OrderFormSearchviewTelphoneModule.telphoneSearchInput();"><img
                 src=".__PUBLIC__/Images/addressBtn.jpg" alt="" title="" border="0"></a></li>
-        <li><a href="javascript:void(0);" onclick="OrderFormSearchviewTelphoneModule.telphoneSearchInput();">电话查询<span>^6</span></a></li>
+        <li><a href="javascript:void(0);" onclick="OrderFormListviewModule.telphoneSearchInput();">电话查询<span>^6</span></a></li>
 
 
         <li style="float: right;margin-right: 40px;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
@@ -47,13 +47,44 @@
 
         //操作格式化
         operate: function (val, rowData, rowIndex) {
-            var btn = [];
-            btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewTelphoneModule.detailview(' + rowData.orderformid + ','+ rowIndex+ ')">查看</a>');
-            btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewTelphoneModule.editview(' + rowData.orderformid +  ','+ rowIndex+')">改单</a>');
-            btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewTelphoneModule.hurry(' + rowData.orderformid +  ','+ rowIndex+')">催送</a>');
-            btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewTelphoneModule.duplicateview(' + rowData.orderformid + ','+ rowIndex+ ')">复制</a>');
-            btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewTelphoneModule.returnorderformview(' + rowData.orderformid +  ','+ rowIndex+ ')">退餐</a>');
-            return btn.join(' | ');
+            if(window.screen.availWidth < 1280){
+                var btn = [];
+                btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewTelphoneModule.detailview(' + rowData.orderformid + ','+ rowIndex+ ')">查看&nbsp;</a>');
+                btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewTelphoneModule.editview(' + rowData.orderformid +  ','+ rowIndex+')">改单&nbsp;</a>');
+                btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewTelphoneModule.hurry(' + rowData.orderformid +  ','+ rowIndex+')">催送&nbsp;</a>');
+                btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewTelphoneModule.duplicateview(' + rowData.orderformid + ','+ rowIndex+ ')">复制&nbsp;</a>');
+                btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewTelphoneModule.returnorderformview(' + rowData.orderformid +  ','+ rowIndex+ ')">退餐</a>');
+                return btn.join('');
+            }else{
+                var btn = [];
+                btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewTelphoneModule.detailview(' + rowData.orderformid + ','+ rowIndex+ ')">查看</a>');
+                btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewTelphoneModule.editview(' + rowData.orderformid +  ','+ rowIndex+')">改单</a>');
+                btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewTelphoneModule.hurry(' + rowData.orderformid +  ','+ rowIndex+')">催送</a>');
+                btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewTelphoneModule.duplicateview(' + rowData.orderformid + ','+ rowIndex+ ')">复制</a>');
+                btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewTelphoneModule.returnorderformview(' + rowData.orderformid +  ','+ rowIndex+ ')">退餐</a>');
+                return btn.join(' | ');
+            }
+
+        },
+
+        //送餐员的格式化操作
+        sendname:function(val,rowData,rowIndex){
+            if((rowData.longitude) && (rowData.latitude) && (!rowData.sendlongitude)){
+                var btn = [];
+                btn.push( val +
+                '<a href="javascript:void(0);" onclick="OrderFormListviewModule.mapshowview(' + rowData.orderformid +','+ rowIndex+ ')" ><img src=".__PUBLIC__/Images/lhkc/location.png" style="height: 20px;" /></a>');
+                return btn.join('');
+            }else if((rowData.sendlongitude) && (rowData.sendlatitude)){
+                var btn = [];
+                btn.push( val +
+                '<a href="javascript:void(0);" onclick="OrderFormListviewModule.sendmapshowview(' + rowData.orderformid +','+ rowIndex+ ')" ><img src=".__PUBLIC__/Images/lhkc/sendlocation.png" style="height: 20px;" /></a>');
+                return btn.join('');
+            }else{
+                var btn = [];
+                btn.push(val);
+                return btn.join(' | ');
+            }
+
         },
 
         //初始返回,定位行操作,但是在翻页是,就不操作
@@ -162,8 +193,8 @@
                 // 返回选项卡
                 var tab = $('#operation').tabs('getSelected');
                 var tabOptions = tab.panel('options');
-                if (tabOptions.title == '订餐地址查询') {
-                    that.addressSearchInput();
+                if (tabOptions.title == '订餐电话查询') {
+                    that.telphoneSearchInput();
                 };
             });
 

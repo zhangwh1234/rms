@@ -1,0 +1,133 @@
+<?php if (!defined('THINK_PATH')) exit();?><div class="moduleMenu">
+    <ul>
+        <li><?php echo (L("$tabName")); ?></li>
+        <li><a href="javascript:void(0);"  onclick="updateTab('__URL__/listview');">&nbsp;&gt;<?php echo (L("$moduleName")); ?></a></li>
+        <li>&nbsp;&gt;<span style="background-color: #FF9797;font-size: 16px;"><?php echo ($operName); ?></span></li>
+        <li style="width: 50px;">&nbsp;</li>
+		
+		 <li style="width: 50px;">&nbsp;</li>
+        <li><a href="javascript:;" id="showSubMenu"  onMouseOver="" ><img src=".__PUBLIC__/Images/addressBtn.jpg" alt="" title="" border="0"></a></li>      
+        <li><a href="javascript:void(0);" class="moduleName" onclick="addressSearchSVMAClick();">地址查询<span>^5</span></a></li>
+      
+        <li style="width: 20px;">&nbsp;</li> 
+        
+        <li style="float: right;margin-right: 60px;"><a href="javascript:void(0);"   onclick="closeTab();" >关闭</a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="closeTab();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
+
+    </ul>
+</div>
+
+
+
+
+<script type="text/javascript">
+	//地址查询click
+	function addressSearchSVMAClick(){
+		$('#addressSearchSearchviewWin').window('open');
+        $('#addressSearchSearchviewWinInput').focus();
+	}
+	
+	//地址查询结果
+	function addressSearchSearchviewKeydown(event,obj){
+		//定义根据输入值，处理订单
+        var inputCode = $(obj).val();
+        //输入的键值 
+        var event = event || window.event;
+        var keyCode = event.which ? event.which : event.keyCode;    
+        if(keyCode == 13){   //订单处理
+            var objValue = $(obj).val();
+            openNewTabUrl('配送地址查询','__URL__/searchviewForAddress/delsession/1/searchAddress/'+encodeURI(objValue));
+            $('#searchViewForAddressOrderHandleAddress input[name=searchAddress]').focus();
+            $(obj).val('');
+            $('#addressSearchSearchviewWin').window('close');  //关闭地址查询
+
+        }
+	}
+	
+    //对退餐的处理
+    function searchCancelOrder(objValue,orderformid,rowIndex){
+        //如果是退餐，就把订单置为已退餐
+        $.ajax({
+            type : "GET",
+            url : "__URL__/cancelOrderHandle/orderformid/"+orderformid+"/code/"+objValue,
+            dataType : "json",
+            success : function(returnData){                 
+                if(returnData['error'] == 'error'){
+                    $.messager.show({
+                        title:'提示',
+                        msg:returnData['msg'],
+                        height:70,
+                        timeout:5000,
+                        showType:'slide',
+                        style:{
+                            left:0,right:'',top:'',
+                            bottom:-document.body.scrollTop-document.documentElement.scrollTop
+                        }
+                    });
+                    return false;
+                }
+
+                if(returnData['success'] == 'success'){ 
+                    rowIndex = rowIndex - 1;
+                    $("#table<?php echo ($actionName); ?> tr:gt(0):eq("+rowIndex+") td:eq(6)").html('已退餐');
+                }
+            }
+
+        });
+    };
+
+    //返回订单
+    function searchBackOrder(objValue,orderformid,rowIndex){
+        $.messager.confirm('确认', '是否真的需要返回订单?', function(r){
+            if (r){
+                $.ajax({
+                    type : "GET",
+                    url : "__URL__/backOrderHandle/orderformid/"+orderformid+"/code/"+objValue,
+                    dataType : "json",
+                    success : function(returnData){                 
+                        if(returnData['error'] == 'error'){
+                            $.messager.show({
+                                title:'提示',
+                                msg:returnData['msg'],
+                                height:70,
+                                timeout:5000,
+                                showType:'slide',
+                                style:{
+                                    left:0,right:'',top:'',
+                                    bottom:-document.body.scrollTop-document.documentElement.scrollTop
+                                }
+                            });
+
+                            return false;
+                        }
+
+                        if(returnData['success'] == 'success'){ 
+                            rowIndex = rowIndex - 1;
+                            $("#<?php echo ($actionName); ?>OrderHandle<?php echo ($row); ?>").val();
+                        }
+                    }
+
+                });
+            }else{
+                // var t = $("#<?php echo ($actionName); ?>OrderHandle"+rowIndex).numberbox('setValue','');
+                $("#<?php echo ($actionName); ?>OrderHandle"+rowIndex).focus();
+            }
+        });
+    };
+
+    //打印订单
+    function searchOrderPrintData(orderformid,rowIndex){
+        //取得打印的内容
+        $.ajax({
+            type : "POST",
+            url :  APP+"/OrderHandle/getPrintOrder/orderformid/"+orderformid,
+            dataType : "json",
+            success : function(data){  
+                printOrderForm(data);
+                //设置打印
+                rowIndex = rowIndex - 1;
+                $("#table<?php echo ($actionName); ?> tr:gt(0):eq("+rowIndex+") td:eq(6)").html('已打印');
+            }
+        })
+    };
+</script>

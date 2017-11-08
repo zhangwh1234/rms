@@ -3,6 +3,7 @@
     var OrderPrintHandleListviewModule = {
         dialog: '#globel-dialog-div',
         datagrid: '#orderprinthandle_index_datagrid',
+        orderprinttime:'',
 
 
         init: function () {
@@ -85,5 +86,11 @@
         setTimeout(function(){
             OrderPrintHandleListviewModule.setPagination();
         },100);
+
+
+        OrderPrintHandleListviewModule.orderprinttime = setTimeout(function(){
+            IndexIndexModule.updateOperateTab("__URL__/createview");
+        },3000);
+
     })
 </script>

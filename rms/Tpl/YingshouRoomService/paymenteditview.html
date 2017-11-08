@@ -1,0 +1,167 @@
+<div class="moduleMenu">
+    <ul>
+        <li>{$Think.lang.$navName}</li>
+        <li><a href="javascript:void(0);" class="moduleName" onclick="IndexIndexModule.updateOperateTab('__URL__/{$returnAction}');">&nbsp;&gt;{$Think.lang.$moduleName}</a></li>
+        <li>&nbsp;&gt;查看操作</li>
+        <li style="width: 50px;">&nbsp;</li>
+
+        <li style="margin-left: 10px;"><a href="javascript:;" onclick="PaymentEditviewModule.update();"><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);" onclick="PaymentEditviewModule.update();">保存订单<span>^9</span></a></li>
+
+        <li style="margin-left: 15px;"><a href="javascript:;" id="showSubMenu" onMouseOver=""><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);" class="moduleName" onclick="IndexIndexModule.updateOperateTab('__URL__/checkOrder/name/{$name}/room_date/{$custdate}/room_ap/{$custap}');">返回列表</a><span>^4</span></li>
+
+
+        <li style="float: right;margin-right: 60px;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="IndexIndexModule.closeOperateTab();"><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <div style="clear:both;"></div>
+    </ul>
+</div>
+
+<include file="YingshouRoomService/paymenteditviewUI" />
+<input id="PaymentEditviewAction" type="hidden" value="Editview" />
+
+<script>
+    var PaymentEditviewModule = {
+        dialog: '#globel-dialog-div',
+        checkSubmitFlg: false,
+
+        //初始化
+        init: function () {
+            $('.moduleOperater').height(IndexIndexModule.operationHeight);
+            this.quickKeyboardAction();
+            $("#YingshouRoomServiceAccountsCode_1").focus();
+        },
+
+        //保存记录
+        update: function () {
+            //防止重复提交
+            if (this.checkSubmitFlg == false) {
+                this.checkSubmitFlg = true;
+            } else {
+                return;
+            }
+            $('#PaymentEditviewForm').form('submit', {
+                url: '__URL__/update/returnAction/{$returnAction}/pagetype/{$pagetype}/rowIndex/{$rowIndex}',
+                onSubmit: function () {
+                    //进行表单验证
+                    if ($('#PaymentEditviewForm  input[name=jiezhangmoney]').val() == '') {
+                        alert('结账金额不能为空!');
+                        PaymentEditviewModule.checkSubmitFlg = false;
+                        return false;
+                    }
+                    //金额验证
+                    totalmoney = parseFloat($('#PaymentEditviewForm input[name=paymenttotalmoney]')
+                        .val());
+                    totalmoney = totalmoney.toFixed(2);
+                    jiezhangmoney = parseFloat($('#PaymentEditviewForm input[name=paymentjiezhangmoney]').val());
+                    jiezhangmoney = jiezhangmoney.toFixed(2);
+                    if (totalmoney !== jiezhangmoney) {
+                        alert('结账金额不等于订单金额!');
+                        PaymentEditviewModule.checkSubmitFlg = false;
+                        return false;
+                    }
+
+                },
+                success: function (res) {
+                    var data = eval('(' + res + ')');
+                    if (!data.status) {
+                        $.app.method.tip('提示信息', data.info, 'error');
+                        PaymentEditviewModule.checkSubmitFlg = false;
+                        return false;
+                    } else {
+                        $.app.method.tip('提示信息', data.info, 'info');
+                        IndexIndexModule.updateOperateTab(data.url);
+                    }
+                }
+            });
+        },
+
+        //对送餐员姓名编辑的操作
+        editSendname: function (ordersn) {
+            custdate = $('#PaymentEditviewForm input[name=custdate]').val();
+            custap = $('#PaymentEditviewForm input[name=custap]').val();
+            url = "__URL__/getSendnameView";
+            $('#globel-dialog-div').dialog({
+                title: '选择送餐员',
+                iconCls: 'icons-application-application_add',
+                width: 400,
+                height: 200,
+                cache: false,
+                href: url,
+                modal: true,
+                collapsible: false,
+                minimizable: false,
+                resizable: true,
+                maximizable: false,
+                buttons: [{
+                    text: '确定',
+                    iconCls: 'icons-other-tick',
+                    handler: function () {
+                        sendname = $(
+                            '#PaymentEditformSelectSendname select[name=sendnameselect]'
+                        ).val();
+                        //设置送餐员
+                        $("#orderformsendname").html(sendname);
+                        $('#globel-dialog-div').dialog('close');
+                        //写入数据库
+                        url = "__URL__/setSendname/sendname/" + sendname + "/ordersn/" +
+                            ordersn;
+                        $.ajax({
+                            type: "GET",
+                            url: url,
+                            dataType: "json",
+                            success: function (data) {}
+                        });
+                    }
+                }, {
+                    text: '取消',
+                    iconCls: 'icons-arrow-cross',
+                    handler: function () {
+                        $('#globel-dialog-div').dialog('close');
+                    }
+                }]
+            });
+        },
+        //新建的快捷操作
+        quickKeyboardAction: function () {
+            // ctrl+1快捷键,新建公告
+            Mousetrap.bind(['ctrl+1', 'ctrl+f1', 'f1'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                //if (tabOptions.title == '订餐单' && ($('#OrderFormAction').val() == 'Detailview')) {
+                IndexIndexModule.updateOperateTab(
+                    '__URL__/createview/returnAction/{$returnAction}');
+                //};
+            });
+
+            // ctrl+4快捷键,放弃
+            Mousetrap.bind(['ctrl+4', 'ctrl+f4', 'f4'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                //if (tabOptions.title == '订餐单' ) {
+                IndexIndexModule.updateOperateTab(
+                    "__URL__/{$returnAction}/pagetype/{$pagetype}/rowIndex/{$rowIndex}");
+                //};
+            });
+
+            // ctrl+4快捷键,放弃
+            Mousetrap.bind(['ctrl+5', 'ctrl+f5', 'f5'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                //if (tabOptions.title == '订餐单' ) {
+                IndexIndexModule.updateOperateTab(
+                    "__URL__/editview/record/{$record}/pagetype/{$pagetype}/rowIndex/{$rowIndex}"
+                );
+                //};
+            });
+        }
+    }
+
+    $(function () {
+        PaymentEditviewModule.init();
+    })
+</script>

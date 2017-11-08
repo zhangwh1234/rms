@@ -1,0 +1,61 @@
+<script type="text/javascript">
+    $(document).ready(function() { 
+        //提交程序
+        $('#createView{$moduleName}').form({  
+            url:"__URL__/insert",
+            onSubmit: function(){  
+                var telphone = $('#createView{$moduleName} input[name=telphone]').val();
+                if(telphone ==  ''){
+                    alert('电话不能为空');
+                    return false;
+                }
+               var regph=/[1][3-9][0-9]{9,9}/;//验证手机号码
+               if(telphone.match(regph) == null){
+                   alert('输入的不是电话号码');
+                   return false;
+               }
+               var content = $('#createView{$moduleName} input[name=content]').attr('value');  
+               alert(content);
+               if(content ==  ''){
+                    alert('内容不能为空');
+                    return false;
+               }
+               //if(content.length > 65){
+               ////    alert('输入的内容太长了');
+               //    return false;
+               //}  
+               
+            },
+            success:function(data){ 
+            	updateTab(data);
+            }  
+        }); 
+
+        //form提交程序
+        $('#createView{$moduleName} input[name=createsave]').bind('click',function(){
+            //提交表单  
+            $('#createView{$moduleName}').submit();
+
+        }) 
+
+        //编辑的提交
+        $('#editView{$moduleName}').form({  
+            url:'__URL__/update',
+            onSubmit: function(){  
+                //进行表单验证  
+                //如果返回false阻止提交  
+            },  
+            success:function(data){ 
+            	updateTab(data);
+            }  
+        }); 
+
+        //form提交程序
+        $('#editView{$moduleName} input[name=editsave]').bind('click',function(){
+            //提交表单  
+            $('#editView{$moduleName}').submit();
+        }) 
+        
+        //电话输入框，只能输入移动联通电话号码
+    });   
+</script>

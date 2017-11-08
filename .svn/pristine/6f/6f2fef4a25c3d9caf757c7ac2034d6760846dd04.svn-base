@@ -1,0 +1,882 @@
+<?php if (!defined('THINK_PATH')) exit();?><script type="text/javascript">
+    //指定某个字段获得焦点
+    $(document).ready(function(){
+         $("#duplicateView<?php echo ($moduleName); ?> #<?php echo ($fieldsFocus); ?>").focus();  
+    });
+    
+</script>
+<div class="moduleoperator">
+    <form id="duplicateView<?php echo ($moduleName); ?>" name="duplicateView<?php echo ($moduleName); ?>" method="POST" style="border: 1px solid white;"  >
+        <input id="<?php echo ($moduleName); ?>Action" type="hidden" value="duplicateview" />
+        <input type="hidden" name="pagenumber" value="<?php echo ($smarty["request"]["start"]); ?>">
+        <input type="hidden" name="module" value="<?php echo ($MODULE); ?>">
+        <input type="hidden" name="record" value="<?php echo ($record); ?>">
+        <input type="hidden" name="returnAction" value="<?php echo ($returnAction); ?>">
+
+        <table border=0 cellspacing=0 cellpadding=0 width=99% align=center bgcolor="">
+            <tr>
+                <td>
+                    <table border=0 cellspacing=0 cellpadding=3 width=100% class="small">
+                        <tr>
+                        <td class="dvtTabCache" style="width:20px" nowrap>&nbsp;</td>
+                        <td class="dvtSelectedCell" align="center" nowrap> 复制 </td>
+                        <td class="dvtTabCache" style="width:80%">&nbsp;</td>
+                        <tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td valign=top align="center" >
+
+                    <!-- Basic Information Tab Opened -->
+                    <div id="basicTab" style="border: 1px solid #e0dddd; background: white;">
+                        <table border=0 cellspacing=0 cellpadding=0 width="98%" class="small">
+                            <tr>
+                               <td></td>
+                                <td align="right">
+                                    <input id="duplicatesave" name="duplicatesave" title="" accessKey="" class="crmbutton small save"   type="button"  value="<?php echo (L("Button_Save")); ?>" style="width:70px;float:right;margin-right:2px;margin-top:2px;margin-bottom:2px;"></td>
+                                <td>
+                                    <input title="" accessKey="" class="crmbutton small cancel" onclick="updateTab('__APP__/<?php echo ($moduleName); ?>/<?php echo ($returnAction); ?>');" type="button" name="button" value="  <?php echo (L("Button_Cancel")); ?>  "  style="width:70px;float:left;margin-left:2px;margin-top:2px;margin-bottom:2px;"></td>
+                                <td> 
+                                </td>
+                            </tr>
+                            <!-- 这里显示具体的编辑 -->
+
+                            <?php if(is_array($blocks)): $i = 0; $__LIST__ = $blocks;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$data): $mod = ($i % 2 );++$i;?><tr>
+                                    <td colspan=4 class="tabBlockViewHeader">
+                                        <?php echo (L("$key")); ?>
+                                    </td>
+                                </tr>
+
+                                <!-- Here we should include the uitype handlings-->
+                                <?php if(is_array($data)): $label = 0; $__LIST__ = $data;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$subdata): $mod = ($label % 2 );++$label;?><tr style="height:35px;border: 1px solid black;background: #F0F0F0;">
+                                        <?php if(is_array($subdata)): $mainlabel = 0; $__LIST__ = $subdata;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$maindata): $mod = ($mainlabel % 2 );++$mainlabel;?><style type="text/css">
+    .dvtCellLabel, .cellLabel {
+        background:#F7F7F7 url(./__PUBLIC__/Images/testsidebar.jpg) repeat-y scroll right center;
+        border-bottom:1px solid #DEDEDE;
+        border-left:1px solid #DEDEDE;
+        border-right:1px solid #DEDEDE;
+        color:#545454;
+        padding-left:10px;
+        padding-right:10px;
+        white-space:nowrap;
+        font-size: 14px;
+    }
+    .dvtCellInfo, .cellInfo {
+        background:#FFFFFF ;
+        padding-left:10px;
+        padding-right:10px;
+        border-bottom:1px solid #dedede;    
+        border-right:1px solid #dedede;
+        border-left:1px solid #dedede;
+    }
+    .detailedViewTextBox{
+        font-size: 16px;
+    }
+    .detailedViewTextBoxOn{
+        font-size: 16px;
+    }
+    
+    lable{
+        font-size:16px;
+    }
+    
+    /*对RBAC节点状态的设置*/
+    .nodestatus{
+        float: left;
+        font-size: 16px;
+        line-height: 28px;
+    }
+</style>
+
+<script language="JavaScript">
+    //指定当前组模块URL地址
+    var URL = '__URL__';
+    var APP     =  '__APP__';
+    var PUBLIC = '__PUBLIC__';
+    var MODULE_NAME = '<?php echo ($module_name); ?>';
+</script>
+
+<?php $label = L("$maindata[name]"); ?>        
+<?php $uitype = $maindata[uitype]; ?>                
+<?php $name = $maindata[name]; ?>                      
+<?php $value = $maindata[value]; ?>                    
+<?php $length = $maindata[length]; ?>                  
+<?php if($maindata[readonly] == 0): $readonly = 'readonly'; ?>              
+<?php else: ?>
+    <?php $readonly = ''; endif; ?>
+
+
+<?php if(($uitype == 0)): ?><td width=20% class="dvtCellLabel" align=right><font color="red"><?php echo ($mandatory_field); ?></font><?php echo ($label); ?>             </td>
+<td width=30% align=left class="dvtCellInfo"><input  type="text"  name="<?php echo ($name); ?>" id ="<?php echo ($name); ?>" <?php echo ($readonly); ?> value="<?php echo ($fldvalue); ?>"  class=detailedViewTextBox onFocus="this.className='detailedViewTextBoxOn'" onBlur="this.className='detailedViewTextBox'" AUTOCOMPLETE="off">
+</td>
+
+    
+<?php elseif($uitype == 1): ?>                 
+<td width=15% class="dvtCellLabel" align=right>
+    <font color="red"><?php echo ($mandatory_field); ?>*</font><?php echo ($label); ?>
+</td>
+<td width=35% align=left class="dvtCellInfo">
+    <input type="text"  name="<?php echo ($name); ?>" id="<?php echo ($name); ?>" value="<?php echo ($value); ?>"  <?php echo ($readonly); ?> size="<?php echo ($length); ?>" class="detailedViewTextBox" onFocus="this.className='detailedViewTextBoxOn'" onBlur="this.className='detailedViewTextBox'" AUTOCOMPLETE="off">
+    </td>
+
+    
+    <?php elseif($uitype == 2): ?>
+    <td width=15% class="dvtCellLabel" align=right><font color="red"><?php echo ($mandatory_field); ?></font><?php echo ($label); ?>
+    </td>
+    <td width=35% align=left class="dvtCellInfo">
+    <input type="text"  class="easyui-numberbox" name="<?php echo ($name); ?>" id="<?php echo ($name); ?>" value="<?php echo ($value); ?>"  <?php echo ($readonly); ?> size="<?php echo ($length); ?>" class=detailedViewTextBox onFocus="this.className='detailedViewTextBoxOn'" onBlur="this.className='detailedViewTextBox'" AUTOCOMPLETE="off"></td> 
+
+    
+    <?php elseif($uitype == 3): ?>
+    <td width=15% class="dvtCellLabel" align=right><font color="red"><?php echo ($mandatory_field); ?></font><?php echo ($label); ?>
+    </td>
+    <td width=35% align=left class="dvtCellInfo">
+    <input type="text" name="<?php echo ($name); ?>" id ="<?php echo ($name); ?>" value="<?php echo ($value); ?>" <?php echo ($readonly); ?> size="<?php echo ($length); ?>" class=detailedViewTextBox onFocus="this.className='detailedViewTextBoxOn'" onBlur="this.className='detailedViewTextBox'" AUTOCOMPLETE="off" />
+    </td> 
+
+            
+    <?php elseif($uitype == 4): ?>
+    <td width="15%" class="dvtCellLabel" align=right>
+    <font color="red"><?php echo ($mandatory_field); ?></font><?php echo ($label); ?> 
+    </td>
+    <td width="35%" align=left class="dvtCellInfo">                
+    <input  type="text" name="<?php echo ($name); ?>" id ="<?php echo ($name); ?>" value="<?php echo ($value); ?>" <?php echo ($readonly); ?> size="<?php echo ($length); ?>" class="detailedViewTextBox" onFocus="this.className='detailedViewTextBoxOn'" onBlur="this.className='detailedViewTextBox'"  onkeyup="" AUTOCOMPLETE="off" />
+    </td>
+
+    
+    <?php elseif($uitype == 5): ?>
+    <td width="15%" class="dvtCellLabel" align=right>
+    <font color="red"><?php echo ($mandatory_field); ?></font><?php echo ($label); ?>
+    </td>
+    <td width="35%" align=left class="dvtCellInfo">
+    <input name="<?php echo ($name); ?>" tabindex="<?php echo ($vt_tab); ?>" id="<?php echo ($name); ?>" class="easyui-datebox" type="text" style="border:1px solid #bababa;" size="11" maxlength="10" value="<?php echo ($value); ?>">
+    </td>
+
+    
+    <?php elseif($uitype == 6): ?>
+    <td width="15%" class="dvtCellLabel" align=right>
+    <font color="red"><?php echo ($mandatory_field); ?></font><?php echo ($label); ?>
+    </td>
+    <td width="35%" align=left class="dvtCellInfo">
+    <input name="<?php echo ($fldname); ?>" id="jscal_field_<?php echo ($fldname); ?>" type="text" style="border:1px solid #bababa;" size="11" maxlength="10" value="<?php echo ($time_val); ?>">
+    <img src="{'btnL3Calendar.gif'|@vtiger_imageurl:$THEME}" id="jscal_trigger_<?php echo ($fldname); ?>">                              <br><font size=1><em old="(hh:ii:ss)">(<?php echo ($dateStr); ?>)</em></font>
+    </td>  
+
+    
+    <?php elseif($uitype == 7): ?>   
+    <td width=15% class="dvtCellLabel" align=right><font color="red"><?php echo ($mandatory_field); ?></font><?php echo ($label); ?>
+    </td>
+    <td width=35% align=left class="dvtCellInfo"><input type="text"  name="<?php echo ($name); ?>" id ="<?php echo ($name); ?>" value="<?php echo ($value); ?>"  <?php echo ($readonly); ?> size="<?php echo ($length); ?>" class=detailedViewTextBox onFocus="this.className='detailedViewTextBoxOn'" onBlur="this.className='detailedViewTextBox'" AUTOCOMPLETE="off">
+    </td>               
+
+     
+    <?php elseif($uitype == 9): ?>
+    <td width="15%" class="dvtCellLabel" align=right>
+    <font color="red"><?php echo ($mandatory_field); ?></font>
+    <?php echo ($label); ?>
+    </td>
+    <td width="35%" align=left class="dvtCellInfo">
+    <?php $select = $company[select]; ?>                    
+    <select name="<?php echo ($name); ?>" id="<?php echo ($name); ?>"  class="detailedViewTextBox" style="width:<?php echo ($length); ?>px">
+        <assing name="ccc" value="$currentName" />
+        <?php if($value): ?><option value="<?php echo ($value); ?>"><?php echo ($value); ?></option>
+        <?php else: ?>
+            <option value="  ">&nbsp;</option><?php endif; ?>
+        <?php if(is_array($$name)): foreach($$name as $key=>$pick): ?><option value="<?php echo ($pick["name"]); ?>"><?php echo ($pick["name"]); ?></option><?php endforeach; endif; ?>
+    </select>
+    </td>   
+
+    
+    <?php elseif($uitype == 10): ?>                 
+    <td width=10% class="dvtCellLabel" align=right>
+    <font color="red"><?php echo ($mandatory_field); ?></font><?php echo ($label); ?> 
+    </td>
+    <td width=40% align=left class="dvtCellInfo">
+    <input type="text" name="<?php echo ($name); ?>"  id ="<?php echo ($name); ?>" value="<?php echo ($value); ?>" <?php echo ($readonly); ?> size="<?php echo ($length); ?>" tabindex="<?php echo ($vt_tab); ?>" class="detailedViewTextBox" onFocus="this.className='detailedViewTextBoxOn'" onBlur="this.className='detailedViewTextBox'" />
+    </td>
+
+           
+    <?php elseif($uitype == 11): ?>
+    <td width="15%" class="dvtCellLabel" align=right>
+    <font color="red"><?php echo ($mandatory_field); ?></font> <?php echo ($label); ?>
+    </td>
+    <td width="35%" align="left" class="dvtCellInfo">
+    <textarea  name="<?php echo ($name); ?>" id="<?php echo ($name); ?>" <?php echo ($readonly); ?> data-options='required:true' class="detailedViewTextBox" onFocus="this.className='detailedViewTextBoxOn'"   onBlur="this.className='detailedViewTextBox'"  rows="2" style="width:100%;"><?php echo ($value); ?></textarea>
+    </td>
+    
+    
+    <?php elseif($uitype == 12): ?>
+    <td width=15% class="dvtCellLabel" align=right><font color="red"><?php echo ($mandatory_field); ?></font><?php echo ($label); ?>
+    </td>
+    <td width=35% align=left class="dvtCellInfo"><input type="password"   name="<?php echo ($name); ?>" id="<?php echo ($name); ?>" value="<?php echo ($value); ?>"  <?php echo ($readonly); ?> size="<?php echo ($length); ?>" class=detailedViewTextBox onFocus="this.className='detailedViewTextBoxOn'" onBlur="this.className='detailedViewTextBox'" ></td> 
+
+    
+    <?php elseif($uitype == 17): ?>
+    <td width="20%" class="dvtCellLabel" align=right>
+    <font color="red"><?php echo ($mandatory_field); ?></font><?php echo ($label); ?> 
+    </td>
+    <td width="30%" align=left class="dvtCellInfo">
+    &nbsp;&nbsp;http://
+    <input style="width:74%;" class = 'detailedViewTextBox' type="text" tabindex="<?php echo ($vt_tab); ?>" name="<?php echo ($fldname); ?>" style="border:1px solid #bababa;" size="27" onFocus="this.className='detailedViewTextBoxOn'"onBlur="this.className='detailedViewTextBox'" onkeyup="validateUrl('<?php echo ($fldname); ?>');" value="<?php echo ($fldvalue); ?>" />
+    </td>
+
+    
+    <?php elseif($uitype == 26): ?>
+    <td width="20%" class="dvtCellLabel" align=right>
+    <font color="red"><?php echo ($mandatory_field); ?></font><?php echo ($label); ?>
+    </td>
+    <td width="30%" align=left class="dvtCellInfo">
+    <select name="<?php echo ($fldname); ?>" tabindex="<?php echo ($vt_tab); ?>" class="small">
+    <?php if(is_array($fldvaluee)): foreach($fldvaluee as $k=>$v): endforeach; endif; ?>   
+    <option value="<?php echo ($k); ?>"><?php echo ($v); ?></option> 
+
+    </select>
+    </td>
+
+      
+    
+    <?php elseif($uitype == 21): ?>                 
+    <td width=15% class="dvtCellLabel" align=right>
+    <font color="red"><?php echo ($mandatory_field); ?></font><?php echo ($label); ?> 
+    </td>
+    <td width=35% align=left class="dvtCellInfo">
+    <input type="text" name="<?php echo ($name); ?>"  value="<?php echo ($value); ?>" id ="<?php echo ($name); ?>" value="<?php echo ($value); ?>"  size="<?php echo ($length); ?>"  onFocus="this.className='detailedViewTextBoxOn'" onBlur="this.className='detailedViewTextBox'" onkeyup="$(this).val($(this).val().replace(/[^0-9]/g,''));" AUTOCOMPLETE="off" />
+</td>
+
+    
+<?php elseif($uitype == 22): ?>                 
+<td width=15% class="dvtCellLabel" align=right>
+    <font color="red"><?php echo ($mandatory_field); ?>*</font><?php echo ($label); ?>
+</td>
+<td width=35% align=left class="dvtCellInfo">
+    <input type="text"  name="<?php echo ($name); ?>" id="<?php echo ($name); ?>" value="<?php echo ($value); ?>"   class="detailedViewTextBox mousetrap" data-options="
+	required:true" size="<?php echo ($length); ?>" AUTOCOMPLETE="off" />
+    <div id="searchResultPanel" style="border:0px solid #C0C0C0;width:50px;height:auto; display:none;"></div>
+</td>   
+
+    
+<?php elseif($uitype == 23): ?>                 
+<td width=15% class="dvtCellLabel" align=right>
+<font color="red"><?php echo ($mandatory_field); ?></font><?php echo ($label); ?>
+</td>
+<td width=35% align=left class="dvtCellInfo">
+<input type="text" name="<?php echo ($name); ?>_1"  id ="<?php echo ($name); ?>_1" value="<?php echo ($custtime_1); ?>"  size="2" maxlength="2" tabindex="<?php echo ($vt_tab); ?>" class="detailedViewTextBox" AUTOCOMPLETE="off" />
+<input type="text" name="<?php echo ($name); ?>_2"  id ="<?php echo ($name); ?>_2" value="<?php echo ($custtime_2); ?>" size="2"  maxlength="2" tabindex="<?php echo ($vt_tab); ?>" class="detailedViewTextBox" AUTOCOMPLETE="off"  />
+<em>*</em>
+</td>
+
+
+<?php elseif($uitype == 30): ?>                 
+<td width=15% class="dvtCellLabel" align=right>
+    <font color="red"><?php echo ($mandatory_field); ?>*</font><?php echo ($label); ?>
+</td>
+<td width=35% align=left class="dvtCellInfo">
+    <input type="text"  name="<?php echo ($name); ?>" id="<?php echo ($name); ?>" value="<?php echo ($shippingname); ?>"  size="<?php echo ($length); ?>" readonly class="detailedViewTextBox" onFocus="this.className='detailedViewTextBoxOn'" onBlur="this.className='detailedViewTextBox'" />
+    </td>
+
+<?php elseif($uitype == 30): ?>                 
+<td width=15% class="dvtCellLabel" align=right>
+    <font color="red"><?php echo ($mandatory_field); ?>*</font><?php echo ($label); ?>
+</td>
+<td width=35% align=left class="dvtCellInfo">
+    <input type="text"  name="<?php echo ($name); ?>" id="<?php echo ($name); ?>" value="<?php echo ($shippingmoney); ?>11"  size="<?php echo ($length); ?>" readonly class="detailedViewTextBox" onFocus="this.className='detailedViewTextBoxOn'" onBlur="this.className='detailedViewTextBox'" onKeydown="alert('ik');" />
+    </td>    
+
+
+<?php elseif($uitype == 50): ?>
+<td width="100%" class="dvtCellLabel" align=center colspan="4">
+<table id="telAddressTable" width="90%" border=0 style="border: 1px solid #e0dddd; margin-top: 2px;" class="small">
+<tr class="detailedViewHeader">
+<td width="10%" align="center">序号</td>
+<td width="70%" align="center">地址</td>
+<td width="10%" align="center">所属分公司</td>   
+<td width="10%" align="center">操作</td>
+</tr>
+<?php if(is_array($teladdress)): foreach($teladdress as $key=>$vo): ?><tr style="height:25px;border: 1px solid black;background: #F0F0F0;" class="CaseRow" >
+<td width="10%" align="center" class="dvtCellLabel"><?php echo ($key+1); ?></td>
+<td width="70%" align="left" class="dvtCellLabel"><input id="telAddress_<?php echo ($key+1); ?>" name="telAddress_<?php echo ($key+1); ?>" type="text" size="80" value="<?php echo ($vo["address"]); ?>" /></td>
+<td width="1%" align="center" class="dvtCellLabel"><input id="telCompany_<?php echo ($key+1); ?>" name="telCompany_<?php echo ($key+1); ?>" type="text" size="10" value="<?php echo ($vo["company"]); ?>" /></td>
+<td width="10%" align="center" class="dvtCellLabel"><a href="javascript:void(0);" onclick="clearTelAddress('<?php echo ($key+1); ?>');" >清空地址</a></td>
+</tr><?php endforeach; endif; ?>
+<?php if(empty($teladdress)): $__FOR_START_996573543__=1;$__FOR_END_996573543__=4;for($key=$__FOR_START_996573543__;$key < $__FOR_END_996573543__;$key+=1){ ?><tr style="height:25px;border: 1px solid black;background: #F0F0F0;" class="CaseRow" >
+<td width="10%" align="center" class="dvtCellLabel"><?php echo ($key); ?></td>
+<td width="70%" align="left" class="dvtCellLabel"><input id="telAddress_<?php echo ($key); ?>" name="telAddress_<?php echo ($key); ?>" type="text" size="80" value="<?php echo ($vo["address"]); ?>" /></td>
+<td width="70%" align="center" class="dvtCellLabel"><input id="telCompany_<?php echo ($key); ?>" name="telCompany_<?php echo ($key); ?>" type="text" size="10" value="<?php echo ($vo["company"]); ?>" /></td>
+<td width="10%" align="center" class="dvtCellLabel"><a href="#" onclick="clearTelAddress('<?php echo ($key); ?>');" >清空地址</a></td>
+</tr><?php } endif; ?>
+</table> 
+<table  width="90%" >
+<tr>
+<td>    
+<input type="button" value="添加地址行" class="crmbutton small save" style="width:100px;margin-right: 10px;" onclick="addTelAddress();">
+<input type="button" value="删除最后一行"  class="crmbutton small save"  onclick="delTelAddress();">  
+<input id="addressLength" name="addressLength" type="hidden" value="<?php echo ($key+1); ?>" />
+</td>
+</tr>
+</table>     
+</td>
+
+
+<?php elseif($uitype == 51): ?>
+<td width="100%" class="dvtCellLabel" align=center colspan="4">
+
+<table id="productsTable" width="100%" border=0 style="border: 1px solid #e0dddd; margin-top: 2px;" class="small">
+    <tr class="detailedViewHeader" style="border: 1px solid red;">
+        <td width="5%" align="center">序号</td>
+        <td width="12%" align="center">数量</td>
+        <td width="15%" align="center">产品代码</td>
+        <td width="30%" align="center">产品名称</td>
+        <td width="12%" align="center">单价</td>
+        <td width="15%" align="center">金额</td>
+        <td width="10%" align="center">操作</td>           
+    </tr>
+    <?php if(empty($orderproducts)): $__FOR_START_1255872037__=0;$__FOR_END_1255872037__=3;for($key=$__FOR_START_1255872037__;$key < $__FOR_END_1255872037__;$key+=1){ ?><tr style="height:20px;border: 1px solid black;background: #F0F0F0;" class="CaseRow" >
+                <td width="5%" align="center" class="dvtCellLabel"><?php echo ($key+1); ?></td>
+                <td width="15%" align="center" class="dvtCellLabel"> 
+                    <input id="productsNumber_<?php echo ($key+1); ?>" class="easyui-numberbox" name="productsNumber_<?php echo ($key+1); ?>" type="text" size="5"  tabindex="1" onkeydown="keydownSumProductsMoney(<?php echo ($key+1); ?>,event,this)" 
+                        onblur="blurkeydownSumProductsMoney(<?php echo ($key+1); ?>,this)" value="" AUTOCOMPLETE="off" />
+                </td>
+                <td width="10%" align="center" class="dvtCellLabel"> 
+                    <input id="productsCode_<?php echo ($key+1); ?>" name="productsCode_<?php echo ($key+1); ?>" type="text" class="easyui-numberbox" size="10" tabindex="1"   onkeydown="getProductsByCode(<?php echo ($key+1); ?>,event,this);"  AUTOCOMPLETE="off"  />
+
+                    <img id="searchIcon1" title="产品选择" src="./__PUBLIC__/Images/products.gif" style="cursor: pointer;" align="absmiddle" onclick="productsPickList(&apos;<?php echo U('OrderForm/popupview',array('module'=>'Products','row'=>$key+1));?>&apos;);" /><a href="javascript:productsPickList(&apos;<?php echo U('OrderForm/popupview',array('module'=>'Products','row'=>$key+1));?>&apos;)" >选择</a> 
+                </td>
+                <td width="30%" align="center" class="dvtCellLabel"> 
+                    <input id="productsName_<?php echo ($key+1); ?>" name="productsName_<?php echo ($key+1); ?>" type="text" size="30" readonly="readonly"  /> 
+                    <input id="productsShortName_<?php echo ($key+1); ?>" name="productsShortName_<?php echo ($key+1); ?>" size="30" type="hidden"  />                  
+                </td>               
+                <td width="15%" align="center" class="dvtCellLabel"> 
+                    <input id="productsPrice_<?php echo ($key+1); ?>" name="productsPrice_<?php echo ($key+1); ?>" type="text" size="10" readonly="readonly" tabindex="1" value="" />
+                </td>
+                <td width="15%" align="center" class="dvtCellLabel"> 
+                    <input id="productsMoney_<?php echo ($key+1); ?>" name="productsMoney_<?php echo ($key+1); ?>" type="text" size="10" readonly="readonly"  tabindex="1" value="" />
+                </td>
+                <td width="10%" align="center" class="dvtCellLabel"><a href="#" onclick="clearProducts(<?php echo ($key+1); ?>);" >清空产品</a></td>
+            </tr><?php } endif; ?>
+    <?php if(is_array($orderproducts)): foreach($orderproducts as $key=>$vo): ?><tr style="height:20px;border: 1px solid black;background: #F0F0F0;" class="CaseRow" >
+            <td width="5%" align="center" class="dvtCellLabel"><?php echo ($key+1); ?></td>
+            <td width="15%" align="center" class="dvtCellLabel"> 
+                <input id="productsNumber_<?php echo ($key+1); ?>" name="productsNumber_<?php echo ($key+1); ?>" class="easyui-numberbox" type="text" size="5"  tabindex="1" value="<?php echo ($vo["number"]); ?>" onkeydown="keydownSumProductsMoney(<?php echo ($key+1); ?>)" onblur="sumProductsMoney(<?php echo ($key+1); ?>);" AUTOCOMPLETE="off" />
+            </td>
+            <td width="10%" align="center" class="dvtCellLabel"> 
+                <input id="productsCode_<?php echo ($key+1); ?>" name="productsCode_<?php echo ($key+1); ?>" class="easyui-numberbox" type="text" size="10" tabindex="1" value="<?php echo ($vo["code"]); ?>" onkeyup="getProductsByCode(<?php echo ($key+1); ?>,event,this);" AUTOCOMPLETE="off" />
+                <img id="searchIcon1" title="产品选择" src="./__PUBLIC__/Images/products.gif" style="cursor: pointer;" align="absmiddle" onclick="productsPickList(&apos;<?php echo U('OrderForm/popupview',array('module'=>'Products','row'=>$key+1));?>&apos;);" /><a href="javascript:productsPickList(&apos;<?php echo U('OrderForm/popupview',array('module'=>'Products','row'=>$key+1));?>&apos;)" >选择</a> 
+            </td>
+            <td width="30%" align="center" class="dvtCellLabel"> 
+                <input id="productsName_<?php echo ($key+1); ?>" name="productsName_<?php echo ($key+1); ?>" type="text" size="30" readonly="readonly" value="<?php echo ($vo["name"]); ?>" />
+                <input id="productsShortName_<?php echo ($key+1); ?>" name="productsShortName_<?php echo ($key+1); ?>" type="hidden"  value="<?php echo ($vo["shortname"]); ?>" />
+                <img id="searchIcon1" title="产品选择" src="./__PUBLIC__/Images/products.gif" style="cursor: pointer;" align="absmiddle" onclick="productsPickList('Products',<?php echo ($key); ?>);" />
+            </td>           
+            <td width="15%" align="center" class="dvtCellLabel"> 
+                <input id="productsPrice_<?php echo ($key+1); ?>" name="productsPrice_<?php echo ($key+1); ?>" type="text" size="10" readonly="readonly" tabindex="1" value="<?php echo ($vo["price"]); ?>" />
+            </td>
+            <td width="15%" align="center" class="dvtCellLabel"> 
+                <input id="productsMoney_<?php echo ($key+1); ?>" name="productsMoney_<?php echo ($key+1); ?>" type="text" size="10" readonly="readonly"  tabindex="1" value="<?php echo ($vo["money"]); ?>" />
+            </td>
+            <td width="10%" align="center" class="dvtCellLabel"><a href="#" onclick="clearProducts('<?php echo ($key+1); ?>');" >清空产品</a></td>
+        </tr><?php endforeach; endif; ?>
+
+</table> 
+<table  width="90%" >
+    <tr>
+        <td>    
+            <input type="button" value="添加产品行" class="crmbutton small save" style="width:100px" onclick="addProducts();" style="margin-right:20px;">  
+            <input type="button" value="删除产品最后一行"  class="crmbutton small save"  onclick="delProducts();">  
+            <input id="productsLength" name="productsLength" type="hidden" value="<?php echo ($key+1); ?>" />
+        </td>
+        <td width="" align="right">
+            小计:
+        </td>  
+        <td class="dvtCellLabel"> 
+            <input id="productsTotalMoney" name="productsTotalMoney" type="text" size="10" readonly="readonly" style="border: 0px;" value="<?php echo ($totalmoney); ?>" />
+        </td> 
+    </tr>
+</table>     
+
+<script type="text/javascript">
+    /*产品的js计算程序*/
+    var productsAjax = false;  //判断是否查询过产品代码，防止在ajax中按回车，反复执行，有个alert的小bug
+    //添加产品
+    function addProducts(){
+        //取得表格行的长度
+        var rowNum = $("#productsTable tr").length;
+
+        var tableTrAppend =   "<tr style='height:20px;border: 1px solid black;background: #F0F0F0;' class='CaseRow' > ";
+        tableTrAppend +=  "<td width='5%' align='center' class='dvtCellLabel'>"+rowNum+"</td> ";
+        tableTrAppend +=  "<td width='10%' align='center' class='dvtCellLabel'>";        
+        tableTrAppend +=    "<input id='productsNumber_"+rowNum+"' name='productsNumber_"+rowNum+"' type='text' size='5' value='' tabindex='1' onkeydown='keydownSumProductsMoney("+rowNum+",event,this)' onblur='blurkeydownSumProductsMoney("+rowNum+"event,this)' value='' AUTOCOMPLETE=''off' />";
+        tableTrAppend +=    "</td>"; 
+        tableTrAppend +=    "<td width='15%' align='center' class='dvtCellLabel'>";
+        tableTrAppend +=  "<input class='easyui-numberbox' id='productsCode_"+rowNum+"' name='productsCode_"+rowNum+"'  type='text' size='10' tabindex='1' onkeyup='getProductsByCode("+rowNum+",event,this)'/>";
+        tableTrAppend +=   "<img id='searchIcon1' title='产品选择' src='"+PUBLIC+"/Images/products.gif' style='cursor: pointer;' align='absmiddle' onclick='productsPickList(\"__APP__/OrderForm/popupview/module/Products/row/"+rowNum+"\");' />";
+        tableTrAppend +=   "<a href='javascript:productsPickList(\"__APP__/OrderForm/popupview/module/Products/row/"+rowNum+"\");' >选择</a>"; 
+        tableTrAppend +=   "</td>";
+        tableTrAppend +=   "<td width='30%' align='center' class='dvtCellLabel'>";
+        tableTrAppend +=   "<input id='productsName_"+rowNum+"' name='productsName_"+rowNum+"' type='text' size='30' readonly='readonly'  />";
+        tableTrAppend +=   "<input id='productsShortName_"+rowNum+"' name='productsShortName_"+rowNum+"' type='hidden'  />";
+        tableTrAppend +=    "</td>";
+        tableTrAppend +=    "<td width='15%' align='center' class='dvtCellLabel'>";
+        tableTrAppend +=    "<input id='productsPrice_"+rowNum+"' name='productsPrice_"+rowNum+"' type='text' size='10' readonly='readonly' tabindex='1' value='' />";
+        tableTrAppend +=    "</td>";
+        tableTrAppend +=    "<td width='15%' align='center' class='dvtCellLabel'>";
+        tableTrAppend +=    "<input id='productsMoney_"+rowNum+"' name='productsMoney_"+rowNum+"' type='text' size='10' readonly='readonly'  tabindex='1' value='' />";
+        tableTrAppend +=    "</td>";
+        tableTrAppend +=    "<td width='10%' align='center' class='dvtCellLabel'><a href='#' onclick='clearProducts("+rowNum+");' >清空产品</a></td>";
+        tableTrAppend +=    "</tr>";
+        //alert(tableTrAppend);
+        $("#productsTable").append(tableTrAppend);  
+        $("#productsLength").attr("value",rowNum+1);  //表格行数保存
+        $('#productsNumber_'+rowNum).numberbox({      //定义输入类型为数字
+            min:0,
+            precision:0
+        });
+        $('#productsCode_'+rowNum).numberbox({      //定义输入类型为数字
+            min:0,
+            precision:0
+        });
+
+
+    } 
+
+    /*  删除产品最后一行 */
+    function delProducts(){
+        //取得表格行的长度
+        var rowNum = $("#productsTable tr").length;
+        if(rowNum == 2){
+            alert("最后一行不能删除");
+            return;
+        }
+        $("#productsTable tr:last").remove();
+        $("#productsLength").attr("value",rowNum-1);  //表格行数保存
+        sumProductsMoney(rowNum);
+
+    }
+
+    /* 清空产品上的内容 */
+    function clearProducts(rowNum){
+        var productsCode = $("#productsCode_"+rowNum).val();
+        var productsName = $("#productsName_"+rowNum).val();
+
+        if((productsCode == '') && (productsName == '')){
+            return;
+        } 
+        if(confirm("是否要清空内容")){
+            $("#productsNumber_"+rowNum).numberbox('setValue', '');
+            $("#productsCode_"+rowNum).numberbox('setValue', '');
+            $("#productsName_"+rowNum).attr('value',''),
+            $("#productsShortName_"+rowNum).attr('value',''),
+            $("#productsPrice_"+rowNum).attr('value',''),
+            $("#productsMoney_"+rowNum).attr('value',0),
+            sumProductsMoney(rowNum);
+        }         
+    }
+
+    /* 弹出窗口，选择产品 */
+    //moduleName:产品名称  rowNum:行号 moduleName,rowNum
+    function productsPickList(url){
+        window.open(url);
+    }
+
+
+    /* 通过产品代码取得产品 */    
+    // rowNum 是行号，evt是firefox下的event事件，obj是this指针
+    function getProductsByCode(rowNum,evt,obj){
+        evt = evt ? evt : ((window.event) ? window.event : null);     
+        var key = evt.keyCode ? evt.keyCode : evt.which; 
+        //var code = $(obj).numberbox('getValue');
+        var code = $(obj).val();
+
+        if((key == 13) && (code.length>0)){
+            getProducts(rowNum,code);
+        }
+        //向上移动
+        if(key == 38){
+            $("#productsNumber_"+rowNum).focus();
+        }
+        //向下移动
+        if(key == 40){
+            var focusNum = rowNum + 1;
+            $("#productsNumber_"+focusNum).focus();  
+        }
+
+    }
+
+
+    /*  */
+    function getProducts(rowNum,code){
+        $.ajax({
+            url:APP+'/Products'+"/getProductsByCode&code="+code,
+            async:true,
+            beforeSend:function(){
+                //$jq("#lihuastatus").show();
+                //alert('dd');
+            },
+            complete:function(){
+                //$jq("#lihuastatus").hide();
+                //alert('ee');
+            },                            
+            success:function(mydata){
+                if(mydata){
+                    //首先检查父窗口表格是否有存在输入的代码和产品
+                    var rowLength = $("#productsTable tr").length;
+                    for(i=1;i<rowLength;i++){
+                        var productsName = $("#productsName_"+i).attr('value');
+                        if((productsName == mydata.name) && (i != rowNum)){
+                            //$.messager.alert('Warning','The warning message');
+                            alert('产品已经存在,不能添加！');
+                            return;
+                        }
+                    } 
+                    $("#productsName_"+rowNum).val(mydata.name);
+                    $("#productsShortName_"+rowNum).val(mydata.shortname);
+                    $("#productsPrice_"+rowNum).val(mydata.price);
+                    //计算总的金额
+                    sumProductsMoney(rowNum);
+                    //跳转到下一行
+                    rowNum = parseInt(rowNum) + 1; 
+                    $("#productsNumber_"+rowNum).focus();
+                }else{
+                    alert("输入的产品代码有错误，请重新输入！");
+                    return;
+                }
+            }       
+
+        })
+    }
+
+
+    /* 计算产品金额 */
+    function sumProductsMoney(rowNum){
+        var productsNumber = $("#productsNumber_"+rowNum).val();  //数量
+        var productsPrice  = $("#productsPrice_"+rowNum).val();  //单价
+        var productsMoney = 0 ;
+        productsMoney = parseInt(productsNumber) * parseFloat(productsPrice);
+
+        //写入
+        $("#productsMoney_"+rowNum).val(productsMoney);
+        //计算全部的金额
+        var totalMoney = 0;
+        //取得表格行的长度
+        var rowLength = $("#productsTable tr").length;
+        for(i=1;i< rowLength;i++){
+            if($("#productsMoney_"+i).val() >  0 ){
+                totalMoney = totalMoney + parseFloat($("#productsMoney_"+i).val());
+            }
+        }
+
+        //写入总的金额
+        //totalMoney = totalMoney.toFixed(2);
+        $("#productsTotalMoney").val(totalMoney);
+        //下一个表格代码输入框显示焦点
+        rowNum = rowNum + 0;   
+        //加上送餐费
+        var shippingmoney =0;
+        var shippingmoneyVal = $('#shippingmoney').val();
+        if(shippingmoneyVal){
+            shippingmoney = parseFloat(shippingmoneyVal);
+        }
+        totalMoney = totalMoney + shippingmoney;
+        totalMoney = parseFloat(totalMoney).toFixed(2);  
+        $('#totalmoney').val(totalMoney);          
+    }
+
+    /* 键盘回车计算产品金额 */
+    function keydownSumProductsMoney(rowNum,evt,obj){
+        evt = evt ? evt : ((window.event) ? window.event : null);     
+        var key = evt.keyCode ? evt.keyCode : evt.which; 
+        if(key  == 13){
+            if($("#productsName_"+rowNum).val() != ''){    //如果不为空，才计算
+                sumProductsMoney(rowNum);
+            }
+            $("#productsCode_"+rowNum).focus();
+
+        }
+        //向上移动一个
+        if(key == 38){
+            var focusNum = rowNum - 1;
+            if(focusNum > 0){
+                $("#productsCode_"+focusNum).focus();  
+            }
+        }
+        //向下移动
+        if(key == 40){
+            $("#productsCode_"+rowNum).focus(); 
+        }
+
+    }
+
+    //产品代码失去焦点的计算金额
+    function blurSumProductsMoney(rowNum,obj){
+        if($("#productsName_"+rowNum).val() != ''){    //如果不为空，才计算
+            sumProductsMoney(rowNum);
+        }
+    }
+
+    function blurkeydownSumProductsMoney(rowNum,obj){
+
+    }
+
+
+
+</script>
+
+</td>   
+
+    
+<?php elseif($uitype == 52): ?>                 
+    <td width="100%" class="dvtCellLabel" align=center colspan="4">
+        <table style="border: 1px solid #BEBEBE;" width="95%">
+        <?php if(is_array($orderaction)): foreach($orderaction as $key=>$vo): ?><tr>
+                <td width="20%"><?php echo ($vo["logtime"]); ?></td>
+                <td><?php echo ($vo["action"]); ?></td>
+            </tr><?php endforeach; endif; ?>
+        </table>
+    </td>
+
+
+<?php elseif($uitype == 53): ?>
+<td width=10% class="dvtCellLabel" align=right>
+    <font color="red"><?php echo ($mandatory_field); ?></font>是否开启 
+</td>
+    <td width=40% align="left" class="dvtCellInfo" id="nodestatus">
+    <input type="radio" name="<?php echo ($name); ?>"   value="1" checked='checked' class="nodestatus" /><label class="nodestatus">&nbsp;开启&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+    <input type="radio" name="<?php echo ($name); ?>"   value="0" class="nodestatus" /><label class="nodestatus">&nbsp;关闭&nbsp;</label>
+</td>
+
+ 
+    <?php elseif($uitype == 54): ?>
+    <td width="15%" class="dvtCellLabel" align=right>
+    <font color="red"><?php echo ($mandatory_field); ?></font>
+    <?php echo ($label); ?>
+    </td>
+    <td width="35%" align=left class="dvtCellInfo">
+    <?php $select = $company[select]; ?>                    
+    <select name="role_id" id="<?php echo ($name); ?>"  class="detailedViewTextBox" style="width:200px">
+        <?php if($roleCurrent): ?><option value="<?php echo ($roleCurrent["id"]); ?>"><?php echo ($roleCurrent["name"]); ?>(<?php echo ($roleCurrent["remark"]); ?>)</option>
+         <?php else: ?>
+        <option value="  ">请选择用户的角色</option><?php endif; ?>
+        <?php if(is_array($role)): foreach($role as $key=>$vo): ?><option value="<?php echo ($vo['id']); ?>"><?php echo ($vo["name"]); ?>(<?php echo ($vo["remark"]); ?>)</option><?php endforeach; endif; ?>
+    </select>
+    </td> 
+    
+   
+    <?php elseif($uitype == 55): ?>
+    <td width="15%" class="dvtCellLabel" align=right>
+        <font color="red"><?php echo ($mandatory_field); ?></font><?php echo ($label); ?>
+    </td>
+    <td width="35%" align="left" class="dvtCellInfo1">
+    <input name="<?php echo ($name); ?>" tabindex="<?php echo ($vt_tab); ?>" id="todaymenudate" class="easyui-datebox" type="text" style="border:1px solid black;font-size:16px;" size="11" maxlength="10" value="<?php echo ($todaymenudate); ?>" data-options="onSelect:onTodaymenuSelect">
+    </td>
+    
+
+<?php elseif($uitype == 56): ?>
+<td width="100%" class="dvtCellLabel" align=center colspan="4"> 
+        <textarea name="<?php echo ($name); ?>" class="detailedViewTextBox" style="border:1px solid blcak;width: 98%;"   rows="20"><?php echo ($value); ?></textarea>
+</td>  
+
+ 
+    <?php elseif($uitype == 57): ?>
+    <td width="15%" class="dvtCellLabel" align=right>
+    <font color="red"><?php echo ($mandatory_field); ?></font>
+    <?php echo ($label); ?>
+    </td>
+    <td width="35%" align=left class="dvtCellInfo">
+    <select id="invoiceheaderselect"  class="detailedViewTextBox" style="width:200px">
+            <option value="  ">&nbsp;</option>
+    </select>
+    <input name="<?php echo ($name); ?>" id="<?php echo ($name); ?>" type="text" value="" size="35" style="margin-left: 10px;" />
+    </td>
+    <script type="text/javascript">
+      //select的选择发票
+      $('#invoiceheaderselect').click(function(){
+          var header = $("option:selected",this);
+          $('#invoiceheader').val(header.text());
+      })
+    </script>   
+
+<?php elseif($uitype == 58): ?>
+<td width="100%" class="dvtCellLabel" align=center colspan="4"> 
+</td>
+
+
+<?php elseif($uitype == 60): ?>
+<td width="100%" class="dvtCellLabel" align=center colspan="4"> 
+<script type="text/javascript">
+    //添加地址
+    function addTelAddress(){
+        //取得表格行的长度
+        var rowNum = $("#orderPrintHandleTable tr").length;
+        var tableTrAppend =  "<tr style='height:25px;border: 1px solid black;background: #F0F0F0;' class='CaseRow' >";
+        tableTrAppend += "<td width='10%' align='center' class='dvtCellLabel'>"+rowNum+"</td>";
+        tableTrAppend += "<td width='10%' align='left' class='dvtCellLabel'><input id='telAddress_"+rowNum+"' name='telAddress_"+rowNum+"'   type='text' size='10' value='' /></td> ";
+        tableTrAppend += "<td width='70%' align='center' class='dvtCellLabel'><input id='telCompany_"+rowNum+"' name='telCompany_"+rowNum+"'   type='text' size='80' value='' /></td> ";
+
+        tableTrAppend += "<td width='10%' align='center' class='dvtCellLabel'><a href='#' onclick='clearTelAddress("+rowNum+")' >清空地址</a></td></tr>";               
+
+        $("#telAddressTable").append(tableTrAppend);
+        $("#addressLength").attr("value",rowNum+1);  //表格行数保存
+    } 
+
+    //根据输入的订单号，显示订单内容
+    function getOrderByid(rowNum,evt,obj){
+        evt = evt ? evt : ((window.event) ? window.event : null);     
+        var key = evt.keyCode ? evt.keyCode : evt.which; 
+        var orderformid = $(obj).val();
+        if(key == 13){
+            $.ajax({
+                url:"__URL__/getOrderByid/orderformid/"+orderformid,
+                async:true,
+                beforeSend:function(){
+
+                },
+                complete:function(){
+                },                            
+                success:function(mydata){
+                    if(mydata.error == 'error'){
+                        $.messager.show({
+                            title:'提示',
+                            msg:'输入号码有误!',
+                            height:70,
+                            timeout:5000,
+                            showType:'slide',
+                            style:{
+                                left:0,right:'',top:'',
+                                bottom:-document.body.scrollTop-document.documentElement.scrollTop
+                            }
+                        });
+                        return false;  
+                    }
+                    if(mydata.success == 'success'){
+                        $('#addressOrdertxt_'+rowNum).val(mydata.addressOrdertxt);
+                    }
+                }
+            })
+        }
+    }
+</script>
+<table id="orderPrintHandleTable" width="90%" border=0 style="border: 1px solid #e0dddd; margin-top: 2px;" class="small">
+    <tr class="detailedViewHeader">
+        <td width="10%" align="center">序号</td>
+        <td width="10%" align="center">打印编号</td>
+        <td width="70%" align="center">打印订单内容</td>           
+        <td width="10%" align="center">操作</td>
+    </tr>
+    <?php if(is_array($orderPrintHandle)): foreach($orderPrintHandle as $key=>$vo): ?><tr style="height:25px;border: 1px solid black;background: #F0F0F0;" class="CaseRow" >
+            <td width="10%" align="center" class="dvtCellLabel"><?php echo ($key+1); ?></td>
+            <td width="10%" align="left" class="dvtCellLabel"><input id="orderformid_<?php echo ($key+1); ?>" name="orderformid_<?php echo ($key+1); ?>" type="text" size="10" value="<?php echo ($vo["orderformid"]); ?>" onkeyup="getOrderByid(<?php echo ($key+1); ?>,event,this);" /></td>
+            <td width="70%" align="center" class="dvtCellLabel"><input id="addressOrdertxt_<?php echo ($key+1); ?>" name="addressOrdertxt_<?php echo ($key+1); ?>" type="text" size="80" value="<?php echo ($vo["content"]); ?>" /></td>
+            <td width="10%" align="center" class="dvtCellLabel"><a href="#" onclick="clearAddressOrdertxt('<?php echo ($key+1); ?>');" >清空内容</a></td>
+        </tr><?php endforeach; endif; ?>
+    <?php if(empty($orderPrintHandle)): $__FOR_START_1589381908__=0;$__FOR_END_1589381908__=3;for($key=$__FOR_START_1589381908__;$key < $__FOR_END_1589381908__;$key+=1){ ?><tr style="height:25px;border: 1px solid black;background: #F0F0F0;" class="CaseRow" >
+                <td width="10%" align="center" class="dvtCellLabel"><?php echo ($key+1); ?></td>
+                <td width="10%" align="left" class="dvtCellLabel"><input id="orderformid_<?php echo ($key+1); ?>" name="orderformid_<?php echo ($key+1); ?>" type="text" size="10" value="" onkeyup="getOrderByid(<?php echo ($key+1); ?>,event,this);" /></td>
+                <td width="70%" align="center" class="dvtCellLabel"><input id="addressOrdertxt_<?php echo ($key+1); ?>" name="addressOrdertxt_<?php echo ($key+1); ?>" type="text" size="80" value="" /></td>
+                <td width="10%" align="center" class="dvtCellLabel"><a href="#" onclick="clearAddressOrdertxt('<?php echo ($key+1); ?>');" >清空内容</a></td>
+            </tr><?php } endif; ?>
+</table> 
+<table  width="90%" >
+    <tr>
+        <td>    
+            <input type="button" value="添加输入行" class="crmbutton small save" style="width:100px;margin-right: 10px;" onclick="addTelAddress();">  
+            <input type="button" value="删除最后一行"  class="crmbutton small save" style="float: left;" onclick="delTelAddress();">  
+            <input id="orderPrintHandleLength" name="orderPrintHandleLength" type="hidden" value="<?php echo ($key+1); ?>" />
+        </td>
+    </tr>
+</table> 
+</td>
+
+<?php elseif($uitype == 61): ?>
+<td width="100%" class="dvtCellLabel" align=center colspan="4"> 
+<div align="left">
+    <label>增加预订日期：</label><input type="text" class="easyui-datebox" id="bookdateadd" style="float: left;"></br>
+    <div id="bookdatediv" style="float: left;width:1200px;" >
+        <?php if(is_array($bookdate)): foreach($bookdate as $key=>$vo): ?><input  type="text" id="bookorderdate<?php echo ($key); ?>" name="bookorderdate[]" value="<?php echo ($vo["bookdate"]); ?>" size="14">
+            <input  type='button' value='删除' onclick="clearbook(<?php echo ($key); ?>,this);" ><?php endforeach; endif; ?> 
+    </div>
+</div>
+<script type="text/javascript">
+    var count = 1;
+    $(function(){
+        $('#bookdateadd').datebox({
+            onSelect: function(date){
+                // alert(date.getFullYear()+":"+(date.getMonth()+1)+":"+date.getDate());
+                //selectDate =    date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();
+                selectDate = date.Format('yyyy-MM-dd');
+                //alert(selectDate);
+                var st = "<input type='text' id='bookorderdate"+count+"' value='"+selectDate+"' name='bookorderdate[]' /><input  type='button' value='删除' onclick='clearbook("+count+",this);' >";
+                $('#bookdatediv').append(st);
+                count = count + 1;
+            }
+        });    
+    })
+
+    function add(){
+        //$('#bookdatediv').append("<input type='text' class='easyui-datebox'>");
+        $('#dd').clone().prependTo('#bookdatediv');
+    }
+
+    function clearbook(i,obj){
+        //$(obj).val('');
+        bookorderdate = "#bookorderdate"+i;
+        $(bookorderdate).remove();
+        $(obj).hide();
+
+    }
+
+    // 对Date的扩展，将 Date 转化为指定格式的String
+    // 月(M)、日(d)、小时(h)、分(m)、秒(s)、季度(q) 可以用 1-2 个占位符，
+    // 年(y)可以用 1-4 个占位符，毫秒(S)只能用 1 个占位符(是 1-3 位的数字)
+    // 例子：
+    // (new Date()).Format("yyyy-MM-dd hh:mm:ss.S") ==> 2006-07-02 08:09:04.423
+    // (new Date()).Format("yyyy-M-d h:m:s.S")      ==> 2006-7-2 8:9:4.18
+    Date.prototype.Format = function(fmt)
+    { //author: meizz
+        var o = {
+            "M+" : this.getMonth()+1,                 //月份
+            "d+" : this.getDate(),                    //日
+            "h+" : this.getHours(),                   //小时
+            "m+" : this.getMinutes(),                 //分
+            "s+" : this.getSeconds(),                 //秒
+            "q+" : Math.floor((this.getMonth()+3)/3), //季度
+            "S"  : this.getMilliseconds()             //毫秒
+        };
+        if(/(y+)/.test(fmt))
+            fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));
+        for(var k in o)
+            if(new RegExp("("+ k +")").test(fmt))
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+        return fmt;
+    }
+
+</script>
+</td>
+
+
+<?php elseif($uitype == 62): ?>
+<td width="100%" class="dvtCellLabel" align="left" colspan="2"> 
+<label style="float:left;font-size: 14px;line-height: 30px;margin-left: 100px;">按F10快捷键</label><input id="todaymenu" type="button" value="今日菜单" style="" />
+</td><?php endif; endforeach; endif; else: echo "" ;endif; ?>
+                                    </tr><?php endforeach; endif; else: echo "" ;endif; ?>
+                                <tr style="line-height: 2px;"><td>&nbsp;</td></tr><?php endforeach; endif; else: echo "" ;endif; ?>
+
+                            <tr>
+                                <td></td>
+                                <td align="right">
+                                    <input id="duplicatesave" name="duplicatesave" title="" accessKey="" class="crmbutton small save"   type="button"  value="<?php echo (L("Button_Save")); ?>" style="width:70px;float:right;margin-right:2px;margin-top:2px;margin-bottom:2px;"></td>
+                                <td>
+                                    <input title="" accessKey="" class="crmbutton small cancel" onclick="updateTab('__APP__/<?php echo ($moduleName); ?>/returnAction/<?php echo ($returnAction); ?>');" type="button" name="button" value="  <?php echo (L("Button_Cancel")); ?>  " style="width:70px;float:left;margin-left:2px;margin-top:2px;margin-bottom:2px;"></td>
+                                <td> 
+                                </td>
+                            </tr>
+                            </tr>
+                        </table>
+
+                    </div>
+
+
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>

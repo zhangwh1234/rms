@@ -1,0 +1,14 @@
+<?php if (!defined('THINK_PATH')) exit();?>
+<div class="moduleMenu">
+    <ul>
+        <li><?php echo (L("$tabName")); ?></li>
+        <li><a href="javascript:void(0);" class="moduleName" onclick="updateTab('__URL__/listview');">&nbsp;&gt;<?php echo (L("$moduleName")); ?></a></li>
+        <li>&nbsp;&gt;查询操作</li>
+        <li style="width: 50px;">&nbsp;</li>
+        <li><a href="javascript:;" id="showSubMenu"  onMouseOver="" ><img src=".__PUBLIC__/Images/returnBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);" class="moduleName" onclick="updateTab('__URL__/listview');">返回列表<span>^4</span></a></li>
+        
+        <li style="float: right;margin-right: 40px;"><a href="javascript:void(0);" class="moduleName" onclick="closeTab();">关闭</a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="closeTab();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
+    </ul>
+</div>

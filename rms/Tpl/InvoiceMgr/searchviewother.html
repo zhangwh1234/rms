@@ -22,8 +22,10 @@
         <li><a href="javascript:void(0);" class="moduleName"
                onclick="InvoiceMgrSearchviewOtherModule.searchInvoiceView();">发票查询<span>^5</span></a></li>
         <li style="float: right;margin-right: 40px;"><a href="javascript:void(0);" class="moduleName"
-                                                        onclick="InvoiceMgrSearchviewOtherModule.closeTab();">关闭</a></li>
-        <li style="float:right;"><a href="javascript:void(0);" onclick="InvoiceMgrSearchviewOtherModule.closeTab();"><img
+                                                        onclick="InvoiceMgrSearchviewOtherModule.closeTab();">关闭</a>
+        </li>
+        <li style="float:right;"><a href="javascript:void(0);"
+                                    onclick="InvoiceMgrSearchviewOtherModule.closeTab();"><img
                 src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
     </ul>
 </div>
@@ -66,39 +68,43 @@
         setDatagrid: function () {
             /*定义订单invoice处理表*/
             this.invoiceMgrSearchviewGrid.datagrid({
-                nowrap: "true",
-                fitColumns: "true",
-                singleSelect: "true",
-                autoRowHeight: "true",
-                striped: "true",
-                border: "false",
-                rownumbers: "false",  //显示行号
-                showFooter: 'true',
+                nowrap: true,
+                fitColumns: true,
+                singleSelect: true,
+                autoRowHeight: true,
+                striped: true,
+                border: false,
+                rownumbers: false,  //显示行号
+                showFooter: true,
                 pagination: true,
                 pagePosition: 'bottom',
                 toolbar: '#tb',
                 columns: [[
                     {field: 'invoiceid', title: 'id', hidden: 'true', width: 100},
-                    {field: 'header', title: '发票抬头', width: 110, align: 'left'},
-                    {field: 'body', title: '发票内容', width: 20, align: 'center'},
-                    {field: 'orderformtxt', title: '订单情况', width: 100, align: 'left'},
-                    {field: "ordermoney", width: 15, title: '金额',align:'center'},
-                    {field: "state", width: 15, title: '状态',align:'center'},
+                    {field: 'header', title: '发票抬头', width: 60, align: 'left'},
+                    {field: 'body', title: '发票内容', width: 10, align: 'center'},
+                    {field: 'orderformtxt', title: '订单情况', width: 60, align: 'left'},
+                    {field: "ordermoney", width: 10, title: '金额', align: 'center'},
+                    {field: "opentime", width: 15, title: '开票时间', align: 'center'},
+                    {field: "openman", width: 15, title: '开票人', align: 'center'},
+                    {field: "state", width: 15, title: '状态', align: 'center'},
                     {
                         field: "operation",
-                        width: 40,
+                        width: 15,
                         title: '操作',
                         align: 'center',
                         formatter: function (value, rowData, rowIndex) {
                             var operation;
                             operation = '';
-                            operation += "<a href='javascript:void(0);' onclick='InvoiceMgrSearchviewOtherModule.openInvoice(" + rowData.invoiceid  + ")' class='orderHandleDetailview' style='margin-left:4px;' >开票</a>";
+                            if(rowData.state == '已开票') {
+                                operation += "<a href='javascript:void(0);' onclick='InvoiceMgrSearchviewOtherModule.renewInvoice(" + rowData.invoiceid + ")' class='orderHandleDetailview' style='margin-left:4px;' >恢复开票</a>";
+                            }
                             return operation;
                         }
                     }
                 ]],
                 onClickRow: this.clickDataGridRow,   //选择行事件
-                onSelect:this.selectDataGridRow      //选择行事件
+                onSelect: this.selectDataGridRow      //选择行事件
             });
 
             /*定义订单分页表*/
@@ -121,28 +127,17 @@
 
         //单击表格的处理函数
         clickDataGridRow: function (rowIndex, rowData) {
-            //显示当前行订单的订货的内容
-            if (rowData) { //初始化的时候，可能没有数据
-                //缓存光标位置
-                InvoiceMgrSearchviewOtherModule.focusNumberOH = rowIndex;
-                InvoiceMgrSearchviewOtherModule.focusOrderformidOH = rowData.orderformid;
-                InvoiceMgrSearchviewOtherModule.orderProductsShow(OrderHandleListviewModule.focusOrderformidOH);
-            }
+
         },
 
         //选择行事件
-        selectDataGridRow:function(rowIndex,rowData){
-            //显示当前行订单的订货的内容
-            if (rowData) { //初始化的时候，可能没有数据
-                //显示备注
-                //$('#beizhuOrderHandle').linkbutton({text: '备注:' + rowData.beizhu});
-                //$('#otherInfoOrderHandle').html(InvoiceMgrSearchviewOtherModule.monitInfo + ' ' + orderformOtherInfo);
-            }
+        selectDataGridRow: function (rowIndex, rowData) {
+
         },
 
 
         //单击处理栏
-        orderHandleClick: function (rowIndex,invoiceid) {
+        orderHandleClick: function (rowIndex, invoiceid) {
             //订单序号
             this.focusNumberOH = rowIndex;
             //更新焦点订单号
@@ -285,7 +280,7 @@
                             ordermonit += "催餐:" + data[0].fast + '     ';
                             ordermonit += "总金额:" + data[0].totalmoney;
                             monitInfo = ordermonit;
-                            $('#orderHandleMonit').html(ordermonit +  ' |  '  +fastKeyHelp)
+                            $('#orderHandleMonit').html(ordermonit + ' |  ' + fastKeyHelp)
                         }
                     }
                 });
@@ -297,15 +292,15 @@
          * 发票查询
          */
         searchInvoiceView: function () {
-            this.refreshOrder = false;
+
             var that = this;
             $(this.dialog).dialog({
-                title: '送餐地址查询',
+                title: '发票查询',
                 iconCls: 'icons-application-application_add',
                 width: 500,
                 height: 140,
                 cache: false,
-                href: "{:U('InvoiceMgr/searchAddressInput')}",
+                href: "{:U('InvoiceMgr/searchOtherInput')}",
                 modal: true,
                 collapsible: false,
                 minimizable: false,
@@ -321,14 +316,14 @@
                                 if (!isValid) return false;
 
                                 var formArray = $(this).serializeArray();
-                                var url = '__URL__/searchviewAddress/';
+                                var url = '__URL__/searchviewOther/';
                                 $.each(formArray, function (key, value) {
                                     url = url + value.name + '/' + value.value;
                                 });
                                 url = encodeURI(url);
-                                IndexIndexModule.openOperateTab(url, '配送地址查询');
-                                $(OrderHandleListviewModule.dialog).dialog('close');
-                                OrderHandleListviewModule.refreshOrder = true;
+                                IndexIndexModule.openOperateTab(url, '发票查询');
+                                $(InvoiceMgrListviewModule.dialog).dialog('close');
+                                InvoiceMgrListviewModule.refreshOrder = true;
                                 return false;
                             }
                         });
@@ -353,11 +348,11 @@
             //获取发票所需要的信息
             $.ajax({
                 type: "GET",
-                url: "__URL__/getInvoiceInfo/invoiceid/"+invoiceid,
+                url: "__URL__/getInvoiceInfo/invoiceid/" + invoiceid,
                 dataType: "json",
                 success: function (data) {
                     var invoiceOperState = InvoiceOper.openInvoice(data);
-                    if(invoiceOperState){
+                    if (invoiceOperState) {
                         $.messager.progress('close');
                         //更新打印状态
                         that.invoiceMgrHandleGrid.datagrid('updateRow', {
@@ -369,13 +364,13 @@
                         // 设定订单状态为已打印
                         $.ajax({
                             type: "GET",
-                            url: "__URL__/setInvoiceOpened/invoiceid/"+invoiceid,
+                            url: "__URL__/setInvoiceOpened/invoiceid/" + invoiceid,
                             dataType: "json",
                             success: function (data) {
                             }
                         })
 
-                    }else{
+                    } else {
                         alert('最后开票失败 !')
                         $.messager.progress('close');
                     }
@@ -385,9 +380,23 @@
         },
 
         /**
-         * 放弃开具发票
+         * 恢复开具发票
          */
-        cancelOpenInvoice :function(invoiceid){
+        renewInvoice: function (invoiceid) {
+            var that = this;
+            $.messager.confirm('提示信息', invoiceid + '<center><font color="red">确定要恢复吗？</font></center>', function (result) {
+                if (!result) return false;
+                $.messager.progress({text: '处理中，请稍候...'});
+                $.get("{:U('InvoiceMgr/renewInvoice')}", {invoiceid: invoiceid}, function (res) {
+                    $.messager.progress('close');
+                    if (!res.status) {
+                        $.app.method.tip('提示信息', res.info, 'error');
+                    } else {
+                        $.app.method.tip('提示信息', res.info, 'info');
+                        //that. quickRefreshInvoice();
+                    }
+                }, 'json');
+            });
 
         },
 
@@ -395,7 +404,7 @@
         /**
          * 页面快键键设置
          */
-        quickKeyboardAction : function () {
+        quickKeyboardAction: function () {
             var that = this;
             // ctrl+5快捷键 f5是不能用的;地址查询
             Mousetrap.bind(['ctrl+5', 'ctrl+f5'], function (e) {
@@ -428,7 +437,7 @@
             });
 
             // ESC键
-            Mousetrap.bind('esc', function(e) {
+            Mousetrap.bind('esc', function (e) {
                 // 返回选项卡
                 var tab = $('#operation').tabs('getSelected');
                 var tabOptions = tab.panel('options');
@@ -441,7 +450,7 @@
         /**
          * 开启刷新
          */
-        setRefresh : function(){
+        setRefresh: function () {
             this.refreshOrder = true;
         },
 

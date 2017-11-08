@@ -1,5 +1,6 @@
 <?php
     class TelcustomerModel extends CRMEntityModel{
+        var  $trueTableName = 'rms_telcustomer';
 
         var $focusFields = 'telphone';
         var $listFields = array(
@@ -39,6 +40,26 @@
         protected function _initialize() {
             $this->editFields = $this->createFields; //编辑字段
             $this->detailFields = $this->createFields; //浏览字段
+            switch($this->getDomain()){
+                case 'sz.lihuaerp.com':
+                    $this->trueTableName = 'rms_telcustomer_sz';
+                    break;
+                case 'nj.lihuaerp.com':
+                    $this->trueTableName = 'rms_telcustomer_nj';
+                    break;
+                case 'sh.lihuaerp.com':
+                    $this->trueTableName = 'rms_telcustomer_sh';
+                    break;
+                case 'wx.lihuaerp.com':
+                    $this->trueTableName = 'rms_telcustomer_wx';
+                    break;
+                case 'bj.lihuaerp.com':
+                    $this->trueTableName = 'rms_telcustomer';
+                    break;
+                default:
+                    $this->trueTableName = 'rms_telcustomer';
+                    break;
+            }
         }
 
         //返回ID

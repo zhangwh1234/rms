@@ -1,0 +1,52 @@
+
+<table id="{$MODULE}list" class="easyui-datagrid"  
+    data-options="singleSelect:true,
+    collapsible:false,
+    url:'__URL__/listJsonData',
+    fitColumns:true ,
+    pagination:true, 
+    rownumbers:true,
+    border:false
+
+    ">
+    <thead>
+        <tr>
+            <foreach name="listHeader" item="header">   
+                <th data-options="field:'{$header}',width:80">{$Think.lang.$header}</th>
+            </foreach> 
+            <th data-options="field:'action',width:30,formatter:formatt"><center>操作</center></th>
+        </tr>
+    </thead>
+</table>
+
+
+ 
+
+<script type="text/javascript">
+    var moduleID = "{$moduleName}"+"id";  //模块id
+    var returnAction = '{$returnAction}';
+    moduleID = moduleID.toLocaleLowerCase();  //换成小写
+    function formatt(value,row,index){
+        //console.info(row[moduleID]);
+        var str = '';
+        str = "<center><a style='font-size:14px;' href='javascript:void(0)' onclick=\"updateTab('__URL__/detailview?&record="+row[moduleID]+"&returnAction="+returnAction+"')\">查看</a>";
+        str += "<span style='font-size:14px;' >&nbsp&nbsp|&nbsp&nbsp</span>";
+        str += "<a style='font-size:14px;' href='javascript:void(0)' onclick=\"updateTab('__URL__/editview?&record="+row[moduleID]+"&returnAction="+returnAction+"');\">编辑</a>";
+        str += "<span style='font-size:14px;'>&nbsp&nbsp|&nbsp&nbsp</span><a style='font-size:14px;' href='javascript:void()' onclick=\"deleteRecord('{$record}');\">删除</a></center>";
+        //str += "check";
+        return str;
+    }
+   
+ 
+    $(function(){
+        var tab = $('#operation').tabs('options');
+                    
+        $("#{$MODULE}list").datagrid({
+            height:tab.height-60,
+            doResize:false
+        })
+              
+    })
+
+</script>
+

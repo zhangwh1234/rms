@@ -1,0 +1,24 @@
+<span>送达率统计</span>
+<table id="table{$actionName}" border="0" cellspacing="1"
+       cellpadding="3" width="100%" class="lvt" align="center">
+    <tr class="listHeader">
+        <td class="">序号</td>
+        <td class="listHeader">分公司</td>
+        <td class="listHeader">1~15分钟</td>
+        <td class="listHeader">15~30分钟</td>
+        <td class="listHeader">30~40分钟</td>
+        <td class="listHeader">40~50分钟</td>
+        <td class="listHeader">50~60分钟</td>
+        <td class="listHeader">1小时以上</td>
+    </tr>
+    <foreach item="entity" name="sendtime"> <assign name='record' value="$key" />
+        <tr bgcolor="white" onMouseOver="this.className='lvtColDataHover'"
+            onMouseOut="this.className='lvtColData'"
+            ondblclick="alert('row_{$record}');" id="row_{$entity_id}">
+            <td class="listColData">{$key+1}</td>
+            <foreach name="entity" item="id">
+                <td class="listColData">{$id}</td>
+            </foreach>
+        </tr>
+    </foreach>
+</table>

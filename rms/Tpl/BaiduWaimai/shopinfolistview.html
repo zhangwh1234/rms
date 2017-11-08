@@ -6,6 +6,8 @@
        onclick="baiduwaimaiShopinfoListviewCreate();">新建商户参数</a>
     <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true"
        onclick="baiduwaimaiShopinfoList('__URL__/shopinfoList');">显示百度服务器上商户信息</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true"
+       onclick="baiduwaimaiShopinfoList('__URL__/supplierList');">查看供应商</a>
 
 </div>
 
@@ -146,10 +148,12 @@
 
     //上传
     var  baiduwaimaiCreateShopinfo = function(url) {
-        $.messager.progress();
+        //$.messager.progress();
         $.ajax({
             url: url,
             success: function (data) {
+                console.info(data);
+                return;
                 $.messager.progress('close');
                 $.messager.alert('返回的结果',
                         '操作内容:' + data.cmd + '</br>' +
@@ -168,26 +172,39 @@
 
     //列表商户
     var baiduwaimaiShopinfoList = function(url){
-        $.messager.progress();
+        //$.messager.progress();
         var msg = '';
         $.ajax({
             url: url,
             success: function (data) {
-                $.messager.progress('close');
-                $.each(data.data,function(key,value){
-                    $.each(value,function(k,v){
-                        msg = msg + k + ': ' + v+ '</br>';
-                    })
-                })
-                $.messager.alert('返回的结果',
-                        '操作内容:' + data.cmd + '</br>' +
-                        '操作结果:' + msg + '</br>','',function(){
-                            var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
-                            var regin = baiduwaimaiMainviewLayout.layout('panel', 'center');
-                            regin.panel('refresh', '__URL__/shopinfoListview');
-                        });
+
+                if(data.errno  == '0'){
+                    $.messager.progress('close');
+                    $.each(data.data,function(key,value){
+                        msg = msg + key + ': ' + value + '</br>';
+                    });
+
+                    $.messager.alert('返回的结果',
+                            '操作内容:' + data.cmd + '</br>' +
+                            '操作结果:' + msg + '</br>','',function(){
+                                var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+                                var regin = baiduwaimaiMainviewLayout.layout('panel', 'center');
+                                regin.panel('refresh', '__URL__/shopinfoListview');
+                    });
+                }else{
+                    $.messager.progress('close');
+                    $.messager.alert('返回的结果',
+                            '操作内容:' + data.cmd + '</br>' +
+                            '操作结果:' + data.error +'</br>' +
+                            '编号:' + data.errno +
+                            '</br>','',function(){
+                                var baiduwaimaiMainviewLayout = $('#baiduwaimaiMainviewLayout');
+                                var regin = baiduwaimaiMainviewLayout.layout('panel', 'center');
+                                regin.panel('refresh', '__URL__/shopinfoListview');
+                            });
+                }
             }
-        })
+        });
     }
 
     //更新

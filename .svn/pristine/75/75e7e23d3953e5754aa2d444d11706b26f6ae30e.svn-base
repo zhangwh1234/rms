@@ -1,0 +1,177 @@
+<?php
+    /**
+    * 解析从服务器过来的订单
+    * 保存到数据库中
+    */
+    class WeborderinfoAction extends Action{
+        /**
+        * 取得订单的函数
+        * 
+        */
+        public function index(){
+            //载入curl函数等
+            load("@.function");
+            echo 'start download lihuaweb orderinfo!';
+			
+            //下载的网址
+            $url = 'http://115.29.190.255:8887/index.php?s=/downloadWeb/getOrder/suppliersid/1.html';
+          
+            //执行url
+            $resp = curl($url);
+            //转换json数据位数组
+            $orderArray = json_decode($resp);
+            //p($orderArray);
+			
+            /* 格式话数据 */
+            $orderform_array = array();
+            foreach ($orderArray AS $key => $value)
+            {
+
+                $orderform_array['ordersn'] = $value->order_sn;
+
+                $orderform_array['address'] = $this->ReMoveChar($value->address)." ".$this->ReMoveChar($value->consignee);
+
+                $orderform_array['telphone'] = $this->ReMoveChar($value->tel);
+                if(!empty($value->shipping_time)){  //如果有配送日期，就输入日期
+                    $orderform_array['custdate'] = Date("Y-m-d",$value->shipping_time);
+                }else{
+                    $orderform_array['custdate'] = Date("Y-m-d",time()); //没有配送日期，就选当前日期
+                }
+                $orderform_array['custtime'] = $value->best_time;
+                if(trim($value->referer)  == '本站'){
+                    $orderform_array['telname'] = '网络';
+                }else{
+                    $orderform_array['telname'] = trim($value->referer);
+                }
+
+				$orderform_array['recdate'] = date('Y-m-d');
+                $orderform_array['rectime'] = Date("H:i:s");
+                $orderform_array['beizhu'] = $this->ReMoveChar($value->postscript);
+                $orderform_array['clientname'] = '';        //$value['user_name']?$value['user_name']:'';
+                $orderform_array['totalmoney'] =  $value->order_amount + 0;  //$value['goods_amount']+$value['shipping_fee'];
+                if($online == 1){
+                    $orderform_array['billheader'] = $value->inv_payee;
+                    $orderform_array['billbody'] = $value->inv_content;
+                }else{
+                    $orderform_array['billheader'] = '';
+                    $orderform_array['billbody'] = '';
+                }
+                $orderform_array['orderTxt'] = '';
+				$orderform_array['state'] = '订餐';
+				//根据suppliers_id来判断,输入domain
+				if( $value->suppliers_id == '4'){
+					$orderform_array['domain'] = 'cz.lihuaerp.com';
+				}
+				if( $value->suppliers_id == '9'){
+					$orderform_array['domain'] = 'gz.lihuaerp.com';
+				}
+
+                //根据送餐时间来判断
+                if (intval(substr($value->best_time,0,2)) >= 15)
+                    $cAp= '下午';
+                else
+                    $cAp= '上午';
+                $orderform_array['ap'] = $cAp;
+
+                //判断支付宝等其他支付方式
+                if(($value->pay_id == 8) or ($value->pay_id == 11) or ($value->pay_id == 9)){                
+                        $orderform_array['address'] = '(支付宝)'.$orderform_array['address'];                 
+                }
+                //判断微信支付
+				if($value->pay_id == 30){
+					$orderform_array['address'] = '(微信支付)' .  $orderform_array['address'];
+				 }
+                //如果是常州地区，备注栏添加 （网订）
+                if($value->suppliers_id == 4){
+                    if($value->referer == '手机APP'){
+                        $orderform_array['address'] = '(A)'.$orderform_array['address'];
+                        $orderform_array['beizhu'] .= '(手机)';
+                    }else{
+                        $orderform_array['beizhu'] .= '(网订)';
+                    }
+                }
+
+                $orderformModel = D('Orderform');
+				
+				//首先检查是否有重复
+				$where = array();
+				$where['ordersn'] = $orderform_array['ordersn'];
+				$orderformModel->where($where)->delete();
+				$orderformModel->create();
+                $resutl = $orderformModel->add($orderform_array);
+                //p($orderformModel);
+                var_dump($orderformModel->getLastSql());
+                //var_dump($result);
+                $orderformid = $orderformModel->getLastInsID();
+
+                $products_array = array();
+                $goods_arr['goodsmoney'] = 0; //核对订单用
+                //添加送餐费    
+                //var_dump('songcanfei'.$value['shipping_fee']); 
+                if($value->shipping_fee>0){
+                    $goods_temp = array();
+                    $goods_temp['name'] = (string)(int)$value->shipping_fee . 'S';
+                    $goods_temp['orderformid'] = $orderformid;
+                    $goods_temp['number'] = 1;
+                    $goods_temp['price'] = $value->shipping_fee ;
+                    $goods_temp['money'] += 1*$value->shipping_fee ;
+                    $goods_arr['money'] = 1*$value->shipping_fee ;
+                    $orderform_array['orderTxt'] .= $goods_temp["goodsnumber"] .'×'.$goods_temp['goodsname'].' ';
+                    //print_r($orderform_array['orderTxt']);
+                    $products_array[] = $goods_temp;               
+                }
+
+                $order_goods = $value->goods;                
+                foreach ($order_goods AS $item=>$goods)
+                {
+                    $goods_temp = array();
+                    $goods_temp['orderformid'] = $orderformid;
+	            $goods_temp['ordersn'] =$value->order_sn;
+                    $goods_temp['name'] = $goods->goods_name;
+					$goods_temp['shortname'] =  $goods->shortname;
+                    $goods_temp['number'] = $goods->goods_number;
+                    $goods_temp['price'] = $goods->goods_price;
+                    $goods_temp['money'] += $goods->goods_number * $goods->goods_price;
+                    //保存产品
+                    $orderproductsModel = D('Orderproducts');
+                    $result = $orderproductsModel->add($goods_temp);
+                    //var_dump($orderproductsModel->getLastSql());
+                    $goods_arr['goodsmoney'] += $goods->goods_number * $goods->goods_price;
+                    $orderform_array['orderTxt'] .= $goods_temp["number"] .'×'.$goods_temp['shortname'].' ';
+                    $products_array[] = $goods_temp;
+                }
+
+                //保存日志
+                $orderActionModel = D('Orderaction');
+                $data = array();
+                $data['orderformid'] = $orderformid; 
+                $data['action'] ='从网站输入订单'.$orderform_array['address'];
+                $data['logtime'] = date('Y-m-d H:i:s');
+                $orderActionModel->add($data);
+
+				//更新订单产品简述
+				$data = array();
+				$data['ordertxt'] =  $orderform_array['orderTxt'];
+				$orderformModel->where("orderformid=$orderformid")->save($data);
+
+
+                //确认订单
+                $url = 'http://115.29.190.255:8887/index.php?s=/downloadWeb/confirmOrder/record/'. $value->order_id.'.html';
+                //var_dump($url);
+                //执行url
+                $resp = curl($url);
+            }
+        }
+
+        //删除特殊的字符
+        function ReMoveChar($text)
+        {
+            $text=str_replace("`","",$text);   
+            $text=str_replace("'","",$text);   
+            $text=str_replace("~","",$text);   
+            $text=str_replace('"',"",$text);
+            $text=str_replace('　'," ",$text);
+            return htmlspecialchars($text,ENT_QUOTES);
+        }    
+    }
+?>

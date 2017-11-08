@@ -46,7 +46,7 @@ class ElemeAction extends ModuleAction
     public function shopinfoListview()
     {
         $where = array();
-        $where ['domain'] = $_SERVER ['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
         $elemeshopinfoModel = D('elemeshopinfo');
         $total = $elemeshopinfoModel->where($where)->count();
         $elemeshopinfoResult = $elemeshopinfoModel->where($where)->select();
@@ -302,7 +302,7 @@ class ElemeAction extends ModuleAction
     public function categorymgrCreateview()
     {
         $where = array();
-        $where ['domain'] = $_SERVER ['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
 
         $elemeshopinfoModel = D('elemeshopinfo');
         $shopinfoResult = $elemeshopinfoModel->where($where)->select();
@@ -317,7 +317,7 @@ class ElemeAction extends ModuleAction
     {
         $data = array();
         $data = $_REQUEST;
-        $data ['domain'] = $_SERVER ['HTTP_HOST'];
+        $data ['domain'] = $this->getDomain();
         $elemecategorymgrModel = D('elemecategorymgr');
         $elemecategorymgrModel->create();
         $elemecategorymgrResult = $elemecategorymgrModel->add($data);
@@ -365,7 +365,7 @@ class ElemeAction extends ModuleAction
     public function categorymgrEditUpdate()
     {
         $data = $_REQUEST;
-        $data ['domain'] = $_SERVER ['HTTP_HOST'];
+        $data ['domain'] = $this->getDomain();
         $where = array();
         $where['categoryid'] = $_REQUEST['categoryid'];
         $elemecategorymgrModel = D('elemecategorymgr');
@@ -481,7 +481,7 @@ class ElemeAction extends ModuleAction
     public function menumgrCreateview()
     {
         $where = array();
-        $where ['domain'] = $_SERVER ['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
         $fields = array(
             'shopinfoid',
             'poi_name'
@@ -525,7 +525,7 @@ class ElemeAction extends ModuleAction
             }
         }
 
-        $data ['domain'] = $_SERVER ['HTTP_HOST'];
+        $data ['domain'] = $this->getDomain();
         $elememenumgrModel = D('elememenumgr');
         $elememenumgrModel->create();
         $elememenumgrResult = $elememenumgrModel->add($data);
@@ -564,7 +564,7 @@ class ElemeAction extends ModuleAction
         $elememenumgrResult = $elememenumgrModel->where($where)->select();
         // 取得shopid的商户名称
         $where = array();
-        $where ['domain'] = $_SERVER ['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
         $where ['shopinfoid'] = $elememenumgrResult [0] ['shop_id'];
         $fields = array(
             'shopinfoid',
@@ -575,7 +575,7 @@ class ElemeAction extends ModuleAction
         $this->assign('shopinfoid_poi_name', $shopinfoResult [0] ['poi_name']);
         // 取得所有商户号和名称
         $where = array();
-        $where ['domain'] = $_SERVER ['HTTP_HOST'];
+        $where ['domain'] = $this->getDomain();
 
         $elemeshopinfoModel = D('elemeshopinfo');
         $shopinfoResult = $elemeshopinfoModel->where($where)->find();

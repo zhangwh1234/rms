@@ -22,7 +22,7 @@
         );
 
          //定义查询字段
-        var $searchFields = array('address','telphone','sendname','telname','company');
+        var $searchFields = array('address','telphone','sendname','telname','company','ordersn');
         
          var $detailFields = array(
                'LBL_ORDERFORM_INFORMATION' => array(
@@ -86,6 +86,12 @@
         //返回列表字段
         function getListFields(){
             return $this->listFields;
+        }
+
+        //返回ID
+        public function getPk()
+        {
+            return 'orderformid';
         }
 
     }

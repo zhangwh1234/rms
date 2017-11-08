@@ -1,0 +1,87 @@
+<div class="moduleoperator">
+    <form id="editView{$moduleName}" name="editView{$moduleName}" method="POST" style="border: 1px solid white;"  >
+    	<input id="{$moduleName}Action" type="hidden" value="editview" />
+        <input type="hidden" name="pagenumber" value="{$smarty.request.start}">
+        <input type="hidden" name="module" value="{$MODULE}">
+        <input type="hidden" id="{$moduleName}returnAction" value="{$returnAction}">
+        <input type="hidden" name="record" value="{$record}">
+
+        <table border=0 cellspacing=0 cellpadding=0 width=99% align=center bgcolor="">
+            <tr>
+                <td>
+                    <table border=0 cellspacing=0 cellpadding=3 width=100% class="small">
+                        <tr>
+                        <td class="dvtTabCache" style="width:20px" nowrap>&nbsp;</td>
+                        <td class="dvtSelectedCell" align="center" nowrap> 编辑 </td>
+                        <td class="dvtTabCache" style="width:80%">&nbsp;</td>
+                        <tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td valign=top align="center" >
+
+                    <!-- Basic Information Tab Opened -->
+                    <div id="basicTab" style="border: 1px solid #e0dddd; background: white;">
+                        <table border=0 cellspacing=0 cellpadding=0 width="98%" class="small">
+                            <tr>
+                               <td></td>
+                                <td align="right">
+                                    <input id="editsave" name="editsave" title="" accessKey="" class="crmbutton small save"   type="button"  value="{$Think.lang.Button_Save} ^9 " style="width:70px;float:right;margin-right:2px;margin-top:2px;margin-bottom:2px;"></td>
+                                <td>
+                                    <input title="" accessKey="" class="crmbutton small cancel" onclick="updateTab('__APP__/{$moduleName}/{$returnAction}');" type="button" name="button" value="  {$Think.lang.Button_Cancel} ^4 "  style="width:70px;float:left;margin-left:2px;margin-top:2px;margin-bottom:2px;"></td>
+                                <td> 
+                                </td>
+                            </tr>
+                            <!-- 这里显示具体的编辑 -->
+
+                            <volist name="blocks"  id="data" >
+                                <tr>
+                                    <td colspan=4 class="tabBlockViewHeader">
+                                        {$Think.lang.$key}
+                                    </td>
+                                </tr>
+
+                                <!-- Here we should include the uitype handlings-->
+                                <volist key="label" id="subdata" name="data">
+                                    <tr style="height:35px;border: 1px solid black;background: #F0F0F0;">
+                                        <volist key="mainlabel" id="maindata" name="subdata">  
+                                            <assign name="label" value="$Think.lang.$maindata[name]" />        {//标题}
+                                            <assign name="uitype"   value="$maindata[uitype]" />                {//类型}
+                                            <assign name="name" value="$maindata[name]" />                      {//字段名称}
+                                            <assign name="value" value="$maindata[value]" />                    {//字段的值}
+                                            <assign name="length" value="$maindata[length]" />                  {//字段长度}
+                                            <td width="15%" class="dvtCellLabel" align="right" >
+                                                <font color="red">{$mandatory_field}</font> {$label}
+                                            </td>
+                                            <td width="35%" align="left" class="dvtCellInfo"  >
+                                                <textarea  name="{$name}" id="{$name}"  class="detailedViewTextBox" onFocus="this.className='detailedViewTextBoxOn'"   onBlur="this.className='detailedViewTextBox'"  rows="10" style="width:100%;">{$value}</textarea>
+                                        </td>       
+                                        </volist>
+                                    </tr>
+                                </volist>
+                                <tr style="line-height: 2px;"><td>&nbsp;</td></tr>
+                            </volist>
+
+                            <tr>
+                                <td></td>
+                                <td align="right">
+                                    <input id="editsave" name="editsave" title="" accessKey="" class="crmbutton small save"   type="button"  value="{$Think.lang.Button_Save} ^9 " style="width:70px;float:right;margin-right:2px;margin-top:2px;margin-bottom:2px;"></td>
+                                <td>
+                                    <input title="" accessKey="" class="crmbutton small cancel" onclick="updateTab('__APP__/{$moduleName}/{$returnAction}');" type="button" name="button" value="  {$Think.lang.Button_Cancel} ^4 " style="width:70px;float:left;margin-left:2px;margin-top:2px;margin-bottom:2px;"></td>
+                                <td> 
+                                </td>
+                            </tr>
+                            </tr>
+                        </table>
+
+                    </div>
+
+
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+    
+

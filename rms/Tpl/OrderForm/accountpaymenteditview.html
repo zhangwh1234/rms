@@ -1,0 +1,386 @@
+<style>
+    .accountsTableHeader {
+        background-color: #008B00;
+        font-size: 12px;
+    }
+
+    #accountsTable td {
+        height: 25px;
+    }
+
+    #accountsTable span {
+        font-size: 16px;
+    }
+
+    #accountsTable input {
+        font-size: 16px;
+    }
+
+</style>
+<table id="OrderFormAccountPaymentTable" style="BORDER-COLLAPSE: collapse" borderColor="#CCCCCC" cellSpacing="0" width="100%"
+    align="center" border="1">
+    <tr class="accountsTableHeader">
+        <td width="5%" align="center" class="accountsTableHeaderLeftTd">序号</td>
+        <td width="10%" align="center" class="accountsTableHeaderLeftTd">编号</td>
+        <td width="30%" align="center" class="accountsTableHeaderLeftTd">名称</td>
+        <td width="15%" align="center" class="accountsTableHeaderLeftTd">金额</td>
+        <td width="25%" align="center" class="accountsTableHeaderLeftTd">备注</td>
+        <td width="10%" align="center" class="accountsTableHeaderRightTd">操作</td>
+    </tr>
+    <empty name="orderaccountpayment">
+        <for start="0" end="1" name="key">
+            <tr>
+                <td width="5%" align="center">{$key+1}</td>
+                <td width="10%" align="center"> {//代码}
+                    <input id="OrderFormAccountsCode_{$key+1}" name="accountpaymentCode_{$key+1}" type="text" size="6"
+                        tabindex="1" onkeydown="OrderFormAccountPaymentEditViewModule.getAccountsByCode({$key+1},event,this);"
+                        AUTOCOMPLETE="off" style="font-size:16px;" />
+
+                    <img id="OrderFormsearchIcon1" title="选择" src="./__PUBLIC__/Images/products.gif" style="cursor: pointer;"
+                        align="absmiddle" onclick="OrderFormAccountPaymentEditViewModule.accountsPickList('__URL__/popupAccountsview/module/Accounts/row/{$key+1}');" /><a
+                        href="javascript:OrderFormAccountPaymentEditViewModule.accountsPickList('__URL__/popupAccountsview/module/Accounts/row/{$key+1}')">选择</a>
+                </td>
+                <td width="30%" align="center"> {//客户支付名称}
+                    <input id="OrderFormAccountsName_{$key+1}" name="accountpaymentName_{$key+1}" type="text" size="30"
+                        readonly="readonly" style="font-size:16px;" />
+                </td>
+                <td width="15%" align="center"> {//金额}
+                    <input id="OrderFormAccountsMoney_{$key+1}" name="accountpaymentMoney_{$key+1}" type="text" size="10"
+                        onkeydown="OrderFormAccountPaymentEditViewModule.keydownSumAccountsMoney('{$key+1}',event,this);"
+                        onblur="OrderFormAccountPaymentEditViewModule.blurSumAccountsMoney();" tabindex="1" value=""
+                        style="font-size:16px;" />
+                </td>
+                <td width="25%" align="center"> {//备注}
+                    <input id="OrderFormAccountsNote_{$key+1}" name="accountpaymentNote_{$key+1}" type="text" size="30"
+                        onkeydown="OrderFormAccountPaymentEditViewModule.keydownAccountsNote('{$key+2}',event);" style="font-size:16px;" />
+                </td>
+                <td width="10%" align="center"><a href="#" onclick="OrderFormAccountPaymentEditViewModule.clearAccounts({$key+1});">清空</a>
+                </td>
+            </tr>
+        </for>
+    </empty>
+    <foreach name="orderaccountpayment" item="vo">
+        <tr>
+            <td width="5%" align="center">{$key+1}</td>
+            <td width="10%" align="center"> {//产品代码}
+                <input id="OrderFormAccountsCode_{$key+1}" name="accountpaymentCode_{$key+1}" type="text" size="6"
+                    tabindex="1" value="{$vo.paymentid}" onkeydown="OrderFormAccountPaymentEditViewModule.getAccountsByCode({$key+1},event,this);"
+                    AUTOCOMPLETE="off" style="font-size:16px;" />
+                <img id="OrderFormAccountssearchIcon1" title="客户选择" src="./__PUBLIC__/Images/products.gif" style="cursor: pointer;"
+                    align="absmiddle" onclick="OrderFormAccountPaymentEditViewModule.accountsPickList('__URL__/popupAccountsview/module/Accounts/row/{$key+1}');" /><a
+                    href="javascript:OrderFormAccountPaymentEditViewModule.accountsPickList('__URL__/popupAccountsview/module/Accounts/row/{$key+1}')">选择</a>
+            </td>
+            <td width="30%" align="center"> {//名称}
+                <input id="OrderFormAccountsName_{$key+1}" name="accountpaymentName_{$key+1}" type="text" size="30"
+                    readonly="readonly" value="{$vo.name}" style="font-size:16px;" />
+            </td>
+            <td width="15%" align="center"> {//金额}
+                <input id="OrderFormAccountsMoney_{$key+1}" name="accountpaymentMoney_{$key+1}" type="text" size="10"
+                    onkeydown="OrderFormAccountPaymentEditViewModule.keydownSumAccountsMoney();" onblur="OrderFormAccountPaymentEditViewModule.blurSumAccountsMoney();"
+                    tabindex="1" value="{$vo.money}" style="font-size:16px;" />
+            </td>
+            <td width="25%" align="center"> {//备注}
+                <input id="OrderFormAccountsNote_{$key+1}" name="accountpaymentNote_{$key+1}" type="text" size="30"
+                    value="{$vo.note}" style="font-size:16px;" />
+            </td>
+            <td width="10%" align="center"><a href="#" onclick="OrderFormAccountPaymentEditViewModule.clearAccounts('{$key+1}');">清空</a>
+            </td>
+        </tr>
+    </foreach>
+</table>
+<table width="100%" style="BORDER-COLLAPSE: collapse" borderColor="#CCCCCC" cellSpacing="0" width="100%" align="center"
+    border="1">
+    <tr>
+        <td class="accountsTableXiaojiLeftTd" width="65%">
+            <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-car_cart_basket-basket_add'" onclick="OrderFormAccountPaymentEditViewModule.addAccounts();"
+                style="font-size:16px;">添加项目</a>
+            <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-car_cart_basket-basket_delete'" onclick="OrderFormAccountPaymentEditViewModule.delAccounts();"
+                style="font-size:16px;margin-left:30px;">删除项目最后一行</a>
+            <input id="OrderFormAccountPaymentLength" name="accountpaymentLength" type="hidden" value="{$key+1}" />
+        </td>
+
+        <td style="font-size: 16px;">
+
+        </td>
+        <td class="accoutsTableXiaojiRightTd" style="font-size: 14px;"> {// 金额小计}
+            <span>小计</span>
+            <input id="OrderFormAccountPaymentTotalMoney" name="accountpaymentTotalMoney" type="text" size="10"
+                readonly="readonly" style="border: 0px;font-size: 14px;" value="{$orderpaymentmoney}" />
+        </td>
+    </tr>
+</table>
+
+<script type="text/javascript">
+    var OrderFormAccountPaymentEditViewModule = {
+
+        init: function () {},
+
+        test: function () {
+            alert('ok');
+        },
+
+        //添加产品
+        addAccounts: function () {
+            //取得表格行的长度
+            var rowNum = $("#OrderFormAccountPaymentTable tr").length;
+
+            var tableTrAppend = "<tr> ";
+            tableTrAppend += "<td width='5%' align='center' class='accountsTableLeftTd'>" + rowNum + "</td> ";
+            tableTrAppend += "<td width='15%' align='center' class='accountsTableLeftTd'>";
+            tableTrAppend += "<input class='easyui-numberbox' id='OrderFormAccountsCode_" + rowNum +
+                "' name='accountpaymentCode_" + rowNum +
+                "'  type='text' size='6' tabindex='1' onkeyup='OrderFormAccountPaymentEditViewModule.getAccountsByCode(" +
+                rowNum + ",event,this)' style='font-size:16px;' />";
+            tableTrAppend += "<img id='OrderFormsearchIcon1' title='客户选择' src='./" + PUBLIC +
+                "/Images/products.gif' style='cursor: pointer;' align='absmiddle' onclick='OrderFormAccountPaymentEditViewModule.accountsPickList(\"__URL__/popupAccountsview/module/Accounts/row/" +
+                rowNum + "\");' />";
+            tableTrAppend +=
+                "<a href='javascript:OrderFormAccountPaymentEditViewModule.accountsPickList(\"__URL__/popupAccountsview/module/Accounts/row/" +
+                rowNum + "\");' >选择</a>";
+            tableTrAppend += "</td>";
+            tableTrAppend += "<td width='30%' align='center' class='accountsTableLeftTd'>";
+            tableTrAppend += "<input id='OrderFormAccountsName_" + rowNum + "' name='accountpaymentName_" +
+                rowNum +
+                "' type='text' size='30'  style='font-size:16px;' readonly />";
+            tableTrAppend += "</td>";
+            tableTrAppend += "<td width='15%' align='center' class='accountsTableLeftTd'>";
+            tableTrAppend += "<input id='OrderFormAccountsMoney_" + rowNum + "' name='accountpaymentMoney_" +
+                rowNum +
+                "' type='text' size='10'   tabindex='1' value='' style='font-size:16px;' onkeydown=\"OrderFormAccountPaymentEditViewModule.keydownSumAccountsMoney();\"\n" +
+                "                       onblur=\"OrderFormAccountPaymentEditViewModule.blurSumAccountsMoney();\" />";
+            tableTrAppend += "</td>";
+            tableTrAppend += "<td width='25%' align='center' class='accountsTableLeftTd'>";
+            tableTrAppend += "<input id='OrderFormAccountsNote_" + rowNum + "' name='accountpaymentNote_" +
+                rowNum +
+                "' type='text' size='30'  style='font-size:16px;'  />";
+            tableTrAppend += "</td>";
+            tableTrAppend +=
+                "<td width='10%' align='center' class='accountsTableLeftTd'><a href='#' onclick='OrderFormAccountPaymentEditViewModule.clearAccounts(" +
+                rowNum + ");' >清空</a></td>";
+            tableTrAppend += "</tr>";
+            $("#OrderFormAccountsTable").append(tableTrAppend);
+            $("#OrderFormAccountsLength").attr("value", rowNum + 1); //表格行数保存
+        },
+
+        /* 键盘回车计算产品金额 */
+        keydownSumAccountsMoney: function (rowNum, evt, obj) {
+            evt = evt ? evt : ((window.event) ? window.event : null);
+            var key = evt.keyCode ? evt.keyCode : evt.which;
+            if (key == 13) {
+                if ($("#OrderFormAccountsName_" + rowNum).val() != '') { //如果不为空，才计算
+                    this.sumAccountsMoney(rowNum);
+                }
+                $("#OrderFormAccountsNote_" + rowNum).focus();
+            }
+            //向上移动一个
+            if (key == 38) {
+                var focusNum = rowNum - 1;
+                if (focusNum > 0) {
+                    $("#OrderFormAccountsCode_" + focusNum).focus();
+                }
+            }
+            //向下移动
+            if (key == 40) {
+                $("#OrderFormAccountsCode_" + rowNum).focus();
+            }
+        },
+
+        /**
+         * 备注的键盘回车处理
+         */
+        keydownAccountsNote: function (rowNum, evt) {
+            evt = evt ? evt : ((window.event) ? window.event : null);
+            var key = evt.keyCode ? evt.keyCode : evt.which;
+            if (key == 13) {
+                $("#OrderFormAccountsCode_" + rowNum).focus();
+            }
+        },
+
+        //产品数量输入框失去焦点
+        blurkeydownSumProductsMoney: function (rowNum, obj) {
+            this.sumProductsMoney(rowNum);
+        },
+
+        /* 通过产品代码取得产品 */
+        // rowNum 是行号，evt是firefox下的event事件，obj是this指针
+        getAccountsByCode: function (rowNum, evt, obj) {
+            evt = evt ? evt : ((window.event) ? window.event : null);
+            var key = evt.keyCode ? evt.keyCode : evt.which;
+            var code = $(obj).val();
+
+            if ((key == 13) && (code.length > 0)) {
+                this.getAccounts(rowNum, code);
+            }
+            //向上移动
+            if (key == 38) {
+                $("#OrderFormAccountsCode_" + rowNum).focus();
+            }
+            //向下移动
+            if (key == 40) {
+                var focusNum = rowNum + 1;
+                $("#OrderFormAccountsCode_" + focusNum).focus();
+            }
+
+        },
+
+        /* 弹出窗口，选择产品 */
+        //moduleName:产品名称  rowNum:行号 moduleName,rowNum
+        accountsPickList: function (url) {
+            //url = url + '/returnModule/' + '{$moduleName}{$Think.ACTION_NAME|ucfirst}';
+            $('#globel-dialog-div').dialog({
+                title: '选择客户',
+                iconCls: 'icons-application-application_add',
+                width: 900,
+                height: 540,
+                cache: false,
+                href: url,
+                modal: true,
+                collapsible: false,
+                minimizable: false,
+                resizable: false,
+                maximizable: false,
+                buttons: [{
+                    text: '确定',
+                    iconCls: 'icons-other-tick',
+                    handler: function () {
+                        $(that.dialog).find('form').eq(0).form('submit', {
+                            onSubmit: function () {
+                                var isValid = $(this).form('validate');
+                                if (!isValid) return false;
+
+                                var formArray = $(this).serializeArray();
+                                var url = '__URL__/searchviewAddress/';
+                                $.each(formArray, function (key, value) {
+                                    url = url + value.name + '/' +
+                                        value.value;
+                                })
+                                IndexIndexModule.openOperateTab(url, '订单地址查询');
+                                $(that.dialog).dialog('close');
+                                return false;
+                            }
+                        });
+                    }
+                }, {
+                    text: '取消',
+                    iconCls: 'icons-arrow-cross',
+                    handler: function () {
+                        $('#globel-dialog-div').dialog('close');
+                    }
+                }]
+            });
+
+        },
+
+        /* 清空产品上的内容 */
+        clearAccounts: function (rowNum) {
+            var accountsCode = $("#OrderFormAccountsCode_" + rowNum).val();
+            var accountsName = $("#OrderFormAccountsName_" + rowNum).val();
+
+            if ((accountsCode == '') && (accountsName == '')) {
+                return;
+            }
+            if (confirm("是否要清空内容")) {
+                $("#OrderFormAccountsCode_" + rowNum).val('');
+                $("#OrderFormAccountsName_" + rowNum).val('');
+                $("#OrderFormAccountsMoney_" + rowNum).val('');
+                $("#OrderFormAccountsNote_" + rowNum).val('');
+                this.sumAccountsMoney(rowNum);
+            }
+        },
+
+        /*  删除客户最后一行 */
+        delAccounts: function () {
+            //取得表格行的长度
+            var rowNum = $("#OrderFormAccountsTable tr").length;
+            if (rowNum == 2) {
+                alert("最后一行不能删除");
+                return;
+            }
+            $("#OrderFormAccountsTable tr:last").remove();
+            $("#OrderFormAccountsLength").attr("value", rowNum - 1); //表格行数保存
+            this.sumAccountsMoney(rowNum);
+
+        },
+
+
+        //根据用户输入的客户代码，输出产品名称
+        getAccounts: function (rowNum, code) {
+            var that = this;
+            $.ajax({
+                url: "__URL__/getAccountPaymentByCode&code=" + code,
+                async: true,
+                beforeSend: function () {},
+                success: function (mydata) {
+                    var accountsName = '';
+                    if (mydata) {
+                        //首先检查父窗口表格是否有存在输入的代码和产品
+                        var rowLength = $("#OrderFormAccountsPaymentTable tr").length;
+                        for (i = 1; i < rowLength; i++) {
+                            accountsName = $("OrderFormAccountsName_" + i).val();
+                            if ((accountsName == mydata.name) && (i != rowNum)) {
+                                alert('客户已经存在,不能添加！');
+                                return;
+                            }
+                        }
+                        $("#OrderFormAccountsName_" + rowNum).val(mydata.name);
+                        //将支付内容加在订单地址上，临时做法
+                        if ($('#OrderFormAction').val() == 'Createview') {
+                            address = $('#OrderFormCreateviewForm input[name=address]').val();
+                            address = '(' + mydata.name + ')' + address;
+                            $('#OrderFormCreateviewForm input[name=address]').val(address);
+                        } else {
+                            address = $('#OrderFormEditviewForm input[name=address]').val();
+                            address = '(' + mydata.name + ')' + address;
+                            $('#OrderFormEditviewForm input[name=address]').val(address);
+                        }
+
+                        //跳转到下一行
+                        $("#OrderFormAccountsMoney_" + rowNum).focus();
+                    } else {
+                        alert("输入的客户代码有错误，请重新输入！");
+                        return;
+                    }
+                }
+
+            })
+        },
+
+
+        /* 计算产品金额 */
+        sumAccountsMoney: function (rowNum) {
+
+            //计算全部的金额
+            var totalMoney = 0;
+            //取得表格行的长度
+            var rowLength = $("#OrderFormAccountPaymentTable tr").length;
+            for (i = 1; i < rowLength; i++) {
+                if ($("#OrderFormAccountsMoney_" + i).val() > 0) {
+                    totalMoney = totalMoney + parseFloat($("#OrderFormAccountsMoney_" + i).val());
+                }
+            }
+            $("#OrderFormAccountPaymentTotalMoney").val(totalMoney); //小计
+
+        },
+
+
+        //产品代码失去焦点的计算金额
+        blurSumAccountsMoney: function (rowNum, obj) {
+            if ($("#OrderFormAccountsName_" + rowNum).val() != '') { //如果不为空，才计算
+                this.sumAccountsMoney(rowNum);
+            }
+        },
+
+
+        //判断是否为数字
+        IsNum: function (s) {
+            if (s != null && s != "") {
+                return !isNaN(s);
+            }
+            return false;
+        }
+
+    }
+
+    /*产品的js计算程序*/
+    var accountsAjax = false; //判断是否查询过产品代码，防止在ajax中按回车，反复执行，有个alert的小bug
+</script>

@@ -44,31 +44,16 @@
             $this->assign('returnAction','searchview');  //定义返回的方法
 
 
-
-
             //建立查询条件
             $where = array();
-            $searchOption = $_REQUEST['searchOption'];  //查询项目
             $searchText = $_REQUEST['searchText'];      //查询内容
-            if(isset($searchOption) && isset($searchText)){
-                if($searchOption == '全部'){ //如果是全部，那么全都要查询
-                    foreach($focus->searchFields as $value){
-                        $where[$value] =  array('like','%'.$searchText.'%');                       
-                    }
-                    $where['_logic'] = 'OR';
-                    $_SESSION['searchOption'.$moduleName] = $searchOption;
-                    $_SESSION['searchText'.$moduleName] = $searchText;
-                }else{
-                    $where[$searchOption] = array('like','%'.$searchText.'%');
-                    $this->assign('searchOptionValue',$searchOption);
-                    $this->assign('searchTextValue',$searchText);
-                    $_SESSION['searchOption'.$moduleName] = $searchOption;
-                    $_SESSION['searchText'.$moduleName] = $searchText; 
-                }
+            if(isset($searchText)){
+                $where['telphone'] = array('like','%'.$searchText .'%');
+                $this->assign('searchTextValue',$searchText);
+                $_SESSION['searchText'.$moduleName] = $searchText;
             }else{
-                if(isset($_SESSION['searchOption'.$moduleName],$_SESSION['searchText'.$moduleName])){
-                    $where[$_SESSION['searchOption'.$moduleName]] = array('like','%'.$_SESSION['searchText'].$moduleName.'%');
-                    $this->assign('searchOptionValue',$_SESSION['searchOption'.$moduleName]);
+                if($_SESSION['searchText'.$moduleName]){
+                    $where[$_SESSION['searchText'.$moduleName]] = array('like','%'.$_SESSION['searchText'].$moduleName.'%');
                     $this->assign('searchTextValue',$_SESSION['searchText'.$moduleName]);
                 }
             }
@@ -79,9 +64,16 @@
             if($where){
                 $map['_complex'] = $where;
             }
-            $map['company'] = $company;
-            $map['domain'] = $_SERVER['HTTP_HOST'];
 
+
+            if(($userInfo['rolename'] == '客服经理') || ($userInfo['rolename'] == '联络员') || ($userInfo['rolename'] == '系统管理员')){
+                $where['domain'] = $this->getDomain();
+            }else{
+                $map['company'] = $company;
+                $map['domain'] = $this->getDomain();
+            }
+
+            var_dump($map);
 
             //导入分页类
             import('ORG.Util.Page');// 导入分页类
@@ -102,6 +94,10 @@
 
             //查询模块的数据 
             $selectFields = $listFields;
+            if(($userInfo['rolename'] == '客服经理') || ($userInfo['rolename'] == '联络员') || ($userInfo['rolename'] == '系统管理员')){
+                array_unshift($selectFields,'company');
+            }
+
             array_unshift($selectFields,$moduleId);
             $listResult = $focus->field($selectFields)->where($map)->limit($Page->firstRow.','.$Page->listRows)->order("$moduleId desc")->select();
    
@@ -134,7 +130,7 @@
             $company = $this->userInfo['department'];
             $auto = array ( 
             	array('company',$company),  //分公司名称
-				array('domain',$_SERVER['HTTP_HOST']),
+				array('domain',$this->getDomain()),
                 array('name','trim',1,'function')
             );
 
@@ -164,9 +160,17 @@
         public function returnWhere(&$where){
             $userInfo = $_SESSION['userInfo'];
             $company = $this->userInfo['department'];
-            //查询条件
-            $where['company'] = $company;
-            $where['domain'] = $_SERVER['HTTP_HOST'];
+
+
+            $userInfo = $_SESSION['userInfo'];
+            $company = $this->userInfo['department'];
+
+
+            if(($userInfo['rolename'] == '客服经理') || ($userInfo['rolename'] == '联络员') || ($userInfo['rolename'] == '系统管理员')){
+            }else{
+                //查询条件
+                $where['company'] = $company;
+            }
         }
     }
 ?>

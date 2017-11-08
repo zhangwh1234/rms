@@ -23,8 +23,8 @@
                     onSubmit: function () {
                         var isValid = $(this).form('validate');
                         if (!isValid) return false;
-                        var searchTextAddress = $(that).val();
-                        var url = '__URL__/searchviewOther/searchTextAddress/' + encodeURIComponent(searchTextAddress);
+                        var searchTextOther = $(that).val();
+                        var url = '__URL__/searchviewOther/searchTextOther/' + encodeURIComponent(searchTextOther);
                         IndexIndexModule.openOperateTab(url, '分配综合查询');
                         $(dialog).dialog('close');
                         OrderDistributionListviewModule.setRefresh();  //开启刷新

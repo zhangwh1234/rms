@@ -4,7 +4,7 @@
         public function index(){
             if(!isset($_SESSION['userid'])) {
                 require APP_PATH.'Conf/datapath.php';
-                $HTTP_POST = $_SERVER['HTTP_HOST'];
+                $HTTP_POST = $this->getDomain();
                 $this->assign('city',$rmsDataPath[$HTTP_POST]['CITY']);
                 $this->display();
             }else{
@@ -44,8 +44,9 @@
             $name = $_REQUEST['name'];
             $where = array();
             $where['name'] = $name;
-            $where['domain'] = $_SERVER['HTTP_HOST'];
+            $where['domain'] = $this->getDomain();
             $userName = $userModel->field('userid,name')->where($where)->find();
+
 
             if(empty($userName)){
                 $this->error('帐号错误！'); 
@@ -56,7 +57,7 @@
             $where = array();
             $where['password'] = $password;
             $where ['name'] = $name;
-            $where ['domain'] = $_SERVER['HTTP_HOST'];
+            $where ['domain'] = $this->getDomain();
             $userPassword = $userModel->field('password')->where($where)->find(); 
             if(empty($userPassword)){
                 $this->error('密码错误！'); 
