@@ -119,6 +119,8 @@
             $sendnameproductsModel = D('Sendnameproducts');
             $where = array();
             $where['extid'] = $record;
+            $where['domain'] = $_SERVER['HTTP_HOST'];
+            $where['company'] = $company;
             $sendnameproductsModel->where($where)->delete();
             $productsLength = $_REQUEST['productsLength'];
             for($i=1;$i<= $productsLength;$i++){
@@ -138,6 +140,7 @@
                 $data['company'] = $company;
                 $data['date'] = date('Y-m-d');
                 $data['ap'] = $this->getAp();
+                $data['domain'] = $_SERVER['HTTP_HOST'];
                 if( !empty($name) and  !empty($number)){
                     $sendnameproductsModel->create();
                     $sendnameproductsModel->add($data);
@@ -237,7 +240,7 @@
             $action = array();
             $action['zhuangxiangid'] = $record;  //订单号
             //$company = $data['company'];
-            $action['action'] = "装箱单打印:"+$record;
+            $action['action'] = "装箱单打印,打印号:" . $record;
             $action['logtime'] = date('H:i:s');
             $zhuangxiangactionModel->create();
             $result = $zhuangxiangactionModel->add($action);
@@ -298,24 +301,25 @@
 
                 // 导入分页类
                 import('ORG.Util.Page'); // 导入分页类
-                $total = $focus->where($where)->count(); // 查询满足要求的总记录数
+                $total = $popupModule->where($where)->count(); // 查询满足要求的总记录数
                 // 查session取得page的firstRos和listRows
 
 
                 // 取得显示页数
-                $pageNumber = $_REQUEST ['page'];
-                if (empty ($pageNumber)) {
-                    $pageNumber = 1;
-                    // 查session取得page的值
-                    if (!empty ($_SESSION [$moduleName . 'page'])) {
-                        $pageNumber = $_SESSION [$moduleName . 'page'];
-                    }
+                //使用cookie读取rows
+                $listMaxRows = $_COOKIE['listMaxRows'];
+                if (!empty($listMaxRows)) {
+
+                } else {
+                    $listMaxRows = C('LIST_MAX_ROWS'); // 定义显示的列表函数
                 }
 
-                $listMaxRows = C('LIST_MAX_ROWS'); // 定义显示的列表函数
-                if (isset ($listMaxRows)) {
-                    $listMaxRows = 15;
-                }
+                //订单配送还要显示两个统计数据
+                $listMaxRows = $listMaxRows - 2;
+
+                // 导入分页类
+                import('ORG.Util.Page'); // 导入分页类
+                $pageNumber = $_REQUEST ['page'];
                 // 取得页数
                 $_GET ['p'] = $pageNumber;
                 $Page = new Page ($total, $listMaxRows);
@@ -332,13 +336,13 @@
 
                 $listResult = $popupModule->field($selectFields)->where($where)->limit($Page->firstRow . ',' . $Page->listRows)->order("$moduleId desc")->select();
 
-                $orderHandleArray ['total'] = count($listResult);
+                $orderHandleArray ['total'] = $total;
                 if (count($listResult) > 0) {
-                    $orderHandleArray ['rows'] = $listResult;
+                    $orderHandleArray  = $listResult;
                 } else {
-                    $orderHandleArray ['rows'] = array();
+                    $orderHandleArray  = array();
                 }
-                $data = array('total' => $total, 'rows' => $listResult);
+                $data = array('total' => $total, 'rows' => $orderHandleArray);
 
                 $this->ajaxReturn($data);
 
@@ -369,7 +373,7 @@
                     'options' => array(
                         'url' => U($moduleName . '/popupProductsview'),
                         'pageNumber' => 1,
-                        'pageSize' => 10
+                        'pageSize' => 20
                     )
                 );
 

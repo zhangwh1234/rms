@@ -41,7 +41,9 @@
                 
                 //查询角色的功能
                 $accessModel = D('access');
-                $accessResult = $accessModel->field('node_id')->where("role_id=$roleid")->select();
+                $where = array();
+                $where['role_id'] = $roleid;
+                $accessResult = $accessModel->field('node_id')->where($where)->select();
                 foreach($accessResult as $value){
                     $accessArr[] = $value['node_id']; 
                 }
@@ -53,6 +55,7 @@
                 if(in_array($nodeidTelphone,$accessArr)){
                     $this->TelphoneOn = "开启";
                 }
+
                 //来电类型，亿鸿达
                 $nodeYeahdone = $nodeModel->where("name='yeahdone'")->find();
                 $nodeidYeahdone = $nodeYeahdone['id'];
@@ -68,6 +71,16 @@
                     $this->UserName = $userName;          //接线员姓名，用户登陆到华旗呼叫中心使用
                     $_SESSION['TelphoneType'] = 'CCLinkServer';
                 }
+                //华旗呼叫中心新版,支持http连接
+                //来电类型，华旗呼叫中心
+                $nodeCCLinkServer = $nodeModel->where("name='CCLink2008'")->find();
+                $nodeidCCLinkServer = $nodeCCLinkServer['id'];
+                if(in_array($nodeidCCLinkServer,$accessArr)){
+                    $this->TelphoneType = 'CCLink2008'; //来电类型
+                    $this->UserName = $userName;          //接线员姓名，用户登陆到华旗呼叫中心使用
+                    $_SESSION['TelphoneType'] = 'CCLink2008';
+                }
+
                 //打印功能
                 $nodePrinter = $nodeModel->where("name='printer'")->find();
                 $nodeidPrinter = $nodePrinter['id'];

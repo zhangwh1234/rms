@@ -104,6 +104,11 @@ class GeneralReportAction extends ModuleAction {
 			return;
 		}
 
+		if ($reporttype == 'Tongjiordersendtime') {
+			$this->tongjiOrderSendtime ( $reporttype, $where );
+			return;
+		}
+
 		// 连接历史数据库
 		$ordertongjiModel = D ( $reporttype );
 
@@ -232,6 +237,11 @@ class GeneralReportAction extends ModuleAction {
 
 		if ($reporttype == 'Tongjiorderbackcancel') {
 			$this->outputTongjiOrderBackCancelExcel ( $reporttype, $where );
+			return;
+		}
+
+		if ($reporttype == 'Tongjiordersendtime') {
+			$this->outputTongjiOrderSendtimeExcel ( $reporttype, $where );
 			return;
 		}
 
@@ -587,6 +597,88 @@ class GeneralReportAction extends ModuleAction {
 	}
 
 	/**
+	 * 导出送达率统计表
+	 */
+	private function outputTongjiOrderSendtimeExcel($reporttype, $where) {
+		$reporttype = 'Tongjisendtime';
+		// 连接历史数据库
+		$ordertongjiModel = D ( $reporttype );
+
+		// 查询项目名称
+		$fields = array (
+			'company',
+			'sum(a0115) as a1',
+			'sum(a1630) as a2',
+			'sum(a3140) as a3',
+			'sum(a4150) as a4',
+			'sum(a5160) as a5',
+			'sum(a6100) as a6'
+		);
+		// 返回查询的数据
+		$ordertongjiResult = $ordertongjiModel->field ( $fields )->where ( $where )->select ();
+
+		// 建立表格头
+		$listHeader [] = '分公司';
+		$listHeader [] = '1-15分钟';
+		$listHeader [] = '15-30分钟';
+		$listHeader [] = '30-40分钟';
+		$listHeader [] = '40-50分钟';
+		$listHeader [] = '50-60分钟';
+		$listHeader [] = '1个小时以上';
+		// 引入类
+		vendor ( 'PHPExcel.PHPExcel' );
+
+		// 创建excel对象
+		$objPHPExcel = new PHPExcel ();
+
+		// 设置文档的属性
+		$objPHPExcel->getProperties ()->setCreator ( "丽华快餐" )->setLastModifiedBy ( "丽华快餐集团" )->setTitle ( "统计文档" )->setSubject ( "订单管理系统统计" )->setDescription ( "统计订单系统用" )->setKeywords ( "统计 订单" )->setCategory ( "文件" );
+		$i = 1;
+		foreach ( $listHeader as $key => $value ) {
+			$objPHPExcel->setActiveSheetIndex ( 0 )->setCellValueByColumnAndRow ( $i, 2, $value );
+			$i ++;
+		}
+
+		$i = 2;
+		$l = 0;
+		foreach ( $ordertongjiResult as $tongjiKey => $tongjiValue ) {
+			$i = $i + 1;
+			$l = 0;
+			// $objPHPExcel->setActiveSheetIndex ( 0 )->setCellValueByColumnAndRow ( $l, $i, $tongjiKey );
+			foreach ( $tongjiValue as $colKey => $colValue ) {
+				$l = $l + 1;
+				$objPHPExcel->setActiveSheetIndex ( 0 )->setCellValueByColumnAndRow ( $l, $i, $colValue );
+			}
+		}
+
+		// Rename worksheet
+		$objPHPExcel->getActiveSheet ()->setTitle ( L ( $reporttype ) );
+
+		// Set active sheet index to the first sheet, so Excel opens this as the first sheet
+		$objPHPExcel->setActiveSheetIndex ( 0 );
+
+		$filename = L ( $reporttype ) . $startDate . '-' . $endDate;
+
+		// Redirect output to a client’s web browser (Excel5)
+		header ( 'Content-Type: application/vnd.ms-excel' );
+		header ( 'Content-Disposition: attachment;filename="' . $filename . '.xls"' );
+		header ( 'Cache-Control: max-age=0' );
+		// If you're serving to IE 9, then the following may be needed
+		header ( 'Cache-Control: max-age=1' );
+
+		// If you're serving to IE over SSL, then the following may be needed
+		header ( 'Expires: Mon, 26 Jul 1997 05:00:00 GMT' ); // Date in the past
+		header ( 'Last-Modified: ' . gmdate ( 'D, d M Y H:i:s' ) . ' GMT' ); // always modified
+		header ( 'Cache-Control: cache, must-revalidate' ); // HTTP/1.1
+		header ( 'Pragma: public' ); // HTTP/1.0
+
+		$objWriter = PHPExcel_IOFactory::createWriter ( $objPHPExcel, 'Excel5' );
+		$objWriter->save ( 'php://output' );
+		exit ();
+	}
+
+
+	/**
 	 * 导出通用的统计表
 	 */
 	public function outputAllTongjiExcel() {
@@ -668,6 +760,7 @@ class GeneralReportAction extends ModuleAction {
 		// $connectionConfig = $localhostHistory;
 		// $connectionConfig = $rmsDataPath['localhostHistory'];
 
+
 		// 引入类
 		vendor ( 'PHPExcel.PHPExcel' );
 
@@ -696,18 +789,12 @@ class GeneralReportAction extends ModuleAction {
 			$ordertongjiResult = $ordertongjiModel->where ( $where )->select ();
 			// var_dump($ordertongjiModel->getLastSql());
 			// var_dump($ordertongjiResult);
+
 			// 查询项目名称
-			$ordertongjiNameResult = $ordertongjiModel->Distinct ( true )->field ( 'name' )->select ();
-			// var_dump($ordertongjiModel->getLastSql());
-			// var_dump($ordertongjiNameResult);
-			if (empty ( $ordertongjiNameResult )) {
-				$objPHPExcel->setActiveSheetIndex ( $worksheetNumber )->setTitle ( L ( $reporttype ) );
-				$objPHPExcel->createSheet ();
-				$worksheetNumber += 1;
-				continue;
-			}
+			$ordertongjiNameResult = $ordertongjiModel->Distinct ( true )->field ( 'name' )->where($where)->order('name')->select ();
 			// 查询统计的项目内容
-			$ordertongjiContentResult = $ordertongjiModel->Distinct ( true )->field ( 'content' )->select ();
+
+			$ordertongjiContentResult = $ordertongjiModel->Distinct ( true )->field ( 'content' )->where($where)->select ();
 			// 定义统计的数组
 			$tongji = array ();
 			// 建立统计的二维数组表
@@ -732,23 +819,22 @@ class GeneralReportAction extends ModuleAction {
 			$listHeader = array ();
 			// 建立表格头
 			foreach ( $ordertongjiContentResult as $contentValue ) {
-
 				$listHeader [] = $contentValue ['content'];
 			}
 
 			$i = 1;
 			foreach ( $listHeader as $key => $value ) {
-
 				$objPHPExcel->setActiveSheetIndex ( $worksheetNumber )->setCellValueByColumnAndRow ( $i, 1, $value );
 				$i ++;
 			}
+
 
 			$i = 1;
 			$l = 0;
 			foreach ( $tongji as $tongjiKey => $tongjiValue ) {
 				$i = $i + 1;
 				$l = 0;
-				$objPHPExcel->setActiveSheetIndex ( $worksheetNumber )->setCellValueByColumnAndRow ( $l, $i, $tongjiKey );
+				$objPHPExcel->setActiveSheetIndex ( $worksheetNumber )->setCellValueByColumnAndRow ( 0, $i, $tongjiKey);
 				foreach ( $tongjiValue as $colKey => $colValue ) {
 					$l = $l + 1;
 					$objPHPExcel->setActiveSheetIndex ( $worksheetNumber )->setCellValueByColumnAndRow ( $l, $i, $colValue );
@@ -762,13 +848,17 @@ class GeneralReportAction extends ModuleAction {
 			$objPHPExcel->createSheet ();
 			$worksheetNumber += 1;
 		}
-		//催餐统计
-		$this->outputAllTongjiHurry ( $objPHPExcel, $worksheetNumber ,$where );
-		$worksheetNumber  = $worksheetNumber;
+
 		$objPHPExcel->createSheet ();
 		$worksheetNumber += 1;
+		//催餐统计
+		$this->outputAllTongjiHurry ( $objPHPExcel, $worksheetNumber ,$where );
+		$objPHPExcel->createSheet ();
+		$worksheetNumber += 1;
+
 		//大客户
 		$this->outputAllTongjiBigCustomer ($objPHPExcel, $worksheetNumber ,$where);
+
 		$objPHPExcel->createSheet ();
 		$worksheetNumber += 1;
 		//退餐废单
@@ -776,8 +866,15 @@ class GeneralReportAction extends ModuleAction {
 		$objPHPExcel->createSheet ();
 		$worksheetNumber += 1;
 
+		//送达率统计
+		$this->outputAllTongjiSendtime ($objPHPExcel, $worksheetNumber ,$where);
+		$objPHPExcel->createSheet ();
+		$worksheetNumber += 1;
+
 		//导出所有的订单
 		$this->outputAllTongjiAllOrder ($objPHPExcel, $worksheetNumber,$where);
+
+
 
 		// Set active sheet index to the first sheet, so Excel opens this as the first sheet
 		$objPHPExcel->setActiveSheetIndex ( 0 );
@@ -890,6 +987,7 @@ class GeneralReportAction extends ModuleAction {
 			'address',
 			'ordertxt',
 			'totalmoney',
+			'telname',
 			'company'
 		);
 
@@ -901,6 +999,7 @@ class GeneralReportAction extends ModuleAction {
 		$listHeader [] = '送餐地址';
 		$listHeader [] = '数量规格';
 		$listHeader [] = '金额';
+		$listHeader [] = '接线员';
 		$listHeader [] = '分公司';
 
 		// 创建excel对象
@@ -1015,6 +1114,7 @@ class GeneralReportAction extends ModuleAction {
 
 		// 查询项目名称
 		$fields = array (
+			'ordersn',
 			'address',
 			'ordertxt',
 			'totalmoney',
@@ -1025,12 +1125,14 @@ class GeneralReportAction extends ModuleAction {
 			'company',
 			'beizhu',
 		);
+
 		// $ordertongjiModel->db(1,$connectionConfig);
 
 		// 返回查询的数据
 		$tongjiallorderResult = $tongjiallorderModel->field ( $fields )->where ( $where )->select ();
 
 		// 建立表格头
+		$listHeader [] = '订单号';
 		$listHeader [] = '送餐地址';
 		$listHeader [] = '数量规格';
 		$listHeader [] = '总金额';
@@ -1055,14 +1157,20 @@ class GeneralReportAction extends ModuleAction {
 			$i ++;
 		}
 
+		//设置B2格式
+		//$objPHPExcel->setActiveSheetIndex ( $worksheetNumber )->getStyle('B')->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_TEXT);
+
 		$i = 2;
 		$l = 0;
 		foreach ( $tongjiallorderResult as $tongjiKey => $tongjiValue ) {
 			$i = $i + 1;
 			$l = 0;
-			// $objPHPExcel->setActiveSheetIndex ( 0 )->setCellValueByColumnAndRow ( $l, $i, $tongjiKey );
+			$objPHPExcel->setActiveSheetIndex (  $worksheetNumber )->setCellValueByColumnAndRow ( $l, $i, $tongjiKey );
 			foreach ( $tongjiValue as $colKey => $colValue ) {
 				$l = $l + 1;
+				if($colKey == 'ordersn'){
+					$colValue = "'".$colValue;
+				}
 				$objPHPExcel->setActiveSheetIndex ( $worksheetNumber )->setCellValueByColumnAndRow ( $l, $i, $colValue );
 			}
 		}
@@ -1073,7 +1181,72 @@ class GeneralReportAction extends ModuleAction {
 		$objPHPExcel->setActiveSheetIndex ( $worksheetNumber )->setTitle ( L ( $reporttype ) );
 
 
+
 	}
+
+	/**
+	 * 导出全部excel送达率统计表
+	 */
+	private function outputAllTongjiSendtime($objPHPExcel, $worksheetNumber,$where) {
+
+		$reporttype = 'Tongjisendtime';
+
+		// 连接历史数据库
+		$ordertongjiModel = D ( $reporttype );
+
+		// 查询项目名称
+		$fields = array (
+			'company',
+			'sum(a0115) as a1',
+			'sum(a1630) as a2',
+			'sum(a3140) as a3',
+			'sum(a4150) as a4',
+			'sum(a5160) as a5',
+			'sum(a6100) as a6'
+		);
+		// 返回查询的数据
+		$ordertongjiResult = $ordertongjiModel->field ( $fields )->where ( $where )->select ();
+
+
+		// 建立表格头
+		$listHeader [] = '分公司';
+		$listHeader [] = '1-15分钟';
+		$listHeader [] = '15-30分钟';
+		$listHeader [] = '30-40分钟';
+		$listHeader [] = '40-50分钟';
+		$listHeader [] = '50-60分钟';
+		$listHeader [] = '1个小时以上';
+
+		// 创建excel对象
+		$objPHPExcel = $objPHPExcel;
+
+		// 设置文档的属性
+		$objPHPExcel->getProperties ()->setCreator ( "丽华快餐" )->setLastModifiedBy ( "丽华快餐集团" )->setTitle ( "统计文档" )->setSubject ( "订单管理系统统计" )->setDescription ( "统计订单系统用" )->setKeywords ( "统计 订单" )->setCategory ( "文件" );
+		$i = 1;
+		foreach ( $listHeader as $key => $value ) {
+			$objPHPExcel->setActiveSheetIndex ( $worksheetNumber )->setCellValueByColumnAndRow ( $i, 2, $value );
+			$i ++;
+		}
+
+		$i = 2;
+		$l = 0;
+		foreach ( $ordertongjiResult as $tongjiKey => $tongjiValue ) {
+			$i = $i + 1;
+			$l = 0;
+			// $objPHPExcel->setActiveSheetIndex ( 0 )->setCellValueByColumnAndRow ( $l, $i, $tongjiKey );
+			foreach ( $tongjiValue as $colKey => $colValue ) {
+				$l = $l + 1;
+				$objPHPExcel->setActiveSheetIndex ( $worksheetNumber )->setCellValueByColumnAndRow ( $l, $i, $colValue );
+			}
+		}
+
+		// Rename worksheet
+		$objPHPExcel->getActiveSheet ()->setTitle ( L ( $reporttype ) );
+
+		$objPHPExcel->createSheet ();
+		$worksheetNumber += 1;
+	}
+
 
 
 	/**
@@ -1115,6 +1288,7 @@ class GeneralReportAction extends ModuleAction {
 			'address',
 			'ordertxt',
 			'totalmoney',
+			'telname',
 			'company'
 		);
 
@@ -1148,6 +1322,36 @@ class GeneralReportAction extends ModuleAction {
 		$this->assign ( 'orderbc', $tongjiorderbcResult );
 		$this->display ( 'GeneralReport/reportresultorderbc' );
 	}
+
+	/**
+	 * ********************
+	 * 统计订单送达率
+	 */
+	private function tongjiOrderSendtime($reporttype, $where)
+	{
+
+		// 实例大订单
+		$tongjisendtimeModel = D ( 'Tongjisendtime' );
+
+		$fields = array (
+			'company',
+			'sum(a0115) as a1',
+			'sum(a1630) as a2',
+			'sum(a3140) as a3',
+			'sum(a4150) as a4',
+			'sum(a5160) as a5',
+			'sum(a6100) as a6'
+		);
+
+		$tongjisendtimeResult = $tongjisendtimeModel->field ( $fields )->where($where)->select ();
+
+		// 显示数据
+		$this->assign ( 'sendtime', $tongjisendtimeResult );
+
+		$this->display ( 'GeneralReport/reportresultsendtime' );
+	}
+
+
 	public function _empty() {
 	}
 

@@ -41,8 +41,9 @@
                     $company = $userInfo ['department'];
                     $where ['company'] = $company;
                 }
+                //1是电子票,2是普通发票
                 //需要显示普通发票
-                $where['type'] = array('NEQ','1');
+                //$where['type'] = array('NEQ','1');
                 //$where ['_string'] = "length(trim(company)) > 0";
                 $where ['domain'] = $_SERVER ['HTTP_HOST'];
 
@@ -84,7 +85,7 @@
                 $selectFields = $listFields;
                 array_unshift($selectFields, $moduleId);
 
-                $listResult = $focus->where($where)->field($selectFields)->limit($Page->firstRow . ',' . $Page->listRows)->select();
+                $listResult = $focus->where($where)->field($selectFields)->limit($Page->firstRow . ',' . $Page->listRows)->order('invoiceid desc')->select();
                 //var_dump($focus->getLastSql());
                 $orderHandleArray ['total'] = $total;
                 if (count($listResult) > 0) {
@@ -105,8 +106,14 @@
                 // 取得对应的导航名称
                 $navName = $focus->getNavName($moduleName);
                 $this->assign('navName', $navName); // 导航名称
+                $domain = $_SERVER['HTTP_HOST'];
+                if($domain == 'bj.lihuaerp.com'){
+                    $this->display('InvoiceMgr/listview');
+                }else{
+                    $this->display('InvoiceMgr/czlistview');
+                }
 
-                $this->display('InvoiceMgr/listview');
+
             }
         }
 
@@ -245,17 +252,108 @@
             $where['ordermoney'] = array('gt',0);
 
             $fields = array(
-              'invoiceid','header','body','ordermoney'
+              'invoiceid','header','body','gmf_nsrsbh','gmf_dzdh','gmf_yhzh','ordermoney','type','ordersn','orderformtxt',
             );
             $invoiceResult = $focus->field($fields)->where($where)->find();
-            if(empty($invoiceResult['body'])){
-                $invoiceResult['body'] = '工作餐';
-            }
 
-            // 接线员的姓名
-            $userInfo = $_SESSION ['userInfo'];
-            $name = $userInfo ['truename'];
-            $invoiceResult['name'] = $name;  //开票人
+            //1是电子票,2是普通票,这里是电子票的处理逻辑
+            if(!empty($invoiceResult)){
+                if(empty($invoiceResult['body'])){
+                    $invoiceResult['body'] = '工作餐';
+                }
+
+                // 接线员的姓名
+                $userInfo = $_SESSION ['userInfo'];
+                $name = $userInfo ['truename'];
+                $invoiceResult['name'] = mb_substr($name,0,3,'utf-8');  //开票人
+
+                // 获取分公司
+                $company = $this->userInfo ['department'];
+
+                //返回收款人和复核人的信息,如果为空,就写默认
+                $companymgrModel = D('companymgr');
+                $where = array();
+                $where['name'] = $company;
+                $where['domain'] = $_SERVER['HTTP_HOST'];
+                $companymgrResult = $companymgrModel->field('cashier,checker')->where($where)->find();
+                if(empty($companymgrResult['cashier'])){
+                    $invoiceResult['cashier'] = mb_substr($name,0,3,'utf-8');
+                }else{
+                    $invoiceResult['cashier'] = $companymgrResult['cashier'];
+                }
+                if(empty($companymgrResult['checker'])){
+                    $invoiceResult['checker'] = '丽华';
+                }else{
+                    $invoiceResult['checker'] = $companymgrResult['checker'];
+                }
+                //如果是电子票,就直接返回
+                if($invoiceResult['type'] == 2){
+                    if($_SERVER['HTTP_HOST'] == 'bj.lihuaerp.com'){
+                        $invoiceResult['city'] = 'bj';
+                    }
+                    $this->ajaxReturn($invoiceResult);
+                }
+
+                //将发票数据存入到invoiceweb表
+                $data = array();
+                $data['invoiceid'] = $invoiceid;
+                $data['ordersn'] = $invoiceResult['ordersn'];
+                $data['ordertxt'] = $invoiceResult['orderformtxt'];
+                $data['header'] = $invoiceResult['header'];
+                $data['body'] = $invoiceResult['body'];
+                $data['gmf_nsrsbh'] = $invoiceResult['gmf_nsrsbh'];
+                $data['gmf_dzdh'] = $invoiceResult['gmf_dzdh'];
+                $data['gmf_yhzh'] = $invoiceResult['gmf_yhzh'];
+                $data['money'] = $invoiceResult['ordermoney'];
+                $data['KPR'] = mb_substr($name,0,3,'utf-8');  //开票人
+                $data['SKR'] =  $invoiceResult['cashier'];    //收款人
+                $data['FHR'] = $invoiceResult['checker']; //复核人
+                $data['printman'] = mb_substr($name,0,3,'utf-8');  //操作员
+                $data['type'] = 1;
+                $data['date'] = date('Y-m-d H:i:s');
+                $data['createdate'] = date('Y-m-d H:i:s');
+                // 获取分公司
+                $company = $this->userInfo ['department'];
+                $data['company'] = $company;
+                $data['domain'] = $_SERVER['HTTP_HOST'];
+                $where = array();
+                $where['ordersn'] = $invoiceResult['ordersn'];
+                $invoicewebModel = D('invoiceweb');
+                $invoicewebResult = $invoicewebModel->where($where)->find();
+                if(empty($invoicewebResult)){
+                    //hack一下,让电子票能够识别不同的地区
+                    if($_SERVER['HTTP_HOST'] == 'bj.lihuaerp.com'){
+                        $data['eticketno'] = '1'.rand(1,10).date('s').date('md') . $invoiceResult['invoiceid'].rand(10,1000);
+                        $data['city'] = 'bj';
+                    }else{
+                        $data['eticketno'] = '2'.rand(1,10).date('s'). date('md') . $invoiceResult['invoiceid'].rand(10,1000);
+                    }
+                    $invoicewebModel->create();
+                    $invoicewebModel->add($data);
+                }else{
+                    $data['eticketno'] = $invoicewebResult['eticketno'];
+                    $invoicewebModel->where($where)->save($data);
+                }
+
+                $eticketno = $data['eticketno'];
+                // 同时写入日志中,先取得orderformid
+                $orderformModel  = D('orderform');
+                $where = array();
+                $where['ordersn'] = $invoiceResult['ordersn'];
+                $orderformResult = $orderformModel->field('orderformid')->where($where)->find();
+                // 记入操作到action中
+                $orderactionModel = D('Orderaction');
+                $actiondata = array();
+                $actiondata ['orderformid'] = $orderformResult['orderformid']; // 订单号
+                $actiondata ['ordersn'] = $invoiceResult['ordersn'];
+                $actiondata ['action'] = "产生电子票提取码:".$eticketno;
+                $actiondata ['logtime'] = date('H:i:s');
+                $actiondata ['domain'] = $_SERVER ['HTTP_HOST'];
+                $orderactionModel->create();
+                $result = $orderactionModel->add($actiondata);
+
+                $this->ajaxReturn($data);
+            }
 
             $this->ajaxReturn($invoiceResult);
         }
@@ -273,6 +371,10 @@
 
             $data = array();
             $data['state'] = '已开票';
+            $data['opentime'] = date('H:i:s Y-m-d');
+            // 接线员的姓名
+            $userInfo = $_SESSION ['userInfo'];
+            $data['openname'] =  $userInfo ['truename'];
             $result = $focus->where($where)->save($data);
 
             if($result){
@@ -303,6 +405,115 @@
             }else{
                 $this->ajaxReturn(array('info'=>'失败!'));
             }
+        }
+
+        /* 一般顺序表记录的保存
+         * 2016-6-2改写
+        */
+        public function insert() {
+            // 返回当前的模块名
+            $moduleName = $this->getActionName ();
+
+            $focus = D ( $moduleName );
+            $this->assign ( 'moduleName', $moduleName );
+
+            // 回调自动完成的函数
+            $auto = $this->autoParaInsert ();
+            $focus->setProperty ( "_auto", $auto );
+
+            // 保存主表
+            $result = $focus->create ();
+            if (! $result) {
+                exit ( $focus->getError () );
+            }
+            $result = $focus->add ();
+
+            if (! $result) {
+                $info['status'] = 0;
+                $info['info'] =  '保存数据不成功！' ;
+                $this->ajaxReturn(json_encode($info),'EVAL');
+            }
+
+            // 取得保存的主键
+            $record = $result;
+
+            // 新写的保存从表方案
+            $result = $this->save_slave_table ( $record );
+
+            // 如果保存订单都成功，就跳转到查看页面
+            $return ['record'] = $record;
+
+            $returnAction = $_REQUEST['returnAction'];
+
+            // 生成查看的url
+            $detailviewUrl = U ( "$moduleName/listview", array (
+                'record' => $record,'returnAction'=>$returnAction
+            ) );
+            $return = $detailviewUrl;
+            $info['status'] = 1;
+            $info['info'] ='保存成功' ;
+            $info['url'] = $return;
+            $this->ajaxReturn(json_encode($info),'EVAL');
+        }
+
+
+
+        //插入，补充数据的回调函数
+        public function autoParaInsert(){
+            //分公司名称
+            $userInfo = $_SESSION['userInfo'];
+            $company = $this->userInfo['department'];
+            $auto = array (
+                array('orderformtxt','自开'),
+                array('company',$company),  //分公司名称
+                array('domain',$_SERVER['HTTP_HOST']),
+                array('ordertime',date('H:i:s')),
+                array('header','trim',3,'function') ,
+                array('gmf_nsrsbh','trim',3,'function') ,
+                array('gmf_dzdh','trim',3,'function') ,
+                array('gmf_yhzh','trim',3,'function') ,
+            );
+
+            return $auto;
+
+        }
+
+        // 更新记录
+        public function update() {
+
+            // 返回当前的模块名
+            $moduleName = $this->getActionName ();
+
+            $focus = D ( $moduleName );
+            $this->assign ( 'moduleName', $moduleName );
+            // 返回的页面
+            $returnAction = $_REQUEST ['returnAction'];
+
+            // 取得记录号
+            $record = $_REQUEST ['record'];
+            $moduleId = $focus->getPk ();
+
+            // 回调自动完成的函数
+            $auto = $this->autoParaUpdate ();
+            $focus->setProperty ( "_auto", $auto );
+            // 保存主表
+            $focus->create ();
+
+            $where = array();
+            $where[$moduleId] = $record;
+            $result = $focus->where ( $where )->save ();
+
+            $return ['record'] = $record;
+
+            // 生成查看的url
+            $detailviewUrl = U ( "$moduleName/listview", array (
+                'record' => $record,'returnAction'=>$returnAction
+            ) );
+            $return = $detailviewUrl;
+            $info['status'] = 1;
+            $info['info'] ='保存成功' ;
+            $info['url'] = $return;
+            $this->ajaxReturn(json_encode($info),'EVAL');
         }
 
     }

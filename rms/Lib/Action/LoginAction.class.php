@@ -55,7 +55,8 @@
             $password = $_REQUEST['password'];
             $where = array();
             $where['password'] = $password;
-            $where['domain'] = $_SERVER['HTTP_HOST'];
+            $where ['name'] = $name;
+            $where ['domain'] = $_SERVER['HTTP_HOST'];
             $userPassword = $userModel->field('password')->where($where)->find(); 
             if(empty($userPassword)){
                 $this->error('密码错误！'); 

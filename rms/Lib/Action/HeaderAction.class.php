@@ -78,16 +78,25 @@
 			//p($menu_info_array);
             //返回导航和模块菜单关系表
             $navmenuModel = D('Nav_menu');
-            $navmenuResult = $navmenuModel->order('navid,sequence')->select();
-
             //定义菜单表
             $nav_menu_arr = array();
-            foreach($navmenuResult as $navmenuValue){
-                $menu_arr = $menu_info_array[$navmenuValue['menuid']];
-                if((in_array($menu_arr,$access_arr))|| (C('RBAC_SUPERADMIN') == $userInfo['name'])){
-                    if($menu_arr){  //如果模块存在，没有隐藏，就显示
-                        $nav_menu_arr[$nav_info_array[$navmenuValue['navid']]][] = $menu_arr;
+
+            foreach($navResult as $navKey => $navValue){
+                $where = array();
+                $where['navid'] = $navValue['navid'];
+                $navmenuResult = $navmenuModel->order('navid,menuid,sequence')->where($where)->select();
+                foreach($navmenuResult as $navmenuValue){
+                    $menu_arr = $menu_info_array[$navmenuValue['menuid']];
+                    if(in_array($menu_arr,$access_arr)){
+                        if($menu_arr){  //如果模块存在，没有隐藏，就显示
+                            $nav_menu_arr[$nav_info_array[$navmenuValue['navid']]][] = $menu_arr;
+                        }
+                    }elseif(C('RBAC_SUPERADMIN') == $userInfo['name']){
+                        if($menu_arr){  //如果模块存在，没有隐藏，就显示
+                            $nav_menu_arr[$nav_info_array[$navmenuValue['navid']]][] = $menu_arr;
+                        }
                     }
+
                 }
             }
 

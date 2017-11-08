@@ -7,6 +7,7 @@
  * Time: 上午10:21
  * 微信短信服务程序
  * 测试案例:http://localhost/rms/index.php/InterfaceServer/getCzMsg/token/lihua1
+ * 2016-09-08修改,添加sendnameapp实例
  */
 class InterfaceServerAction extends Action
 {
@@ -16,7 +17,10 @@ class InterfaceServerAction extends Action
      */
     public function YingshouGetOrderForm()
     {
-        $connect_str = C('RMS_CONNECT');
+        $domain = $this->getDomain($_REQUEST['domain']);
+        $domain = str_replace('.','',$domain);
+        $connect_str = C($domain);
+              
         // 实例化订单表
         $orderformModel = M('orderform','rms_',$connect_str);
         // 实例化订货表
@@ -36,7 +40,7 @@ class InterfaceServerAction extends Action
         $where ['status'] = 0;
         $where ['domain'] =  $this->getDomain($_REQUEST['domain']);
         $where['ordersn']  = array('neq','');
-        $orderyingshouexchangeResult = $orderyingshouexchangeModel->where($where)->limit( 1)->select();
+        $orderyingshouexchangeResult = $orderyingshouexchangeModel->where($where)->limit(100)->select();
         foreach ($orderyingshouexchangeResult as $value) {
             $ordersn = $value ['ordersn'];
             $where = array();
@@ -71,8 +75,13 @@ class InterfaceServerAction extends Action
         $orderformArray ['error'] = 0;
         // 订单号
         $orderformid = $_REQUEST ['orderformid'];
+        
+        $domain = $this->getDomain($_REQUEST['domain']);
+        $domain = str_replace('.','',$domain);
+        $connect_str = C($domain);
+        
         // 实例化订单发送表
-        $orderyingshouexchangeModel = D('Orderyingshouexchange');
+        $orderyingshouexchangeModel = M('orderyingshouexchange','rms_',$connect_str);  //D('Orderyingshouexchange'); 
         $where = array();
         $where ['id'] = $orderformid;
         $data = array();
@@ -90,7 +99,10 @@ class InterfaceServerAction extends Action
         $orderformArray = array();
         $orderformArray ['error'] = 0;
 
-        $connect_str = C('RMS_CONNECT');
+        $domain = $this->getDomain($_REQUEST['domain']);
+        $domain = str_replace('.','',$domain);
+        $connect_str = C($domain);
+        
         // 实例化订单表
         $orderformModel = M('orderform','rms_',$connect_str);
         // 实例化打印表
@@ -100,8 +112,7 @@ class InterfaceServerAction extends Action
         $where = array();
         $where ['status'] = 0;
         $where ['domain'] =  $this->getDomain($_REQUEST['domain']);
-        $orderprinter = $orderprinterModel->where($where)->limit(1)->select();
-
+        $orderprinter = $orderprinterModel->where($where)->limit(100)->select();
         foreach($orderprinter as $printerValue){
             $ordersn = $printerValue['ordersn'];
             $where = array();
@@ -139,7 +150,10 @@ class InterfaceServerAction extends Action
         $orderformArray = array();
         $orderformArray ['error'] = 0;
 
-        $connect_str = C('RMS_CONNECT');
+        $domain = $this->getDomain($_REQUEST['domain']);
+        $domain = str_replace('.','',$domain);
+        $connect_str = C($domain);
+        
         // 实例化打印表
         $orderprinterModel = M('orderprinter','rms_',$connect_str);
 
@@ -164,7 +178,9 @@ class InterfaceServerAction extends Action
             return;
         }
         $domain = $this->getDomain($_REQUEST['domain']);
-        $connect_str = C('RMS_CONNECT');
+        $domaintmp = str_replace('.','',$domain);
+        $connect_str = C($domaintmp);
+        
         // 实例化订单表
         $orderformModel = M('orderform','rms_',$connect_str);
         // 实例化订货表
@@ -182,7 +198,7 @@ class InterfaceServerAction extends Action
         // 开始查询
         $where = array();
         $where ['assisstatus'] = 0;
-        $where ['domain'] = $domain;
+        $where ['domain'] = $_REQUEST['domain'];
         $orderyingshouexchangeResult = $orderyingshouexchangeModel->where($where)->limit(1)->select();
         foreach ($orderyingshouexchangeResult as $value) {
             $ordersn = $value ['ordersn'];
@@ -218,8 +234,13 @@ class InterfaceServerAction extends Action
         $orderformArray ['error'] = 0;
         // 订单号
         $orderformid = $_REQUEST ['orderformid'];
+        
+        $domain = $this->getDomain($_REQUEST['domain']);
+        $domain = str_replace('.','',$domain);
+        $connect_str = C($domain);
+        
         // 实例化订单发送表
-        $orderyingshouexchangeModel = D('Orderyingshouexchange');
+        $orderyingshouexchangeModel = M('orderyingshouexchange','rms_',$connect_str); //D('Orderyingshouexchange');
         $where = array();
         $where ['id'] = $orderformid;
         $data = array();
@@ -238,11 +259,13 @@ class InterfaceServerAction extends Action
             return;
         }
         $domain = $this->getDomain($_REQUEST['domain']);
-        $connect_str = C('RMS_CONNECT');
+        $domain = str_replace('.','',$domain);
+        $connect_str = C($domain);
+        
         $smsmgr_model = M('smsmgr', 'rms_', $connect_str);
         $where = array();
         $where['assissend'] = 0;
-        $where['domain'] = $domain;
+        $where['domain'] = $this->getDomain($_REQUEST['domain']);
         $smsmgr = $smsmgr_model->where($where)->limit(3)->select();
         $msg_json = json_encode($smsmgr);
         echo $msg_json;
@@ -255,7 +278,10 @@ class InterfaceServerAction extends Action
         if ($_REQUEST['token'] !== 'lihua1') {
             return;
         }
-        $connect_str = C('RMS_CONNECT');
+        $domain = $this->getDomain($_REQUEST['domain']);
+        $domain = str_replace('.','',$domain);
+        $connect_str = C($domain);
+        
         $smsmgr_model = M('smsmgr', 'rms_', $connect_str);
         $smsmgrid = $_REQUEST['smsmgrid'];
         if (empty($smsmgrid)) {
@@ -280,11 +306,13 @@ class InterfaceServerAction extends Action
             return;
         }
         $domain = $this->getDomain($_REQUEST['domain']);
-        $connect_str = C('RMS_CONNECT');
+        $domain = str_replace('.','',$domain);
+        $connect_str = C($domain);
+        
         $smsmgr_model = M('smsmgr', 'rms_', $connect_str);
         $where = array();
         $where['issend'] = 0;
-        $where['domain'] = $domain;
+        $where['domain'] =  $this->getDomain($_REQUEST['domain']);
         $smsmgr = $smsmgr_model->where($where)->limit(10)->select();
         $msg_json = json_encode($smsmgr);
         echo $msg_json;
@@ -297,7 +325,10 @@ class InterfaceServerAction extends Action
         if ($_REQUEST['token'] !== 'lihua1') {
             return;
         }
-        $connect_str = C('RMS_CONNECT');
+        $domain = $this->getDomain($_REQUEST['domain']);
+        $domain = str_replace('.','',$domain);
+        $connect_str = C($domain);
+        
         $smsmgr_model = M('smsmgr', 'rms_', $connect_str);
         $smsmgrid = $_REQUEST['smsmgrid'];
         if (empty($smsmgrid)) {
@@ -311,14 +342,74 @@ class InterfaceServerAction extends Action
         echo 'ok';
     }
 
+    /***
+     * 获取sendname数据，发送json
+     * http://localhost/rms/index.php/InterfaceServer/getSendnameApp/token/lihua1/domain/4
+     * 服务器测试命令：http://nj.lihuaerp.com/index.php/InterfaceServer/getSendnameApps/token/lihua1/domain/4
+     */
+    public function getSendnameApp()
+    {
+        if ($_REQUEST['token'] !== 'lihua1') {
+            return;
+        }
+        $domain = $this->getDomain($_REQUEST['domain']);
+        $domain = str_replace('.','',$domain);
+        $connect_str = C($domain);
+
+        $sendnameapp_model = M('sendnameapp', 'rms_', $connect_str);
+        $where = array();
+        $where['state'] = 0;
+        $where['domain'] =  $this->getDomain($_REQUEST['domain']);
+        $sendnameapp = $sendnameapp_model->where($where)->limit(10)->select();
+        $sendnameapp_json = json_encode($sendnameapp);
+        echo $sendnameapp_json;
+    }
+
+    //设置sendnameapp为已经发送状态
+    //测试命令:http://localhost/rms/index.php/WeChatMsgServer/setSendnameApp/sendnameappid/281/token/lihua1
+    function setSendnameApp()
+    {
+        if ($_REQUEST['token'] !== 'lihua1') {
+            return;
+        }
+        $domain = $this->getDomain($_REQUEST['domain']);
+        $domain = str_replace('.','',$domain);
+        $connect_str = C($domain);
+
+        $sendnameapp_model = M('sendnameapp', 'rms_', $connect_str);
+        $sendnameappid = $_REQUEST['sendnameappid'];
+        if (empty($sendnameappid)) {
+            return;
+        }
+        $where = array();
+        $where['sendnameappid'] = $sendnameappid;
+        $data = array();
+        $data['state'] = 1;
+        $sendnameapp_model->where($where)->save($data);
+        var_dump($sendnameapp_model->getLastSql());
+        echo 'ok';
+    }
+
     /*
      * 返回标识
      */
     function getDomain($domain)
     {
         switch ($domain) {
+        	case 1:
+        		$domain = 'bj.lihuaerp.com';
+        		break;
+        	case 3:
+        		$domain = 'sh.lihuaerp.com';
+        		break;
             case 4:
                 $domain = 'cz.lihuaerp.com';
+                break;
+            case 8:
+                $domain = 'wx.lihuaerp.com';
+                break;
+            case 5:
+                $domain = 'sz.lihuaerp.com';
                 break;
             case 6:
                 $domain = 'nj.lihuaerp.com';

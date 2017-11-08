@@ -60,7 +60,6 @@ class OrderDistributionAction extends ModuleAction {
 			//保存页数
 			$_SESSION [$moduleName . 'listview' . 'page'] = $pageNumber;
 
-
 			// 分公司的名称
 			$userInfo = $_SESSION ['userInfo'];
 			$company = $userInfo ['company'];
@@ -130,6 +129,7 @@ class OrderDistributionAction extends ModuleAction {
 	/**
 	 * listview输入的编码处理订单
 	 * code 输入的编码
+	 * 第一次的订单分配
 	 */
 	public function listviewOrderDistributionByCode($orderformid,$code) {
 		// 取得模块的名称
@@ -168,8 +168,9 @@ class OrderDistributionAction extends ModuleAction {
 		//获得订单号
 		$where = array();
 		$where['orderformid'] = $orderformid;
-		$orderformResult = $focus->field('ordersn')->where($where)->find();
+		$orderformResult = $focus->field('ordersn,origin')->where($where)->find();
 		$ordersn = $orderformResult['ordersn'];
+		$origin  = $orderformResult['origin'];
 
 		$data = array();
 		$data ['company'] = $companyName;
@@ -180,10 +181,11 @@ class OrderDistributionAction extends ModuleAction {
 		// 同时写入日志中
 		// 记入操作到action中
 		$orderactionModel = D ( 'Orderaction' );
+		$orderactionData ['orderformid'] = $orderformid;
 		$orderactionData ['ordersn'] = $ordersn; // 订单号
-		$company = $data ['company'];
 		$orderactionData ['action'] = "订单分配给" . $companyName . "配送点";
 		$orderactionData ['logtime'] = date ( 'H:i:s' );
+		$orderactionData ['domain'] = $_SERVER['HTTP_HOST'];
 		$orderactionModel->create ();
 		$result = $orderactionModel->add ( $orderactionData );
 
@@ -196,6 +198,37 @@ class OrderDistributionAction extends ModuleAction {
 		$where = array ();
 		$where ['orderformid'] = $orderformid;
 		$orderstateModel->where ( $where )->save ( $data );
+
+		// 写入到营收状态表
+		$data = array();
+		$data ['orderformid'] = $orderformid;
+		$data ['ordersn'] = $ordersn;
+		$data ['status'] = 0;
+		$data ['assisstatus'] = 0;
+		$data ['domain'] =  $_SERVER['HTTP_HOST'];
+		$orderyingshouexchangeModel = D('Orderyingshouexchange');
+		$orderyingshouexchangeModel->create();
+		$orderyingshouexchangeModel->add($data);
+
+		//写入到网站状态接口表
+		$data = array();
+		$data['ordersn'] = $ordersn;
+		$data['type'] = 2 ;  //表示分配
+		$data['content'] = "订单分配给" . $companyName . "配送点";
+		$data['date'] = date('Y-m-d H:i:s');
+		$data['origin'] = $origin;
+		$data['domain'] = $_SERVER['HTTP_HOST'];
+		$webstatusModel = D('Webstatus');
+		$webstatusModel->create();
+		$webstatusModel->add($data);
+
+		//发票处理
+		$invoiceModel = D('Invoice');
+		$where = array();
+		$where['ordersn'] = $ordersn;
+		$data = array();
+		$data['company']= $companyName;
+		$invoiceModel->where($where)->save($data);
 
 
 		return;
@@ -245,33 +278,37 @@ class OrderDistributionAction extends ModuleAction {
 			// 生成list字段列表
 			$listFields = $focus->serchListFields;
 			// 模块的ID
-			$moduleId = strtolower($moduleName) . 'id';
+			$moduleId = 'orderformid';
 
 			// 建立查询条件
 			$where = array();
 			$searchText = urldecode($_REQUEST ['searchTextAddress']); // 查询内容
 			if (!empty ( $searchText )) {
-				$where ['address'] = array (
-					'like',
-					'%' . $searchText . '%'
-				);
-				$where ['_logic'] = 'and';
-				$_SESSION ['searchTextAddress' . $moduleName] = $searchText;
-			}elseif($_SESSION ['searchTextAddress' . $moduleName]){
-				$searchText = $_SESSION ['searchTextAddress' . $moduleName]; // 查询内容
-					$where ['address'] = array (
+				if($searchText == '全部'){
+					$where ['address'] = array(
+						'like',
+						'%%'
+					);
+					$where ['_logic'] = 'and';
+					unset($_SESSION ['searchTextAddress' . $moduleName]);
+				}else {
+					$where ['address'] = array(
 						'like',
 						'%' . $searchText . '%'
 					);
 					$where ['_logic'] = 'and';
+					$_SESSION ['searchTextAddress' . $moduleName] = $searchText;
+				}
 			}else{
-				$where ['address'] = array (
-					'like',
-					'%%'
-				);
-				$where ['_logic'] = 'and';
+				$searchText = $_SESSION ['searchTextAddress' . $moduleName]; // 查询内容
+				if (!empty($searchText)) {
+					$where ['address'] = array(
+						'like',
+						'%' . $searchText . '%'
+					);
+					$where ['_logic'] = 'and';
+				}
 			}
-
 			$where ['domain'] = $_SERVER ['HTTP_HOST'];
 
 
@@ -305,7 +342,7 @@ class OrderDistributionAction extends ModuleAction {
 			}
 			array_unshift ( $selectFields, $moduleId );
 
-			$listResult = $focus->where($where)->field($selectFields)->limit($Page->firstRow . ',' . $Page->listRows)->select();
+			$listResult = $focus->where($where)->field($selectFields)->limit($Page->firstRow . ',' . $Page->listRows)->order("$moduleId desc")->select();
 			$orderHandleArray ['total'] = $total;
 			if (count($listResult) > 0) {
 				$orderHandleArray  = $listResult;
@@ -320,8 +357,6 @@ class OrderDistributionAction extends ModuleAction {
 			// 取得模块的名称
 			$moduleName = $this->getActionName();
 			$this->assign('moduleName', $moduleName); // 模块名称
-			//销毁session
-			unset($_SESSION ['searchTextAddress' . $moduleName]);
 
 			// 启动当前模块
 			$focus = D($moduleName);
@@ -396,7 +431,7 @@ class OrderDistributionAction extends ModuleAction {
 			// 生成list字段列表
 			$listFields = $focus->serchListFields;
 			// 模块的ID
-			$moduleId = strtolower($moduleName) . 'id';
+			$moduleId =  'orderformid';
 
 			// 建立查询条件
 			$where = array();
@@ -406,15 +441,12 @@ class OrderDistributionAction extends ModuleAction {
 				$where ['company'] = $searchText;
 				$where ['_logic'] = 'and';
 				$_SESSION ['searchTextCompany' . $moduleName] = $searchText;
-			}elseif(!empty($_SESSION ['searchTextCompany' . $moduleName])){
+			}else{
 				$searchText = $_SESSION ['searchTextCompany' . $moduleName]; // 查询内容
 				if(!empty($searchText)) {
 					$where ['company'] = $searchText;
 					$where ['_logic'] = 'and';
 				}
-			}else{
-				$where ['company'] = 'xxxxx';
-				$where ['_logic'] = 'and';
 			}
 
 			$where ['domain'] = $_SERVER ['HTTP_HOST'];
@@ -447,7 +479,7 @@ class OrderDistributionAction extends ModuleAction {
 				$selectFields[] = $key;
 			}
 			array_unshift ( $selectFields, $moduleId );
-			$listResult = $focus->where($where)->field($selectFields)->limit($Page->firstRow . ',' . $Page->listRows)->select();
+			$listResult = $focus->where($where)->field($selectFields)->limit($Page->firstRow . ',' . $Page->listRows)->order("$moduleId desc")->select();
 
 			$orderHandleArray ['total'] = $total;
 			if (count($listResult) > 0) {
@@ -462,8 +494,6 @@ class OrderDistributionAction extends ModuleAction {
 			// 取得模块的名称
 			$moduleName = $this->getActionName();
 			$this->assign('moduleName', $moduleName); // 模块名称
-			//删除session
-			unset($_SESSION ['searchTextCompanuy' . $moduleName]);
 
 			// 启动当前模块
 			$focus = D($moduleName);
@@ -550,7 +580,7 @@ class OrderDistributionAction extends ModuleAction {
 			// 生成list字段列表
 			$listFields = $focus->searchListFields;
 			// 模块的ID
-			$moduleId = $focus->getPk();
+			$moduleId = 'orderformid';  // $focus->getPk();
 			// 加入模块id到listHeader中
 			// array_unshift($listFields,$moduleNameId);
 			$listHeader = $listFields;
@@ -558,43 +588,40 @@ class OrderDistributionAction extends ModuleAction {
 			// 建立查询条件
 			$where = array ();
 			$searchText = urldecode($_REQUEST ['searchTextOther']); // 查询内容
-
-			// 建立查询条件
-			$where = array();
-			$searchText = urldecode($_REQUEST ['searchTextAddress']); // 查询内容
 			if (!empty ( $searchText )) {
-				foreach ( $focus->searchFields as $value ) {
-					$where [$value] = array (
-						'like',
-						'%' . $searchText . '%'
-					);
-				}
-				$where ['_logic'] = 'OR';
-				$map['_complex'] = $where;
-				$_SESSION ['searchTextOther' . $moduleName] = $searchText;
-			}elseif($_SESSION ['searchTextOther' . $moduleName]){
-				$searchText = $_SESSION ['searchTextOther' . $moduleName]; // 查询内容
-				foreach ( $focus->searchFields as $value ) {
-					$where [$value] = array (
-						'like',
-						'%' . $searchText . '%'
-					);
-				}
-				$where ['_logic'] = 'OR';
-				$map['_complex'] = $where;
-			}else{
-				foreach ( $focus->searchFields as $value ) {
-					$where [$value] = array (
+				if($searchText == '全部'){
+					$where ['address'] = array(
 						'like',
 						'%%'
 					);
+					unset($_SESSION ['searchTextOther' . $moduleName]);
+				}else {
+					foreach ($focus->searchFields as $value) {
+						$where [$value] = array(
+							'like',
+							'%' . $searchText . '%'
+						);
+					}
+					$where ['_logic'] = 'OR';
+					$map['_complex'] = $where;
+					$_SESSION ['searchTextOther' . $moduleName] = $searchText;
 				}
-				$where ['_logic'] = 'OR';
-				$map['_complex'] = $where;
+			}else{
+				if(isset($_SESSION ['searchTextOther' . $moduleName])) {
+					$searchText = $_SESSION ['searchTextOther' . $moduleName]; // 查询内容
+					foreach ($focus->searchFields as $value) {
+						$where [$value] = array(
+							'like',
+							'%' . $searchText . '%'
+						);
+					}
+					$where ['_logic'] = 'OR';
+					$map['_complex'] = $where;
+				}
 			}
 			$map['domain'] = $_SERVER['HTTP_HOST'];
 
-			$total = $focus->where($where)->count(); // 查询满足要求的总记录数
+			$total = $focus->where($map)->count(); // 查询满足要求的总记录数
 
 			//使用cookie读取rows
 			$listMaxRows = $_COOKIE['listMaxRows'];
@@ -616,14 +643,14 @@ class OrderDistributionAction extends ModuleAction {
 			$Page = new Page ($total, $listMaxRows);
 
 			//保存页数
-			$_SESSION [ 'OrderDistributionsearchviewother' . 'page'] = 3; // $pageNumber;
+			$_SESSION [ 'OrderDistributionsearchviewother' . 'page'] =  $pageNumber;
 
 			// 查询模块的数据
 			foreach($listFields as $key => $value) {
 				$selectFields[] = $key;
 			}
 			array_unshift ( $selectFields, $moduleId );
-			$listResult = $focus->where($where)->field($selectFields)->limit($Page->firstRow . ',' . $Page->listRows)->select();
+			$listResult = $focus->where($map)->field($selectFields)->limit($Page->firstRow . ',' . $Page->listRows)->order("$moduleId desc")->select();
 
 			$orderHandleArray ['total'] = $total;
 			if (count($listResult) > 0) {
@@ -655,17 +682,8 @@ class OrderDistributionAction extends ModuleAction {
 			$listHeader = $listFields;
 
 			// 建立查询条件
-			$where = array ();
 			$searchText = $_REQUEST ['searchTextOther']; // 查询内容
-			foreach ( $focus->searchFields as $value ) {
-				$where [$value] = array (
-					'like',
-					'%' . $searchText . '%'
-				);
-			}
-			$where ['_logic'] = 'OR';
-			$map['_complex'] = $where;
-			$map['domain'] = $_SERVER['HTTP_HOST'];
+
 
 			$this->assign ( 'searchTextValue', $searchText );
 
@@ -692,6 +710,140 @@ class OrderDistributionAction extends ModuleAction {
 			}
 
 			$this->display ( 'OrderDistribution/searchviewother' ); // 查询的结果显示
+		}
+
+	}
+
+
+	/**
+	 * 显示下午的订单
+	 */
+	public function orderNumberAp(){
+		if(IS_POST){
+			// 取得模块的名称
+			$moduleName = $this->getActionName();
+			$this->assign('moduleName', $moduleName); // 模块名称
+
+			// 启动当前模块
+			$focus = D($moduleName);
+
+			// 取得对应的导航名称
+			$navName = $focus->getNavName($moduleName);
+			$this->assign('navName', $navName); // 导航民
+			$this->assign('operName', '下午订单');
+
+			// 生成list字段列表
+			$listFields = $focus->serchListFields;
+			// 模块的ID
+			$moduleId =  'orderformid';
+
+			// 建立查询条件
+			$where = array();
+			$searchText =  '下午';
+
+			if (!empty ( $searchText )) {
+				$where ['ap'] = '下午';
+				$where ['_logic'] = 'and';
+				$_SESSION ['searchTextAp' . $moduleName] = '下午';
+			}else{
+				$searchText = $_SESSION ['searchTextAp' . $moduleName]; // 查询内容
+				if(!empty($searchText)) {
+					$where ['ap'] = $searchText;
+					$where ['_logic'] = 'and';
+				}
+			}
+
+			$where ['domain'] = $_SERVER ['HTTP_HOST'];
+
+			$total = $focus->where($where)->count(); // 查询满足要求的总记录数
+			//var_dump($focus->getLastSql());
+
+			//使用cookie读取rows
+			$listMaxRows = $_COOKIE['listMaxRows'];
+			if(!empty($listMaxRows)){
+
+			}else{
+				$listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
+			}
+
+			//订单配送还要显示两个统计数据
+			$listMaxRows = $listMaxRows - 1;
+
+			// 导入分页类
+			import('ORG.Util.Page'); // 导入分页类
+			$pageNumber = $_REQUEST ['page'];  	// 取得显示页数
+			// 取得页数
+			$_GET ['p'] = $pageNumber;
+			$Page = new Page ($total, $listMaxRows);
+
+			//保存页数
+			$_SESSION [$moduleName . 'searchviewAp' . 'page'] = $pageNumber;
+
+			// 查询模块的数据
+			foreach($listFields as $key => $value) {
+				$selectFields[] = $key;
+			}
+			array_unshift ( $selectFields, $moduleId );
+			$listResult = $focus->where($where)->field($selectFields)->limit($Page->firstRow . ',' . $Page->listRows)->order("$moduleId desc")->select();
+			//var_dump($focus->getLastSql());
+
+			$orderHandleArray ['total'] = $total;
+			if (count($listResult) > 0) {
+				$orderHandleArray  = $listResult;
+			} else {
+				$orderHandleArray  = array();
+			}
+			$data = array('page'=>$Page->firstRow,'total' => $total, 'rows' => $orderHandleArray,'sql' => $focus->getLastSql());
+			$this->ajaxReturn($data, 'JSON');
+
+		}else{
+			// 取得模块的名称
+			$moduleName = $this->getActionName();
+			$this->assign('moduleName', $moduleName); // 模块名称
+
+			// 启动当前模块
+			$focus = D($moduleName);
+
+			// 取得对应的导航名称
+			$navName = $focus->getNavName($moduleName);
+			$this->assign('navName', $navName); // 导航民
+			$this->assign('operName', '下午订单');
+
+			// 生成list字段列表
+			$listFields = $focus->searchListFields;
+			// 模块的ID
+			$moduleId = $focus->getPk();
+			// 加入模块id到listHeader中
+			// array_unshift($listFields,$moduleNameId);
+			$listHeader = $listFields;
+
+			// 建立查询条件
+			$where = array();
+			$searchCompany = $_REQUEST ['searchTextCompany']; // 查询内容
+
+			$url = U('OrderDistribution/orderNumberAp', array('searchTextAp' => '下午'));
+			$this->assign('url',$url);
+			// 加入模块id到listHeader中
+			// array_unshift($listFields,$moduleNameId);
+			$listHeader = $listFields;
+			$this->assign("listHeader", $listHeader); // 列表头
+			$this->assign('returnAction', 'searchviewCompany'); // 定义返回的方法
+
+			//如果存在页数,获取
+			if(isset($_REQUEST['pagetype'])){
+				$pageNumber = $_SESSION[$moduleName . $_REQUEST['pagetype'] . 'page'];
+			}else{
+				$pageNumber = 1;
+			}
+			$this->assign( 'pagenumber',$pageNumber);
+			//是否存在选中的行号
+			if(isset($_REQUEST['rowIndex'])){
+				$this->assign ( 'rowIndex',$_REQUEST['rowIndex']);
+			}else{
+				$this->assign ( 'rowIndex',0);
+			}
+
+			$this->display('OrderDistribution/ordernumberap'); // 查询的结果显示
 		}
 
 	}
@@ -803,11 +955,11 @@ class OrderDistributionAction extends ModuleAction {
 		$ordermonitModel = D ( 'Ordermonit' );
 		$where = array ();
 		$where ['name'] = '全部';
+		$where ['domain'] = $_SERVER['HTTP_HOST'];
 		$ordermonit = $ordermonitModel->where ( $where )->select ();
 		if (empty ( $ordermonit )) {
 			$ordermonit = array ();
 		}
-		// echo $ordermonit_model->getLastSql();
 		$this->ajaxReturn ( $ordermonit, 'JSON' );
 	}
 	
@@ -912,8 +1064,10 @@ class OrderDistributionAction extends ModuleAction {
 		//获得订单号
 		$where = array();
 		$where['orderformid'] = $orderformid;
-		$orderformResult = $focus->field('ordersn,company')->where($where)->find();
+		$orderformResult = $focus->field('ordersn,company,origin')->where($where)->find();
 		$ordersn = $orderformResult['ordersn'];
+		$origin  = $orderformResult['origin'];
+		if(empty($origin)) $origin = '';
 
 		if(!empty($orderformResult['company'])){
 			//已经分配过了订单
@@ -929,7 +1083,6 @@ class OrderDistributionAction extends ModuleAction {
 			$orderactionModel = D ( 'Orderaction' );
 			$orderactionData ['orderformid'] = $orderformid; // 订单号
 			$orderactionData ['ordersn'] = $ordersn; // 订单号
-			$company = $data ['company'];
 			$orderactionData ['action'] = "订单从".$orderformResult['company']."重新分配给" . $companyName . "配送点";
 			$orderactionData ['logtime'] = date ( 'H:i:s' );
 			$orderactionData ['domain'] = $_SERVER['HTTP_HOST'];
@@ -948,7 +1101,6 @@ class OrderDistributionAction extends ModuleAction {
 			$orderactionModel = D ( 'Orderaction' );
 			$orderactionData ['orderformid'] = $orderformid; // 订单号
 			$orderactionData ['ordersn'] = $ordersn; // 订单号
-			$company = $data ['company'];
 			$orderactionData ['action'] = "订单分配给" . $companyName . "配送点";
 			$orderactionData ['logtime'] = date ( 'H:i:s' );
 			$orderactionData ['domain'] = $_SERVER['HTTP_HOST'];
@@ -956,9 +1108,6 @@ class OrderDistributionAction extends ModuleAction {
 			$result = $orderactionModel->add ( $orderactionData );
 		}
 
-
-
-		
 		// 写入到状态表中
 		$orderstateModel = D ( 'Orderstate' );
 		$data = array ();
@@ -968,11 +1117,41 @@ class OrderDistributionAction extends ModuleAction {
 		$where = array ();
 		$where ['orderformid'] = $orderformid;
 		$orderstateModel->where ( $where )->save ( $data );
-		
+
+		// 写入到营收状态表
+		$data = array();
+		$data ['orderformid'] = $orderformid;
+		$data ['ordersn'] = $ordersn;
+		$data ['status'] = 0;
+		$data ['assisstatus'] = 0;
+		$data ['domain'] =  $_SERVER['HTTP_HOST'];
+		$orderyingshouexchangeModel = D('Orderyingshouexchange');
+		$orderyingshouexchangeModel->create();
+		$orderyingshouexchangeModel->add($data);
+
+		//写入到网站状态接口表
+		$data = array();
+		$data['ordersn'] = $ordersn;
+		$data['type'] = 2 ;  //表示分配
+		$data['content'] = "订单分配给" . $companyName . "配送点";
+		$data['date'] = date('Y-m-d H:i:s');
+		$data['origin'] = $origin;
+		$data['domain'] = $_SERVER['HTTP_HOST'];
+		$webstatusModel = D('Webstatus');
+		$webstatusModel->create();
+		$webstatusModel->add($data);
+
+		//发票处理
+		$invoiceModel = D('Invoice');
+		$where = array();
+		$where['ordersn'] = $ordersn;
+		$data = array();
+		$data['company']= $companyName;
+		$invoiceModel->where($where)->save($data);
 
 		// 定义返回
 		$returnInfo ['success'] = 'success';
-		$returnInfo ['data'] = $companyName;
+		$returnInfo ['data'] = $invoiceModel->getLastSql(); //$webstatusModel->getLastSql(); //$companyName;
 		$this->ajaxReturn ( $returnInfo, 'JSON' );
 	}
 	
@@ -980,8 +1159,8 @@ class OrderDistributionAction extends ModuleAction {
 	public function getCompanyByCode() {
 		
 		// 获得处理过了的编码
-		$code = $_REQUEST ['code'];
-		
+		$code = substr($_SERVER['QUERY_STRING'],-1);
+
 		// 定义返回的数组
 		$returnInfo = array ();
 		
@@ -993,6 +1172,7 @@ class OrderDistributionAction extends ModuleAction {
 		$where ['distributionCode'] = $code; // 配送点的编号
 		$where ['domain'] = $_SERVER ['HTTP_HOST'];
 		$companymgrResult = $companyMgrModel->field ( 'name,distributioncode' )->where ( $where )->find ();
+
 		$companyName = array ();
 		if ($companymgrResult) {
 			$companyName ['company'] = $companymgrResult ['name'];
@@ -1037,6 +1217,7 @@ class OrderDistributionAction extends ModuleAction {
 		$data ['paidmoney'] = 0;
 		$data ['shouldmoney'] = 0;
 		$data ['shippingmoney'] = 0;
+		$data ['goodsmoney'] = 0;
 		$data ['ordertxt'] = '';
 		$focus->where ( $where )->save ( $data );
 		
@@ -1064,6 +1245,18 @@ class OrderDistributionAction extends ModuleAction {
 		$where = array ();
 		$where ['orderformid'] = $record;
 		$orderstateModel->where ( $where )->save ( $data );
+
+		// 写入到营收状态表
+		$data = array();
+		$data ['orderformid'] = $record;
+		$data ['ordersn'] = $ordersn;
+		$data ['status'] = 0;
+		$data ['assisstatus'] = 0;
+		$data ['domain'] =  $_SERVER['HTTP_HOST'];
+		$orderyingshouexchangeModel = D('Orderyingshouexchange');
+		$orderyingshouexchangeModel->create();
+		$orderyingshouexchangeModel->add($data);
+
 
 		$pagetype = $_REQUEST['pagetype'];
 		// 生成查看的url
@@ -1113,6 +1306,29 @@ class OrderDistributionAction extends ModuleAction {
 		$orderaction = $orderaction_model->where("orderformid=$record")->select(); //
 		$this->assign('orderaction', $orderaction);
 
+	}
+
+	/**
+	 * 统计下午订单数量和金额
+	 */
+	public function getOrderNumberAp(){
+
+		//取得订单数量
+		$orderform_model = D('Orderform');
+		$where = array();
+		$where['ap'] = '下午';
+		$where['domain'] = $_SERVER['HTTP_HOST'];
+		$ordernumber = $orderform_model->where($where)->count();
+
+		//取得订单金额
+		$ordermoney = $orderform_model->where($where)->sum('totalmoney');
+
+
+		$orderNumberAp = array(
+			'number' => $ordernumber,
+			'money' =>  $ordermoney
+		);
+		$this->ajaxReturn ( $orderNumberAp, 'JSON' );
 	}
 }
 

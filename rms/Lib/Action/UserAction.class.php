@@ -169,7 +169,9 @@
                 $this->roleCurrent = $result;
             }
             //返回所有的角色
-            $this->role = $roleModle->select();
+            $where = array();
+            $where['domain'] = $_SERVER['HTTP_HOST'];
+            $this->role = $roleModle->where($where)->select();
 
         }
 
@@ -223,5 +225,36 @@
             $userModel->where("userid=$record")->save($data);
         }
 
+        //修改用户密码页面
+        public function changeCodeView(){
+
+            //返回用户userid
+            $userid =  $_SESSION['userid'];
+            $this->assign('recordchangecode',$userid);
+
+            //取得模块的名称
+            $moduleName = $this->getActionName();
+            $this->display($moduleName.'/changecodeview');
+        }
+
+        //修改用户密码
+        public function changeCode(){
+            $userId = $_REQUEST['record'];
+            $password = $_REQUEST['password'];
+
+            //取得模块的名称
+            $moduleName = $this->getActionName();
+            $this->assign('moduleName',$moduleName);   //模块名称
+
+            //启动当前模块的模型
+            $focus = D($moduleName);
+
+            $where = array();
+            $where['userid'] = $userId;
+            $data = array();
+            $data['password'] = $password;
+            $focus->where($where)->save($data);
+
+        }
     }
 ?>

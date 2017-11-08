@@ -169,6 +169,20 @@ class ElemeAction extends ModuleAction
     }
 
     /**
+     * 改变商户的下单模式
+     * 命令:http://localhost/rms/index.php?s=/Eleme/changeOrderMode
+     */
+    public  function changeOrderMode(){
+
+        import('@.Extend.Eleme');
+        $ElemeApi = new Eleme();
+        $resp = $ElemeApi->changeOrderMode();
+        //$this->ajaxReturn($resp);
+        echo '<pre>';
+        var_dump($resp);
+    }
+
+    /**
      * 获得商户下面所有门店的信息
      */
     public function shopGetOwn(){

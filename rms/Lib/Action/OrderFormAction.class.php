@@ -46,6 +46,10 @@ class OrderFormAction extends ModuleAction
             foreach ($listFields as $key => $value) {
                 $selectFields[] = $key;
             }
+            $selectFields[] = 'longitude';
+            $selectFields[] = 'latitude';
+            $selectFields[] = 'sendlongitude';
+            $selectFields[] = 'sendlatitude';
             array_unshift($selectFields, $moduleId);
 
             $listResult = $focus->where($where)->field($selectFields)->limit($Page->firstRow . ',' . $Page->listRows)->order("$moduleId desc")->select(); //lastdatetime desc,
@@ -104,6 +108,26 @@ class OrderFormAction extends ModuleAction
                     'width' => $value['width']
                 );
             }
+
+            foreach ($listFields as $key => $value) {
+                $header = L($key);
+                if($key == 'sendname'){
+                    $datagrid ['fields'] [$header] = array(
+                        'field' => $key,
+                        'align' => $value['align'],
+                        'width' => $value['width'],
+                        'formatter' => $moduleName . 'ListviewModule.sendname'
+                    );
+                }else{
+                    $datagrid ['fields'] [$header] = array(
+                        'field' => $key,
+                        'align' => $value['align'],
+                        'width' => $value['width']
+                    );
+                }
+
+            }
+
             $datagrid ['fields'] ['操作'] = array(
                 'field' => 'id',
                 'width' => 20,
@@ -169,7 +193,7 @@ class OrderFormAction extends ModuleAction
             $this->assign('operName', '地址查询操作');
 
             // 生成list字段列表
-            $listFields = $focus->listFields;
+            $listFields = $focus->searchlistFields;
             // 模块的ID
             $moduleId = strtolower($moduleName) . 'id';
 
@@ -177,15 +201,26 @@ class OrderFormAction extends ModuleAction
             $where = array();
             $searchText = urldecode($_REQUEST ['searchTextAddress']); // 查询内容
             if (!empty ($searchText)) {
-                $where ['address'] = array(
-                    'like',
-                    '%' . $searchText . '%'
-                );
-                $where ['_logic'] = 'and';
+                if($searchText == '全部'){
+                    $where ['address'] = array(
+                        'like',
+                        '%%'
+                    );
+                    $where ['_logic'] = 'and';
+                    unset($_SESSION ['searchAddress' . $moduleName]);
+                }else{
+                    $where ['address'] = array(
+                        'like',
+                        '%' . $searchText . '%'
+                    );
+                    $this->assign('searchAddressValue', $searchText);
+                    $_SESSION ['searchAddress' . $moduleName ] = $searchText;
+                    $where ['_logic'] = 'and';
+                }
+
             } else {
-                $searchText = $_SESSION ['searchText' . $moduleName]; // 查询内容
+                $searchText = $_SESSION ['searchAddress' . $moduleName]; // 查询内容
                 if (!empty($searchText)) {
-                    $searchText = $_SESSION ['searchText' . $moduleName];
                     $where ['address'] = array(
                         'like',
                         '%' . $searchText . '%'
@@ -225,13 +260,13 @@ class OrderFormAction extends ModuleAction
 
             $listResult = $focus->where($where)->field($selectFields)->limit($Page->firstRow . ',' . $Page->listRows)->order("$moduleId desc")->select();
 
-            $orderHandleArray ['total'] = $total;
-            if (count($listResult) > 0) {
-                $orderHandleArray ['rows'] = $listResult;
+
+            if ($total > 0) {
+                $orderHandleArray  = $listResult;
             } else {
-                $orderHandleArray ['rows'] = array();
+                $orderHandleArray  = array();
             }
-            $data = array('total' => $total, 'rows' => $listResult);
+            $data = array('total' => $total, 'rows' =>  $orderHandleArray);
             $this->ajaxReturn($data);
 
         } else {
@@ -267,11 +302,21 @@ class OrderFormAction extends ModuleAction
             );
             foreach ($listFields as $key => $value) {
                 $header = L($key);
-                $datagrid ['fields'] [$header] = array(
-                    'field' => $key,
-                    'align' => $value['align'],
-                    'width' => $value['width']
-                );
+                if($key == 'sendname'){
+                    $datagrid ['fields'] [$header] = array(
+                        'field' => $key,
+                        'align' => $value['align'],
+                        'width' => $value['width'],
+                        'formatter' => $moduleName . 'SearchviewAddressModule.sendname'
+                    );
+                }else{
+                    $datagrid ['fields'] [$header] = array(
+                        'field' => $key,
+                        'align' => $value['align'],
+                        'width' => $value['width']
+                    );
+                }
+
             }
             $datagrid ['fields'] ['操作'] = array(
                 'field' => 'id',
@@ -328,7 +373,7 @@ class OrderFormAction extends ModuleAction
             $focus = D($moduleName);
 
             // 生成list字段列表
-            $listFields = $focus->listFields;
+            $listFields = $focus->searchListFields;
             // 模块的ID
             $moduleId = strtolower($moduleName) . 'id';
 
@@ -337,12 +382,21 @@ class OrderFormAction extends ModuleAction
             // 查询内容
             $searchTelphone = $_REQUEST ['searchTextTelphone'];
             if (isset ($searchTelphone)) {
-                $where ['telphone'] = array(
-                    'like',
-                    '%' . $searchTelphone . '%'
-                );
-                $this->assign('searchTelphoneValue', $searchTelphone);
-                $_SESSION ['searchTelphone' . $moduleName . 'Telphone'] = $searchTelphone;
+                if($searchTelphone == '全部'){
+                    $where ['telphone'] = array(
+                        'like',
+                        '%%'
+                    );
+                    unset($_SESSION ['searchText' . $moduleName . 'Telphone']);
+                }else{
+                    $where ['telphone'] = array(
+                        'like',
+                        '%' . $searchTelphone . '%'
+                    );
+                    $this->assign('searchTelphoneValue', $searchTelphone);
+                    $_SESSION ['searchTelphone' . $moduleName . 'Telphone'] = $searchTelphone;
+                }
+
             } else {
                 if (isset ($_SESSION ['searchTelphone' . $moduleName . 'Telphone'])) {
                     $where ['telphone'] = array(
@@ -415,7 +469,7 @@ class OrderFormAction extends ModuleAction
             $this->assign('operName', '电话查询操作');
 
             // 生成list字段列表
-            $listFields = $focus->listFields;
+            $listFields = $focus->searchListFields;
             // 模块的ID
             $moduleId = strtolower($moduleName) . 'id';
 
@@ -435,13 +489,24 @@ class OrderFormAction extends ModuleAction
                     'pageNumber' => $pageNumber
                 )
             );
+
             foreach ($listFields as $key => $value) {
                 $header = L($key);
-                $datagrid ['fields'] [$header] = array(
-                    'field' => $key,
-                    'align' => $value['align'],
-                    'width' => $value['width']
-                );
+                if($key == 'sendname'){
+                    $datagrid ['fields'] [$header] = array(
+                        'field' => $key,
+                        'align' => $value['align'],
+                        'width' => $value['width'],
+                        'formatter' => $moduleName . 'SearchviewTelphoneModule.sendname'
+                    );
+                }else{
+                    $datagrid ['fields'] [$header] = array(
+                        'field' => $key,
+                        'align' => $value['align'],
+                        'width' => $value['width']
+                    );
+                }
+
             }
             $datagrid ['fields'] ['操作'] = array(
                 'field' => 'id',
@@ -449,6 +514,7 @@ class OrderFormAction extends ModuleAction
                 'align' => 'center',
                 'formatter' => $moduleName . 'SearchviewTelphoneModule.operate'
             );
+
             $this->assign('datagrid', $datagrid);
 
             // 加入模块id到listHeader中
@@ -653,13 +719,22 @@ class OrderFormAction extends ModuleAction
             $where = array();
             $searchText = $_REQUEST ['searchTextOther']; // 查询内容
             if (isset ($searchText)) {
-                foreach ($focus->searchFields as $value) {
-                    $where [$value] = array(
+                if($searchText == '全部'){
+                    $where ['address'] = array(
                         'like',
-                        '%' . $searchText . '%'
+                        '%%'
                     );
+                    unset($_SESSION ['searchText' . $moduleName . 'Other']);
+                }else{
+                    foreach ($focus->searchFields as $value) {
+                        $where [$value] = array(
+                            'like',
+                            '%' . $searchText . '%'
+                        );
+                    }
+                    $_SESSION ['searchText' . $moduleName . 'Other'] = $searchText;
                 }
-                $_SESSION ['searchText' . $moduleName . 'Other'] = $searchText;
+
             } else {
                 if (isset ($_SESSION ['searchText' . $moduleName . 'Other'])) {
                     $searchText = $_SESSION ['searchText' . $moduleName . 'Other'];
@@ -760,13 +835,24 @@ class OrderFormAction extends ModuleAction
                     'pageNumber' => $pageNumber
                 )
             );
+
             foreach ($listFields as $key => $value) {
                 $header = L($key);
-                $datagrid ['fields'] [$header] = array(
-                    'field' => $key,
-                    'align' => $value['align'],
-                    'width' => $value['width']
-                );
+                if($key == 'sendname'){
+                    $datagrid ['fields'] [$header] = array(
+                        'field' => $key,
+                        'align' => $value['align'],
+                        'width' => $value['width'],
+                        'formatter' => $moduleName . 'SearchviewOtherModule.sendname'
+                    );
+                }else{
+                    $datagrid ['fields'] [$header] = array(
+                        'field' => $key,
+                        'align' => $value['align'],
+                        'width' => $value['width']
+                    );
+                }
+
             }
 
             $datagrid ['fields'] ['操作'] = array(
@@ -872,11 +958,16 @@ class OrderFormAction extends ModuleAction
 
         $where = array();
         $where ['orderformid'] = $record;
+        // 取得原来订单的情况
+        $orderformResult = $focus->where($where)->find();
+        $ordersn= $orderformResult['ordersn'];
 
         //删除订餐内容
         $orderproductsModel =D('orderproducts');
         $orderproductsModel->where($where)->delete();
 
+        $where = array();
+        $where ['orderformid'] = $record;
         // 对订单状态处理,如果订单已经分配到分公司，只能是退餐，如果是未分配，也写退餐，让联络员来处理
         $data = array();
         $data ['state'] = '退餐';
@@ -884,6 +975,7 @@ class OrderFormAction extends ModuleAction
         $data ['paidmoney'] = 0;
         $data ['shouldmoney'] = 0;
         $data ['shippingmoney'] = 0;
+        $data ['goodsmoney'] = 0;
         $data ['ordertxt'] = '';
         $focus->where($where)->save($data);
 
@@ -893,6 +985,8 @@ class OrderFormAction extends ModuleAction
         $data ['cancel'] = 1;
         $data ['canceltime'] = date('Y-m-d H:i:s');
         $data ['cancelcontent'] = $userName . ' ' . $cancelcontent;
+        $data ['orderformid'] = $record;
+        $data ['ordersn'] = $ordersn;
         $orderStateModel->where($where)->save($data);
 
         // 写入订单日志
@@ -901,7 +995,21 @@ class OrderFormAction extends ModuleAction
         $data ['orderformid'] = $record;
         $data ['action'] = $userName . '将订单退餐,原因：' . $cancelcontent; // 写入日志内容
         $data ['logtime'] = date('Y-m-d H:i:s'); // 记入时间
+        $data ['orderformid'] = $record;
+        $data ['ordersn'] = $ordersn;
         $orderActionModel->add($data);
+
+        // 写入到营收状态表
+        $data = array();
+        $data ['orderformid'] = $record;
+        $data ['ordersn'] = $ordersn;
+        $data ['status'] = 0;
+        $data ['assisstatus'] = 0;
+        $data ['domain'] =  $_SERVER['HTTP_HOST'];
+        $orderyingshouexchangeModel = D('Orderyingshouexchange');
+        $orderyingshouexchangeModel->create();
+        $orderyingshouexchangeModel->add($data);
+
 
         $pagetype = $_REQUEST['pagetype'];
         // 生成查看的url
@@ -938,7 +1046,10 @@ class OrderFormAction extends ModuleAction
         $where ['orderformid'] = $record;
         // 取得原来订单的情况
         $orderformResult = $focus->where($where)->find();
+        $ordersn = $orderformResult['ordersn'];
 
+        $where = array();
+        $where ['orderformid'] = $record;
         // 对订单状态处理
         $data = array();
         $data ['state'] = '订餐';
@@ -958,6 +1069,7 @@ class OrderFormAction extends ModuleAction
         $orderActionModel = D('Orderaction');
         $data = array();
         $data ['orderformid'] = $record;
+        $data ['ordersn'] = $ordersn;
         $data ['action'] = $userName . '将订单修改为订餐状态。'; // 写入日志内容
         $data ['logtime'] = date('Y-m-d H:i:s'); // 记入时间
         $orderActionModel->add($data);
@@ -973,10 +1085,37 @@ class OrderFormAction extends ModuleAction
     {
         // 分公司的数据
         $companymgr_model = D('companymgr');
-        $companymgr = $companymgr_model->field('name')->select();
+        $where = array();
+        $where['telphoneauto'] = '营业';
+        $where['domain'] = $_SERVER['HTTP_HOST'];
+        $companymgr = $companymgr_model->field('name')->where($where)->select();
         // 在company字段中写入值
-        $this->assign('company', $companymgr);
+        $this->assign('companymgr', $companymgr);
 
+        //传递城市
+        switch($_SERVER['HTTP_HOST']){
+            case 'bj.lihuaerp.com':
+                $this->assign('city','北京');
+                break;
+            case 'nj.lihuaerp.com':
+                $this->assign('city','南京');
+                break;
+            case 'cz.lihuaerp.com':
+                $this->assign('city','常州');
+                break;
+            case 'wx.lihuaerp.com':
+                $this->assign('city','无锡');
+                break;
+            case 'sz.lihuaerp.com':
+                $this->assign('city','苏州');
+                break;
+            case 'sh.lihuaerp.com':
+                $this->assign('city','上海');
+                break;
+            case 'gz.lihuaerp.com':
+                $this->assign('city','广州');
+                break;
+        }
 
         // 查询送餐方式和送餐费的设置
         $this->assign('shippingname', '分公司配送');
@@ -1001,11 +1140,21 @@ class OrderFormAction extends ModuleAction
         $this->todayDate = $todayDate;
         $this->todaymenuContent = $todaymenuResult ['content'];
 
+        $invoiceeleparaModel = D('invoiceelepara');
+        $where = array();
+        $where['domain'] = $_SERVER['HTTP_HOST'];
+        $invoiceelepara = $invoiceeleparaModel->where($where)->find();
+        if(count($invoiceelepara) > 0){
+            $this->invoiceelectronopen = $invoiceelepara['invoiceelectron_open'];
+        }else{
+            $this->invoiceelectronopen = '关闭';
+        }
+
         // 返回百度地图需要的城市名称
-        $HTTP_POST = $_SERVER ['HTTP_HOST'];
-        require APP_PATH . 'Conf/datapath.php';
-        $cityMap = $rmsDataPath [$HTTP_POST] ['CITY'];
-        $this->assign('CITY', $cityMap); // 返回地图中的城市
+        //$HTTP_POST = $_SERVER ['HTTP_HOST'];
+        //require APP_PATH . 'Conf/datapath.php';
+        //$cityMap = $rmsDataPath [$HTTP_POST] ['CITY'];
+        //$this->assign('CITY', $cityMap); // 返回地图中的城市
 
     }
 
@@ -1161,11 +1310,8 @@ class OrderFormAction extends ModuleAction
         $orderproducts = $orderproducts_model->field('orderformid,code,name,shortname,price,number,money')->where("orderformid=$record")->select();
         $this->assign('orderproducts', $orderproducts);
 
-        // 单独取得订单金额
-        $orderform_model = D('Orderform');
-        $orderform = $orderform_model->field('totalmoney')->where("orderformid=$record")->select();
-        $totalmoney = $orderform [0] ['totalmoney'];
-        $this->assign('totalmoney', $totalmoney);
+        $productsTotalNumber = $orderproducts_model->where("orderformid=$record")->sum('number');
+        $this->assign('productstotalnumber', $productsTotalNumber);
 
         //取得活动信息
         $orderactivity_model = D('Orderactivity');
@@ -1187,6 +1333,16 @@ class OrderFormAction extends ModuleAction
         $orderaction = $orderaction_model->where("orderformid=$record")->select(); //
         $this->assign('orderaction', $orderaction);
 
+        $orderformResult = D('Orderform')->field('custtime,totalmoney,ordersn')->where("orderformid=$record")->find();
+        if($orderformResult){
+            $this->assign('custtime_1',substr($orderformResult['custtime'],0,2));
+            $this->assign('custtime_2',substr($orderformResult['custtime'],3,2));
+        }
+        //订单总金额
+        $this->assign('totalmoney', $orderformResult['totalmoney']);
+        //订单号
+        $ordersn = $orderformResult['ordersn'];
+
     }
 
     // 保存产品数据等其他数据
@@ -1195,7 +1351,7 @@ class OrderFormAction extends ModuleAction
         // 订单号
         $moduleId = 'orderformid';
         // 订单编号
-        $ordersn = $record . date('Ymd');
+        $ordersn = $record . date('YmdHis');
 
         $orderformModel = D('Orderform');
 
@@ -1274,6 +1430,30 @@ class OrderFormAction extends ModuleAction
         $orderstateModel->create();
         $orderstateModel->add($data);
 
+        if(!empty($_REQUEST['company'])){
+            // 同时写入日志中
+            // 记入操作到action中
+            $orderactionModel = D ( 'Orderaction' );
+            $orderactionData ['orderformid'] = $record; // 订单号
+            $orderactionData ['ordersn'] = $ordersn; // 订单号
+            $orderactionData ['action'] = "订单分配给" . $_REQUEST['company'] . "配送点";
+            $orderactionData ['logtime'] = date ( 'H:i:s' );
+            $orderactionData ['domain'] = $_SERVER['HTTP_HOST'];
+            $orderactionModel->create ();
+            $result = $orderactionModel->add ( $orderactionData );
+
+            // 写入到状态表中
+            $orderstateModel = D ( 'Orderstate' );
+            $data = array ();
+            $data ['distribution'] = 1;
+            $data ['distributiontime'] = date ( 'Y-m-d H:i:s' );
+            $data ['distributioncontent'] = $_REQUEST['company'];
+            $where = array ();
+            $where ['orderformid'] = $record;
+            $orderstateModel->where ( $where )->save ( $data );
+
+        }
+
         // 写入到来电历史表中
         $telphone = trim($_REQUEST ['telphone']);
         $SESSIONTelphone = trim($_SESSION ['telphoneIncome']);
@@ -1306,6 +1486,47 @@ class OrderFormAction extends ModuleAction
             $notifyclientModel->create();
             $notifyclientModel->add($data);
         }
+
+        //保存发票
+        if (!empty($_REQUEST['invoiceheader'])) {
+            $data = array();
+            $data['header'] = mb_substr($_REQUEST['invoiceheader'],0,100,'utf-8');
+            $data['body'] = $_REQUEST['invoicebody'];
+            $data['gmf_nsrsbh'] = $_REQUEST['gmf_nsrsbh'];
+            $data['gmf_dzdh'] = $_REQUEST['gmf_dzdh'];
+            $data['gmf_yhzh'] = $_REQUEST['gmf_yhzh'];
+            $data['type'] = 2; //默认是普通票
+            $data['ordersn'] = $ordersn;
+            $data['orderformtxt'] = $_REQUEST['address'] . ' ' . $orderTxt;
+            $data['ordermoney'] = $totalmoney;
+            $data['ordertime'] = date('H:i:s');
+            $data['state'] = '未开';
+            if(empty($_REQUEST['company'])){
+                $data['company'] =  '';
+            }else{
+                $data['company'] =  $_REQUEST['company'];
+            }
+            if($_REQUEST['invoicetype'] == '电子票'){
+                $data['type'] = 3;
+            }else{
+                $data['type'] = 2;  //普通发票
+            }
+            $data['domain'] = $_SERVER['HTTP_HOST'];
+            $invoiceModel = D('Invoice');
+            $invoiceModel->create();
+            $invoice = $invoiceModel->add($data);
+        }
+
+        // 写入到营收状态表
+        $data = array();
+        $data ['orderformid'] = $record;
+        $data ['ordersn'] = $ordersn;
+        $data ['status'] = 0;
+        $data ['assisstatus'] = 1;
+        $data ['domain'] =  $_SERVER['HTTP_HOST'];
+        $orderyingshouexchangeModel = D('Orderyingshouexchange');
+        $orderyingshouexchangeModel->create();
+        $orderyingshouexchangeModel->add($data);
     }
 
     // 保存产品数据等其他数据
@@ -1316,8 +1537,17 @@ class OrderFormAction extends ModuleAction
 
         $orderform_model = D('Orderform');
 
-        $orderformResult = $orderform_model->field('ordersn')->where("$entity_id=$record")->find();
+        $orderformResult = $orderform_model->field('ordersn,company')->where("$entity_id=$record")->find();
         $ordersn = $orderformResult['ordersn'];
+
+        //判断订单是否已经分配
+        $company = '';
+        if(!empty($orderformResult['company'])){
+            $company = $orderformResult['company'];
+        }
+        if(!empty($_REQUEST['company'])){
+            $company = $_REQUEST['company']; //这个优先
+        }
 
         $orderproducts_model = D('orderproducts');
         // 先清掉数据
@@ -1359,7 +1589,7 @@ class OrderFormAction extends ModuleAction
         $action ['orderformid'] = $record; // 订单号
         $action ['ordersn'] = $ordersn;
         $action ['action'] = $name . ' 改单 ' . $_REQUEST ['address'] . ' ' . $orderTxt .
-            '分:' . $_REQUEST['company'] . ' ' . $_REQUEST['beizhu'];
+            '分:' . $company . ' ' . $_REQUEST['beizhu'];
         $action ['logtime'] = date('H:i:s');
         $action ['domain'] = $_SERVER['HTTP_HOST'];
         $orderaction_model->create();
@@ -1368,6 +1598,16 @@ class OrderFormAction extends ModuleAction
         // 保存配送费
         $shippingmoney = $_REQUEST ['shippingmoney'];
         $totalmoney += $shippingmoney;
+
+        //活动费用
+        $where = array();
+        $where['ordersn'] = $ordersn;
+        $orderactivity_model = D('Orderactivity');
+        $orderactivityResult = $orderaction_model->where($where)->select();
+        $activitymoney = 0;
+        foreach($orderactivityResult as $activityValue){
+            $activitymoney += $activityValue['money'];
+        }
 
         // 保存数量规格
         $data = array();
@@ -1393,6 +1633,55 @@ class OrderFormAction extends ModuleAction
                 $telhistoryModel->add($data);
             }
         }
+
+        //保存发票
+        if (!empty($_REQUEST['invoiceheader'])) {
+            $invoiceModel = D('Invoice');
+            $where = array();
+            $where['ordersn'] = $ordersn;
+            $invoice = $invoiceModel->where($where)->find();
+            $data = array();
+            $data['header'] = substr($_REQUEST['invoiceheader'],0,100);
+            $data['body'] = $_REQUEST['invoicebody'];
+            $data['gmf_nsrsbh'] = $_REQUEST['gmf_nsrsbh'];
+            $data['gmf_dzdh'] = $_REQUEST['gmf_dzdh'];
+            $data['gmf_yhzh'] = $_REQUEST['gmf_yhzh'];
+            $data['type'] = 2;
+            $data['ordersn'] = $ordersn;
+            $data['orderformtxt'] = $_REQUEST['address'] . ' ' . $orderTxt;
+            $data['ordermoney'] = $totalmoney - $activitymoney;
+            $data['ordertime'] = date('H:i:s');
+            $data['state'] = '未开';
+            $data['domain'] = $_SERVER['HTTP_HOST'];
+            if(!empty($_REQUEST['company'])){
+                $data['company'] = $_REQUEST['company'];
+            }else{
+
+            }
+            if($_REQUEST['invoicetype'] == '电子票'){
+                $data['type'] = 3;
+            }else{
+                $data['type'] = 2;  //普通发票
+            }
+            if(empty($invoice['header'])){
+                $data['company'] = $company;
+                $invoiceModel->create();
+                $invoice = $invoiceModel->add($data);
+            }else{
+                $invoiceModel->where($where)->save($data);
+            }
+        }
+
+        // 写入到营收状态表
+        $data = array();
+        $data ['orderformid'] = $record;
+        $data ['ordersn'] = $ordersn;
+        $data ['status'] = 0;
+        $data ['assisstatus'] = 0;
+        $data ['domain'] =  $_SERVER['HTTP_HOST'];
+        $orderyingshouexchangeModel = D('Orderyingshouexchange');
+        $orderyingshouexchangeModel->create();
+        $orderyingshouexchangeModel->add($data);
 
     }
 
@@ -1468,7 +1757,7 @@ class OrderFormAction extends ModuleAction
         $data = array();
         $data ['create'] = 1;
         $data ['createtime'] = date('Y-m-d H:i:s');
-        $data ['createcontent'] = $sendname . ' ' . $telphone;
+        $data ['createcontent'] = $name . '复制新建订单';
         $data ['orderformid'] = $record;
         $data ['domain'] = $_SERVER['HTTP_HOST'];
         $orderstateModel->create();
@@ -1490,6 +1779,18 @@ class OrderFormAction extends ModuleAction
                 $telhistoryModel->add($data);
             }
         }
+
+        // 写入到营收状态表
+        $data = array();
+        $data ['orderformid'] = $record;
+        $data ['ordersn'] = $ordersn;
+        $data ['status'] = 0;
+        $data ['assisstatus'] = 0;
+        $data ['domain'] =  $_SERVER['HTTP_HOST'];
+        $orderyingshouexchangeModel = D('Orderyingshouexchange');
+        $orderyingshouexchangeModel->create();
+        $orderyingshouexchangeModel->add($data);
+
 
     }
 
@@ -1521,7 +1822,10 @@ class OrderFormAction extends ModuleAction
         $stateBefore = $state_result ['state'];
         if ($stateBefore == '订餐') {
             $data ['state'] = '订餐';
-        } else {
+        }elseif ($stateBefore == '已打印') {
+            $data ['state'] = '打印催';
+        }
+        else {
             $data ['state'] = '催送';
         }
         $data ['hurrynumber'] = array(
@@ -1564,58 +1868,58 @@ class OrderFormAction extends ModuleAction
     }
 
     // 根据来电，返回来电的发票抬头
-    public function getTelphoneHeader()
+    public function getTelphoneInvoiceHeader()
     {
         // 取来电
         $telphone = $_REQUEST ['telphoneNumber'];
         // 取得来电客户的ID
-        $telCustomerModel = D('Telcustomer');
+        $telcustomerModel = D('Telcustomer');
         $where = array();
         $where ['telphone'] = $telphone;
-        $telCustomerResult = $telCustomerModel->where($where)->find();
+        $where ['domain'] = $_SERVER['HTTP_HOST'];
+        $telcustomerResult = $telcustomerModel->where($where)->find();
 
-        $returnajax = array();
-        if ($telCustomerResult) {
-            $telCustomerId = $telCustomerResult ['telcustomerid'];
+        $returnData = array();
+        if ($telcustomerResult) {
+            $telcustomerId = $telcustomerResult ['telcustomerid'];
         } else {
-            $returnajax ['error'] = 'error';
-            $this->ajaxReturn($returnajax, 'JSON');
+            $returnData['telinvoice'] = array();
+            $this->ajaxReturn($returnData, 'JSON');
         }
 
-        $telFapiaoModel = D('Telinvoice');
+        $telinvoiceModel = D('Telinvoice');
         // 查询
         $where = array();
-        $where ['telcustomerid'] = $telCustomerId;
-        $headerResult = $telFapiaoModel->field('header')->where($where)->select();
-        // var_dump($telFapiaoModel->getLastSql());
-        if ($headerResult) {
-            $returnajax ['success'] = 'success';
-            $returnajax ['data'] = $headerResult;
-            $this->ajaxReturn($returnajax, 'JSON');
-        } else {
-            $returnajax ['error'] = 'error';
-            $this->ajaxReturn($returnajax, 'JSON');
-        }
+        $where ['telcustomerid'] = $telcustomerId;
+        $telinvoiceResult = $telinvoiceModel->field('header,body,gmf_nsrsbh,gmf_dzdh,gmf_yhzh')->where($where)->select();
+
+        $telinvoice = $telinvoiceResult;
+
+        $returnData['telinvoice']  = $telinvoice;
+        $this->ajaxReturn($returnData, 'JSON');
     }
 
     // 插入，补充数据的回调函数
     public function autoParaInsert()
     {
-        $custtime = $_REQUEST ['custtime']; // 要餐时间
-        if (empty ($custtime)) {
+        $custtime_1 = $_REQUEST['custtime_1'];
+        $custtime_2 = $_REQUEST['custtime_2'];
+        if (empty ($custtime_1)) {
             $custtime = date('H:i:s', time() + 30 * 60); // 自动加半小时
         } else {
-            $custtime = $_REQUEST ['custtime'] ;
+            if(empty($custtime_2)){
+                $custtime = $custtime_1 . ":00:00";
+            }else{
+                $custtime = $custtime_1 . ":" . $custtime_2 . ":00";
+            }
             //判断配送时间,如何小于当前时间,就返回错误
             if(strtotime($custtime) < time()){
-                $info['status'] = 0;
-                $info['info'] =  '要餐时间小于当前时间,错误！' ;
-                $this->ajaxReturn(json_encode($info),'EVAL');
+                $this->info =  '要餐时间小于当前时间,错误！' ;
             }
         }
         // 设置午别
-        if (!empty ($custtime)) {
-            $apTime = $custtime;
+        if (!empty ($custtime_1)) {
+            $apTime = $custtime_1;
         } else {
             $apTime = date('H');
         }
@@ -1669,6 +1973,10 @@ class OrderFormAction extends ModuleAction
                 date('Y-m-d H:i:s')
             ),
             array(
+                'origin',
+                '电话'
+            ),
+            array(
                 'domain',
                 $_SERVER['HTTP_HOST']
             )
@@ -1685,16 +1993,26 @@ class OrderFormAction extends ModuleAction
 
         $focus = D($moduleName);
 
-        $custtime = $_REQUEST ['custtime']; // 要餐时间
-        if (empty ($custtime)) {
+        $custtime_1 = $_REQUEST['custtime_1'];
+        $custtime_2 = $_REQUEST['custtime_2'];
+        if (empty ($custtime_1)) {
             $custtime = date('H:i:s', time() + 30 * 60); // 自动加半小时
         } else {
-            $custtime = $_REQUEST ['custtime'] ;
+            if(empty($custtime_2)){
+                $custtime = $custtime_1 . ":00:00";
+            }else{
+                $custtime = $custtime_1 . ":" . $custtime_2 . ":00";
+            }
+            //判断配送时间,如何小于当前时间,就返回错误
+            if(strtotime($custtime) < time()){
+                $this->info =  '要餐时间小于当前时间,错误！' ;
+                //$this->ajaxReturn(json_encode($info),'EVAL');
+            }
         }
 
         // 设置午别
-        if (!empty ($custtime)) {
-            $apTime = $custtime;
+        if (!empty ($custtime_1)) {
+            $apTime = $custtime_1;
         } else {
             $apTime = date('H');
         }
@@ -1711,7 +2029,10 @@ class OrderFormAction extends ModuleAction
         // var_dump(strstr($stateBefore,"已"));
         if ($stateBefore == '订餐') {
             $state = "订餐";
-        } else {
+        }elseif($stateBefore == '已打印'){
+            $state = '打印改';
+        }
+        else {
             $state = "改单";
         }
 
@@ -1723,9 +2044,6 @@ class OrderFormAction extends ModuleAction
         $where[$moduleId] = $record;
         $orderformResule = $focus->field('company')->where($where)->find();
         $company = $orderformResule['company'];
-
-        $_REQUEST['company'] = '2222';
-
 
         $auto = array(
             array(
@@ -1805,7 +2123,121 @@ class OrderFormAction extends ModuleAction
         $this->ajaxReturn($data, 'JSON');
     }
 
+    //返回订单坐标地图
+    public function mapshowview(){
 
+        // 取得模块的名称
+        $moduleName = $this->getActionName();
+        $this->assign('moduleName', $moduleName); // 模块名称
+
+        // 启动当前模块的模型
+        $focus = D($moduleName);
+
+        $record = $_REQUEST['record'];
+
+        $where = array();
+        $where['orderformid'] = $record;
+         //查询坐标地址
+        $orderformResult = $focus->field('longitude,latitude,address')->where($where)->find();
+
+        $this->assign('longitude',$orderformResult['longitude']);
+        $this->assign('latitude',$orderformResult['latitude']);
+        $this->assign('address',$orderformResult['address']);
+
+        //为了显示城市
+        require APP_PATH.'Conf/datapath.php';
+        $HTTP_POST = $_SERVER['HTTP_HOST'];
+        $this->assign('city',$rmsDataPath[$HTTP_POST]['CITY']);
+        $this->display('mapview');
+    }
+
+
+    //返回送餐员订单坐标地图
+    public function sendmapshowview(){
+
+        // 取得模块的名称
+        $moduleName = $this->getActionName();
+        $this->assign('moduleName', $moduleName); // 模块名称
+
+        // 启动当前模块的模型
+        $focus = D($moduleName);
+
+        $record = $_REQUEST['record'];
+
+        $where = array();
+        $where['orderformid'] = $record;
+        //查询坐标地址
+        $orderformResult = $focus->field('longitude,latitude,address,sendname,sendlongitude,sendlatitude')->where($where)->find();
+
+        $this->assign('longitude',$orderformResult['longitude']);
+        $this->assign('latitude',$orderformResult['latitude']);
+        $this->assign('address',$orderformResult['address']);
+        $this->assign('sendname',$orderformResult['sendname']);
+        $this->assign('sendlongitude',$orderformResult['sendlongitude']);
+        $this->assign('sendlatitude',$orderformResult['sendlatitude']);
+        if(empty($orderformResult['longitude'])){
+            //为了显示城市
+            require APP_PATH.'Conf/datapath.php';
+            $HTTP_POST = $_SERVER['HTTP_HOST'];
+            $this->assign('city',$rmsDataPath[$HTTP_POST]['CITY']);
+            $this->display('sendmapview_two');
+            return;
+        }
+        //为了显示城市
+        require APP_PATH.'Conf/datapath.php';
+        $HTTP_POST = $_SERVER['HTTP_HOST'];
+        $this->assign('city',$rmsDataPath[$HTTP_POST]['CITY']);
+        $this->display('sendmapview');
+    }
+
+
+    /**
+     * 显示送餐区域图,并能根据图,选择定位坐标
+     */
+    public function showArea(){
+        //传递城市
+        switch($_SERVER['HTTP_HOST']){
+            case 'bj.lihuaerp.com':
+                $this->assign('city','北京');
+                break;
+            case 'nj.lihuaerp.com':
+                $this->assign('city','南京');
+                break;
+            case 'cz.lihuaerp.com':
+                $this->assign('city','常州');
+                break;
+            case 'wx.lihuaerp.com':
+                $this->assign('city','无锡');
+                break;
+            case 'sz.lihuaerp.com':
+                $this->assign('city','苏州');
+                break;
+            case 'sh.lihuaerp.com':
+                $this->assign('city','上海');
+                break;
+            case 'gz.lihuaerp.com':
+                $this->assign('city','广州');
+                break;
+        }
+
+        $this->display('area');
+    }
+
+    /**
+     * 返回分公司的送餐范围
+     */
+    public function getCompanyArea(){
+        $companymgrModel = D('companymgr');
+
+        $where = array();
+        $where['telphoneauto'] = '营业';
+        $where['domain'] = $_SERVER['HTTP_HOST'];
+        $companymgrResult = $companymgrModel->field('companymgrid as id,name,longitude,latitude,region')->where($where)->select();
+        $return['data'] = $companymgrResult;
+        $this->ajaxReturn($return);
+
+
+    }
 }
 
 ?>

@@ -200,7 +200,7 @@ class BaiduWaimaiAction extends ModuleAction
     // 设置上传信息
     public function shopinfoCreate()
     {
-        import('@.Extend.Baiduwaimai');
+        import('@.Extend.BaiduwaimaiV3');
         $shopinfoid = $_REQUEST ['shopinfoid'];
         $where = array();
         $where ['shopinfoid'] = $shopinfoid;
@@ -209,11 +209,14 @@ class BaiduWaimaiAction extends ModuleAction
         if ($baiduwaimaishopinfoResult) {
             $body = array();
             $body = $baiduwaimaishopinfoResult;
-            $baiduwaimaiApi = new Baiduwaimai();
+            $baiduwaimaiApi = new BaiduwaimaiV3();
             $resp = $baiduwaimaiApi->shopinfoCreate($body);
-            $data = array();
-            $data ['shop_state'] = 1;
-            $baiduwaimaishopinfoModel->where($where)->save($data);
+            //创建成功,处理到数据库
+            if($resp['errno'] == 0){
+                $data = array();
+                $data ['shop_state'] = 1;
+                $baiduwaimaishopinfoModel->where($where)->save($data);
+            }
             $this->ajaxReturn($resp);
         } else{
 
@@ -259,6 +262,34 @@ class BaiduWaimaiAction extends ModuleAction
                 $baiduwaimaishopinfoModel->where($where)->save($data);
             }
         }
+        $this->ajaxReturn($resp);
+    }
+
+    //查看商户详细信息
+    public function shopinfoView()
+    {
+        import('@.Extend.BaiduwaimaiV3');
+        $baiduwaimaishopinfoModel = D('baiduwaimaishopinfo');
+        $baiduwaimaiApi = new BaiduwaimaiV3();
+        $resp = $baiduwaimaiApi->shopinfoView();
+        if($resp['data']){
+            foreach($resp['data'] as $key=>$value){
+                $data = array();
+                $data['baidu_shop_id'] = $value['baidu_shop_id'];
+                $where = array();
+                $where['shopinfoid'] = $value['shop_id'];
+                $baiduwaimaishopinfoModel->where($where)->save($data);
+            }
+        }
+        $this->ajaxReturn($resp);
+    }
+
+    //查看供应商的信息
+    public function supplierList(){
+        import('@.Extend.BaiduwaimaiV3');
+        $baiduwaimaishopinfoModel = D('baiduwaimaishopinfo');
+        $baiduwaimaiApi = new BaiduwaimaiV3();
+        $resp = $baiduwaimaiApi->supplierList();
         $this->ajaxReturn($resp);
     }
 
@@ -797,6 +828,13 @@ class BaiduWaimaiAction extends ModuleAction
         $where ['menuid'] = $menuid;
         $baiduwaimaimenumgrModel = D('baiduwaimaimenumgr');
         $baiduwaimaimenumgrResult = $baiduwaimaimenumgrModel->where($where)->find();
+        if($baiduwaimaimenumgrResult['shop_id'] !=  0){
+            $where = array();
+            $where ['domain'] = $_SERVER ['HTTP_HOST'];
+            $where ['shopinfoid'] = $baiduwaimaimenumgrResult['shop_id'];
+            $baiduwaimaishopinfoModel = D('baiduwaimaishopinfo');
+            $baiduwaimaishopinfoResult = $baiduwaimaishopinfoModel->where($where)->select();
+        }
         if ( $baiduwaimaimenumgrResult) {
             $body = array();
             $body =  $baiduwaimaimenumgrResult;
@@ -821,6 +859,13 @@ class BaiduWaimaiAction extends ModuleAction
         $where ['menuid'] = $menuid;
         $baiduwaimaimenumgrModel = D('baiduwaimaimenumgr');
         $baiduwaimaimenumgrResult = $baiduwaimaimenumgrModel->where($where)->find();
+        if($baiduwaimaimenumgrResult['shop_id'] !=  0){
+            $where = array();
+            $where ['domain'] = $_SERVER ['HTTP_HOST'];
+            $where ['shopinfoid'] = $baiduwaimaimenumgrResult['shop_id'];
+            $baiduwaimaishopinfoModel = D('baiduwaimaishopinfo');
+            $baiduwaimaishopinfoResult = $baiduwaimaishopinfoModel->where($where)->select();
+        }
         if ( $baiduwaimaimenumgrResult) {
             $body = array();
             $body =  $baiduwaimaimenumgrResult;
@@ -845,6 +890,13 @@ class BaiduWaimaiAction extends ModuleAction
         $where ['menuid'] = $menuid;
         $baiduwaimaimenumgrModel = D('baiduwaimaimenumgr');
         $baiduwaimaimenumgrResult = $baiduwaimaimenumgrModel->where($where)->find();
+        if($baiduwaimaimenumgrResult['shop_id'] !=  0){
+            $where = array();
+            $where ['domain'] = $_SERVER ['HTTP_HOST'];
+            $where ['shopinfoid'] = $baiduwaimaimenumgrResult['shop_id'];
+            $baiduwaimaishopinfoModel = D('baiduwaimaishopinfo');
+            $baiduwaimaishopinfoResult = $baiduwaimaishopinfoModel->where($where)->select();
+        }
         if ( $baiduwaimaimenumgrResult) {
             $body = array();
             $body =  $baiduwaimaimenumgrResult;
@@ -868,6 +920,13 @@ class BaiduWaimaiAction extends ModuleAction
         $where ['menuid'] = $menuid;
         $baiduwaimaimenumgrModel = D('baiduwaimaimenumgr');
         $baiduwaimaimenumgrResult = $baiduwaimaimenumgrModel->where($where)->find();
+        if($baiduwaimaimenumgrResult['shop_id'] !=  0){
+            $where = array();
+            $where ['domain'] = $_SERVER ['HTTP_HOST'];
+            $where ['shopinfoid'] = $baiduwaimaimenumgrResult['shop_id'];
+            $baiduwaimaishopinfoModel = D('baiduwaimaishopinfo');
+            $baiduwaimaishopinfoResult = $baiduwaimaishopinfoModel->where($where)->select();
+        }
         if ( $baiduwaimaimenumgrResult) {
             $body = array();
             $body =  $baiduwaimaimenumgrResult;

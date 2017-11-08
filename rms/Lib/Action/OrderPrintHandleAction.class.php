@@ -133,6 +133,10 @@
             //通知表
             $notifyclientModel = D('NotifyClient');
 
+            //取得分公司名称
+            $userInfo = $this->userInfo;
+            $company = $this->userInfo['department'];
+
             //删除以前的记录 
             $where = array();
             $where['orderprinthandleid'] = $record;
@@ -140,8 +144,8 @@
 
             //内容保存在打印明细表
             $printNumberTxt = '';
-            $orderPrintHandleLength = $_REQUEST['orderPrintHandleLength'];
-            for($i=1;$i<= $orderPrintHandleLength;$i++){
+            $orderPrintHandleLength = 30;
+            for($i= 0;$i < $orderPrintHandleLength;$i++){
                 $printNumber =  $_REQUEST['orderPrintHandleid_'.$i];
                 if(!empty($printNumber)){
                     //订单号
@@ -219,13 +223,101 @@
                         $data['sendtype'] = '单发';
                         $orderformModel->where($where)->save($data);
 
+                        /*****************************************
+                         * 新加的代码,写入对送餐员APP的数据通知的代码
+                         */
+                        $sendname = $_REQUEST['name'];
+                        $data = array();
+                        $data['ordersn'] = $ordersn;
+                        $data['sendname'] = $_REQUEST['name'];
+                        $data['company'] = $company;
+                        $data['domain'] = $_SERVER['HTTP_HOST'];
+                        $data['date'] = date('Y-m-d H:i:s');
+                        $data['ap'] = $this->getAp();
+                        //如果订单还没有派单
+                        if (empty($orderformResult['sendname'])) {
+                            $data['type'] = 'order'; //新订单
+                            $sendnameappModel = D('Sendnameapp');
+                            $sendnameappModel->create();
+                            $sendnameappModel->add($data);
+                        } else {
+                            //已派单,但是还是原来的送餐员
+                            if ($orderformResult['sendname'] == $sendname) {
+
+                                $data['type'] = 'order';
+                                $sendnameappModel = D('Sendnameapp');
+                                $sendnameappModel->create();
+                                $sendnameappModel->add($data);
+                            }
+
+                            //已派单,送餐员不相同
+                            if ($orderformResult['sendname'] != $sendname) {
+                                //先保存新送餐员的信息
+                                $data['type'] = 'order';
+                                $sendnameappModel = D('Sendnameapp');
+                                $sendnameappModel->create();
+                                $sendnameappModel->add($data);
+                                $data['type'] = 'again';
+                                $data['sendname'] = $orderformResult['sendname'];
+                                $sendnameappModel = D('Sendnameapp');
+                                $sendnameappModel->create();
+                                $sendnameappModel->add($data);
+                            }
+                        }
+
+                        // 写入到营收状态表
+                        $data = array();
+                        $data ['orderformid'] = $orderformResult['orderformid'];
+                        $data ['ordersn'] = $ordersn;
+                        $data ['status'] = 0;
+                        $data ['assisstatus'] = 0;
+                        $data ['domain'] =  $_SERVER['HTTP_HOST'];
+                        $orderyingshouexchangeModel = D('Orderyingshouexchange');
+                        $orderyingshouexchangeModel->create();
+                        $orderyingshouexchangeModel->add($data);
+
+                        // 保存到送餐员餐售情况
+                        $sendnameproductsModel = D('Sendnameproducts');
+                        $where = array();
+                        $where ['extid'] =  $orderformResult['orderformid'];
+                        $where ['type'] = '已送';
+                        $where ['domain'] = $_SERVER['HTTP_HOST'];
+                        $sendnameproductsModel->where($where)->delete();
+
+                        // 查询订货
+                        $orderproductsModel = D('Orderproducts');
+                        $where = array();
+                        $where ['orderformid'] =  $orderformResult['orderformid'];
+                        $orderproductsResult = $orderproductsModel->where($where)->select();
+
+                        // 是为了计算装箱送餐员的饭
+                        foreach ($orderproductsResult as $productsValue) {
+                            $code = $productsValue ['code'];
+                            $name = $productsValue ['name'];
+                            $shortname = $productsValue ['shortname'];
+                            $price = $productsValue ['price'];
+                            $number = $productsValue ['number'];
+                            $money = $productsValue ['money'];
+                            $data = array();
+                            $data ['productsname'] = $name;
+                            $data ['shortname'] = $shortname;
+                            $data ['type'] = '已送';
+                            $data ['number'] = $number;
+                            $data ['extid'] =  $orderformResult['orderformid'];
+                            $data ['sendname'] = $sendname; // 送餐员
+                            $data ['company'] = $company;
+                            $data ['date'] = date('Y-m-d');
+                            $data ['ap'] = $this->getAp();
+                            $data ['domain'] = $_SERVER['HTTP_HOST'];
+                            $sendnameproductsModel->create();
+                            $sendnameproductsModel->add($data);
+                        }
+
                     }
                 }
             }
 
-            //取得分公司名称
-            $userInfo = $this->userInfo;
-            $company = $this->userInfo['department'];
+
 
             //存入打印表中
             $orderprinthandleModel = D('OrderPrintHandle');
@@ -249,9 +341,11 @@
         
         //
         public function get_slave_table($record){
+            $where = array();
+            $where['orderprinthandleid'] = $record;
             //打印表
             $orderprintcontentModel = D('Orderprintcontent');
-            $orderprintcontentResult = $orderprintcontentModel->select();
+            $orderprintcontentResult = $orderprintcontentModel->where($where)->select();
             $this->orderPrintHandle = $orderprintcontentResult;
         }
 

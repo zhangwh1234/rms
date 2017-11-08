@@ -6,16 +6,22 @@
 class  TelcustomerAction extends ModuleAction
 {
 
+
     //listview   列表显示
     public function listview()
     {
         if (IS_POST) {
+
             //取得模块的名称
             $moduleName = $this->getActionName();
             $this->assign('moduleName', $moduleName);   //模块名称
 
             //启动当前模块
             $focus = D($moduleName);
+            //地址和发票模块
+            $teladdressModel = D('Teladdress');
+            $telinvoiceModel = D('Telinvoice');
+
 
             //模块的ID
             $moduleId = strtolower($moduleName) . 'id';
@@ -37,16 +43,19 @@ class  TelcustomerAction extends ModuleAction
 
                 }
             }
+
             if ($where) {
-                $where .= "rms_telcustomer.domain = '" . $_SERVER['HTTP_HOST'] . "'";
+                $where .= $focus->trueTableName .".domain = '" . $_SERVER['HTTP_HOST'] . "'";
             } else {
-                $where = "rms_telcustomer.domain = '" . $_SERVER['HTTP_HOST'] . "'";
+                $where = $focus->trueTableName .".domain = '" . $_SERVER['HTTP_HOST'] . "'";
             }
 
             //导入分页类
             import ( 'ORG.Util.Page' ); // 导入分页类
-            $sql = "select count(*) as total from rms_telcustomer left join rms_teladdress on rms_telcustomer.telcustomerid = rms_teladdress.telcustomerid  ";
+            $sql = "select count(*) as total from ". $focus->trueTableName ;
             $sql = $sql . ' where ' .$where;
+
+
             $totalResult = $focus->query($sql);// 查询满足要求的总记录数
             $total = $totalResult[0]['total'];
 
@@ -73,18 +82,17 @@ class  TelcustomerAction extends ModuleAction
             $_GET ['p'] = $pageNumber;
             $Page = new Page ( $total, $listMaxRows );
 
-
             //特殊的查询方式，用于复合查询
             if ($this->getListQuery()) {
                 $query = $this->getListQuery();
 
                 $query = $query . ' where ' . $where;
-                $query .= ' order by rms_telcustomer.telcustomerid desc ';
+                $query .= " order by " . $focus->trueTableName .".telcustomerid desc ";
                 $query .= 'limit ' . $Page->firstRow . ', ' .$Page->listRows ;
+
                 $listResult = $focus->query($query);
-
             }
-
+            //var_dump($focus->getLastSql());
             $orderHandleArray ['total'] = $total;
             if (count($listResult) > 0 || empty($listResult)) {
                 $orderHandleArray ['rows'] = $listResult;
@@ -175,11 +183,11 @@ class  TelcustomerAction extends ModuleAction
     {
         //保存地址的数量
         $addressLength = $_REQUEST['addressLength'];
+        $teladdress_model = D('Teladdress');
 
         for ($i = 1; $i <= $addressLength; $i++) {
             $address = $_REQUEST['telAddress_' . $i];
             $company = $_REQUEST['telCompany_' . $i];
-            $teladdress_model = D('Teladdress');
             $data['address'] = $address;
             $data['company'] = $company;
             $data['domain'] = $_SERVER['HTTP_HOST'];
@@ -216,33 +224,42 @@ class  TelcustomerAction extends ModuleAction
         }
     }
 
-//返回从表的内容:地址
+    //返回从表的内容:地址
     public function get_slave_table($record)
     {
         $teladdress_model = D('Teladdress');
         $teladdress = $teladdress_model->field('telcustomerid,address,company')->where("telcustomerid=$record")->order('teladdressid')->select();
-        //echo $teladdress_model->getLastSql();
 
         $this->assign('teladdress', $teladdress);
-        //return $teladdress;
     }
 
-//返回自定义的list的select语句
+    //返回自定义的list的select语句
     public function getListQuery()
     {
-        $sql = "select rms_telcustomer.telcustomerid,rms_telcustomer.name,rms_telcustomer.telphone,rms_teladdress.address,rms_telcustomer.rectime from rms_telcustomer left join rms_teladdress on rms_telcustomer.telcustomerid = rms_teladdress.telcustomerid  ";
+        //取得模块的名称
+        $moduleName = $this->getActionName();
+        $this->assign('moduleName', $moduleName);   //模块名称
+
+        //启动当前模块
+        $focus = D($moduleName);
+        //地址和发票模块
+        $teladdressModel = D('Teladdress');
+
+        $sql = "select ". $focus->trueTableName .".telcustomerid,". $focus->trueTableName .".name," .
+            $focus->trueTableName .".telphone," . $teladdressModel->trueTableName .".address," . $focus->trueTableName .
+            ".rectime from ". $focus->trueTableName  ." left join " . $teladdressModel->trueTableName .
+            " on ". $focus->trueTableName .".telcustomerid = ". $teladdressModel->trueTableName .".telcustomerid  ";
         return $sql;
     }
 
-//定义启动是的焦点字段
-    public
-    function getFocusFields()
+    //定义启动是的焦点字段
+    public function getFocusFields()
     {
         $fields = "telphone";
         return $fields;
     }
 
-//来电显示
+    //来电显示
     public function getAddressByPhone()
     {
         //取得电话号码
@@ -255,32 +272,50 @@ class  TelcustomerAction extends ModuleAction
         $where = array();
         $where['telphone'] = $telphone;
         $where['teldate'] = date('Y-m-d');
+        $where['domain'] = $_SERVER['HTTP_HOST'];
         $telhistoryResult = $telhistoryModel->where($where)->select();
 
-        //将来电记录到来电历史表中
-        $data = array();
-        $data['telphone'] = $telphone;
-        $data['telname'] = $this->userInfo['truename'];
-        $data['teltime'] = date('H:i:s');
-        $data['teldate'] = date('Y-m-d');
-        $data['teltask'] = '客户来电';
-        $telhistoryModel->create();
-        $telhistoryModel->add($data);
+        //是否要保存在来电历史表中
+        $addHistory = $_REQUEST['noaddhistory'];
+        if($addHistory == 'no'){
+            //不需要保存
+        }else{
+            //将来电记录到来电历史表中
+            $data = array();
+            $data['telphone'] = $telphone;
+            $data['telname'] = $this->userInfo['truename'];
+            $data['teltime'] = date('H:i:s');
+            $data['teldate'] = date('Y-m-d');
+            $data['teltask'] = '客户来电';
+            $data['domain'] = $_SERVER['HTTP_HOST'];
+            $telhistoryModel->create();
+            $telhistoryModel->add($data);
+        }
+
+
         //查询，返回记录的地址
-        $telcustomerModel = D('telcustomer');
-        $telcustomer = $telcustomerModel->field("telcustomerid,name,telphone")->where("telphone = '$telphone'")->find();
+        $telcustomerModel = D('Telcustomer');
+        $where = array();
+        $where['telphone'] = $telphone;
+        $where['domain'] = $_SERVER['HTTP_HOST'];
+        $telcustomer = $telcustomerModel->field("telcustomerid,name,telphone")->where($where)->find();
+
         $telcustomerid = $telcustomer['telcustomerid'];
+
         //查询地址
-        $teladdressModel = D('teladdress');
-        $teladdress = $teladdressModel->field("teladdressid,address,company")->where("telcustomerid=$telcustomerid")->limit(5)->select();
+        $teladdressModel = D('Teladdress');
+        $teladdress = $teladdressModel->field("teladdressid,address,longitude,latitude,company")->where("telcustomerid=$telcustomerid")->limit(5)->select();
         if (empty($teladdress)) $teladdress = array();
+
         $returnData['teladdress'] = $teladdress;
+        $returnData['telhistory'] = $telhistoryResult;
+
         $this->ajaxReturn($returnData, 'JSON');
     }
 
 
 
-//根据客户来电，显示客户以前的订单历史记录
+    //根据客户来电，显示客户以前的订单历史记录
     public function getByPhoneOrderhistoryView()
     {
         //取得模块的名称
@@ -319,13 +354,13 @@ class  TelcustomerAction extends ModuleAction
         $connectionDns = $dbConfig['DB_TYPE'] . '://' . $dbConfig['DB_USER'] . ':' . $dbConfig['DB_PWD'] . '@' . $dbConfig['DB_HOST'] . ':' . $dbConfig['DB_PORT'] . '/' . $dbConfig['DB_NAME'];
 
         //连接历史数据库
-        $orderformHistoryModel = M("orderform", "rms_", $connectionDns);
+        //$orderformHistoryModel = M("orderform", "rms_", $connectionDns);
 
 
         // 进行分页数据查询 注意limit方法的参数要使用Page类的属性
         //导入分页类
         import('ORG.Util.Page');// 导入分页类
-        $total = $orderformHistoryModel->where($where)->count();// 查询满足要求的总记录数
+        //$total = $orderformHistoryModel->where($where)->count();// 查询满足要求的总记录数
 
         //查session取得page的firstRos和listRows
         if (isset($_SESSION[$moduleName . 'firstRowSearchview'])) {
@@ -339,7 +374,7 @@ class  TelcustomerAction extends ModuleAction
 
 
         //查询历史表
-        $listResult = $orderformHistoryModel->where($where)->field($selectFields)->limit($Page->firstRow . ',' . $Page->listRows)->select();
+        //$listResult = $orderformHistoryModel->where($where)->field($selectFields)->limit($Page->firstRow . ',' . $Page->listRows)->select();
 
         //合并数据
         if (empty($listResult)) {
@@ -366,7 +401,7 @@ class  TelcustomerAction extends ModuleAction
     }
 
 
-//根据输入的内容查询的订单历史记录
+    //根据输入的内容查询的订单历史记录
     public function getOrderhistoryView()
     {
         //取得模块的名称
@@ -456,7 +491,7 @@ class  TelcustomerAction extends ModuleAction
     }
 
 
-//根据客户来电，显示客户以前的订单历史记录的详细记录
+    //根据客户来电，显示客户以前的订单历史记录的详细记录
     public function getByPhoneOrderhistorydetailview()
     {
 

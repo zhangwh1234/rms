@@ -56,6 +56,7 @@ class MessagesAction extends ModuleAction {
 			$data ['sender'] = $value ['name'];
 			$data ['status'] = 0;
 			$data ['content'] = $_REQUEST ['content'];
+			$data ['time'] = date('H:i:s');
 			$data ['domain'] = $_SERVER['HTTP_HOST'];
 			// 保存主表
 			$result = $focus->create ();

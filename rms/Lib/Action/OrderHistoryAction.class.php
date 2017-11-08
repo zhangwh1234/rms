@@ -145,7 +145,12 @@ class OrderHistoryAction extends ModuleAction
             }
             $map ['domain'] =  $_SERVER['HTTP_HOST'];
 
-            $name = 'orderform' . substr(date('Y-m-d'), 0, 4);
+            $userInfo = $this->userInfo;
+            if($userInfo['rolename'] == '调度员'){
+                $map['company'] = $userInfo['department'];
+            }
+
+            $name = 'orderform' . substr($startDate, 0, 4);
 
             // 取得表的连接信息
             import('COM.Db.SystemDb');
@@ -165,25 +170,49 @@ class OrderHistoryAction extends ModuleAction
             // 连接历史数据库
             $orderformModel = M("orderform", "rms_", $connectionDns);
 
-            // 导入分页类
-            import('ORG.Util.Page'); // 导入分页类
-            $dbNameTableName = 'rms_orderform';
+
+            $dbNameTableName = 'rms_orderform_'.substr($startDate, 5, 2);
             $total = $orderformModel->table("$dbNameTableName")->where($map)->count(); // 查询满足要求的总记录数
 
-            // 查session取得page的firstRos和listRows
-            if (isset ($_SESSION [$moduleName . 'firstRowSearchview'])) {
-                $Page->firstRow = $_SESSION [$moduleName . 'firstRowSearchview'];
-            }
+            //使用cookie读取rows
+            $listMaxRows = $_COOKIE['listMaxRows'];
+            if(!empty($listMaxRows)){
 
-            if($_SESSION['listMaxRows']){
-                $listMaxRows = $_SESSION['listMaxRows'];
             }else{
                 $listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
             }
 
-
+            // 导入分页类
+            import('ORG.Util.Page'); // 导入分页类
+            $pageNumber = $_REQUEST ['page'];
+            // 取得页数
+            $_GET ['p'] = $pageNumber;
             $Page = new Page ($total, $listMaxRows);
-            $show = $Page->show();
+
+            //保存页数
+            $_SESSION [$moduleName . 'searchviewaddress' . 'page'] = $pageNumber;
+
+
+            //计算订单总额
+            $totalmoney = $orderformModel->table("$dbNameTableName")->where($map)->Sum('totalmoney');
+
+            //使用cookie读取rows
+            $listMaxRows = $_COOKIE['listMaxRows'];
+            if(!empty($listMaxRows)){
+
+            }else{
+                $listMaxRows = C ( 'LIST_MAX_ROWS' ); // 定义显示的列表函数
+            }
+
+            // 导入分页类
+            import('ORG.Util.Page'); // 导入分页类
+            $pageNumber = $_REQUEST ['page'];
+            // 取得页数
+            $_GET ['p'] = $pageNumber;
+            $Page = new Page ($total, $listMaxRows);
+
+            //保存页数
+            $_SESSION [$moduleName . 'listview' . 'page'] = $pageNumber;
 
             // 查询模块的数据
             //$selectFields = $listFields;
@@ -197,7 +226,6 @@ class OrderHistoryAction extends ModuleAction
 
 
             $this->assign('moduleId', $moduleId);
-            $this->assign('page', $show); // 赋值分页输出
 
             $searchOption = $focus->searchFields;
             $this->assign('searchOption', $searchOption);
@@ -209,7 +237,14 @@ class OrderHistoryAction extends ModuleAction
             } else {
                 $orderHistoryArray ['rows'] = array();
             }
-            $data = array('total' => $total, 'rows' => $listResult);
+            $footer = array(
+                array(
+                    'ordertxt' => '订单总额:',
+                    'telphone'=> $totalmoney,
+
+                )
+            );
+            $data = array('total' => $total, 'rows' => $listResult,'footer'=>$footer);
             $this->ajaxReturn($data);
         } else {
 
@@ -239,8 +274,8 @@ class OrderHistoryAction extends ModuleAction
                     'url' => U($moduleName . '/searchview', $searchArray),
                     'pageNumber' => 1,
                     'pageSize' => 10,
+                    'showFooter' => true,
                     'toolbar' => '#orderhistory-searchview-datagrid-toolbar',
-
                 )
             );
             foreach ($listFields as $key => $value) {
@@ -257,6 +292,9 @@ class OrderHistoryAction extends ModuleAction
                 'align' => 'center',
                 'formatter' => $moduleName . 'SearchviewModule.operate'
             );
+
+            $searchOption = $focus->searchFields;
+            $this->assign('searchOption',$searchOption);
 
             $this->assign('datagrid', $datagrid);
 
@@ -288,8 +326,7 @@ class OrderHistoryAction extends ModuleAction
         $record = $_REQUEST ['ordersn'];
         // 重新设定订单历史查询的数据库
         $startDate = $_REQUEST ['startDate'];
-
-        $name = 'orderform' . substr(date('Y-m-d'), 0, 4);
+        $name = 'orderform' . substr($startDate, 0, 4);
         // 取得表的连接信息
         import('COM.Db.SystemDb');
         $systemDb = new SystemDb ();
@@ -307,7 +344,7 @@ class OrderHistoryAction extends ModuleAction
         $orderformModel = M("orderformhistory", "rms_", $connectionDns);
 
         // 重新设定订单历史查询的数据库
-        $dbNameTableName = 'rms_orderform';
+        $dbNameTableName = 'rms_orderform_'.substr($startDate, 5, 2);
 
         // 返回模块的记录
         $result = $orderformModel->table("$dbNameTableName")->where("ordersn=$record")->find();
@@ -320,15 +357,15 @@ class OrderHistoryAction extends ModuleAction
         $this->assign ( 'blocks',$blocks);
 
         // 返回从表的内容
-        $this->get_slave_table ( $record );
+        $this->get_slave_table ( $record , $startDate);
         $this->display('OrderHistory/detailview');
     }
 
     // 返回从表的内容:产品
-    public function get_slave_table($record)
+    public function get_slave_table($record,$startDate)
     {
 
-        $name = 'orderform' . substr(date('Y-m-d'), 0, 4);
+        $name = 'orderform' . substr($startDate, 0, 4);
         // 取得表的连接信息
         import('COM.Db.SystemDb');
         $systemDb = new SystemDb ();
@@ -345,39 +382,97 @@ class OrderHistoryAction extends ModuleAction
 
         // 设定日期
         $date = $_REQUEST ['startDate'];
-        $dbNameTableName = 'rms_orderproducts';
-
+        $startdate = $_REQUEST ['startDate'];
+        $dbNameTableName = 'rms_orderproducts_'.substr($startDate, 5, 2);
         // 连接历史数据库
-        $orderproductsModel = M("orderproducts", "rms_", $connectionDns);
+        $orderproductsModel = M("orderproducts_".substr($startDate, 5, 2), "rms_", $connectionDns);
 
         $orderproducts = $orderproductsModel->table($dbNameTableName)->field('orderformid,code,name,price,number,money')->where("ordersn=$record")->select();
 
         $this->assign('orderproducts', $orderproducts);
 
         //取得活动信息
-        $orderactivity_model =  M("orderactivity", "rms_", $connectionDns);
-        $dbNameTableName = 'rms_orderactivity';
+        $orderactivity_model =  M("orderactivity_".substr($startDate, 5, 2), "rms_", $connectionDns);
+        $dbNameTableName = 'rms_orderactivity_'.substr($startDate, 5, 2);
         $orderactivity = $orderactivity_model->table($dbNameTableName)->where("ordersn=$record")->select();
         $this->assign('orderactivity',$orderactivity);
 
         //取得订单支付信息
-        $orderpayment_model =  M("orderpayment", "rms_", $connectionDns);
-        $dbNameTableName = 'rms_orderpayment';
+        $orderpayment_model =  M("orderpayment_".substr($startDate, 5, 2), "rms_", $connectionDns);
+        $dbNameTableName = 'rms_orderpayment_'.substr($startDate, 5, 2);
         $orderpayment = $orderpayment_model->table($dbNameTableName)->where("ordersn=$record")->select();
         $this->assign('orderpayment',$orderpayment);
 
         // 取得订单的状态
-        $orderStateModel =  M("orderstate", "rms_", $connectionDns);
-        $dbNameTableName = 'rms_orderstate';
+        $orderStateModel =  M("orderstate_".substr($startDate, 5, 2), "rms_", $connectionDns);
+        $dbNameTableName = 'rms_orderstate_'.substr($startDate, 5, 2);
         $orderStateResult = $orderStateModel->table($dbNameTableName)->where("ordersn=$record")->find();  //
         $this->assign('orderstate', $orderStateResult);
 
         // 取得订单日志
-        $orderactionModel = M("orderaction", "rms_", $connectionDns);
-        $dbNameTableName = 'rms_orderaction';
+        $orderactionModel = M("orderaction_".substr($startDate, 5, 2), "rms_", $connectionDns);
+        $dbNameTableName = 'rms_orderaction_'.substr($startDate, 5, 2);
         $orderaction = $orderactionModel->table($dbNameTableName)->where("ordersn=$record")->select();
         $this->assign('orderaction', $orderaction);
     }
+
+
+    /* 取得打印需要的数据 */
+    function getPrintOrder()
+    {
+        // 取得订单号
+        $record = $_REQUEST ['ordersn'];
+        // 重新设定订单历史查询的数据库
+        $startDate = $_REQUEST ['startDate'];
+        $name = 'orderform' . substr($startDate, 0, 4);
+
+        // 取得表的连接信息
+        import('COM.Db.SystemDb');
+        $systemDb = new SystemDb ();
+        $connectConfig = $systemDb->getHistoryDbConnection($name);
+        $db_type = 'mysql';
+        $db_user = trim($connectConfig ['db_user']);
+        $db_pwd = trim($connectConfig ['db_pwd']);
+        $db_host = trim($connectConfig ['db_host']);
+        $db_port = trim($connectConfig ['db_port']);
+        $db_name = trim($connectConfig ['db_name']);
+
+        $connectionDns = "mysql://$db_user:$db_pwd@$db_host:$db_port/$db_name";
+
+        // 连接历史数据库
+        $orderformModel = M("orderform", "rms_", $connectionDns);
+
+        // 重新设定订单历史查询的数据库
+        $dbNameTableName = 'rms_orderform_'. substr($startDate, 5, 2);
+
+        // 返回模块的记录
+        $orderform = $orderformModel->table("$dbNameTableName")->where("ordersn=$record")->find();
+
+        $orderform['printnumber'] = rand(100,999);
+
+        // 连接历史数据库
+        $orderproductsModel = M("orderproducts_". substr($startDate, 5, 2), "rms_", $connectionDns);
+        $dbNameTableName = 'rms_orderproducts_'.substr($startDate, 5, 2);
+        $orderproducts = $orderproductsModel->table($dbNameTableName)->where("ordersn=$record")->select();
+
+        //取得活动信息
+        $orderactivityModel =  M("orderactivity_".substr($startDate, 5, 2), "rms_", $connectionDns);
+        $dbNameTableName = 'rms_orderactivity_'.substr($startDate, 5, 2);
+        $orderactivity = $orderactivityModel->table($dbNameTableName)->where("ordersn=$record")->select();
+
+        //取得订单支付信息
+        $orderpaymentModel =  M("orderpayment_".substr($startDate, 5, 2), "rms_", $connectionDns);
+        $dbNameTableName = 'rms_orderpayment_'.substr($startDate, 5, 2);
+        $orderpayment = $orderpaymentModel->table($dbNameTableName)->where("ordersn=$record")->select();
+
+        $order ['orderform'] = $orderform;
+        $order ['orderproducts'] = $orderproducts;
+        $order ['orderactivity'] = $orderactivity;
+        $order ['orderpayment'] = $orderpayment;
+
+        $this->ajaxReturn($order, 'JSON');
+    }
+
 }
 
 ?>

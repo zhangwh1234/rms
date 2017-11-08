@@ -10,7 +10,7 @@ class ModuleAction extends Action {
 	/**
 	 * 类的默认初始化方法
 	 */
-	public function _initialize() {
+	public function _initializexx() {
 		// 引入用户信息
 		$this->userInfo = $_SESSION ['userInfo'];
 		
@@ -28,6 +28,7 @@ class ModuleAction extends Action {
 			// RBAC::AccessDecision() || $this->error('no rolse');
 		}
 	}
+
 	public function index() {
 		$this->listview ();
 	}
@@ -54,7 +55,7 @@ class ModuleAction extends Action {
 
 			// 建立查询条件
 			$where = array ();
-			$searchText = $_REQUEST ['searchText']; // 查询内容
+			$searchText = urldecode($_REQUEST ['searchText']); // 查询内容
 			if (!empty ( $searchText )) {
 					foreach ( $focus->searchFields as $value ) {
 						$where [$value] = array (
@@ -62,7 +63,7 @@ class ModuleAction extends Action {
 							'%' . $searchText . '%'
 						);
 					}
-					$where ['_logic'] = 'and';
+					$where ['_logic'] = 'OR';
 			}else{
 				$searchText = $_SESSION ['searchText' . $moduleName]; // 查询内容
 				if(!empty($searchText)) {
@@ -73,16 +74,18 @@ class ModuleAction extends Action {
 							'%' . $searchText . '%'
 						);
 					}
-					$where ['_logic'] = 'and';
+					$where ['_logic'] = 'OR';
 				}
 			}
 
 			$this->returnWhere($where);
 
+
+
 			// 导入分页类
 			import ( 'ORG.Util.Page' ); // 导入分页类
 			$total = $focus->where ( $where )->count (); // 查询满足要求的总记录数
-			                                             
+
 			// 取得显示页数
 			$pageNumber = $_REQUEST ['page'];
 			if (empty ( $pageNumber )) {
@@ -357,12 +360,15 @@ class ModuleAction extends Action {
 		
 		// 取得记录ID
 		$record = $_REQUEST ['record'];
+		$where = array();
 		$where [$moduleId] = $record;
 		
 		// 返回模块的行记录
 		$result = $focus->where ( $where )->find ();
 		// 返回区块
 		$blocks = $focus->detailBlocks ( $result );
+
+
 				
 		$this->assign ( 'info', $result );
 		$this->assign ( 'fieldsFocus', $focus->fieldsFocus ); // 指定字段获得焦点
@@ -371,7 +377,7 @@ class ModuleAction extends Action {
 		$this->assign ( 'blocks', $blocks);
 		$this->assign ( 'rowIndex', $_REQUEST['rowIndex']);  //选中的行号
 		$this->assign ( 'pagetype', $_REQUEST['pagetype']);
-		                                     
+
 		// 回调主程序需要的参数,比如下拉框的数据
 		$this->returnMainFnPara ();
 		
@@ -581,7 +587,7 @@ class ModuleAction extends Action {
 		// 建立查询条件
 		$where = array ();
 		$searchOption = $_REQUEST ['searchOption']; // 查询项目
-		$searchText = $_REQUEST ['searchText']; // 查询内容
+		$searchText = urldecode($_REQUEST ['searchText']); // 查询内容
 		if (isset ( $searchOption ) && isset ( $searchText )) {
 			if ($searchOption == '全部') { // 如果是全部，那么全都要查询
 				foreach ( $focus->searchFields as $value ) {
@@ -613,7 +619,7 @@ class ModuleAction extends Action {
 				$this->assign ( 'searchTextValue', $_SESSION ['searchText' . $moduleName] );
 			}
 		}
-		
+
 		// 导入分页类
 		import ( 'ORG.Util.Page' ); // 导入分页类
 		$total = $focus->where ( $where )->count (); // 查询满足要求的总记录数
@@ -679,13 +685,14 @@ class ModuleAction extends Action {
 		
 		$focus = D ( $moduleName );
 		$this->assign ( 'moduleName', $moduleName );
-		
+
 		// 回调自动完成的函数
 		$auto = $this->autoParaInsert ();
 		$focus->setProperty ( "_auto", $auto );
-		
+
 		// 保存主表
 		$result = $focus->create ();
+
 		if (! $result) {
 			exit ( $focus->getError () );
 		}
@@ -693,7 +700,7 @@ class ModuleAction extends Action {
 
 		if (! $result) {
 			$info['status'] = 0;
-			$info['info'] =  '保存数据不成功！' ;
+			$info['info'] =  '保存数据不成功！';
 			$this->ajaxReturn(json_encode($info),'EVAL');
 		}
 		
@@ -714,7 +721,7 @@ class ModuleAction extends Action {
 		) );
 		$return = $detailviewUrl;
 		$info['status'] = 1;
-		$info['info'] ='保存成功' ;
+		$info['info']  = $this->info  . ' 保存成功' ;
 		$info['url'] = $return;
 		$this->ajaxReturn(json_encode($info),'EVAL');
 	}
@@ -785,7 +792,7 @@ class ModuleAction extends Action {
 		) );
 		$return = $detailviewUrl;
 		$info['status'] = 1;
-		$info['info'] ='保存成功' ;
+		$info['info']  = $this->info  . ' 保存成功' ;
 		$info['url'] = $return;
 		$this->ajaxReturn(json_encode($info),'EVAL');
 	}
@@ -933,7 +940,42 @@ class ModuleAction extends Action {
 	 * 返回listview的where
 	 */
 	public function returnWhere(&$where) {
-		$where ['domain'] = $_SERVER ['HTTP_HOST'];
+		//$where ['domain'] = $_SERVER ['HTTP_HOST']
+		if(count($where) == 0){
+			$where ['domain'] = $_SERVER ['HTTP_HOST'];
+		}else{
+			$temp = $where;
+			$map = array();
+			$map['_complex'] = $temp;
+			$map['domain'] = $_SERVER ['HTTP_HOST'];
+			$where = $map;
+		}
+
+
+
+	}
+
+	/**
+	 * 基础方法,获取结账的连接数据库
+	 * @pama getdate
+	 * $pama getap
+	 */
+	public function connectReveueDb($getdate=''){
+		//不能为空
+		//if(empty($getdate)){
+		//	return false;
+		//}
+
+		$db_type = 'mysql';
+		$db_user = C('db_user');
+		$db_pwd = C('db_pwd');
+		$db_host = C('db_host');
+		$db_port = C('db_port');
+		$db_name = 'rms_revenue';
+
+		$connectionDns = "mysql://$db_user:$db_pwd@$db_host:$db_port/$db_name";
+
+		return $connectionDns;
 	}
 }
 
