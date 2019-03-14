@@ -267,7 +267,7 @@ class YingshouRevparMgrAction extends YingshouAction
                 $insertStr = '订单:' . $orderform['address'] . ' ' . $orderform['ordertxt'] . '还没有派单,无法结账';
                 $data = array();
                 $data['result'] = $insertStr;
-                $data['domain'] = $this->getDomain();
+                $data['domain'] = $this->getDomain∏();
                 $revparmgrresultModel->create();
                 $revparmgrresultModel->add($data);
             }
