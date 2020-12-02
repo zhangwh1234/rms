@@ -144,6 +144,8 @@
                                                 <input type="text" name="shouldmoney" readonly style="font-size:16px;width:80px;"
                                                     value="<?php echo ($info["shouldmoney"]); ?>" />
                                             </td>
+
+                                            <td>发票:已开</td>
                                         </tr>
                                     </table>
                                 </td>
@@ -200,7 +202,7 @@
         <td width="15%" align="center" class="productsTableHeaderLeftTd">金额</td>
         <td width="10%" align="center" class="productsTableHeaderRightTd">操作</td>
     </tr>
-    <?php if(empty($orderproducts)): $__FOR_START_90126470__=0;$__FOR_END_90126470__=3;for($key=$__FOR_START_90126470__;$key < $__FOR_END_90126470__;$key+=1){ ?><tr>
+    <?php if(empty($orderproducts)): $__FOR_START_1779303598__=0;$__FOR_END_1779303598__=3;for($key=$__FOR_START_1779303598__;$key < $__FOR_END_1779303598__;$key+=1){ ?><tr>
                 <td width="5%" align="center" ><?php echo ($key+1); ?></td>
                 <td width="15%" align="center" > 
                     <input id="<?php echo ($moduleName); echo (ucfirst(ACTION_NAME)); ?>productsNumber_<?php echo ($key+1); ?>" name="productsNumber_<?php echo ($key+1); ?>" type="text" size="5" tabindex="1"
@@ -294,7 +296,7 @@
         <td class="productsTableXiaojiRightTd" style="font-size: 14px;"> 
             <span>小计</span>
             <input id="<?php echo ($moduleName); echo (ucfirst(ACTION_NAME)); ?>productsTotalMoney" name="productsTotalMoney" type="text" size="10" readonly="readonly"
-                   style="border: 0px;font-size: 14px;" value="<?php echo ($info["goodsmoney"]); ?>"/>
+                   style="border: 0px;font-size: 14px;" value="<?php echo ($orderproductsmoney); ?>"/>
         </td>
     </tr>
 </table>
@@ -395,7 +397,7 @@
             $('#globel-dialog-div').dialog({
                 title: '选择产品',
                 iconCls: 'icons-application-application_add',
-                width: 900,
+                width: 600,
                 height: 540,
                 cache: false,
                 href: url,
@@ -747,7 +749,7 @@
 			</td>
 		</tr><?php endforeach; endif; ?>
 	<input id="<?php echo ($moduleName); echo (ucfirst(ACTION_NAME)); ?>activityTotalMoney" name="activityTotalMoney" type="text" size="10"
-	 readonly="readonly" style="border: 0px;font-size: 14px;" value="<?php echo ($orderactivitymoney); ?>11" />
+	 readonly="readonly" style="border: 0px;font-size: 14px;" value="<?php echo ($orderactivitymoney); ?>" hidden />
 </table>
                                     </td>
                                 </tr>
@@ -791,7 +793,7 @@
         <td width="25%" align="center" class="accountsTableHeaderLeftTd">备注</td>
         <td width="10%" align="center" class="accountsTableHeaderRightTd">操作</td>
     </tr>
-    <?php if(empty($orderaccountpayment)): $__FOR_START_1037222897__=0;$__FOR_END_1037222897__=1;for($key=$__FOR_START_1037222897__;$key < $__FOR_END_1037222897__;$key+=1){ ?><tr>
+    <?php if(empty($orderaccountpayment)): $__FOR_START_75366138__=0;$__FOR_END_75366138__=1;for($key=$__FOR_START_75366138__;$key < $__FOR_END_75366138__;$key+=1){ ?><tr>
                 <td width="5%" align="center"><?php echo ($key+1); ?></td>
                 <td width="10%" align="center"> 
                     <input id="OrderFormAccountsCode_<?php echo ($key+1); ?>" name="accountpaymentCode_<?php echo ($key+1); ?>" type="text" size="6"

@@ -22,9 +22,9 @@ class SendnameLocationAction extends ModuleAction{
         $where = array();
         $where['name'] = $company;
         $where['domain'] = $this->getDomain();
-        $fields = array('companymgrid as id,name,longitude,latitude,region');
+        $fields = array('companymgrid as id,name,longitude,latitude,region,domain');
         $companymgr = $companymgrModel->field($fields)->where($where)->find();
-
+        
         $this->ajaxReturn($companymgr,'json');
     }
 
@@ -42,7 +42,7 @@ class SendnameLocationAction extends ModuleAction{
         $where['company'] = $company;
         $where['domain'] = $this->getDomain();
         $where[] = ' length(longitude) > 0 ';
-        $fields = array('sendnamemgrid as id,telphone,name,longitude,latitude');
+        $fields = array('sendnamemgrid as id,telphone,name,longitude,latitude,domain');
         $sendnamemgr = $sendnamemgrModel->field($fields)->where($where)->select();
 
         $this->ajaxReturn($sendnamemgr,'json');

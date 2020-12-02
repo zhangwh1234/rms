@@ -142,7 +142,7 @@ class InvoiceElectronAction extends ModuleAction
             $selectFields = $listFields;
             array_unshift($selectFields, $moduleId);
 
-            $listResult = $invoicewebModel->field('invoicewebid,ordersn,ordertxt,eticketno,header,body,telphone,email,money,gmf_nsrsbh,gmf_dzdh,gmf_yhzh,KPR,SKR,FHR,createdate,opendate,state,download_state,cancel_state,cancel_download_state,fp_dm,fp_hm,sendemail,issms,company,domain')->where($where)->limit($Page->firstRow . ',' . $Page->listRows)->order('createdate desc')->select();
+            $listResult = $invoicewebModel->field('invoicewebid,ordersn,ordertxt,eticketno,header,body,telphone,email,money,gmf_nsrsbh,gmf_dzdh,gmf_yhzh,KPR,SKR,FHR,createdate,opendate,state,download_state,cancel_state,cancel_download_state,fp_dm,fp_hm,sendemail,issms,pdf_url,company,domain')->where($where)->limit($Page->firstRow . ',' . $Page->listRows)->order('createdate desc')->select();
 
             //$orderHandleArray ['sql'] = $invoicewebModel->getLastSql();
 

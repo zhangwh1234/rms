@@ -216,7 +216,7 @@ class YingshouAction extends ModuleAction
             //当前日期和当前午别
             $currentDate = date('Y-m-d');
             $currentAp = $this->getAp();
-            if (empty($getDate) || empty($getAp)) {
+            if (empty($getDate)) {
                 $getDate = $currentDate;
                 $getAp = $currentAp;
             }
@@ -236,7 +236,7 @@ class YingshouAction extends ModuleAction
             // 建立查询条件
             $where = array();
             $where['date'] = $getDate;
-            $where['domain'] = $_SERVER['HTTP_HOST'];
+            $where['domain'] = $this->getDomain();
 
             $total = $Model->where($where)->count(); // 查询满足要求的总记录数
 
@@ -310,9 +310,17 @@ class YingshouAction extends ModuleAction
                 $pageNumber = 1;
             }
 
+            if (empty($_REQUEST['getDate'])) {
+                $getDate = date('Y-m-d');
+            } else {
+                $getDate = $_REQUEST['getDate'];
+            }
+            $param = array(
+                'getDate' => $getDate,
+            );
             $datagrid = array(
                 'options' => array(
-                    'url' => U($moduleName . '/listview', array()),
+                    'url' => U($moduleName . '/listview', $param),
                     'pageNumber' => $pageNumber,
                     'pageSize' => 10,
                 ),
@@ -364,7 +372,8 @@ class YingshouAction extends ModuleAction
 
             $this->assign('returnAction', 'listview');
             //当前日期
-            $this->assign('getDate', date('Y-m-d'));
+
+            $this->assign('getDate', $getDate);
             //当前午别
             $this->assign('getAp', $this->getAp());
             $this->display($moduleName . '/listview'); // 执行方法自身的列表
@@ -419,10 +428,10 @@ class YingshouAction extends ModuleAction
 
         // 返回模块的行记录
         $result = $Model->where($where)->find();
-
+        
         // 返回区块
         $blocks = $focus->detailBlocks($result);
-
+ 
         $this->assign('info', $result);
         $this->assign('record', $record);
         $this->assign('blocks', $blocks);
@@ -509,9 +518,10 @@ class YingshouAction extends ModuleAction
 
         // 返回模块的行记录
         $result = $Model->where($where)->find();
+        var_dump($Model->getLastSql());
 
         // 返回区块
-        $blocks = $focus->detailBlocks($result);
+        $blocks = $focus->editBlocks($result);
 
         $this->assign('info', $result);
         $this->assign('fieldsFocus', $focus->fieldsFocus); // 指定字段获得焦点
@@ -584,6 +594,8 @@ class YingshouAction extends ModuleAction
             $info['sql'] = $Model->getLastSql();
             $this->ajaxReturn(json_encode($info), 'EVAL');
         }
+        $sql = $Model->getLastSql();
+
 
         // 取得保存的主键
         $record = $result;
@@ -605,6 +617,7 @@ class YingshouAction extends ModuleAction
         $info['status'] = 1;
         $info['info'] = $this->info . ' 保存成功';
         $info['url'] = $return;
+        $info['sql'] = $sql;
         $this->ajaxReturn(json_encode($info), 'EVAL');
     }
 
@@ -696,7 +709,7 @@ class YingshouAction extends ModuleAction
         $where[$moduleId] = $record;
 
         //连接字符串
-        $connectionDb = $this->connectReveueDb('');
+        $connectionDb = $this->connectReveueDb($getDate);
         //连接的数据表
         $tableName = $focus->getTableName();
 
@@ -718,10 +731,7 @@ class YingshouAction extends ModuleAction
             $info['info'] = '删除失败';
             $this->ajaxReturn(json_encode($info), 'EVAL');
         }
-
     }
-
-    
 
     /**
      * 生成报数单错误,产生的结果,显示一下
@@ -765,12 +775,22 @@ class YingshouAction extends ModuleAction
     //根据客户代码，查询客户支付名称
     public function getAccountsByCode()
     {
+        // 配送店（分公司）的信息
+        // 分公司的名称
+        $company = $this->userInfo['department'];
+
         $code = $_REQUEST['code'];
-        $accountsModel = D('PaymentMgr');
+        $paymentmgrModel = D('PaymentMgr');
         $where = array();
         $where['code'] = $code;
+        $where['company'] = array(
+            array('eq', '总部'),
+            array('eq', $company),
+            'or',
+        );
+        $where['is_shenhe'] = 1;
         $where['domain'] = $this->getDomain();
-        $accounts = $accountsModel->field('name')->where($where)->find();
+        $accounts = $paymentmgrModel->field('name')->where($where)->find();
         $this->ajaxReturn($accounts, 'JSON');
     }
 
@@ -832,7 +852,7 @@ class YingshouAction extends ModuleAction
     public function getAp()
     {
         $nowTime = time();
-        $splitTime = strtotime('16:30:00'); // 分割的时间
+        $splitTime = strtotime('16:00:00'); // 分割的时间
         if (($nowTime - $splitTime) >= 0) {
             $ap = '下午';
         } else {
@@ -842,12 +862,51 @@ class YingshouAction extends ModuleAction
     }
 
     /**
+     * 获取操作员的权限
+     */
+    public function getRevparType()
+    {
+        //定义是哪个结账
+        $userid = $_SESSION['userid'];
+        //查询角色ID
+        $roleuserModel = D('role_user');
+        $roleuserResult = $roleuserModel->where("user_id=$userid")->find();
+        $roleid = $roleuserResult['role_id'];
+
+        //查询角色的功能
+        $accessModel = D('access');
+        $where = array();
+        $where['role_id'] = $roleid;
+        $accessResult = $accessModel->field('node_id')->where($where)->select();
+        foreach ($accessResult as $value) {
+            $accessArr[] = $value['node_id'];
+        }
+        //节点表
+        $nodeModel = D('node');
+        //查询分公司结账节点
+        $nodeidResult = $nodeModel->where("name='companyRevpar'")->find();
+        $nodeidCompanyRevpar = $nodeidResult['id'];
+        if (in_array($nodeidCompanyRevpar, $accessArr)) {
+            $revparType = 'company';
+        }
+
+        //查询财务结账节点
+        $nodeidResult = $nodeModel->where("name='financeRevpar'")->find();
+        $nodeidFinanceRevpar = $nodeidResult['id'];
+        if (in_array($nodeidFinanceRevpar, $accessArr)) {
+            $revparType = 'finance';
+        }
+
+        return $revparType;
+    }
+
+    /**
      * 获取结账数据库的午别，一般是3点，和查看午别不同，查看是16点以后
      */
     public function getDbAp()
     {
         $nowTime = time();
-        $splitTime = strtotime('15:00:00'); // 分割的时间
+        $splitTime = strtotime('15:30:00'); // 分割的时间
         if (($nowTime - $splitTime) >= 0) {
             $ap = '下午';
         } else {

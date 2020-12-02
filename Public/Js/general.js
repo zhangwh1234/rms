@@ -3,7 +3,7 @@ var Namespace = new Object();
 //定义全局发票数据
 var telInvoiceArray = {};
 
-Namespace.register = function (path) {
+Namespace.register = function(path) {
     var arr = path.split(".");
     var ns = "";
     for (var i = 0; i < arr.length; i++) {
@@ -54,8 +54,7 @@ function fnDropDown(obj, Lay) {
     if (getVal > document.body.clientWidth) {
         leftSide = eval(leftSide) - eval(widthM);
         tagName.style.left = leftSide + 24 + 'px';
-    }
-    else
+    } else
         tagName.style.left = leftSide - 1 + 'px';
     tagName.style.top = topSide + 24 + 'px';
     // tagName.style.display = 'block';
@@ -82,10 +81,10 @@ function fnShowDrop(obj) {
     // $(category).hide();
 }
 
-$(document).ready(function () {
+$(document).ready(function() {
 
     // 键盘回车自动下移
-    $("input").keypress(function (e) {
+    $("input").keypress(function(e) {
         var keyCode = e.keyCode ? e.keyCode : e.which ? e.which : e.charCode;
         if (keyCode == 13) {
             var i;
@@ -95,16 +94,15 @@ $(document).ready(function () {
             i = (i + 1) % this.form.elements.length;
             this.form.elements[i].focus();
             return false;
-        }
-        else
+        } else
             return true;
     });
 
     $.extend($.fn.datagrid.methods, {
-        keyCtr: function (jq) {
-            return jq.each(function () {
+        keyCtr: function(jq) {
+            return jq.each(function() {
                 var grid = $(this);
-                grid.datagrid('getPanel').panel('panel').attr('tabindex', 1).bind('keydown', function (e) {
+                grid.datagrid('getPanel').panel('panel').attr('tabindex', 1).bind('keydown', function(e) {
                     switch (e.keyCode) {
                         case 38: // up
                             var selected = grid.datagrid('getSelected');
@@ -135,15 +133,15 @@ $(document).ready(function () {
 });
 
 // 来电显示，F2复制电话和地址到订单表单中
-Mousetrap.bind(['ctrl+2', 'ctrl+f2', 'f2'], function (e) {
+Mousetrap.bind(['ctrl+2', 'ctrl+f2', 'f2'], function(e) {
     // 返回选项卡
     var tab = $('#operation').tabs('getSelected');
     var tabOptions = tab.panel('options');
-    if (tabOptions.title == '订餐单') {  // 订单创建状态，
+    if (tabOptions.title == '订餐单') { // 订单创建状态，
         if ($('#OrderFormAction').val() == 'Createview') { // 保存
             // 可以复制电话内容
             var telphoneNumber = $('#telphoneNumber').val();
-            $.each(teladdressObj, function (key, value) {
+            $.each(teladdressObj, function(key, value) {
                 if (value.teladdressid == teladdressObjId) {
                     $('#OrderFormCreateviewForm input[name=address]').val(value.address);
                     if (value.longitude) {
@@ -165,11 +163,11 @@ Mousetrap.bind(['ctrl+2', 'ctrl+f2', 'f2'], function (e) {
                     url: APP + '/OrderForm/getTelphoneInvoiceHeader/telphoneNumber/' + telphoneNumber,
                     type: "GET",
                     dataType: "json",
-                    success: function (data) {
+                    success: function(data) {
                         if (data.telinvoice) {
                             // 删掉以前的选项
                             $('#invoiceheaderselect').empty();
-                            $(data.telinvoice).each(function (i, val) {
+                            $(data.telinvoice).each(function(i, val) {
                                 $('#invoiceheaderselect').append("<option value=''>" + val.header + "</option>");
                             });
                             if (data.telinvoice[0].header) {
@@ -199,7 +197,7 @@ Mousetrap.bind(['ctrl+2', 'ctrl+f2', 'f2'], function (e) {
 // 今日菜单功能中看昨天的菜单
 function yesterdayMenuClick() {
     var selectdate = $('#todaymenudate').datebox('getValue');
-    var d = new Date(selectdate);   // 格式化为Date对像;
+    var d = new Date(selectdate); // 格式化为Date对像;
     if (d == "Invalid Date") {
         alert("非日期");
         return;
@@ -227,7 +225,7 @@ function yesterdayMenuClick() {
 // 今日菜单功能中看明天的菜单
 function tomorrowMenuClick() {
     var selectdate = $('#todaymenudate').datebox('getValue');
-    var d = new Date(selectdate);   // 格式化为Date对像;
+    var d = new Date(selectdate); // 格式化为Date对像;
     if (d == "Invalid Date") {
         alert("非日期");
         return;
@@ -267,15 +265,15 @@ function onTodaymenuSelect(date) {
 // 例子：
 // (new Date()).Format("yyyy-MM-dd hh:mm:ss.S") ==> 2006-07-02 08:09:04.423
 // (new Date()).Format("yyyy-M-d h:m:s.S") ==> 2006-7-2 8:9:4.18
-Date.prototype.Format = function (fmt) { // author: meizz
+Date.prototype.Format = function(fmt) { // author: meizz
     var o = {
-        "M+": this.getMonth() + 1,                 // 月份
-        "d+": this.getDate(),                    // 日
-        "h+": this.getHours(),                   // 小时
-        "m+": this.getMinutes(),                 // 分
-        "s+": this.getSeconds(),                 // 秒
+        "M+": this.getMonth() + 1, // 月份
+        "d+": this.getDate(), // 日
+        "h+": this.getHours(), // 小时
+        "m+": this.getMinutes(), // 分
+        "s+": this.getSeconds(), // 秒
         "q+": Math.floor((this.getMonth() + 3) / 3), // 季度
-        "S": this.getMilliseconds()             // 毫秒
+        "S": this.getMilliseconds() // 毫秒
     };
     if (/(y+)/.test(fmt))
         fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
@@ -293,7 +291,7 @@ function orderPrintData(orderformid, rowIndex, accounttype) {
         type: "POST",
         url: APP + "/OrderHandle/getPrintOrder/orderformid/" + orderformid,
         dataType: "json",
-        success: function (data) {
+        success: function(data) {
             printOrderForm(data, data['accounttype']);
         }
 
@@ -302,7 +300,7 @@ function orderPrintData(orderformid, rowIndex, accounttype) {
 
 // 实际打印
 function printOrderForm(data, accounttype) {
-    var printPage = $.cookie('rmsPrintPage');  //localStorage['printPage'];  // 取得打印纸张类型
+    var printPage = $.cookie('rmsPrintPage'); //localStorage['printPage'];  // 取得打印纸张类型
     if (printPage == '') {
         alert('请设置打印纸张类型');
     } else if (printPage == '60hot') {
@@ -329,7 +327,7 @@ function print_80(data, accounttype) {
 
     // 定义行号
     var linespacing = 14;
-    var row = 0;  // 循环变量
+    var row = 0; // 循环变量
     // 重新设置打印机的设备
     LODOP.PRINT_INIT("printorder");
     LODOP.SET_PRINTER_INDEX(print_index);
@@ -421,6 +419,10 @@ function print_80(data, accounttype) {
     beizhu4 = beizhu.subCHStr(90, 30);
     beizhu5 = beizhu.subCHStr(120, 30);
     beizhu6 = beizhu.subCHStr(150, 30);
+    beizhu7 = beizhu.subCHStr(150, 30);
+    beizhu8 = beizhu.subCHStr(150, 30);
+    beizhu9 = beizhu.subCHStr(150, 30);
+    beizhu10 = beizhu.subCHStr(150, 30);
     if (beizhu1.length > 0) {
         row = row + 1;
         LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, beizhu1);
@@ -445,6 +447,22 @@ function print_80(data, accounttype) {
         row = row + 1;
         LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, beizhu6);
     }
+    if (beizhu7.length > 0) {
+        row = row + 1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, beizhu7);
+    }
+    if (beizhu8.length > 0) {
+        row = row + 1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, beizhu8);
+    }
+    if (beizhu9.length > 0) {
+        row = row + 1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, beizhu9);
+    }
+    if (beizhu10.length > 0) {
+        row = row + 1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, beizhu10);
+    }
 
     LODOP.SET_PRINT_STYLE("FontSize", 10);
     LODOP.SET_PRINT_STYLE('FontName', '宋体');
@@ -455,7 +473,7 @@ function print_80(data, accounttype) {
     row = row + 1;
     LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, productsTitle);
     if (data['orderproducts']) {
-        $.each(data['orderproducts'], function (key, value) {
+        $.each(data['orderproducts'], function(key, value) {
             linespacing = 19;
             row = row + 1;
             // 产品名称
@@ -469,15 +487,16 @@ function print_80(data, accounttype) {
         })
     }
     // 送餐费金额
-    LODOP.SET_PRINT_STYLE("FontSize", 10);
-    linespacing = 19;
-    row = row + 1;
-    var shippingmoney = '送餐费:' + data['orderform'].shippingmoney;
-    LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, shippingmoney);
+    //LODOP.SET_PRINT_STYLE("FontSize", 10);
+    //linespacing = 19;
+    //row = row + 1;
+    //var shippingmoney = '送餐费:' + data['orderform'].shippingmoney;
+    //LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, shippingmoney);
 
     // 总金额
     LODOP.SET_PRINT_STYLE("FontSize", 8);
     linespacing = 19;
+    row = row + 1;
     var totalmoney = '总金额:' + data['orderform'].totalmoney;
     LODOP.ADD_PRINT_TEXT(linespacing * row, 110, 644, 62, totalmoney);
     //活动打印
@@ -485,7 +504,7 @@ function print_80(data, accounttype) {
         var activityTitle = '营销活动:    名称          金额';
         row = row + 1;
         LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, activityTitle);
-        $.each(data['orderactivity'], function (key, value) {
+        $.each(data['orderactivity'], function(key, value) {
             linespacing = 19;
             row = row + 1;
             // 产品名称
@@ -499,7 +518,7 @@ function print_80(data, accounttype) {
         var paymentTitle = '订单支付:     名称           金额';
         row = row + 1;
         LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, paymentTitle);
-        $.each(data['orderpayment'], function (key, value) {
+        $.each(data['orderpayment'], function(key, value) {
             linespacing = 19;
             row = row + 1;
             // 产品名称
@@ -519,7 +538,7 @@ function print_80(data, accounttype) {
     // 发票抬头和发票内容
     if (data['orderform'].invoiceheader.length > 0) {
         var invoice = '发票:' + data['orderform'].invoiceheader + ' 内容:'; // +
-                                                                        // data['orderform'].invoicebody;
+        // data['orderform'].invoicebody;
         invoice1 = invoice.subCHStr(0, 30);
         invoice2 = invoice.subCHStr(30, 30);
         if (invoice1.length > 0) {
@@ -631,6 +650,10 @@ function print_80(data, accounttype) {
     beizhu4 = beizhu.subCHStr(90, 30);
     beizhu5 = beizhu.subCHStr(120, 30);
     beizhu6 = beizhu.subCHStr(150, 30);
+    beizhu7 = beizhu.subCHStr(150, 30);
+    beizhu8 = beizhu.subCHStr(150, 30);
+    beizhu9 = beizhu.subCHStr(150, 30);
+    beizhu10 = beizhu.subCHStr(150, 30);
     if (beizhu1.length > 0) {
         row = row + 1;
         LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, beizhu1);
@@ -655,6 +678,22 @@ function print_80(data, accounttype) {
         row = row + 1;
         LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, beizhu6);
     }
+    if (beizhu7.length > 0) {
+        row = row + 1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, beizhu7);
+    }
+    if (beizhu8.length > 0) {
+        row = row + 1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, beizhu8);
+    }
+    if (beizhu9.length > 0) {
+        row = row + 1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, beizhu9);
+    }
+    if (beizhu10.length > 0) {
+        row = row + 1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, beizhu10);
+    }
 
     LODOP.SET_PRINT_STYLE("FontSize", 10);
     LODOP.SET_PRINT_STYLE('FontName', '宋体');
@@ -665,7 +704,7 @@ function print_80(data, accounttype) {
     row = row + 1;
     LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, productsTitle);
     if (data['orderproducts']) {
-        $.each(data['orderproducts'], function (key, value) {
+        $.each(data['orderproducts'], function(key, value) {
             linespacing = 19;
             row = row + 1;
             // 产品名称
@@ -694,267 +733,13 @@ function print_80(data, accounttype) {
 
     }
 
-    // 重新设置打印机的设备
-    LODOP.PRINT_INIT("printorder");
-    LODOP.SET_PRINTER_INDEX(print_index);
-    // ********** 调度联 *****************
-    // 送餐单标题
-    LODOP.SET_PRINT_STYLE("FontSize", 12);
-    row = 0;
-    LODOP.ADD_PRINT_TEXT(linespacing * row, 60, 644, 62, '调度联');
-
-
-    //打印订单号
-    LODOP.SET_PRINT_STYLE("FontSize", 10);
-    linespacing = 20;
-    row = row + 1;
-    LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, orderformid);
-
-    // 打印条码 :去掉条形码
-    //LODOP.SET_PRINT_STYLEA, (0, "FontSize", 10);
-    //linespacing = 17;
-    //row = row + 1;
-    //LODOP.ADD_PRINT_BARCODE(linespacing * row, 0, 260, 40, '128Auto', data['orderform'].orderformid);
-
-    // 地址
-    LODOP.SET_PRINT_STYLE("FontSize", 12);
-    LODOP.SET_PRINT_STYLE('FontName', '宋体');
-    LODOP.SET_PRINT_STYLE('Bold', 1);
-    linespacing = 19;
-    //row = row + 1;
-    address = '地址:' + data['orderform'].address;
-    address1 = address.subCHStr(0, 32);
-    address2 = address.subCHStr(32, 32);
-    address3 = address.subCHStr(64, 32);
-    address4 = address.subCHStr(96, 32);
-    address5 = address.subCHStr(120, 30);
-
-    if (address1.length > 0) {
-        row = row + 1;
-        LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, address1);
-    }
-    if (address2.length > 0) {
-        row = row + 1;
-        linespacing = 19;
-        LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, address2);
-    }
-    if (address3.length > 0) {
-        row = row + 1;
-        linespacing = 19;
-        LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, address3);
-    }
-    if (address4.length > 0) {
-        row = row + 1;
-        linespacing = 19;
-        LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, address4);
-    }
-    if (address5.length > 0) {
-        row = row + 1;
-        linespacing = 19;
-        LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, address5);
-    }
-
-
-    LODOP.SET_PRINT_STYLE("FontSize", 10);
-    LODOP.SET_PRINT_STYLE('FontName', '宋体');
-    LODOP.SET_PRINT_STYLE('Bold', 0);
-    linespacing = 19;
-    // 电话
-    telphone = '电话:' + data['orderform'].telphone;
-    // 客户
-    clientname = '客户:' + data['orderform'].clientname;
-    // 要餐时间
-    custtime = '要餐时间:' + data['orderform'].custtime;
-    // 订餐时间
-    teltime = '下单时间:' + data['orderform'].rectime;
-    row = row + 1;
-    LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, telphone + '  ' + custtime);
-    row = row + 1;
-    LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, clientname + '  ' + teltime);
-    // 备注
-    LODOP.SET_PRINT_STYLE("FontSize", 12);
-    LODOP.SET_PRINT_STYLE('FontName', '宋体');
-    LODOP.SET_PRINT_STYLE('Bold', 1);
-    linespacing = 19;
-    beizhu = '备注:' + data['orderform'].beizhu;
-    beizhu1 = beizhu.subCHStr(0, 30);
-    beizhu2 = beizhu.subCHStr(30, 30);
-    beizhu3 = beizhu.subCHStr(60, 30);
-    beizhu4 = beizhu.subCHStr(90, 30);
-    beizhu5 = beizhu.subCHStr(120, 30);
-    beizhu6 = beizhu.subCHStr(150, 30);
-    if (beizhu1.length > 0) {
-        row = row + 1;
-        LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, beizhu1);
-    }
-    if (beizhu2.length > 0) {
-        row = row + 1;
-        LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, beizhu2);
-    }
-    if (beizhu3.length > 0) {
-        row = row + 1;
-        LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, beizhu3);
-    }
-    if (beizhu4.length > 0) {
-        row = row + 1;
-        LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, beizhu4);
-    }
-    if (beizhu5.length > 0) {
-        row = row + 1;
-        LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, beizhu5);
-    }
-    if (beizhu6.length > 0) {
-        row = row + 1;
-        LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, beizhu6);
-    }
-
-    LODOP.SET_PRINT_STYLE("FontSize", 10);
-    LODOP.SET_PRINT_STYLE('FontName', '宋体');
-    LODOP.SET_PRINT_STYLE('Bold', 0);
-    linespacing = 19;
-    // 商品打印
-    var productsTitle = '名称        数量    单价   金额';
-    row = row + 1;
-    LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, productsTitle);
-    if (data['orderproducts']) {
-        $.each(data['orderproducts'], function (key, value) {
-            linespacing = 19;
-            row = row + 1;
-            // 产品名称
-            LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, value.shortname);
-            // 产品数量
-            LODOP.ADD_PRINT_TEXT(linespacing * row, 110, 644, 62, value.number);
-            // 单价
-            LODOP.ADD_PRINT_TEXT(linespacing * row, 150, 644, 62, value.price);
-            // 金额
-            LODOP.ADD_PRINT_TEXT(linespacing * row, 210, 644, 62, value.money);
-        })
-    }
-    // 送餐费金额
-    LODOP.SET_PRINT_STYLE("FontSize", 10);
-    linespacing = 19;
-    row = row + 1;
-    var shippingmoney = '送餐费:' + data['orderform'].shippingmoney;
-    LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, shippingmoney);
-    // 总金额
-    LODOP.SET_PRINT_STYLE("FontSize", 10);
-    linespacing = 19;
-    totalmoney = '总金额:' + data['orderform'].totalmoney;
-    LODOP.ADD_PRINT_TEXT(linespacing * row, 110, 644, 62, totalmoney);
-
-    //活动打印
-    /**
-     if (data['orderactivity']) {
-    var activityTitle = '营销活动:    名称          金额';
-    row = row + 1;
-    LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, activityTitle);
-        $.each(data['orderactivity'], function (key, value) {
-            linespacing = 19;
-            row = row + 1;
-            // 产品名称
-            LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, value.name);
-            // 金额
-            LODOP.ADD_PRINT_TEXT(linespacing * row, 185, 644, 62, value.money);
-        })
-    }
-     **/
-    //支付打印
-    if (data['orderpayment']) {
-        var paymentTitle = '订单支付:     名称           金额';
-        row = row + 1;
-        LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, paymentTitle);
-        $.each(data['orderpayment'], function (key, value) {
-            linespacing = 19;
-            row = row + 1;
-            // 产品名称
-            LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, value.name);
-            // 金额
-            LODOP.ADD_PRINT_TEXT(linespacing * row, 185, 644, 62, value.money);
-        })
-    }
-    // 客户还需付款金额
-    LODOP.SET_PRINT_STYLE("FontSize", 10);
-    linespacing = 19;
-    row = row + 1;
-    var shouldmoney = '客户还需付款金额:' + data['orderform'].shouldmoney;
-    LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, shouldmoney);
-
-
-    // 发票抬头和发票内容
-    if (data['orderform'].invoiceheader.length > 0) {
-        invoice = '发票抬头:' + data['orderform'].invoiceheader + ' 内容:'; // +
-        // data['orderform'].invoicebody;
-        invoice1 = invoice.subCHStr(0, 30);
-        invoice2 = invoice.subCHStr(30, 30);
-        if (invoice1.length > 0) {
-            row = row + 1;
-            LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, invoice1);
-        }
-        if (invoice2.length > 0) {
-            row = row + 1;
-            LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, invoice2);
-        }
-    }
-    //发票的购买方纳税人识别号
-    if (data['orderform'].gmf_nsrsbh.length > 0) {
-        invoice = '识别号:' + data['orderform'].gmf_nsrsbh;
-        invoice1 = invoice.subCHStr(0, 30);
-        if (invoice1.length > 0) {
-            row = row + 1;
-            LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, invoice1);
-        }
-    }
-    //购买方地址电话
-    if (data['orderform'].gmf_dzdh.length > 0) {
-        invoice = '发票地址电话:' + data['orderform'].gmf_dzdh;
-        invoice1 = invoice.subCHStr(0, 30);
-        invoice2 = invoice.subCHStr(30, 30);
-        invoice3 = invoice.subCHStr(60, 30);
-        if (invoice1.length > 0) {
-            row = row + 1;
-            LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, invoice1);
-        }
-        if (invoice2.length > 0) {
-            row = row + 1;
-            LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, invoice2);
-        }
-        if (invoice3.length > 0) {
-            row = row + 1;
-            LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, invoice3);
-        }
-    }
-    //购买方银行账户
-    if (data['orderform'].gmf_yhzh.length > 0) {
-        invoice = '发票银行账号:' + data['orderform'].gmf_yhzh;
-        invoice1 = invoice.subCHStr(0, 30);
-        invoice2 = invoice.subCHStr(30, 30);
-        if (invoice1.length > 0) {
-            row = row + 1;
-            LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, invoice1);
-        }
-        if (invoice2.length > 0) {
-            row = row + 1;
-            LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, invoice2);
-        }
-    }
-
-
-    row = row + 1;
-    LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, '.');
-
-    LODOP.PRINT();
-
-    for (i = 0; i < 10000; i++) {
-
-    }
-
 
     // ********** 客户联 *****************
     //因为常州客服提出的需求，所以加上 *********************************************
     if (accounttype === 2) {
         // 定义行号
         var linespacing = 14;
-        var row = 0;  // 循环变量
+        var row = 0; // 循环变量
         // 重新设置打印机的设备
         LODOP.PRINT_INIT("printorder");
         LODOP.SET_PRINTER_INDEX(print_index);
@@ -1071,7 +856,7 @@ function print_80(data, accounttype) {
         row = row + 1;
         LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, productsTitle);
         if (data['orderproducts']) {
-            $.each(data['orderproducts'], function (key, value) {
+            $.each(data['orderproducts'], function(key, value) {
                 linespacing = 19;
                 row = row + 1;
                 // 产品名称
@@ -1085,11 +870,11 @@ function print_80(data, accounttype) {
             })
         }
         // 送餐费金额
-        LODOP.SET_PRINT_STYLE("FontSize", 10);
-        linespacing = 19;
-        row = row + 1;
-        var shippingmoney = '送餐费:' + data['orderform'].shippingmoney;
-        LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, shippingmoney);
+        //LODOP.SET_PRINT_STYLE("FontSize", 10);
+        //linespacing = 19;
+        //row = row + 1;
+        //var shippingmoney = '送餐费:' + data['orderform'].shippingmoney;
+        //LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, shippingmoney);
 
         // 总金额
         LODOP.SET_PRINT_STYLE("FontSize", 8);
@@ -1101,7 +886,7 @@ function print_80(data, accounttype) {
             var activityTitle = '营销活动:    名称          金额';
             row = row + 1;
             LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, activityTitle);
-            $.each(data['orderactivity'], function (key, value) {
+            $.each(data['orderactivity'], function(key, value) {
                 linespacing = 19;
                 row = row + 1;
                 // 产品名称
@@ -1115,7 +900,7 @@ function print_80(data, accounttype) {
             var paymentTitle = '订单支付:     名称           金额';
             row = row + 1;
             LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, paymentTitle);
-            $.each(data['orderpayment'], function (key, value) {
+            $.each(data['orderpayment'], function(key, value) {
                 linespacing = 19;
                 row = row + 1;
                 // 产品名称
@@ -1144,6 +929,287 @@ function print_80(data, accounttype) {
     }
 
 
+    /****调度联************************************** */
+    // 重新设置打印机的设备
+    LODOP.PRINT_INIT("printorder");
+    LODOP.SET_PRINTER_INDEX(print_index);
+    // ********** 调度联 *****************
+    // 送餐单标题
+    LODOP.SET_PRINT_STYLE("FontSize", 12);
+    row = 0;
+    LODOP.ADD_PRINT_TEXT(linespacing * row, 60, 644, 62, '调度联');
+
+
+    //打印订单号
+    LODOP.SET_PRINT_STYLE("FontSize", 10);
+    linespacing = 20;
+    row = row + 1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, orderformid);
+
+    // 打印条码 :去掉条形码
+    //LODOP.SET_PRINT_STYLEA, (0, "FontSize", 10);
+    //linespacing = 17;
+    //row = row + 1;
+    //LODOP.ADD_PRINT_BARCODE(linespacing * row, 0, 260, 40, '128Auto', data['orderform'].orderformid);
+
+    // 地址
+    LODOP.SET_PRINT_STYLE("FontSize", 12);
+    LODOP.SET_PRINT_STYLE('FontName', '宋体');
+    LODOP.SET_PRINT_STYLE('Bold', 1);
+    linespacing = 19;
+    //row = row + 1;
+    address = '地址:' + data['orderform'].address;
+    address1 = address.subCHStr(0, 32);
+    address2 = address.subCHStr(32, 32);
+    address3 = address.subCHStr(64, 32);
+    address4 = address.subCHStr(96, 32);
+    address5 = address.subCHStr(120, 30);
+
+    if (address1.length > 0) {
+        row = row + 1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, address1);
+    }
+    if (address2.length > 0) {
+        row = row + 1;
+        linespacing = 19;
+        LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, address2);
+    }
+    if (address3.length > 0) {
+        row = row + 1;
+        linespacing = 19;
+        LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, address3);
+    }
+    if (address4.length > 0) {
+        row = row + 1;
+        linespacing = 19;
+        LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, address4);
+    }
+    if (address5.length > 0) {
+        row = row + 1;
+        linespacing = 19;
+        LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, address5);
+    }
+
+
+    LODOP.SET_PRINT_STYLE("FontSize", 10);
+    LODOP.SET_PRINT_STYLE('FontName', '宋体');
+    LODOP.SET_PRINT_STYLE('Bold', 0);
+    linespacing = 19;
+    // 电话
+    telphone = '电话:' + data['orderform'].telphone;
+    // 客户
+    clientname = '客户:' + data['orderform'].clientname;
+    // 要餐时间
+    custtime = '要餐时间:' + data['orderform'].custtime;
+    // 订餐时间
+    teltime = '下单时间:' + data['orderform'].rectime;
+    row = row + 1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, telphone + '  ' + custtime);
+    row = row + 1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, clientname + '  ' + teltime);
+    // 备注
+    LODOP.SET_PRINT_STYLE("FontSize", 12);
+    LODOP.SET_PRINT_STYLE('FontName', '宋体');
+    LODOP.SET_PRINT_STYLE('Bold', 1);
+    linespacing = 19;
+    beizhu = '备注:' + data['orderform'].beizhu;
+    beizhu1 = beizhu.subCHStr(0, 30);
+    beizhu2 = beizhu.subCHStr(30, 30);
+    beizhu3 = beizhu.subCHStr(60, 30);
+    beizhu4 = beizhu.subCHStr(90, 30);
+    beizhu5 = beizhu.subCHStr(120, 30);
+    beizhu6 = beizhu.subCHStr(150, 30);
+    beizhu7 = beizhu.subCHStr(150, 30);
+    beizhu8 = beizhu.subCHStr(150, 30);
+    beizhu9 = beizhu.subCHStr(150, 30);
+    beizhu10 = beizhu.subCHStr(150, 30);
+    if (beizhu1.length > 0) {
+        row = row + 1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, beizhu1);
+    }
+    if (beizhu2.length > 0) {
+        row = row + 1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, beizhu2);
+    }
+    if (beizhu3.length > 0) {
+        row = row + 1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, beizhu3);
+    }
+    if (beizhu4.length > 0) {
+        row = row + 1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, beizhu4);
+    }
+    if (beizhu5.length > 0) {
+        row = row + 1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, beizhu5);
+    }
+    if (beizhu6.length > 0) {
+        row = row + 1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, beizhu6);
+    }
+    if (beizhu7.length > 0) {
+        row = row + 1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, beizhu7);
+    }
+    if (beizhu8.length > 0) {
+        row = row + 1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, beizhu8);
+    }
+    if (beizhu9.length > 0) {
+        row = row + 1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, beizhu9);
+    }
+    if (beizhu10.length > 0) {
+        row = row + 1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, beizhu10);
+    }
+
+    LODOP.SET_PRINT_STYLE("FontSize", 10);
+    LODOP.SET_PRINT_STYLE('FontName', '宋体');
+    LODOP.SET_PRINT_STYLE('Bold', 0);
+    linespacing = 19;
+    // 商品打印
+    var productsTitle = '名称        数量    单价   金额';
+    row = row + 1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, productsTitle);
+    if (data['orderproducts']) {
+        $.each(data['orderproducts'], function(key, value) {
+            linespacing = 19;
+            row = row + 1;
+            // 产品名称
+            LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, value.shortname);
+            // 产品数量
+            LODOP.ADD_PRINT_TEXT(linespacing * row, 110, 644, 62, value.number);
+            // 单价
+            LODOP.ADD_PRINT_TEXT(linespacing * row, 150, 644, 62, value.price);
+            // 金额
+            LODOP.ADD_PRINT_TEXT(linespacing * row, 210, 644, 62, value.money);
+        })
+    }
+    // 送餐费金额
+    //LODOP.SET_PRINT_STYLE("FontSize", 10);
+    //linespacing = 19;
+    //row = row + 1;
+    //var shippingmoney = '送餐费:' + data['orderform'].shippingmoney;
+    //LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, shippingmoney);
+
+    // 总金额
+    LODOP.SET_PRINT_STYLE("FontSize", 10);
+    linespacing = 19;
+    row = row + 1;
+    totalmoney = '总金额:' + data['orderform'].totalmoney;
+    LODOP.ADD_PRINT_TEXT(linespacing * row, 110, 644, 62, totalmoney);
+
+    //活动打印
+    /**
+     if (data['orderactivity']) {
+    var activityTitle = '营销活动:    名称          金额';
+    row = row + 1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, activityTitle);
+        $.each(data['orderactivity'], function (key, value) {
+            linespacing = 19;
+            row = row + 1;
+            // 产品名称
+            LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, value.name);
+            // 金额
+            LODOP.ADD_PRINT_TEXT(linespacing * row, 185, 644, 62, value.money);
+        })
+    }
+     **/
+    //支付打印
+    if (data['orderpayment']) {
+        var paymentTitle = '订单支付:     名称           金额';
+        row = row + 1;
+        LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, paymentTitle);
+        $.each(data['orderpayment'], function(key, value) {
+            linespacing = 19;
+            row = row + 1;
+            // 产品名称
+            LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, value.name);
+            // 金额
+            LODOP.ADD_PRINT_TEXT(linespacing * row, 185, 644, 62, value.money);
+        })
+    }
+    // 客户还需付款金额
+    LODOP.SET_PRINT_STYLE("FontSize", 10);
+    linespacing = 19;
+    row = row + 1;
+    var shouldmoney = '客户还需付款金额:' + data['orderform'].shouldmoney;
+    LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, shouldmoney);
+
+
+    // 发票抬头和发票内容
+    if (data['orderform'].invoiceheader.length > 0) {
+        invoice = '发票抬头:' + data['orderform'].invoiceheader + ' 内容:'; // +
+        // data['orderform'].invoicebody;
+        invoice1 = invoice.subCHStr(0, 30);
+        invoice2 = invoice.subCHStr(30, 30);
+        if (invoice1.length > 0) {
+            row = row + 1;
+            LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, invoice1);
+        }
+        if (invoice2.length > 0) {
+            row = row + 1;
+            LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, invoice2);
+        }
+    }
+    //发票的购买方纳税人识别号
+    if (data['orderform'].gmf_nsrsbh.length > 0) {
+        invoice = '识别号:' + data['orderform'].gmf_nsrsbh;
+        invoice1 = invoice.subCHStr(0, 30);
+        if (invoice1.length > 0) {
+            row = row + 1;
+            LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, invoice1);
+        }
+    }
+    //购买方地址电话
+    if (data['orderform'].gmf_dzdh.length > 0) {
+        invoice = '发票地址电话:' + data['orderform'].gmf_dzdh;
+        invoice1 = invoice.subCHStr(0, 30);
+        invoice2 = invoice.subCHStr(30, 30);
+        invoice3 = invoice.subCHStr(60, 30);
+        if (invoice1.length > 0) {
+            row = row + 1;
+            LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, invoice1);
+        }
+        if (invoice2.length > 0) {
+            row = row + 1;
+            LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, invoice2);
+        }
+        if (invoice3.length > 0) {
+            row = row + 1;
+            LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, invoice3);
+        }
+    }
+    //购买方银行账户
+    if (data['orderform'].gmf_yhzh.length > 0) {
+        invoice = '发票银行账号:' + data['orderform'].gmf_yhzh;
+        invoice1 = invoice.subCHStr(0, 30);
+        invoice2 = invoice.subCHStr(30, 30);
+        if (invoice1.length > 0) {
+            row = row + 1;
+            LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, invoice1);
+        }
+        if (invoice2.length > 0) {
+            row = row + 1;
+            LODOP.ADD_PRINT_TEXT(linespacing * row, 20, 644, 62, invoice2);
+        }
+    }
+
+
+    row = row + 1;
+    LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, '.');
+
+    LODOP.PRINT();
+
+    for (i = 0; i < 10000; i++) {
+
+    }
+
+
+
+
+
 }
 
 // 60宽热敏的打印代码
@@ -1155,7 +1221,7 @@ function print_60(data) {
     }
     // 定义行号
     var linespacing = 14;
-    var row = 0;  // 循环变量
+    var row = 0; // 循环变量
     // 重新设置打印机的设备
     LODOP.SET_PRINTER_INDEX(print_index);
     LODOP.SET_PRINT_PAGESIZE(3, "58mm", "10mm", 'ORDER');
@@ -1224,7 +1290,7 @@ function print_60(data) {
     row = row + 1;
     LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, productsTitle);
     if (data['orderproducts']) {
-        $.each(data['orderproducts'], function (key, value) {
+        $.each(data['orderproducts'], function(key, value) {
             row = row + 1;
             // 产品名称
             LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, value.shortname);
@@ -1317,7 +1383,7 @@ function print_60(data) {
     row = row + 1;
     LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, productsTitle);
     if (data['orderproducts']) {
-        $.each(data['orderproducts'], function (key, value) {
+        $.each(data['orderproducts'], function(key, value) {
             row = row + 1;
             // 产品名称
             LODOP.ADD_PRINT_TEXT(linespacing * row, 0, 644, 62, value.shortname);
@@ -1343,7 +1409,7 @@ function print_60(data) {
         type: "GET",
         url: APP + "/OrderHandle/setOrderPrinted/orderformid/" + data['orderform'].orderformid,
         dataType: "json",
-        success: function (data) {
+        success: function(data) {
 
         }
     })
@@ -1361,7 +1427,7 @@ function print_ht(data) {
     // 重新设置打印机的设备
     LODOP.SET_PRINTER_INDEX(print_index);
     LODOP.PRINT_INITA(0, 0, 1522, 382, "打印控件功能_Lodop功能");
-    LODOP.SET_PRINT_PAGESIZE(0, 0, 0, "lihua");  //(1, 2400, 700, "lihua");
+    LODOP.SET_PRINT_PAGESIZE(0, 0, 0, "lihua"); //(1, 2400, 700, "lihua");
     // 订单号
     orderformid = data['orderform'].recdate + '-' + data['orderform'].orderformid;
     LODOP.ADD_PRINT_TEXT(6, 29, 187, 24, orderformid);
@@ -1416,7 +1482,7 @@ function print_ht(data) {
         type: "GET",
         url: APP + "/OrderHandle/setOrderPrinted/orderformid/" + data['orderform'].orderformid,
         dataType: "json",
-        success: function (data) {
+        success: function(data) {
 
         }
     })
@@ -1434,7 +1500,7 @@ function printEticketInvoice(data) {
     }
     // 定义行号
     var linespacing = 14;
-    var row = 1;  // 循环变量
+    var row = 1; // 循环变量
     // 重新设置打印机的设备
 
     LODOP.PRINT_INIT("printorder");
@@ -1448,9 +1514,9 @@ function printEticketInvoice(data) {
     LODOP.ADD_PRINT_TEXT(linespacing * row, 60, 644, 62, '电子发票提取码');
 
     // 日期;时间,分公司名称
-    var orderformid = '日期:' + data['date'];
-    ' 打印:' + data['printman'] +
-    ' 分公司:' + data['company'];
+    var orderformid = '日期:' + data['date'] +
+        ' 打印:' + data['print_number'] +
+        ' 订单:' + data['orderformid'];
 
     LODOP.SET_PRINT_STYLE("FontSize", 10);
     linespacing = 16;
@@ -1576,8 +1642,7 @@ function printEticketInvoice(data) {
         type: "GET",
         url: APP + "/InvoiceMgr/setInvoiceOpened/invoiceid/" + data['invoiceid'],
         dataType: "json",
-        success: function (data) {
-        }
+        success: function(data) {}
     });
 
     return true;
@@ -1586,16 +1651,17 @@ function printEticketInvoice(data) {
 
 
 // 计算字符串长度
-String.prototype.strLen = function () {
+String.prototype.strLen = function() {
     var len = 0;
     for (var i = 0; i < this.length; i++) {
-        if (this.charCodeAt(i) > 255 || this.charCodeAt(i) < 0) len += 2; else len++;
+        if (this.charCodeAt(i) > 255 || this.charCodeAt(i) < 0) len += 2;
+        else len++;
     }
     return len;
 }
 
 // 将字符串拆成字符，并存到数组中
-String.prototype.strToChars = function () {
+String.prototype.strToChars = function() {
     var chars = new Array();
     for (var i = 0; i < this.length; i++) {
         chars[i] = [this.substr(i, 1), this.isCHS(i)];
@@ -1605,7 +1671,7 @@ String.prototype.strToChars = function () {
 }
 
 // 判断某个字符是否是汉字
-String.prototype.isCHS = function (i) {
+String.prototype.isCHS = function(i) {
     if (this.charCodeAt(i) > 255 || this.charCodeAt(i) < 0)
         return true;
     else
@@ -1613,7 +1679,7 @@ String.prototype.isCHS = function (i) {
 }
 
 // 截取字符串（从start字节到end字节）
-String.prototype.subCHString = function (start, end) {
+String.prototype.subCHString = function(start, end) {
     var len = 0;
     var str = "";
     this.strToChars();
@@ -1631,7 +1697,7 @@ String.prototype.subCHString = function (start, end) {
 }
 
 // 截取字符串（从start字节截取length个字节）
-String.prototype.subCHStr = function (start, length) {
+String.prototype.subCHStr = function(start, length) {
     return this.subCHString(start, start + length);
 }
 
@@ -1728,31 +1794,15 @@ function title_module(title) {
 
 //初始化快捷键
 function initializeKeyboard() {
-    Mousetrap.bind(['ctrl+0', 'ctrl+f10', 'f10'], function (e) {
-    });
-    Mousetrap.bind(['ctrl+1', 'ctrl+f1', 'f1'], function (e) {
-    });
+    Mousetrap.bind(['ctrl+0', 'ctrl+f10', 'f10'], function(e) {});
+    Mousetrap.bind(['ctrl+1', 'ctrl+f1', 'f1'], function(e) {});
     //Mousetrap.bind(['ctrl+2','ctrl+f2','f2'], function(e) {});
-    Mousetrap.bind(['ctrl+3', 'ctrl+f3', 'f3'], function (e) {
-    });
-    Mousetrap.bind(['ctrl+4', 'ctrl+f4', 'f4'], function (e) {
-    });
-    Mousetrap.bind(['ctrl+5', 'ctrl+f5', 'f5'], function (e) {
-    });
-    Mousetrap.bind(['ctrl+6', 'ctrl+f6', 'f6'], function (e) {
-    });
-    Mousetrap.bind(['ctrl+7', 'ctrl+f7', 'f7'], function (e) {
-    });
-    Mousetrap.bind(['ctrl+8', 'ctrl+f8', 'f8'], function (e) {
-    });
-    Mousetrap.bind(['ctrl+9', 'ctrl+f9', 'f9'], function (e) {
-    });
-    Mousetrap.bind('esc', function (e) {
-    });
+    Mousetrap.bind(['ctrl+3', 'ctrl+f3', 'f3'], function(e) {});
+    Mousetrap.bind(['ctrl+4', 'ctrl+f4', 'f4'], function(e) {});
+    Mousetrap.bind(['ctrl+5', 'ctrl+f5', 'f5'], function(e) {});
+    Mousetrap.bind(['ctrl+6', 'ctrl+f6', 'f6'], function(e) {});
+    Mousetrap.bind(['ctrl+7', 'ctrl+f7', 'f7'], function(e) {});
+    Mousetrap.bind(['ctrl+8', 'ctrl+f8', 'f8'], function(e) {});
+    Mousetrap.bind(['ctrl+9', 'ctrl+f9', 'f9'], function(e) {});
+    Mousetrap.bind('esc', function(e) {});
 }
-
-
-
-
-
-

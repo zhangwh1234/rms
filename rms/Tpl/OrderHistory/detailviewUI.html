@@ -125,6 +125,9 @@
                                     <span style="margin-left:10px; ">&nbsp;</span>
                                     <span class="detailviewLableSpan">已收金额:</span>
                                     <span class="detailviewInputSpan">{$info.paidmoney}</span>
+                                    <if condition="$info.invoice_open eq '已开'">
+                                        <span class="detailviewInputSpan" style="color:red;">发票:{$info.invoice_open}</span>
+                                    </if>
                                 </td>
                                 <td width="15%" align="right">
                                     <span class="detailviewLableSpan">订单总额:</span>

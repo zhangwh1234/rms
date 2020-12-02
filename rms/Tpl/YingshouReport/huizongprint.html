@@ -1,0 +1,85 @@
+<style media="print">
+    @page {
+        size: auto;
+        /* auto is the initial value */
+        margin: 0mm;
+        /* this affects the margin in the printer settings */
+    }
+</style>
+
+<style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 12px;
+        margin: 10px;
+    }
+
+    body table {
+        border-collapse: collapse;
+    }
+
+    body table tr td {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
+        border: 0px solid #000000;
+    }
+
+    .printReport {
+        width: 100%;
+        border: 1px solid #000000;
+        border-collapse: collapse;
+    }
+
+    .printReport tr td {
+        border: 1px dotted #000000;
+        text-align: left;
+        height:35px;
+    }
+
+    .printReport tr th {
+        border-bottom: 2px solid #000000;
+        border-left: 1px solid #000000;
+        border-top: 1px solid #000000;
+        border-right: 1px solid #000000;
+    }
+</style>
+<html>
+
+<body style="text-align:center;" onLoad="JavaScript:window.print()">
+    </br>
+    <label>结账单 分公司:{$company} 日期:{$printDate}</label>
+    <table class="printReport">
+        <foreach item="entity" name="revparmgr_head">
+
+            <assign name='record' value="$key" />
+            <tr>
+                <foreach name="entity" item="id" key="k">
+                    <if condition=" ($k eq 1) or ($k eq 3) or ($k eq 5)">
+                        <td class="listColData" align="center" style="border-right: 1px solid">{$id}</td>
+                        <else />
+                        <td class="listColData" align="center" >{$id}</td>
+                    </if>
+                </foreach>
+            </tr>
+        </foreach>
+    </table>
+    </br>
+    <table class="printReport">
+        <foreach item="entity" name="revparmgr_body">
+            <assign name='record' value="$key" />
+            <tr>
+                 <foreach name="entity" item="id" key="k">
+                     <if condition=" ($k eq 1) or ($k eq 3) or ($k eq 5)">
+                         <td class="listColData" align="center" style="border-right: 1px solid">{$id}</td>
+                         <else />
+                         <td class="listColData" align="center">{$id}</td>
+                     </if>
+                 </foreach>
+            </tr>
+        </foreach>
+    </table>
+
+    <!--  结账人的表格-->
+</body>
+
+</html>

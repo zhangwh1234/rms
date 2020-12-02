@@ -1,0 +1,16 @@
+<!-- 送餐员查询  -->
+<form style="overflow:hidden;" method="get">
+    <table cellspacing="6" width="100%" style="margin-left: 10px;margin-top:10px;">
+        <tr>
+            <td>
+                <span style="font-size: 16px;">支付选择: </span>
+                <select style="width:100px;" name="diningpaymenttypeone" id="diningpaymenttypeone">
+                    <option></option>
+                    <foreach name="paymentmgr" item="vo">
+                        <option>{$vo.name}</option>
+                    </foreach>
+            </select>
+            </td>
+        <tr>
+    </table>
+</form>

@@ -296,7 +296,7 @@ class ElemeApiAction extends Action
         $data = array();
         $data['message'] = 'ok';
         $this->ajaxReturn($data, 'JSON');
-        str_replace()
+        str_replace();
 
     }
 

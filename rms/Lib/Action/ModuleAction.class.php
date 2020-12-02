@@ -7,7 +7,7 @@ class ModuleAction extends Action
 {
 
     // 定义用户信息
-    var $userInfo;
+    public $userInfo;
 
     /**
      * 类的默认初始化方法
@@ -15,10 +15,10 @@ class ModuleAction extends Action
     public function _initialize()
     {
         // 引入用户信息
-        $this->userInfo = $_SESSION ['userInfo'];
+        $this->userInfo = $_SESSION['userInfo'];
 
         // 用户如果没有登陆，跳转到登陆页面
-        if (!isset ($this->userInfo ['userid'])) {
+        if (!isset($this->userInfo['userid'])) {
             $this->redirect('/Login/again');
         }
 
@@ -61,26 +61,26 @@ class ModuleAction extends Action
 
             // 建立查询条件
             $where = array();
-            $searchText = urldecode($_REQUEST ['searchText']); // 查询内容
-            if (!empty ($searchText)) {
+            $searchText = urldecode($_REQUEST['searchText']); // 查询内容
+            if (!empty($searchText)) {
                 foreach ($focus->searchFields as $value) {
-                    $where [$value] = array(
+                    $where[$value] = array(
                         'like',
-                        '%' . $searchText . '%'
+                        '%' . $searchText . '%',
                     );
                 }
-                $where ['_logic'] = 'OR';
+                $where['_logic'] = 'OR';
             } else {
-                $searchText = $_SESSION ['searchText' . $moduleName]; // 查询内容
+                $searchText = $_SESSION['searchText' . $moduleName]; // 查询内容
                 if (!empty($searchText)) {
-                    $searchText = $_SESSION ['searchText' . $moduleName];
+                    $searchText = $_SESSION['searchText' . $moduleName];
                     foreach ($focus->searchFields as $value) {
-                        $where [$value] = array(
+                        $where[$value] = array(
                             'like',
-                            '%' . $searchText . '%'
+                            '%' . $searchText . '%',
                         );
                     }
-                    $where ['_logic'] = 'OR';
+                    $where['_logic'] = 'OR';
                 }
             }
 
@@ -94,11 +94,11 @@ class ModuleAction extends Action
             $total = $focus->where($where)->count(); // 查询满足要求的总记录数
 
             // 取得显示页数
-            $pageNumber = $_REQUEST ['page'];
-            if (empty ($pageNumber)) {
+            $pageNumber = $_REQUEST['page'];
+            if (empty($pageNumber)) {
                 // 查session取得page的值
-                if (!empty ($_SESSION [$moduleName . 'page'])) {
-                    $pageNumber = $_SESSION [$moduleName . 'page'];
+                if (!empty($_SESSION[$moduleName . 'page'])) {
+                    $pageNumber = $_SESSION[$moduleName . 'page'];
                 } else {
                     $pageNumber = 1;
                 }
@@ -113,11 +113,11 @@ class ModuleAction extends Action
             }
 
             // 取得页数
-            $_GET ['p'] = $pageNumber;
-            $Page = new Page ($total, $listMaxRows);
+            $_GET['p'] = $pageNumber;
+            $Page = new Page($total, $listMaxRows);
 
             //保存页数
-            $_SESSION [$moduleName . 'page'] = $pageNumber;
+            $_SESSION[$moduleName . 'page'] = $pageNumber;
 
             // 查询模块的数据
             foreach ($listFields as $key => $value) {
@@ -139,7 +139,8 @@ class ModuleAction extends Action
             } else {
                 $orderHandleArray = array();
             }
-            $data = array('total' => $total, 'rows' => $orderHandleArray, 'sql' => $focus->getLastSql());
+
+            $data = array('total' => $total, 'rows' => $orderHandleArray);
             $this->ajaxReturn($data);
         } else {
             // 取得模块的名称
@@ -149,8 +150,8 @@ class ModuleAction extends Action
             //是否清除session的内容
             $delSession = $_REQUEST['delsession'];
             if (isset($delSession)) {
-                unset($_SESSION ['searchText' . $moduleName]);
-                unset($_SESSION [$moduleName . 'page']);
+                unset($_SESSION['searchText' . $moduleName]);
+                unset($_SESSION[$moduleName . 'page']);
             }
 
             // 启动当前模块的模型
@@ -166,18 +167,18 @@ class ModuleAction extends Action
             $moduleId = $focus->getPk();
 
             //是否有查询字段
-            $searchText = $_REQUEST ['searchText']; // 查询内容
+            $searchText = $_REQUEST['searchText']; // 查询内容
             if (!empty($searchText)) {
                 $searchArray = array('searchText' => $searchText);
                 $this->assign('searchIntroduce', '查询内容:' . $searchText);
-                $_SESSION ['searchText' . $moduleName] = $searchText;
+                $_SESSION['searchText' . $moduleName] = $searchText;
             } else {
-                $searchText = $_SESSION ['searchText' . $moduleName]; // 查询内容
+                $searchText = $_SESSION['searchText' . $moduleName]; // 查询内容
                 if (!empty($searchText)) {
                     $searchArray = array('searchText' => $searchText);
                     $this->assign('searchIntroduce', '查询内容:' . $searchText);
                 } else {
-                    $_SESSION ['searchText' . $moduleName] = '';
+                    $_SESSION['searchText' . $moduleName] = '';
                 }
             }
 
@@ -185,23 +186,23 @@ class ModuleAction extends Action
                 'options' => array(
                     'url' => U($moduleName . '/listview', $searchArray),
                     'pageNumber' => 1,
-                    'pageSize' => 10
-                )
+                    'pageSize' => 10,
+                ),
             );
             foreach ($listFields as $key => $value) {
                 $header = L($key);
-                $datagrid ['fields'] [$header] = array(
+                $datagrid['fields'][$header] = array(
                     'field' => $key,
                     'align' => $value['align'],
                     'halign' => $value['halign'],
-                    'width' => $value['width']
+                    'width' => $value['width'],
                 );
             }
-            $datagrid ['fields'] ['操作'] = array(
+            $datagrid['fields']['操作'] = array(
                 'field' => 'id',
                 'width' => 20,
                 'align' => 'center',
-                'formatter' => $moduleName . 'ListviewModule.operate'
+                'formatter' => $moduleName . 'ListviewModule.operate',
             );
             $this->assign('datagrid', $datagrid);
             $this->assign('moduleId', $moduleId);
@@ -228,7 +229,6 @@ class ModuleAction extends Action
         $navName = $focus->getNavName($moduleName);
         $this->assign('navName', $navName); // 导航名称
 
-
         // 生成list字段列表
         $listFields = $focus->listFields;
         // 模块的ID
@@ -247,17 +247,17 @@ class ModuleAction extends Action
         $total = $focus->where($where)->count(); // 查询满足要求的总记录数
         // 查session取得page的firstRos和listRows
 
-        if (!isset ($_SESSION [$moduleName . 'firstRowlistview'])) {
-            $firstRow = $_SESSION [$moduleName . 'firstRowlistview'];
+        if (!isset($_SESSION[$moduleName . 'firstRowlistview'])) {
+            $firstRow = $_SESSION[$moduleName . 'firstRowlistview'];
         }
 
         $listMaxRows = C('LIST_MAX_ROWS'); // 定义显示的列表函数
-        if (isset ($listMaxRows)) {
+        if (isset($listMaxRows)) {
             $listRows = $listMaxRows;
         } else {
             $listMaxRows = 15;
         }
-        $Page = new Page ($total, $listMaxRows);
+        $Page = new Page($total, $listMaxRows);
         $show = $Page->show();
 
         // 查询模块的数据
@@ -273,22 +273,22 @@ class ModuleAction extends Action
                 'url' => U($moduleName . '/listview'),
                 'pageNumber' => 1,
                 'pageSize' => 13,
-                'pageList' => array()
-            )
+                'pageList' => array(),
+            ),
         );
         foreach ($listHeader as $value) {
             $header = L($value);
-            $datagrid ['fields'] [$header] = array(
+            $datagrid['fields'][$header] = array(
                 'field' => $value,
                 'align' => 'center',
-                'width' => 25
+                'width' => 25,
             );
         }
-        $datagrid ['fields'] ['操作'] = array(
+        $datagrid['fields']['操作'] = array(
             'field' => 'id',
             'width' => 20,
             'align' => 'center',
-            'formatter' => $moduleName . $actionName . 'Module.operate'
+            'formatter' => $moduleName . $actionName . 'Module.operate',
         );
         $this->assign('datagrid', $datagrid);
 
@@ -313,7 +313,6 @@ class ModuleAction extends Action
         $this->display('Module/searchinput');
     }
 
-
     // 创建新数据createView
     public function createview()
     {
@@ -337,7 +336,7 @@ class ModuleAction extends Action
         $moduleNameId = strtolower($moduleName) . 'id';
         // 返回缓存blocks
         //$moduleBlocks = F($moduleName . 'Blocks');
-        if (!empty ($moduleBlocks)) {
+        if (!empty($moduleBlocks)) {
             $this->blocks = $moduleBlocks;
         } else {
             // 返回新建区块和字段
@@ -368,30 +367,28 @@ class ModuleAction extends Action
         $this->assign('navName', $navName); // 导航民
 
         // 取得返回的是列表还是查询列表
-        $returnAction = $_REQUEST ['returnAction'];
+        $returnAction = $_REQUEST['returnAction'];
         $this->assign('returnAction', $returnAction);
-
 
         // 模块的ID
         $moduleId = $focus->getPk();
 
         // 取得记录ID
-        $record = $_REQUEST ['record'];
+        $record = $_REQUEST['record'];
         $where = array();
-        $where [$moduleId] = $record;
+        $where[$moduleId] = $record;
 
         // 返回模块的行记录
         $result = $focus->where($where)->find();
         // 返回区块
         $blocks = $focus->detailBlocks($result);
 
-
         $this->assign('info', $result);
         $this->assign('fieldsFocus', $focus->fieldsFocus); // 指定字段获得焦点
         $this->assign('record', $record); // 订单记录号
         $this->assign('pagenumber', $_SESSION[$moduleName . $_REQUEST['pagetype'] . 'page']);
         $this->assign('blocks', $blocks);
-        $this->assign('rowIndex', $_REQUEST['rowIndex']);  //选中的行号
+        $this->assign('rowIndex', $_REQUEST['rowIndex']); //选中的行号
         $this->assign('pagetype', $_REQUEST['pagetype']);
 
         // 回调主程序需要的参数,比如下拉框的数据
@@ -422,16 +419,15 @@ class ModuleAction extends Action
         $this->assign('navName', $navName); // 导航民
 
         // 取得返回的是列表还是查询列表
-        $returnAction = $_REQUEST ['returnAction'];
+        $returnAction = $_REQUEST['returnAction'];
         $this->assign('returnAction', $returnAction);
-
 
         // 模块的ID
         $moduleId = $focus->getPk();
 
         // 取得记录ID
-        $record = $_REQUEST ['record'];
-        $where [$moduleId] = $record;
+        $record = $_REQUEST['record'];
+        $where[$moduleId] = $record;
 
         // 返回模块的行记录
         $result = $focus->where($where)->find();
@@ -444,7 +440,7 @@ class ModuleAction extends Action
         $this->assign('fieldsFocus', $focus->fieldsFocus); // 指定字段获得焦点
         $this->assign('pagenumber', $_SESSION[$moduleName . $_REQUEST['pagetype'] . 'page']);
         $this->assign('record', $record); // 订单记录号
-        $this->assign('rowIndex', $_REQUEST['rowIndex']);  //选中的行号
+        $this->assign('rowIndex', $_REQUEST['rowIndex']); //选中的行号
         $this->assign('pagetype', $_REQUEST['pagetype']);
 
         // 回调主程序需要的参数,比如下拉框的数据
@@ -472,15 +468,15 @@ class ModuleAction extends Action
         $this->assign('navName', $navName); // 导航民
 
         // 取得返回的是列表还是查询列表
-        $returnAction = $_REQUEST ['returnAction'];
+        $returnAction = $_REQUEST['returnAction'];
         $this->assign('returnAction', $returnAction);
 
         // 模块的ID
         $moduleId = $focus->getPk();
 
         // 取得记录ID
-        $record = $_REQUEST ['record'];
-        $where [$moduleId] = $record;
+        $record = $_REQUEST['record'];
+        $where[$moduleId] = $record;
 
         // 返回模块的行记录
         $result = $focus->where($where)->find();
@@ -492,7 +488,7 @@ class ModuleAction extends Action
         $this->assign('record', $record);
         $this->assign('blocks', $blocks);
         $this->assign('pagenumber', $_SESSION[$moduleName . $_REQUEST['pagetype'] . 'page']);
-        $this->assign('rowIndex', $_REQUEST['rowIndex']);  //选中的行号
+        $this->assign('rowIndex', $_REQUEST['rowIndex']); //选中的行号
         $this->assign('pagetype', $_REQUEST['pagetype']);
 
         // 返回从表的内容
@@ -517,7 +513,7 @@ class ModuleAction extends Action
         $this->assign('navName', $navName); // 导航名称
 
         // 取得父窗口的表格行数
-        $row = $_REQUEST ['row'];
+        $row = $_REQUEST['row'];
 
         // 生成list字段列表
         $listFields = $focus->listFields;
@@ -534,18 +530,18 @@ class ModuleAction extends Action
         $total = $focus->count(); // 查询满足要求的总记录数
         // 查session取得page的firstRos和listRows
 
-        if (!isset ($_SESSION [$moduleName . 'firstRowlistview'])) {
-            $Page->firstRow = $_SESSION [$moduleName . 'firstRowlistview'];
+        if (!isset($_SESSION[$moduleName . 'firstRowlistview'])) {
+            $Page->firstRow = $_SESSION[$moduleName . 'firstRowlistview'];
         }
 
         // var_dump($_SESSION['test']);
         $listMaxRows = C('LIST_MAX_ROWS'); // 定义显示的列表函数
-        if (isset ($listMaxRows)) {
+        if (isset($listMaxRows)) {
             $Page->listRows = $listMaxRows;
         } else {
             $listMaxRows = 15;
         }
-        $Page = new Page ($total, $listMaxRows);
+        $Page = new Page($total, $listMaxRows);
         $show = $Page->show();
 
         // 查询模块的数据
@@ -572,9 +568,9 @@ class ModuleAction extends Action
         $this->assign('moduleName', $moduleName); // 模块名称
 
         // 如果是从listview进入的，必须删除session['where']
-        if (isset ($_REQUEST ['delsession'])) {
-            unset ($_SESSION ['searchOption' . $moduleName]);
-            unset ($_SESSION ['searchText' . $moduleName]);
+        if (isset($_REQUEST['delsession'])) {
+            unset($_SESSION['searchOption' . $moduleName]);
+            unset($_SESSION['searchText' . $moduleName]);
         }
 
         // 启动当前模块
@@ -606,37 +602,37 @@ class ModuleAction extends Action
 
         // 建立查询条件
         $where = array();
-        $searchOption = $_REQUEST ['searchOption']; // 查询项目
-        $searchText = urldecode($_REQUEST ['searchText']); // 查询内容
-        if (isset ($searchOption) && isset ($searchText)) {
+        $searchOption = $_REQUEST['searchOption']; // 查询项目
+        $searchText = urldecode($_REQUEST['searchText']); // 查询内容
+        if (isset($searchOption) && isset($searchText)) {
             if ($searchOption == '全部') { // 如果是全部，那么全都要查询
                 foreach ($focus->searchFields as $value) {
-                    $where [$value] = array(
+                    $where[$value] = array(
                         'like',
-                        '%' . $searchText . '%'
+                        '%' . $searchText . '%',
                     );
                 }
-                $where ['_logic'] = 'OR';
-                $_SESSION ['searchOption' . $moduleName] = $searchOption;
-                $_SESSION ['searchText' . $moduleName] = $searchText;
+                $where['_logic'] = 'OR';
+                $_SESSION['searchOption' . $moduleName] = $searchOption;
+                $_SESSION['searchText' . $moduleName] = $searchText;
             } else {
-                $where [$searchOption] = array(
+                $where[$searchOption] = array(
                     'like',
-                    '%' . $searchText . '%'
+                    '%' . $searchText . '%',
                 );
                 $this->assign('searchOptionValue', $searchOption);
                 $this->assign('searchTextValue', $searchText);
-                $_SESSION ['searchOption' . $moduleName] = $searchOption;
-                $_SESSION ['searchText' . $moduleName] = $searchText;
+                $_SESSION['searchOption' . $moduleName] = $searchOption;
+                $_SESSION['searchText' . $moduleName] = $searchText;
             }
         } else {
-            if (isset ($_SESSION ['searchOption' . $moduleName], $_SESSION ['searchText' . $moduleName])) {
-                $where [$_SESSION ['searchOption' . $moduleName]] = array(
+            if (isset($_SESSION['searchOption' . $moduleName], $_SESSION['searchText' . $moduleName])) {
+                $where[$_SESSION['searchOption' . $moduleName]] = array(
                     'like',
-                    '%' . $_SESSION ['searchText'] . $moduleName . '%'
+                    '%' . $_SESSION['searchText'] . $moduleName . '%',
                 );
-                $this->assign('searchOptionValue', $_SESSION ['searchOption' . $moduleName]);
-                $this->assign('searchTextValue', $_SESSION ['searchText' . $moduleName]);
+                $this->assign('searchOptionValue', $_SESSION['searchOption' . $moduleName]);
+                $this->assign('searchTextValue', $_SESSION['searchText' . $moduleName]);
             }
         }
 
@@ -644,17 +640,17 @@ class ModuleAction extends Action
         import('ORG.Util.Page'); // 导入分页类
         $total = $focus->where($where)->count(); // 查询满足要求的总记录数
         // 查session取得page的firstRos和listRows
-        if (isset ($_SESSION [$moduleName . 'firstRowSearchview'])) {
-            $Page->firstRow = $_SESSION [$moduleName . 'firstRowSearchview'];
+        if (isset($_SESSION[$moduleName . 'firstRowSearchview'])) {
+            $Page->firstRow = $_SESSION[$moduleName . 'firstRowSearchview'];
         }
         $listMaxRows = C('LIST_MAX_ROWS'); // 定义显示的列表函数
-        if (isset ($listMaxRows)) {
+        if (isset($listMaxRows)) {
             $Page->listRows = $listMaxRows;
         } else {
             $listMaxRows = 15;
         }
 
-        $Page = new Page ($total, $listMaxRows);
+        $Page = new Page($total, $listMaxRows);
         $show = $Page->show();
 
         // 查询模块的数据
@@ -689,13 +685,13 @@ class ModuleAction extends Action
     }
 
     // 重新组装数据
-    function getListviewEntity($listResult, $moduleId)
+    public function getListviewEntity($listResult, $moduleId)
     {
         $listBlock = array();
         // 开始
         foreach ($listResult as $listValue) {
-            $id = $listValue [$moduleId];
-            $listBlock [$id] = $listValue;
+            $id = $listValue[$moduleId];
+            $listBlock[$id] = $listValue;
         }
         return $listBlock;
     }
@@ -717,7 +713,7 @@ class ModuleAction extends Action
         $result = $focus->create();
 
         if (!$result) {
-            exit ($focus->getError());
+            exit($focus->getError());
         }
         $result = $focus->add();
 
@@ -735,13 +731,13 @@ class ModuleAction extends Action
         $result = $this->save_slave_table($record);
 
         // 如果保存订单都成功，就跳转到查看页面
-        $return ['record'] = $record;
+        $return['record'] = $record;
 
         $returnAction = $_REQUEST['returnAction'];
 
         // 生成查看的url
         $detailviewUrl = U("$moduleName/detailview", array(
-            'record' => $record, 'returnAction' => $returnAction
+            'record' => $record, 'returnAction' => $returnAction,
         ));
         $return = $detailviewUrl;
         $info['status'] = 1;
@@ -760,11 +756,11 @@ class ModuleAction extends Action
         $this->assign('moduleName', $moduleName);
 
         // 取得保存的主键
-        $record = $_REQUEST ['record'];
+        $record = $_REQUEST['record'];
 
         $moduleId = $focus->getPk();
 
-        $where [$moduleId] = $record;
+        $where[$moduleId] = $record;
         // 删除记录
         $result = $focus->where($where)->delete();
 
@@ -793,10 +789,10 @@ class ModuleAction extends Action
         $focus = D($moduleName);
         $this->assign('moduleName', $moduleName);
         // 返回的页面
-        $returnAction = $_REQUEST ['returnAction'];
+        $returnAction = $_REQUEST['returnAction'];
 
         // 取得记录号
-        $record = $_REQUEST ['record'];
+        $record = $_REQUEST['record'];
         $moduleId = $focus->getPk();
 
         // 回调自动完成的函数
@@ -812,12 +808,12 @@ class ModuleAction extends Action
         // 新写的保存从表方案
         $slaveResult = $this->update_slave_table($record);
 
-        $return ['record'] = $record;
+        $return['record'] = $record;
         $pagetype = $_REQUEST['pagetype'];
         // 生成查看的url
         $detailviewUrl = U("$moduleName/detailview", array(
             'record' => $record, 'returnAction' => $returnAction,
-            'rowIndex' => $_REQUEST['rowIndex'], 'pagetype' => $pagetype
+            'rowIndex' => $_REQUEST['rowIndex'], 'pagetype' => $pagetype,
         ));
         $return = $detailviewUrl;
         $info['status'] = 1;
@@ -840,7 +836,7 @@ class ModuleAction extends Action
         $this->assign('moduleName', $moduleName);
 
         // 返回的页面
-        $returnAction = $_REQUEST ['returnAction'];
+        $returnAction = $_REQUEST['returnAction'];
 
         // 回调自动完成的函数
         $auto = $this->autoParaInsert();
@@ -849,7 +845,7 @@ class ModuleAction extends Action
         // 保存主表
         $result = $focus->create();
         if (!$result) {
-            exit ($focus->getError());
+            exit($focus->getError());
         }
         $result = $focus->add();
 
@@ -864,11 +860,11 @@ class ModuleAction extends Action
         $result = $this->duplicate_slave_table($record);
 
         // 如果保存订单都成功，就跳转到查看页面
-        $return ['record'] = $record;
+        $return['record'] = $record;
         // 生成查看的url
         $detailviewUrl = U("$moduleName/detailview", array(
             'record' => $record,
-            'returnAction' => $returnAction
+            'returnAction' => $returnAction,
         ));
         $return = $detailviewUrl;
         $this->ajaxReturn(json_encode($return), 'EVAL');
@@ -885,7 +881,8 @@ class ModuleAction extends Action
     }
 
     //定义删除从表
-    public function delete_slave_table($record){
+    public function delete_slave_table($record)
+    {
 
     }
 
@@ -920,8 +917,8 @@ class ModuleAction extends Action
         $data = array(
             array(
                 'domain',
-                $this->getDomain()
-            )
+                $this->getDomain(),
+            ),
         );
         return $data;
     }
@@ -932,36 +929,75 @@ class ModuleAction extends Action
         $data = array(
             array(
                 'domain',
-                $this->getDomain()
-            )
+                $this->getDomain(),
+            ),
         );
         return $data;
     }
 
+    /**
+     * 获取操作员的权限
+     */
+    public function getRevparType()
+    {
+        //定义是哪个结账
+        $userid = $_SESSION['userid'];
+        //查询角色ID
+        $roleuserModel = D('role_user');
+        $roleuserResult = $roleuserModel->where("user_id=$userid")->find();
+        $roleid = $roleuserResult['role_id'];
+
+        //查询角色的功能
+        $accessModel = D('access');
+        $where = array();
+        $where['role_id'] = $roleid;
+        $accessResult = $accessModel->field('node_id')->where($where)->select();
+        foreach ($accessResult as $value) {
+            $accessArr[] = $value['node_id'];
+        }
+        //节点表
+        $nodeModel = D('node');
+        //查询分公司结账节点
+        $nodeidResult = $nodeModel->where("name='companyRevpar'")->find();
+        $nodeidCompanyRevpar = $nodeidResult['id'];
+        if (in_array($nodeidCompanyRevpar, $accessArr)) {
+            $revparType = 'company';
+        }
+
+        //查询财务结账节点
+        $nodeidResult = $nodeModel->where("name='financeRevpar'")->find();
+        $nodeidFinanceRevpar = $nodeidResult['id'];
+        if (in_array($nodeidFinanceRevpar, $accessArr)) {
+            $revparType = 'finance';
+        }
+
+        return $revparType;
+    }
+
     // 根据模块名称，取得导航名称
-    function getTab($module_name)
+    public function getTab($module_name)
     {
         // 根据模块名查找模块ID
         $module_model = D('module');
         $module_result = $module_model->field('moduleid')->where("name='$module_name'")->find();
-        $moduleid = $module_result ['moduleid'];
+        $moduleid = $module_result['moduleid'];
 
         // 根据模块ID,查找关联的tabid
         $tab_module_model = M('tab_module_rel');
         $tab_module_result = $tab_module_model->field('tabid')->where("moduleid=$moduleid")->find();
-        $tabid = $tab_module_result ['tabid'];
+        $tabid = $tab_module_result['tabid'];
 
         // 取得tab的名称
         $tab_model = D('tab');
         $tab_result = $tab_model->field('tab_label')->where("tabid=$tabid")->find();
-        $tab_name = $tab_result ['tab_label'];
+        $tab_name = $tab_result['tab_label'];
 
         // 返回导航名称
         return $tab_name;
     }
 
     // 获取当前时间的午别
-    function getAp()
+    public function getAp()
     {
         $nowTime = time();
         $splitTime = strtotime('15:30:00'); // 分割的时间
@@ -991,7 +1027,7 @@ class ModuleAction extends Action
     {
         //$where ['domain'] = $this->getDomain()
         if (count($where) == 0) {
-            $where ['domain'] = $this->getDomain();
+            $where['domain'] = $this->getDomain();
         } else {
             $temp = $where;
             $map = array();
@@ -1000,10 +1036,7 @@ class ModuleAction extends Action
             $where = $map;
         }
 
-
     }
-
-
 
     /**
      * 基础方法,获取订单的连接数据库
@@ -1024,14 +1057,148 @@ class ModuleAction extends Action
             $db_name = 'czrms_' . substr($getDate, 0, 4);
         }
 
-
         $connectionDns = "mysql://$db_user:$db_pwd@$db_host:$db_port/$db_name";
 
         return $connectionDns;
     }
 
+    //php获取中文字符拼音首字母
+    public function getFirstCharter($str)
+    {
+        if (empty($str)) {return '';}
+        $fchar = ord($str{0});
+        if ($fchar >= ord('A') && $fchar <= ord('z')) {
+            return strtoupper($str{0});
+        }
 
+        $s1 = iconv('UTF-8', 'GBK', $str);
+        $s2 = iconv('GBK', 'UTF-8', $s1);
+        $s = $s2 == $str ? $s1 : $str;
+        $asc = ord($s{0}) * 256 + ord($s{1}) - 65536;
+        if ($asc >= -20319 && $asc <= -20284) {
+            return 'A';
+        }
+
+        if ($asc >= -20283 && $asc <= -19776) {
+            return 'B';
+        }
+
+        if ($asc >= -19775 && $asc <= -19219) {
+            return 'C';
+        }
+
+        if ($asc >= -19218 && $asc <= -18711) {
+            return 'D';
+        }
+
+        if ($asc >= -18710 && $asc <= -18527) {
+            return 'E';
+        }
+
+        if ($asc >= -18526 && $asc <= -18240) {
+            return 'F';
+        }
+
+        if ($asc >= -18239 && $asc <= -17923) {
+            return 'G';
+        }
+
+        if ($asc >= -17922 && $asc <= -17418) {
+            return 'H';
+        }
+
+        if ($asc >= -17417 && $asc <= -16475) {
+            return 'J';
+        }
+
+        if ($asc >= -16474 && $asc <= -16213) {
+            return 'K';
+        }
+
+        if ($asc >= -16212 && $asc <= -15641) {
+            return 'L';
+        }
+
+        if ($asc >= -15640 && $asc <= -15166) {
+            return 'M';
+        }
+
+        if ($asc >= -15165 && $asc <= -14923) {
+            return 'N';
+        }
+
+        if ($asc >= -14922 && $asc <= -14915) {
+            return 'O';
+        }
+
+        if ($asc >= -14914 && $asc <= -14631) {
+            return 'P';
+        }
+
+        if ($asc >= -14630 && $asc <= -14150) {
+            return 'Q';
+        }
+
+        if ($asc >= -14149 && $asc <= -14091) {
+            return 'R';
+        }
+
+        if ($asc >= -14090 && $asc <= -13319) {
+            return 'S';
+        }
+
+        if ($asc >= -13318 && $asc <= -12839) {
+            return 'T';
+        }
+
+        if ($asc >= -12838 && $asc <= -12557) {
+            return 'W';
+        }
+
+        if ($asc >= -12556 && $asc <= -11848) {
+            return 'X';
+        }
+
+        if ($asc >= -11847 && $asc <= -11056) {
+            return 'Y';
+        }
+
+        if ($asc >= -11055 && $asc <= -10247) {
+            return 'Z';
+        } else if (ord($s) >= 48 && ord($s) <= 57) { //数字开头
+            $aa = @iconv_substr($s, 0, 1, 'utf-8');
+            switch ($aa) {
+                case 1:
+                    return "Y";
+                case 2:
+                    return "E";
+                case 3:
+                    return "S";
+                case 4:
+                    return "S";
+                case 5:
+                    return "W";
+                case 6:
+                    return "L";
+                case 7:
+                    return "Q";
+                case 8:
+                    return "B";
+                case 9:
+                    return "J";
+                case 0:
+                    return "L";
+            }
+        } else if (ord($s) >= 65 && ord($s) <= 90) { //大写英文开头
+            return substr($s, 0, 1);
+        } else if (ord($s) >= 97 && ord($s) <= 122) { //小写英文开头
+            return strtoupper(substr($s, 0, 1));
+        } else {
+            return iconv_substr($s0, 0, 1, 'utf-8');
+            //中英混合的词语，不适合上面的各种情况，因此直接提取首个字符即可
+        }
+
+        return null;
+    }
 
 }
-
-?>

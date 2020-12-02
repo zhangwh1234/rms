@@ -24,44 +24,50 @@
         <li>&nbsp;&gt;订单综合查询</li>
         <li style="width: 50px;">&nbsp;</li>
 
-        <li style="margin-left: 10px;"><a href="javascript:void(0);"
-                                          onclick="OrderFormSearchviewOtherModule.otherSearchInput();"><img
-                src=".__PUBLIC__/Images/addressBtn.jpg" alt="" title="" border="0"></a></li>
+        <li style="margin-left: 10px;"><a href="javascript:void(0);" onclick="OrderFormSearchviewOtherModule.otherSearchInput();"><img src=".__PUBLIC__/Images/addressBtn.jpg" alt="" title=""
+                    border="0"></a></li>
         <li><a href="javascript:void(0);" onclick="OrderFormListviewModule.otherSearchInput();">综合查询<span>^9</span></a></li>
 
 
         <li style="float: right;margin-right: 40px;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
-        <li style="float:right;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();"><img
-                src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
+        <li style="float:right;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
     </ul>
 </div>
 
-<tagLib name="easyui"/>
+<tagLib name="easyui" />
 <div class="moduleOperatert" style="height:300px;width:100%;clear:both;">
-    <easyui:datagrid options="datagrid.options" fields="datagrid.fields"/>
+    <easyui:datagrid options="datagrid.options" fields="datagrid.fields" />
 </div>
-<input id="OrderFormSearchviewOtherAction" type="hidden"  value="" />
+<input id="OrderFormSearchviewOtherAction" type="hidden" value="" />
 <script>
     var OrderFormSearchviewOtherModule = {
-        dialog:   '#globel-dialog-div',
+        dialog: '#globel-dialog-div',
 
         //操作格式化
         operate: function (val, rowData, rowIndex) {
-            if(window.screen.availWidth < 1280){
+            if (window.screen.availWidth < 1280) {
                 var btn = [];
-                btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewOtherModule.detailview(' + rowData.orderformid + ','+ rowIndex+ ')">查看&nbsp;</a>');
-                btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewOtherModule.editview(' + rowData.orderformid + ','+ rowIndex+ ')">改单&nbsp;</a>');
-                btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewOtherModule.hurry(' + rowData.orderformid + ','+ rowIndex+ ')">催送&nbsp;</a>');
-                btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewOtherModule.duplicateview(' + rowData.orderformid + ','+ rowIndex+ ')">复制&nbsp;</a>');
-                btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewOtherModule.returnorderformview(' + rowData.orderformid + ','+ rowIndex+ ')">退餐</a>');
+                btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewOtherModule.detailview(' + rowData.orderformid + ',' + rowIndex + ')">查看&nbsp;</a>');
+                if (rowData['rolename'] == 'dispatcher') {
+
+                } else {
+                    btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewOtherModule.editview(' + rowData.orderformid + ',' + rowIndex + ')">改单&nbsp;</a>');
+                    btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewOtherModule.hurry(' + rowData.orderformid + ',' + rowIndex + ')">催送&nbsp;</a>');
+                    btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewOtherModule.duplicateview(' + rowData.orderformid + ',' + rowIndex + ')">复制&nbsp;</a>');
+                    btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewOtherModule.returnorderformview(' + rowData.orderformid + ',' + rowIndex + ')">退餐</a>');
+                }
                 return btn.join('');
-            }else{
+            } else {
                 var btn = [];
-                btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewOtherModule.detailview(' + rowData.orderformid + ','+ rowIndex+ ')">查看</a>');
-                btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewOtherModule.editview(' + rowData.orderformid + ','+ rowIndex+ ')">改单</a>');
-                btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewOtherModule.hurry(' + rowData.orderformid + ','+ rowIndex+ ')">催送</a>');
-                btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewOtherModule.duplicateview(' + rowData.orderformid + ','+ rowIndex+ ')">复制</a>');
-                btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewOtherModule.returnorderformview(' + rowData.orderformid + ','+ rowIndex+ ')">退餐</a>');
+                btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewOtherModule.detailview(' + rowData.orderformid + ',' + rowIndex + ')">查看</a>');
+                if (rowData['rolename'] == 'dispatcher') {
+
+                } else {
+                    btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewOtherModule.editview(' + rowData.orderformid + ',' + rowIndex + ')">改单</a>');
+                    btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewOtherModule.hurry(' + rowData.orderformid + ',' + rowIndex + ')">催送</a>');
+                    btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewOtherModule.duplicateview(' + rowData.orderformid + ',' + rowIndex + ')">复制</a>');
+                    btn.push('<a href="javascript:void(0);" onclick="OrderFormSearchviewOtherModule.returnorderformview(' + rowData.orderformid + ',' + rowIndex + ')">退餐</a>');
+                }
                 return btn.join(' | ');
             }
 
@@ -69,43 +75,44 @@
 
         //送餐员的格式化操作
         sendname: function (val, rowData, rowIndex) {
-            if ((rowData.longitude) && (rowData.latitude) && (!rowData.sendlongitude)) {
+            if ((rowData.longitude) && (rowData.latitude) && (!rowData.sendname)) {
                 var btn = [];
                 btn.push(val +
-                '<a href="javascript:void(0);" onclick="OrderFormListviewModule.mapshowview(' + rowData.orderformid + ',' + rowIndex + ')" ><img src=".__PUBLIC__/Images/lhkc/location.png" style="height: 20px;" /></a>');
+                    '<a href="javascript:void(0);" onclick="OrderFormListviewModule.mapshowview(' + rowData.orderformid + ',' + rowIndex +
+                    ')" ><img src=".__PUBLIC__/Images/lhkc/location.png" style="height: 20px;" /></a>');
                 return btn.join('');
-            } else if ((rowData.sendlongitude) && (rowData.sendlatitude)) {
+            } else if ((rowData.sendlongitude) && (rowData.sendlatitude) && (rowData.sendname)) {
                 var btn = [];
                 btn.push(val +
-                '<a href="javascript:void(0);" onclick="OrderFormListviewModule.sendmapshowview(' + rowData.orderformid + ',' + rowIndex + ')" ><img src=".__PUBLIC__/Images/lhkc/sendlocation.png" style="height: 20px;" /></a>');
+                    '<a href="javascript:void(0);" onclick="OrderFormListviewModule.sendmapshowview(' + rowData.orderformid + ',' + rowIndex +
+                    ')" ><img src=".__PUBLIC__/Images/lhkc/sendlocation.png" style="height: 20px;" /></a>');
                 return btn.join('');
             } else {
                 var btn = [];
                 btn.push(val);
                 return btn.join(' | ');
             }
-
         },
 
         //初始化
-        init :function(){
+        init: function () {
             $('.moduleOperatert').height(IndexIndexModule.operationHeight);
             this.quickKeyboardAction();
         },
 
         //重新设置page
-        setPagination:function(){
+        setPagination: function () {
             //定义订单分页表
             var pager = $('#orderform_searchviewother_datagrid').datagrid().datagrid('getPager')
             pager.pagination({
                 showRefresh: false,
-                pageSize : IndexIndexModule.gridRowsNumber,
-                layout: ['sep','first','prev','manual','links','next','last']
+                pageSize: IndexIndexModule.gridRowsNumber,
+                layout: ['sep', 'first', 'prev', 'manual', 'links', 'next', 'last']
             });
         },
 
         //初始返回,定位行操作,但是在翻页是,就不操作
-        setRowSelect :function(){
+        setRowSelect: function () {
             $('#orderform_searchviewother_datagrid').datagrid('selectRow', {$rowIndex});
         },
 
@@ -125,12 +132,12 @@
                 minimizable: false,
                 resizable: false,
                 maximizable: false,
-                buttons:[{
-                    text:'确定',
-                    iconCls:'icons-other-tick',
-                    handler: function(){
+                buttons: [{
+                    text: '确定',
+                    iconCls: 'icons-other-tick',
+                    handler: function () {
                         $(that.dialog).find('form').eq(0).form('submit', {
-                            onSubmit: function(){
+                            onSubmit: function () {
                                 var isValid = $(this).form('validate');
                                 if (!isValid) return false;
 
@@ -145,10 +152,10 @@
                             }
                         });
                     }
-                },{
-                    text:'取消',
-                    iconCls:'icons-arrow-cross',
-                    handler: function(){
+                }, {
+                    text: '取消',
+                    iconCls: 'icons-arrow-cross',
+                    handler: function () {
                         $(that.dialog).dialog('close');
                     }
                 }]
@@ -156,59 +163,61 @@
         },
 
         //查看订单
-        detailview:function(orderformid,rowIndex){
-            url = '__URL__/detailview/record/'+orderformid+'/returnAction/{$returnAction}'
-                    + '/rowIndex/' + rowIndex+'/pagetype/searchviewother';
+        detailview: function (orderformid, rowIndex) {
+            url = '__URL__/detailview/record/' + orderformid + '/returnAction/{$returnAction}' +
+                '/rowIndex/' + rowIndex + '/pagetype/searchviewother';
             IndexIndexModule.updateOperateTab(url);
         },
 
         //改单
-        editview:function(orderformid,rowIndex){
-            url = '__URL__/editview/record/'+orderformid+'/returnAction/{$returnAction}'
-                    + '/rowIndex/' + rowIndex+'/pagetype/searchviewother';
+        editview: function (orderformid, rowIndex) {
+            url = '__URL__/editview/record/' + orderformid + '/returnAction/{$returnAction}' +
+                '/rowIndex/' + rowIndex + '/pagetype/searchviewother';
             IndexIndexModule.updateOperateTab(url);
         },
 
         //催送订单
-        hurry:function(orderformid,rowIndex){
-            var url = '__URL__/hurry/record/' + orderformid + '/returnAction/{$returnAction}'
-                    + '/rowIndex/' + rowIndex+'/pagetype/searchviewother';
+        hurry: function (orderformid, rowIndex) {
+            var url = '__URL__/hurry/record/' + orderformid + '/returnAction/{$returnAction}' +
+                '/rowIndex/' + rowIndex + '/pagetype/searchviewother';
             var that = this;
-            $.messager.confirm('提示信息', '确定要催送订单吗？', function(result){
-                if(!result) return false;
+            $.messager.confirm('提示信息', '确定要催送订单吗？', function (result) {
+                if (!result) return false;
 
-                $.messager.progress({text:'处理中，请稍候...'});
-                $.post( url , {}, function(res){
+                $.messager.progress({
+                    text: '处理中，请稍候...'
+                });
+                $.post(url, {}, function (res) {
                     $.messager.progress('close');
                     $('#orderform_searchviewother_datagrid').datagrid('reload');
                     $.app.method.tip('提示信息', res.info, 'info');
-                    setTimeout(function(){
-                        $('#orderform_searchviewother_datagrid').datagrid('selectRow', rowIndex);  //显示行定位
-                    },200)
+                    setTimeout(function () {
+                        $('#orderform_searchviewother_datagrid').datagrid('selectRow', rowIndex); //显示行定位
+                    }, 200)
                 }, 'json');
             });
         },
 
         //复制订单
-        duplicateview:function(orderformid,rowIndex){
-            url = '__URL__/duplicateview/record/'+orderformid+'/returnAction/{$returnAction}'
-                    + '/rowIndex/' + rowIndex+'/pagetype/searchviewother';
+        duplicateview: function (orderformid, rowIndex) {
+            url = '__URL__/duplicateview/record/' + orderformid + '/returnAction/{$returnAction}' +
+                '/rowIndex/' + rowIndex + '/pagetype/searchviewother';
             IndexIndexModule.updateOperateTab(url);
         },
 
         //退餐
-        returnorderformview:function(orderformid,rowIndex){
-            url = '__URL__/returnorderformview/record/'+orderformid+'/returnAction/{$returnAction}'
-                    + '/rowIndex/' + rowIndex+'/pagetype/searchviewother';
+        returnorderformview: function (orderformid, rowIndex) {
+            url = '__URL__/returnorderformview/record/' + orderformid + '/returnAction/{$returnAction}' +
+                '/rowIndex/' + rowIndex + '/pagetype/searchviewother';
             IndexIndexModule.updateOperateTab(url);
         },
 
         //新建的快捷操作
-        quickKeyboardAction:function(){
+        quickKeyboardAction: function () {
             var that = this;
 
             // ctrl+9快捷键, 综合查询
-            Mousetrap.bind(['ctrl+9','ctrl+f9','f9'], function(e) {
+            Mousetrap.bind(['ctrl+9', 'ctrl+f9', 'f9'], function (e) {
                 // 返回选项卡
                 var tab = $('#operation').tabs('getSelected');
                 var tabOptions = tab.panel('options');
@@ -219,15 +228,15 @@
 
 
             // ESC键
-            Mousetrap.bind('esc', function(e) {
+            Mousetrap.bind('esc', function (e) {
                 // 返回选项卡
                 var tab = $('#operation').tabs('getSelected');
                 var tabOptions = tab.panel('options');
                 if (tabOptions.title == '订餐综合查询') {
-                    if( $(that.dialog).parent().is(":hidden")  == true){ //隐藏
+                    if ($(that.dialog).parent().is(":hidden") == true) { //隐藏
                         // 更新一个选项卡面板
-                        $('#operation').tabs('select','订餐单');
-                    }else {  //对话框打开
+                        $('#operation').tabs('select', '订餐单');
+                    } else { //对话框打开
                         $(IndexIndexModule.dialog).dialog('close');
                     }
                 }
@@ -236,14 +245,14 @@
 
     }
 
-    $(function(){
+    $(function () {
         OrderFormSearchviewOtherModule.init();
-        setTimeout(function(){
+        setTimeout(function () {
             OrderFormSearchviewOtherModule.setPagination();
-        },100);
+        }, 100);
 
-        setTimeout(function(){
-            OrderFormSearchviewOtherModule.setRowSelect();  //显示行定位
-        },600)
+        setTimeout(function () {
+            OrderFormSearchviewOtherModule.setRowSelect(); //显示行定位
+        }, 600)
     })
 </script>

@@ -103,7 +103,7 @@
             $this->assign('navmenu',$nav_menu_arr);
             //显示的导航条
             $role = D('Role')->where("id=$role_id")->find();       
-            $category = $role['show_tab'];        
+            $category = $role['show_tab'];     
             $this->assign('category',$category);
 
 

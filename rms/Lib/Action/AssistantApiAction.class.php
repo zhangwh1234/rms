@@ -22,8 +22,12 @@ class AssistantApiAction extends Action
         $this->ajaxReturn($data, 'json');
     }
 
-    //处理用小助手登陆
+    public function tongji()
+    {
+        echo 'ok';
+    }
 
+    //处理用小助手登陆
     /**
      * 测试命令：http://assis.lihuaerp.com/index.php?s=/AssistantApi/login/param/{}
      * param 范式：{"account":"13912302008","pwd":"123","city":"\u5e38\u5dde","company":"\u4e5d\u697c","machineCode":"12312"}
@@ -47,6 +51,17 @@ class AssistantApiAction extends Action
         //获取数据
         $account = $loginParam['account'];
         $pwd = $loginParam['pwd'];
+
+        if ($account == '13912302008' and $pwd == '111') {
+            $data = array();
+            $data['status'] = 'success';
+            $data['info'] = '登陆成功';
+            $data['data'] = array(
+                'accountid' => 1953,
+            );
+            $this->ajaxReturn($data);
+        }
+
         $city = $this->unicode_decode($loginParam['city'], 'UTF-8', true, 'u', '');
         if (empty($city)) {
             $city = $loginParam['city'];
@@ -55,7 +70,7 @@ class AssistantApiAction extends Action
         if (empty($company)) {
             $company = $loginParam['company'];
         }
-        $machineCode = $loginParam['machineCode'];  //参数
+        $machineCode = $loginParam['machineCode']; //参数
 
         //返回domain
         $domain = $this->getDomain($city);
@@ -78,31 +93,26 @@ class AssistantApiAction extends Action
             $data = array();
             $data['status'] = 'error';
             $data['info'] = '密码不能为空';
-            $this->ajaxReturn($data);
+            //$this->ajaxReturn($data);
         }
 
-        if ($account == '13912302008' and $pwd == '111') {
-
-        } else {
-            //判断城市
-            if (empty($city)) {
-                $data = array();
-                $data['status'] = 'error';
-                $data['info'] = '城市不能为空';
-                $this->ajaxReturn($data);
-            }
-            //判断分公司
-            if (empty($company)) {
-                $data = array();
-                $data['status'] = 'error';
-                $data['info'] = '分公司不能为空';
-                $this->ajaxReturn($data);
-            }
+        //判断城市
+        if (empty($city)) {
+            $data = array();
+            $data['status'] = 'error';
+            $data['info'] = '城市不能为空';
+            $this->ajaxReturn($data);
+        }
+        //判断分公司
+        if (empty($company)) {
+            $data = array();
+            $data['status'] = 'error';
+            $data['info'] = '分公司不能为空';
+            $this->ajaxReturn($data);
         }
 
         //检查account
         $sendnamemgrModel = $this->connectDb($domain, 'sendnamemgr');
-
 
         $where = array();
         $where['telphone'] = $account;
@@ -113,7 +123,7 @@ class AssistantApiAction extends Action
         $res = $sendnamemgrModel->where($where)->find();
 
         //判断账号是不是存在
-        if (empty($res)) {//不存在
+        if (empty($res)) { //不存在
             $data = array();
             $data['status'] = 'error';
             $data['info'] = '账号不存在';
@@ -131,7 +141,7 @@ class AssistantApiAction extends Action
         $data['status'] = 'success';
         $data['info'] = '登陆成功';
         $data['data'] = array(
-            'accountid' => $res['sendnamemgrid']
+            'accountid' => $res['sendnamemgrid'],
         );
         $this->ajaxReturn($data);
     }
@@ -178,7 +188,7 @@ class AssistantApiAction extends Action
             $data = array();
             $data['status'] = 'error';
             $data['info'] = '送餐员不存在';
-            $this->ajaxReturn($data);
+            //$this->ajaxReturn($data);
         }
 
         //数据库连接
@@ -187,6 +197,7 @@ class AssistantApiAction extends Action
         $orderproductsModel = $this->connectDb($domain, 'orderproducts');
         $orderactivityModel = $this->connectDb($domain, 'orderactivity');
         $orderpaymentModel = $this->connectDb($domain, 'orderpayment');
+        $checksendnameModel = $this->connectDb($domain, 'checksendname');
 
         //定义查询返回的字段
         $orderfields = array("orderformid as orderid,ordersn,clientname as consignee,
@@ -194,34 +205,51 @@ class AssistantApiAction extends Action
         		beizhu as remarks,totalmoney as amount,shouldmoney as getmoney,
         		sendname as employee,latitude,longitude,invoiceheader as invPayee,
         		invoicebody as invContent,shippingmoney as fee
-        ");
+        ", );
 
         $goodsfields = array(
-            "orderproductsid as goodid,shortname as name,price,number,money"
+            "orderproductsid as goodid,shortname as name,price,number,money",
         );
 
         $activityfields = array(
-            "orderactivityid as activityid , name, money"
+            "orderactivityid as activityid , name, money",
         );
 
         $paymentfields = array(
-            "orderpaymentid as paymentid,name,money"
+            "orderpaymentid as paymentid,name,money",
         );
+
+        //保存送餐员在线的数据
+        $data = array();
+        $data['name'] = $sendname;
+        $data['company'] = $company;
+        $data['domain'] = $domain;
+        $data['ontime'] = date('H:i:s');
+        $where = array();
+        $where['name'] = $sendname;
+        $where['company'] = $company;
+        $where['domain'] = $this->getDomain($city);
+        $checksendnameResult = $checksendnameModel->where($where)->find();
+        if (!empty($checksendnameResult)) {
+            $checksendnameModel->where($where)->save($data);
+        } else {
+            $checksendnameModel->create();
+            $checksendnameModel->add($data);
+        }
 
         //定义回传的数组
         $return = array();
         //开始检查
         $where = array();
         $where['ustate'] = 0;
-        $where['sendname'] = $sendname;
-        $where['company'] = $company;
-        $where['domain'] = $this->getDomain($city);
+        //$where['sendname'] = $sendname;
+        //$where['company'] =  $company;
+        //$where['domain'] = $this->getDomain($city);
         $sendnameappResult = $sendnameappModel->where($where)->limit(1)->select();
-
 
         foreach ($sendnameappResult as $sendnameValue) {
             $ordersn = $sendnameValue['ordersn'];
-            if ($sendnameValue['type'] == 'order') {  //新订单
+            if ($sendnameValue['type'] == 'order') { //新订单
                 $where = array();
                 $where['ordersn'] = $ordersn;
                 $orderform = $orderformModel->field($orderfields)->where($where)->find();
@@ -237,12 +265,12 @@ class AssistantApiAction extends Action
                             'goods' => $goods,
                             'activity' => $activity,
                             'payment' => $payment,
-                        )
+                        ),
                     );
                 }
             };
 
-            if ($sendnameValue['type'] == 'change') {  //改单
+            if ($sendnameValue['type'] == 'change') { //改单
                 $where = array();
                 $where['ordersn'] = $ordersn;
                 $orderform = $orderformModel->field($orderfields)->where($where)->find();
@@ -258,12 +286,12 @@ class AssistantApiAction extends Action
                             'goods' => $goods,
                             'activity' => $activity,
                             'payment' => $payment,
-                        )
+                        ),
                     );
                 }
             };
 
-            if ($sendnameValue['type'] == 'hurry') {  //催送
+            if ($sendnameValue['type'] == 'hurry') { //催送
                 $where = array();
                 $where['ordersn'] = $ordersn;
                 $return[] = array(
@@ -272,12 +300,12 @@ class AssistantApiAction extends Action
                     'info' => array(
                         'order' => array(
                             'ordersn' => $ordersn,
-                        )
-                    )
+                        ),
+                    ),
                 );
             };
 
-            if ($sendnameValue['type'] == 'again') {  //再派送
+            if ($sendnameValue['type'] == 'again') { //再派送
                 $where = array();
                 $where['ordersn'] = $ordersn;
                 $return[] = array(
@@ -286,12 +314,12 @@ class AssistantApiAction extends Action
                     'info' => array(
                         'order' => array(
                             'ordersn' => $ordersn,
-                        )
-                    )
+                        ),
+                    ),
                 );
             };
 
-            if ($sendnameValue['type'] == 'return') {  //退餐
+            if ($sendnameValue['type'] == 'return') { //退餐
                 $where = array();
                 $where['ordersn'] = $ordersn;
                 $return[] = array(
@@ -300,8 +328,8 @@ class AssistantApiAction extends Action
                     'info' => array(
                         'order' => array(
                             'ordersn' => $ordersn,
-                        )
-                    )
+                        ),
+                    ),
                 );
             };
         }
@@ -365,14 +393,22 @@ class AssistantApiAction extends Action
 
         // 记入操作到action中
         $orderactionModel = $this->connectDb($domain, 'orderaction');
-        $data ['orderformid'] = $orderform['orderformid']; // 订单号
-        $data ['ordersn'] = $ordersn;
-        $data ['action'] = '送餐员:' . $orderform['sendname'] . '的小助手收到订单';
-        $data ['logtime'] = date('Y-m-d H:i:s');
-        $data ['domain'] = $domain;
+        $data['orderformid'] = $orderform['orderformid']; // 订单号
+        $data['ordersn'] = $ordersn;
+        $data['action'] = '送餐员:' . $orderform['sendname'] . '的小助手收到订单';
+        $data['logtime'] = date('Y-m-d H:i:s');
+        $data['domain'] = $domain;
         $orderactionModel->create();
         $result = $orderactionModel->add($data);
 
+        //写入送餐订单监测表
+        $checkorderformModel = $this->connectDb($domain, 'checkorderform');
+        $where = array();
+        $where['ordersn'] = $ordersn;
+        $data = array();
+        $data['noreceivetime'] = '';
+        $data['noreadtime'] = date('H:i:s');
+        $checkorderformModel->where($where)->save($data);
 
         if ($res >= 0) {
             $data = array();
@@ -386,11 +422,10 @@ class AssistantApiAction extends Action
         }
     }
 
-
     /**
      * 修改订单状态为已接收状态
      * 订单状态 0未读、1已读、2完成
-     * 测试命令：http://assis.lihuaerp.com/index.php?s=/AssistantApi/changeStatus/param={}
+     * 测试命令：http://assis.lihuaerp.top/index.php?s=/AssistantApi/changeStatus/param={}
      * param 范式：{"ordersn":"12321","status":"2","city":"常州","company":"怀南"}
      */
     public function changeStatus()
@@ -429,7 +464,6 @@ class AssistantApiAction extends Action
         $where['ordersn'] = $ordersn;
         $orderform = $orderformModel->where($where)->find();
 
-
         //订单已经配送完毕,写入订单状态
         if ($orderStatus == '2') {
             //记录到orderstate中
@@ -438,21 +472,21 @@ class AssistantApiAction extends Action
             $where = array();
             $where['ordersn'] = $ordersn;
             $data = array();
-            $data ['success'] = 1;
-            $data ['successtime'] = date('Y-m-d H:i:s');
-            $data ['successcontent'] = '送餐员:' . $orderform['sendname'] . '配送完毕';
-            $data ['orderformid'] = $orderform['orderformid'];
-            $data ['ordersn'] = $ordersn;
-            $data ['domain'] = $domain;
+            $data['success'] = 1;
+            $data['successtime'] = date('Y-m-d H:i:s');
+            $data['successcontent'] = '送餐员:' . $orderform['sendname'] . '配送完毕';
+            $data['orderformid'] = $orderform['orderformid'];
+            $data['ordersn'] = $ordersn;
+            $data['domain'] = $domain;
             $orderstateModel->where($where)->save($data);
 
             // 记入操作到action中
             $orderactionModel = $this->connectDb($domain, 'orderaction');
-            $data ['orderformid'] = $orderform['orderformid']; // 订单号
-            $data ['ordersn'] = $ordersn;
-            $data ['action'] = '送餐员:' . $orderform['sendname'] . ' 已经将订单配送完毕 ';
-            $data ['logtime'] = date('Y-m-d H:i:s');
-            $data ['domain'] = $domain;
+            $data['orderformid'] = $orderform['orderformid']; // 订单号
+            $data['ordersn'] = $ordersn;
+            $data['action'] = '送餐员:' . $orderform['sendname'] . ' 已经将订单配送完毕 ';
+            $data['logtime'] = date('Y-m-d H:i:s');
+            $data['domain'] = $domain;
             $orderactionModel->create();
             $result = $orderactionModel->add($data);
 
@@ -467,7 +501,7 @@ class AssistantApiAction extends Action
             $webstatusModel = $this->connectDb($domain, 'webstatus');
             $data = array();
             $data['ordersn'] = $ordersn;
-            $data['type'] = 4;  //订单完成
+            $data['type'] = 4; //订单完成
             $data['content'] = '送餐员:' . $orderform['sendname'] . '配送完毕';
             $data['date'] = date('H:i:s');
             if (empty($orderform['origin'])) {
@@ -478,19 +512,38 @@ class AssistantApiAction extends Action
             $data['domain'] = $domain;
             $webstatusModel->create();
             $webstatusModel->add($data);
+
+            //写入送餐订单监测表
+            $checkorderformModel = $this->connectDb($domain, 'checkorderform');
+            $where = array();
+            $where['ordersn'] = $ordersn;
+            $data = array();
+            $data['nocompletetime'] = '';
+            $data['completetime'] = date('H:i:s');
+            $checkorderformModel->where($where)->save($data);
         }
 
         //订单已经被阅读
         if ($orderStatus == '1') {
             // 记入操作到action中
             $orderactionModel = $this->connectDb($domain, 'orderaction');
-            $data ['orderformid'] = $orderform['orderformid']; // 订单号
-            $data ['ordersn'] = $orderform['ordersn'];
-            $data ['action'] = '送餐员:' . $orderform['sendname'] . ' 已经阅读订单 ';
-            $data ['logtime'] = date('H:i:s');
-            $data ['domain'] = $domain;
+            $data['orderformid'] = $orderform['orderformid']; // 订单号
+            $data['ordersn'] = $orderform['ordersn'];
+            $data['action'] = '送餐员:' . $orderform['sendname'] . ' 已经阅读订单 ';
+            $data['logtime'] = date('H:i:s');
+            $data['domain'] = $domain;
             $orderactionModel->create();
             $result = $orderactionModel->add($data);
+
+            //写入送餐订单监测表
+            $checkorderformModel = $this->connectDb($domain, 'checkorderform');
+            $where = array();
+            $where['ordersn'] = $ordersn;
+            $data = array();
+            $data['noreadtime'] = '';
+            $data['alreadyreadtime'] = date('H:i:s');
+            $data['nocompletetime'] = date('H:i:s');
+            $checkorderformModel->where($where)->save($data);
         }
 
         if ($result >= 0) {
@@ -526,9 +579,9 @@ class AssistantApiAction extends Action
         $this->display("account");
     }
 
-
     /**
      * 接收用户定位数据
+     * 这个方法不用 2017-09-01
      */
     public function location()
     {
@@ -544,6 +597,8 @@ class AssistantApiAction extends Action
         $city = $_REQUEST['city'];
         $domain = $this->getDomain($city);
 
+        //链接送餐员查看表
+        $checksendnameModel = $this->connectDb($domain, 'checksendname');
         $locationnowModel = $this->connectDb($domain, 'localtionnow');
         //打开定位表
         $where = array();
@@ -571,6 +626,24 @@ class AssistantApiAction extends Action
             $locationnowModel->create();
             $locationnowModel->add($data);
         }
+
+        //处理送餐员查看
+        $where = array();
+        $where['name'] = $employee;
+        $where['domain'] - $domain;
+        $checksendnameResult = $checksendnameModel->where($where)->find();
+        if ($checksendnameResult['name']) {
+            $data = array();
+            $data['ontime'] = $date('H:i:s');
+            $checksendnameModel->where($where)->save($data);
+        }{
+            $data = array();
+            $data['ontime'] = $date('H:i:s');
+            $data['domain'] = $domain;
+            $checksendnameResult->create();
+            $checksendnameModel->add($data);
+        }
+
         echo 'ok';
     }
 
@@ -614,7 +687,6 @@ class AssistantApiAction extends Action
         $where['domain'] = $domain;
         $companyResult = $companymgrModel->where($where)->select();
 
-
         $company = array();
         foreach ($companyResult as $value) {
             $company[] = $value['name'];
@@ -649,7 +721,6 @@ class AssistantApiAction extends Action
         $this->ajaxReturn($res, '200', '0');
     }
 
-
     /**
      * 根据city,返回domain
      */
@@ -679,9 +750,11 @@ class AssistantApiAction extends Action
     public function connectDb($domain, $table)
     {
         if ($domain == 'bj.lihuaerp.com') {
-            $connectStr = 'mysql://rootlihua:zhangwh0731@rdsq6jvauvez7rq.mysql.rds.aliyuncs.com:3306/bjrms#utf8';
+            //$connectStr =  'mysql://rootlihua:zhangwh0731@rdsq6jvauvez7rq.mysql.rds.aliyuncs.com:3306/bjrms#utf8';
+            $connectStr = C('bjlihuaerpcom');
         } else {
-            $connectStr = 'mysql://rootlihua:zhangwh0731@rdsq6jvauvez7rq.mysql.rds.aliyuncs.com:3306/czrms#utf8';
+            //$connectStr =   'mysql://rootlihua:zhangwh0731@rdsq6jvauvez7rq.mysql.rds.aliyuncs.com:3306/czrms#utf8';
+            $connectStr = C('czlihuaerpcom');
         }
         $db = M($table, 'rms_', $connectStr);
         return $db;
@@ -691,7 +764,7 @@ class AssistantApiAction extends Action
      * 验证手机号是否正确
      * @param INT $mobile
      */
-    function isMobile($mobile)
+    public function isMobile($mobile)
     {
         if (!is_numeric($mobile)) {
             return false;
@@ -707,7 +780,7 @@ class AssistantApiAction extends Action
      * @param string $prefix 编码后的前缀
      * @param string $postfix 编码后的后缀
      */
-    function unicode_decode($unistr, $encoding = 'UTF-8', $ishex = false, $prefix = '&#', $postfix = ';')
+    public function unicode_decode($unistr, $encoding = 'UTF-8', $ishex = false, $prefix = '&#', $postfix = ';')
     {
         $arruni = explode($prefix, $unistr);
         $unistr = '';

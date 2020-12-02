@@ -1,0 +1,28 @@
+<table id="table{$actionName}" border="1" cellspacing="1" cellpadding="3" width="100%" class="lvt" align="center">
+    <tr class="listHeader">
+        <td class="" width="10%">序号</td>
+        <td class="listHeader" width="10%">代码</td>
+        <td class="listHeader" width="20%">客户名称</td>
+        <td class="listHeader" width="10%">金额</td>
+        <td class="listHeader" width="10%">类型</td>
+        <td class="listHeader" width="10%">日期</td>
+        <td class="listHeader" width="10%">午别</td>
+        <td class="listHeader" width="20%">分公司</td>
+    </tr>
+    <foreach item="entity" name="account">
+        <assign name='record' value="$key" />
+        <tr bgcolor="white" onMouseOver="this.className='lvtColDataHover'" onMouseOut="this.className='lvtColData'" ondblclick="alert('row_{$record}');" id="row_{$entity_id}">
+            <td class="listColData" align="center">{$key+1}</td>
+            <foreach name="entity" item="id">
+                <td class="listColData" align="center">{$id}</td>
+            </foreach>
+        </tr>
+    </foreach>
+</table>
+<table border="1" cellspacing="1" cellpadding="3" width="100%" class="lvt" align="center">
+    <tr>
+        <td class="listColData">汇总</td>
+        <td class="listColData">数量:{$totalnumber}</td>
+        <td class="listColData">金额:{$totalmoney}</td>
+    </tr>
+</table>

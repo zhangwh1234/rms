@@ -1,4 +1,5 @@
 <include file="Module/editview" />
+<input hidden id="paymentmgr_is_edit" value="{$is_edit}" />
 <script>
     var PaymentMgrEditviewModule = {
 
@@ -67,6 +68,13 @@
     $(function(){
         $('#PaymentMgrEditviewForm input[name=code]').focus();
         PaymentMgrEditviewModule.init();
+        setTimeout(function(){
+            if($('#paymentmgr_is_edit').val() ==  1){
+                $('#code').attr('readonly',"readonly");
+                $('#name').attr("readonly","readonly")//将input元素设置为readonly
+                $('#PaymentMgrEditviewForm input[name=subject]').focus();
+            };
+        },300);
 
     })
 </script>

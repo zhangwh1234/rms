@@ -114,8 +114,7 @@
             <tr>
                 <td valign="top" align="center">
                     <div class="detailviewForm">
-                        <table id="detailviewOrderFormBaseTable" style="BORDER-COLLAPSE: collapse" borderColor="#A9A9A9"
-                            cellSpacing="0" width="100%" align="center" border="1">
+                        <table id="detailviewOrderFormBaseTable" style="BORDER-COLLAPSE: collapse" borderColor="#A9A9A9" cellSpacing="0" width="100%" align="center" border="1">
                             <thead>
                 <td colspan="4" class="tabBlockViewHeader">
                     订单基本信息
@@ -207,7 +206,7 @@
         <table border="0" cellspacing="0" cellpadding="0" width="100%" style="margin-top:5px; border: 1px solid #e0dddd; ">
             <tr>
                 <td colspan="4" class="tabBlockViewHeader">
-                    支付输入
+                    客户结账输入
                 </td>
             </tr>
 
@@ -218,19 +217,36 @@
             </tr>
         </table>
 
-        <table border="0" cellspacing="0" cellpadding="0" width="100%" style="margin-top:5px; border: 1px solid #e0dddd; ">
-            <tr>
-                <td colspan="4" class="tabBlockViewHeader">
-                    促销信息
-                </td>
-            </tr>
-            <tr style="background: #FFFFFF;">
-                <td colspan="4">
-                    <include file='ModuleUI:activitydetailview' />
-                </td>
-            </tr>
-        </table>
+        <notempty name="roomserviceaccounts">
+            <table border="0" cellspacing="0" cellpadding="0" width="100%" style="margin-top:5px; border: 1px solid #e0dddd; ">
+                <tr>
+                    <td colspan="4" class="tabBlockViewHeader">
+                        客户支付（供参考）
+                    </td>
+                </tr>
 
+                <tr style="background: #FFFFFF;">
+                    <td colspan="4">
+                        <include file='accountsdetailviewUI' />
+                    </td>
+                </tr>
+            </table>
+        </notempty>
+
+        <notempty name="orderactivity">
+            <table border="0" cellspacing="0" cellpadding="0" width="100%" style="margin-top:5px; border: 1px solid #e0dddd; ">
+                <tr>
+                    <td colspan="4" class="tabBlockViewHeader">
+                        客户促销（供参考）
+                    </td>
+                </tr>
+                <tr style="background: #FFFFFF;">
+                    <td colspan="4">
+                        <include file='ModuleUI:activitydetailview' />
+                    </td>
+                </tr>
+            </table>
+        </notempty>
         <table border="0" cellspacing="0" cellpadding="0" width="100%" style="margin-top:5px; border: 1px solid #e0dddd; ">
             <tr>
                 <td colspan="4" class="tabBlockViewHeader">
@@ -252,10 +268,8 @@
 
         <tr style="line-height: 5px;">
             <td colspan="4" align="center">
-                <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-other-tick'" onclick="OrderFormEditviewModule.update();"
-                    style="width:100px;margin-right:40px;">确认</a>
-                <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-arrow-cross'" onclick="IndexIndexModule.updateOperateTab('__URL__/{$returnAction}');"
-                    style="width:100px;">放弃</a>
+                <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-other-tick'" onclick="PaymentEditviewModule.update();" style="width:100px;margin-right:40px;">确认</a>
+                <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-arrow-cross'" onclick="IndexIndexModule.updateOperateTab('__URL__/{$returnAction}');" style="width:100px;">放弃</a>
             </td>
         </tr>
 

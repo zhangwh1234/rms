@@ -291,7 +291,7 @@ class OrderHandleAction extends ModuleAction
                 if (isset($_SESSION['orderHandleSearchForSendnameSendnameText'])) {
                     $where['sendname'] = $_SESSION['orderHandleSearchForSendnameSendnameText'];
                     $this->assign('searchSendname', $_SESSION['searchText' . $moduleName . 'Sendname']);
-                }else{
+                } else {
                     $where['sendname'] = '';
                 }
             }
@@ -362,6 +362,121 @@ class OrderHandleAction extends ModuleAction
 
             $searchSendname = urldecode($_REQUEST['searchTextSendname']); // 查询的送餐员
             $url = U('OrderHandle/searchviewSendname', array('searchSendname' => $searchSendname));
+            $this->assign('url', $url);
+            $this->assign('searchSendname', $searchSendname);
+
+            $this->assign('moduleId', $moduleId);
+            $this->assign('returnAction', 'searchviewSendname'); // 定义返回的方法
+            $this->getSendnameproductsByName(); // 显示送餐员餐数情况
+
+            $pageNumber = $_SESSION[$moduleName . 'searchviewsendname' . 'page'];
+            //如果存在页数,获取
+            if (isset($pageNumber)) {
+                $pageNumber = $_SESSION[$moduleName . 'searchviewsendname' . 'page'];
+            } else {
+                $pageNumber = 1;
+            }
+            $this->assign('pagenumber', $pageNumber);
+            //是否存在选中的行号
+            if (isset($_REQUEST['rowIndex'])) {
+                $this->assign('rowIndex', $_REQUEST['rowIndex']);
+            } else {
+                $this->assign('rowIndex', 0);
+            }
+
+            $this->display('OrderHandle/searchviewsendname'); // 查询的结果显示
+        }
+    }
+
+    /**
+     * 送餐员未派单查询
+     */
+    public function searchviewSendnameNoPaidan()
+    {
+        if (IS_POST) {
+            // 取得模块的名称
+            $moduleName = $this->getActionName();
+
+            // 启动当前模块
+            $focus = D($moduleName);
+
+            // 生成list字段列表
+            $listFields = $focus->listFields;
+            // 模块的ID
+            $moduleId = $focus->getPk();
+
+            // 建立查询条件
+            $where = array();
+            $searchSendname = $_REQUEST['searchSendname']; // 查询的送餐员
+           
+
+            $where['ap'] = $this->getAp();
+            $where['length(sendname)'] = array('eq',0);
+            $where['domain'] = $this->getDomain();
+            // 获取分公司
+            $company = $this->userInfo['department'];
+            $where['company'] = $company;
+
+            $total = $focus->where($where)->count(); // 查询满足要求的总记录数
+
+            //使用cookie读取rows
+            $listMaxRows = $_COOKIE['listMaxRows'];
+            if (!empty($listMaxRows)) {
+
+            } else {
+                $listMaxRows = C('LIST_MAX_ROWS'); // 定义显示的列表函数
+            }
+
+            //订单配送还要显示两个统计数据
+            $listMaxRows = $listMaxRows - 4;
+
+            // 导入分页类
+            import('ORG.Util.Page'); // 导入分页类
+            $pageNumber = $_REQUEST['page'];
+            // 取得页数
+            $_GET['p'] = $pageNumber;
+            $Page = new Page($total, $listMaxRows);
+            //保存页数
+            $_SESSION[$moduleName . 'searchviewsendname' . 'page'] = $pageNumber;
+
+            // 查询模块的数据
+            $selectFields = $listFields;
+            array_unshift($selectFields, $moduleId);
+            $listResult = $focus->field($selectFields)->where($where)->limit($Page->firstRow . ',' . $Page->listRows)->order("$moduleId desc")->select();
+
+            $listData = array();
+
+            // 从数据中列出列表的数据
+            if (count($listResult) > 0) {
+                $listData['rows'] = $listResult;
+                $listData['total'] = $total;
+            } else {
+                $listData['rows'] = array();
+                $listData['total'] = 0;
+            }
+            $this->ajaxReturn($listData, 'JSON');
+        } else {
+            // 取得模块的名称
+            $moduleName = $this->getActionName();
+            $this->assign('moduleName', $moduleName); // 模块名称
+            $this->assign('functionName', 'searchviewForSendname'); // 输出程序名称
+
+            // 启动当前模块
+            $focus = D($moduleName);
+
+            // 取得对应的导航名称
+            $navName = $focus->getNavName($moduleName);
+            $this->assign('navName', $navName); // 导航民
+            $this->assign('operName', '送餐员查询操作');
+
+            // 模块的ID
+            $moduleId = $focus->getPk();
+            // 加入模块id到listHeader中
+
+            $this->assign('returnAction', 'searchviewForSendname'); // 定义返回的方法
+
+            $searchSendname = urldecode($_REQUEST['searchTextSendname']); // 查询的送餐员
+            $url = U('OrderHandle/searchviewSendnameNoPaidan', array('searchSendname' => $searchSendname));
             $this->assign('url', $url);
             $this->assign('searchSendname', $searchSendname);
 
@@ -1165,7 +1280,7 @@ class OrderHandleAction extends ModuleAction
         $companyparamModel = D('companyparam');
         $where = array();
         $where['domain'] = $this->getDomain();
-        $companyparamResult = $companyparamModel->find();
+        $companyparamResult = $companyparamModel->where($where)->find();
         if ($companyparamResult['accountprinted'] == 2) {
             $accounttype = 2; //需要打印
         } else {
@@ -2199,6 +2314,40 @@ class OrderHandleAction extends ModuleAction
         // 获取分公司
         $company = $this->userInfo['department'];
 
+        $orderprinterModel = D('Orderprinter');
+        // 分公司的名称
+        $company = $this->userInfo['department'];
+        $where = array();
+        $where['orderformid'] = $orderformid;
+        $where['company'] = $company;
+        $where['domain'] = $this->getDomain();
+        //获取订单打印数量
+        $printnumberResult = $orderprinterModel->where($where)->find();
+        if (empty($printnumberResult)) { //如果不存在打印号，就生成打印号
+            $where = array();
+            $where['company'] = $company;
+            $where['domain'] = $this->getDomain();
+            $print_number = $orderprinterModel->where($where)->count();
+            if ($print_number == 0) {
+                $print_number = 1;
+            } else {
+                $print_number = $print_number + 1;
+            }
+
+            $print_number = $print_number + 300;
+            $data = array();
+            $data['printnumber'] = $print_number;
+            $data['orderformid'] = $record;
+            $data['ordersn'] = $orderform['ordersn'];
+            $data['company'] = $company;
+            $data['domain'] = $this->getDomain();
+            $data['date'] = date('Y-m-d H:i:s');
+            $orderprinterModel->create();
+            $orderprinterModel->add($data);
+        } else {
+            $print_number = $printnumberResult['printnumber'];
+        }
+
         $invoicemgrModel = D('invoice');
         $where = array();
         $where['type'] = 3; //是电子票
@@ -2233,6 +2382,8 @@ class OrderHandleAction extends ModuleAction
             $data = array();
             $data['invoiceid'] = $invoicemgrResult['invoiceid'];
             $data['ordersn'] = $ordersn;
+            $data['orderformid'] = $orderformid;
+            $data['print_number']= $print_number;
             $data['ordertxt'] = $invoicemgrResult['orderformtxt'];
             $data['header'] = $invoicemgrResult['header'];
             $data['body'] = $invoicemgrResult['body'];
@@ -2246,7 +2397,7 @@ class OrderHandleAction extends ModuleAction
             $data['printman'] = mb_substr($opername, 0, 3, 'utf-8'); //操作员
             $data['telphone'] = $orderformResult['telphone'];
             $data['type'] = 1;
-            $data['date'] = date('Y-m-d H:i:s');
+            $data['date'] = date('Y-m-d');
             $data['createdate'] = date('Y-m-d H:i:s');
             // 获取分公司
             $company = $this->userInfo['department'];

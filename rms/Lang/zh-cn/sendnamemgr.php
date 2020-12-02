@@ -8,5 +8,7 @@
     'LBL_SENDNAMEMGR_ASSISTANT' => '小助手配置信息',
     'assistantpwd'=> '小助手密码',
     'assistantlogin' => '小助手登陆时间',
+    'LBL_SHAOMAOCODE' => '扫码编码设置',
+    'shaomaocode' => '编码',
   )
 ?>

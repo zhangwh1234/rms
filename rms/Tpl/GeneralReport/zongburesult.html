@@ -1,0 +1,56 @@
+<table id="table{$actionName}" border="1" cellspacing="1" cellpadding="3" width="100%" class="lvt" align="center">
+    <tr class="listHeader">
+
+        <td class="" width="10%" rowspan="2">地区</td>
+        <td class="listHeader" width="5%" colspan="2">电话</td>
+        
+        <td class="listHeader" width="5%" colspan="2">小程序</td>
+        
+        <td class="listHeader" width="5%" colspan="2">微信公众号</td>
+        
+        <td class="listHeader" width="5%" colspan="2">APP</td>
+       
+        <td class="listHeader" width="5%" colspan="2">网站</td>
+        
+        <td class="listHeader" width="5%" colspan="2">其他</td>
+        
+        <td class="listHeader" width="5%" colspan="2">自有平台</td>
+        
+        <td class="listHeader" width="5%" colspan="2">美团</td>
+       
+        <td class="listHeader" width="5%" colspan="2">饿了么</td>
+        
+    </tr>
+    <tr class="listHeader">
+        <td class="listHeader" width="5%">订单数量</td>
+        <td class="listHeader" width="5%">销售额</td>
+        <td class="listHeader" width="5%">订单数量</td>
+        <td class="listHeader" width="5%">销售额</td>
+        <td class="listHeader" width="5%">订单数量</td>
+        <td class="listHeader" width="5%">销售额</td>
+        <td class="listHeader" width="5%">订单数量</td>
+        <td class="listHeader" width="5%">销售额</td>
+        <td class="listHeader" width="5%">订单数量</td>
+        <td class="listHeader" width="5%">销售额</td>
+        <td class="listHeader" width="5%">订单数量</td>
+        <td class="listHeader" width="5%">销售额</td>
+        <td class="listHeader" width="5%">订单数量</td>
+        <td class="listHeader" width="5%">销售额</td>
+        <td class="listHeader" width="5%">订单数量</td>
+        <td class="listHeader" width="5%">销售额</td>
+        <td class="listHeader" width="5%">订单数量</td>
+        <td class="listHeader" width="5%">销售额</td>
+
+
+    </tr>
+    <foreach item="city" name="zongbu" key="key">
+        <assign name='record' value="$key" />
+        <tr bgcolor="white" onMouseOver="this.className='lvtColDataHover'" onMouseOut="this.className='lvtColData'" ondblclick="alert('row_{$record}');" id="row_{$entity_id}">
+            <td class="listColData" align="center">{$key}</td>
+            <foreach name="city" item="type">
+                <td class="listColData" align="center">{$type.ordernumber}</td>
+                <td class="listColData" align="center">{$type.ordermoney}</td>
+            </foreach>
+        </tr>
+    </foreach>
+</table>

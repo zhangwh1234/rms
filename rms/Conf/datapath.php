@@ -30,7 +30,7 @@
         'nj.lihuaerp.comTongjiCmd' => '/usr/local/php/bin/php /home/ftp/1520/lihuaerp-20140316-AYr/workprogram/litter.php OrderTongji/index',
 
         //localhost的数据库路径
-        '192.168.0.146' => array(
+        '192.168.0.184' => array(
             'DB_TYPE' => 'mysql',
             'DB_HOST'=>'localhost',
             'DB_NAME'=>'rms',

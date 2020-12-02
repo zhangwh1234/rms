@@ -24,7 +24,7 @@ class OrderFormModel extends CRMEntityModel
         'telphone' => array('width' => 15, 'align' => 'left'),
         'totalmoney' => array('width' => 10, 'align' => 'center'),
         'custtime' => array('width' => 10, 'align' => 'center'),
-        'sendname' => array('width' => 10, 'align' => 'center'),
+        'sendname' => array('width' => 14, 'align' => 'center'),
         'company' => array('width' => 10, 'align' => 'center'),
         'state' => array('width' => 10, 'align' => 'center'),
         'telname' => array('width' => 10, 'align' => 'left'),

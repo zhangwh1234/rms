@@ -1,0 +1,37 @@
+<?php if (!defined('THINK_PATH')) exit();?><!-- 综合查询  -->
+<form style="overflow:hidden;">
+    <table cellspacing="6" width="100%" style="margin-left: 10px;margin-top:10px;">
+        <tr>
+            <td>
+                <span style="font-size: 16px;">综合查询</span>
+                <input type="text" class="easyui-validatebox" id="orderFormListviewOtherSearchInput"
+                       name="searchTextOther" autocomplete="off"
+                       style="font-size: 16px;width:80%;" value=""/>
+                <input type="text" style="width:0px;visibility:hidden;" >
+            </td>
+        <tr>
+    </table>
+</form>
+<script>
+    $(function(){
+        $('#orderFormListviewOtherSearchInput').focus();
+        $('#orderFormListviewOtherSearchInput').keydown(function(event){
+            var that = this;
+            if(event.keyCode == 13){
+                var dialog = '#globel-dialog-div';
+                $(dialog).find('form').eq(0).form('submit', {
+                    onSubmit: function () {
+                        var isValid = $(this).form('validate');
+                        if (!isValid) return false;
+                        var searchTextOther = $(that).val();
+                        var url = '__URL__/searchviewOther/searchTextOther/'+searchTextOther;
+                        IndexIndexModule.openOperateTab(url, '订单预订');
+                        $(dialog).dialog('close');
+                        return false;
+                    }
+                });
+                return false;
+            }
+        })
+    })
+</script>

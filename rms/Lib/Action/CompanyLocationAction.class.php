@@ -26,6 +26,7 @@ class CompanyLocationAction extends ModuleAction{
         $return = array();
         $return['city'] =  $this->getCityLocal();
         $return['company'] = $companymgr;
+        $return['domain'] = $this->getDomain();
         $this->ajaxReturn($return,'json');
     }
 
@@ -59,7 +60,7 @@ class CompanyLocationAction extends ModuleAction{
         $where = array();
         $where['domain'] = $this->getDomain();
         $fields = array('name,longitude,latitude,region');
-        $city = $cityModel->field($fields)->where($where)->select();
+        $city = $cityModel->field($fields)->where($where)->find();
 
         $this->ajaxReturn($city,'json');
     }

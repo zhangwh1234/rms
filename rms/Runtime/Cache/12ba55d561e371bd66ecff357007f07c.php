@@ -1,11 +1,10 @@
 <?php if (!defined('THINK_PATH')) exit();?><style>
-    .moduleOperater{
-        clear:both;
-        margin:0px;
+    .moduleOperater {
+        clear: both;
+        margin: 0px;
         padding: 0px;
-        overflow:scroll;
+        overflow: scroll;
     }
-
 </style>
 <div class="moduleMenu">
     <ul>
@@ -13,18 +12,26 @@
         <li><a href="javascript:void(0);" class="moduleName" onclick="IndexIndexModule.updateOperateTab('__URL__/<?php echo ($returnAction); ?>');">&nbsp;&gt;<?php echo (L("$moduleName")); ?></a></li>
         <li>&nbsp;&gt;查看操作</li>
         <li style="width: 50px;">&nbsp;</li>
+        <?php if($rolename == 'dispatcher'): ?><li style="margin-left: 10px;"><a href="javascript:;" onclick="IndexIndexModule.updateOperateTab('__URL__/<?php echo ($returnAction); ?>/pagetype/<?php echo ($pagetype); ?>/rowIndex/<?php echo ($rowIndex); ?>');"><img
+                        src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+            <li><a href="javascript:void(0);" onclick="IndexIndexModule.updateOperateTab('__URL__/<?php echo ($returnAction); ?>/pagetype/<?php echo ($pagetype); ?>/rowIndex/<?php echo ($rowIndex); ?>');">返回列表<span>^4</span></a></li>
 
-        <li style="margin-left: 10px;"><a href="javascript:void(0);" onclick="IndexIndexModule.updateOperateTab('__URL__/createview/returnAction/<?php echo ($returnAction); ?>');"><img src=".__PUBLIC__/Images/newBtn.gif" alt="" title="" border="0"></a></li>
-        <li><a id="create<?php echo ($moduelName); ?>" href="javascript:void(0);"  onclick="IndexIndexModule.updateOperateTab('__URL__/createview/returnAction/<?php echo ($returnAction); ?>');">新建订单<span>^1</span></a></li>
+        <?php else: ?>
+            <li style="margin-left: 10px;"><a href="javascript:void(0);" onclick="IndexIndexModule.updateOperateTab('__URL__/createview/returnAction/<?php echo ($returnAction); ?>');"><img
+                        src=".__PUBLIC__/Images/newBtn.gif" alt="" title="" border="0"></a></li>
+            <li><a id="create<?php echo ($moduelName); ?>" href="javascript:void(0);" onclick="IndexIndexModule.updateOperateTab('__URL__/createview/returnAction/<?php echo ($returnAction); ?>');">新建订单<span>^1</span></a></li>
 
-        <li style="margin-left: 10px;"><a href="javascript:;" onclick="IndexIndexModule.updateOperateTab('__URL__/<?php echo ($returnAction); ?>/pagetype/<?php echo ($pagetype); ?>/rowIndex/<?php echo ($rowIndex); ?>');" ><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
-        <li><a href="javascript:void(0);"  onclick="IndexIndexModule.updateOperateTab('__URL__/<?php echo ($returnAction); ?>/pagetype/<?php echo ($pagetype); ?>/rowIndex/<?php echo ($rowIndex); ?>');">返回列表<span>^4</span></a></li>
+            <li style="margin-left: 10px;"><a href="javascript:;" onclick="IndexIndexModule.updateOperateTab('__URL__/<?php echo ($returnAction); ?>/pagetype/<?php echo ($pagetype); ?>/rowIndex/<?php echo ($rowIndex); ?>');"><img
+                        src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+            <li><a href="javascript:void(0);" onclick="IndexIndexModule.updateOperateTab('__URL__/<?php echo ($returnAction); ?>/pagetype/<?php echo ($pagetype); ?>/rowIndex/<?php echo ($rowIndex); ?>');">返回列表<span>^4</span></a></li>
 
-        <li style="margin-left: 10px;"><a href="javascript:;" onclick="IndexIndexModule.updateOperateTab('__URL__/editview/record/<?php echo ($record); ?>/pagetype/<?php echo ($pagetype); ?>/rowIndex/<?php echo ($rowIndex); ?>/returnAction/<?php echo ($returnAction); ?>');" ><img src=".__PUBLIC__/Images/newBtn.gif" alt="" title="" border="0"></a></li>
-        <li><a href="javascript:void(0);"  onclick="IndexIndexModule.updateOperateTab('__URL__/editview/record/<?php echo ($record); ?>/pagetype/<?php echo ($pagetype); ?>/rowIndex/<?php echo ($rowIndex); ?>/returnAction/<?php echo ($returnAction); ?>');">改单<span>^5</span></a></li>
+            <li style="margin-left: 10px;"><a href="javascript:;"
+                    onclick="IndexIndexModule.updateOperateTab('__URL__/editview/record/<?php echo ($record); ?>/pagetype/<?php echo ($pagetype); ?>/rowIndex/<?php echo ($rowIndex); ?>/returnAction/<?php echo ($returnAction); ?>');"><img
+                        src=".__PUBLIC__/Images/newBtn.gif" alt="" title="" border="0"></a></li>
+            <li><a href="javascript:void(0);"
+                    onclick="IndexIndexModule.updateOperateTab('__URL__/editview/record/<?php echo ($record); ?>/pagetype/<?php echo ($pagetype); ?>/rowIndex/<?php echo ($rowIndex); ?>/returnAction/<?php echo ($returnAction); ?>');">改单<span>^5</span></a></li><?php endif; ?>
 
-
-        <li style="float: right;margin-right: 60px;"><a href="javascript:void(0);"   onclick="IndexIndexModule.closeOperateTab();" >关闭</a></li>
+        <li style="float: right;margin-right: 60px;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
         <li style="float:right;"><a href="javascript:;" onclick="IndexIndexModule.closeOperateTab();"><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
         <div style="clear:both;"></div>
     </ul>
@@ -215,13 +222,15 @@
                                     <span style="margin-left:10px; ">&nbsp;</span>
                                     <span class="detailviewLableSpan">已收金额:</span>
                                     <span class="detailviewInputSpan"><?php echo ($info["paidmoney"]); ?></span>
+                                    <?php if($info["invoice_open"] == '已开'): ?><span class="detailviewInputSpan" style="color:red;">发票:<?php echo ($info["invoice_open"]); ?></span><?php endif; ?>
                                 </td>
                                 <td width="15%" align="right">
                                     <span class="detailviewLableSpan">订单总额:</span>
                                 </td>
                                 <td width="20%" align="left" style="background: #F5F5F5;">
-                                    <span class="detailviewInputSpan"><?php echo ($info["totalmoney"]); ?></span>
+                                    <span class="detailviewInputSpan"><?php echo ($info["totalmoney"]); ?></span>                                  
                                 </td>
+                               
                             </tr>
                         </table>
 
@@ -328,7 +337,7 @@
 
         <td class="productsTableXiaojiRightTd"> 
             <span style="font-size:14px;">小计</span>
-            <span style="font-size:16px;"><?php echo ($info["goodsmoney"]); ?></span>
+            <span style="font-size:16px;"><?php echo ($orderproductsmoney); ?></span>
         </td>
     </tr>
 </table>
@@ -638,7 +647,7 @@
 
         <td class="accountsTableXiaojiRightTd"> 
             <span style="font-size:14px;">小计</span>
-            <span style="font-size:16px;"><?php echo ($info["money"]); ?></span>
+            <span style="font-size:16px;"><?php echo ($orderpaymentmoney); ?></span>
         </td>
     </tr>
 </table>
@@ -752,12 +761,12 @@
         </table>
     </form>
 </div>
-<input id="OrderFormAction" type="hidden" value="Detailview"/>
+<input id="OrderFormAction" type="hidden" value="Detailview" />
 
 <script>
     var OrderFormDetailviewModule = {
         //初始化
-        init:function(){
+        init: function () {
             $('.moduleOperater').height(IndexIndexModule.operationHeight);
             this.quickKeyboardAction();
         },
@@ -766,12 +775,12 @@
         //新建的快捷操作
         quickKeyboardAction: function () {
             // ctrl+1快捷键,新建公告
-            Mousetrap.bind(['ctrl+1','ctrl+f1','f1'], function(e) {
+            Mousetrap.bind(['ctrl+1', 'ctrl+f1', 'f1'], function (e) {
                 // 返回选项卡
                 var tab = $('#operation').tabs('getSelected');
                 var tabOptions = tab.panel('options');
                 //if (tabOptions.title == '订餐单' && ($('#OrderFormAction').val() == 'Detailview')) {
-                    IndexIndexModule.updateOperateTab('__URL__/createview/returnAction/<?php echo ($returnAction); ?>');
+                IndexIndexModule.updateOperateTab('__URL__/createview/returnAction/<?php echo ($returnAction); ?>');
                 //};
             });
 
@@ -781,7 +790,7 @@
                 var tab = $('#operation').tabs('getSelected');
                 var tabOptions = tab.panel('options');
                 //if (tabOptions.title == '订餐单' ) {
-                    IndexIndexModule.updateOperateTab("__URL__/<?php echo ($returnAction); ?>/pagetype/<?php echo ($pagetype); ?>/rowIndex/<?php echo ($rowIndex); ?>");
+                IndexIndexModule.updateOperateTab("__URL__/<?php echo ($returnAction); ?>/pagetype/<?php echo ($pagetype); ?>/rowIndex/<?php echo ($rowIndex); ?>");
                 //};
             });
 
@@ -797,7 +806,7 @@
         }
     }
 
-    $(function(){
+    $(function () {
         OrderFormDetailviewModule.init();
     })
 </script>

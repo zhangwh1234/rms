@@ -15,25 +15,21 @@
         <li>&nbsp;&gt;新建操作</li>
         <li style="width: 50px;">&nbsp;</li>
 
-        <li style="margin-left: 10px;"><a href="javascript:;" onclick="OrderFormCreateviewModule.insert();"><img src=".__PUBLIC__/Images/newBtn.png"
-                    alt="" title="" border="0"></a></li>
+        <li style="margin-left: 10px;"><a href="javascript:;" onclick="OrderFormCreateviewModule.insert();"><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
         <li><a href="javascript:void(0);" onclick="OrderFormCreateviewModule.insert();">保存订单<span>^9</span></a></li>
 
-        <li style="margin-left: 30px;"><a href="javascript:;" onclick="IndexIndexModule.updateOperateTab('__URL__/<?php echo ($returnAction); ?>');"><img
-                    src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li style="margin-left: 30px;"><a href="javascript:;" onclick="IndexIndexModule.updateOperateTab('__URL__/<?php echo ($returnAction); ?>');"><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
         <li><a href="javascript:void(0);" onclick="IndexIndexModule.updateOperateTab('__URL__/<?php echo ($returnAction); ?>');">放弃,返回列表<span>^4</span></a>
         </li>
 
 
-        <li style="margin-left: 30px;"><a href="javascript:;" onclick="OrderFormCreateviewModule.showTodayMenuview();"><img
-                    src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li style="margin-left: 30px;"><a href="javascript:;" onclick="OrderFormCreateviewModule.showTodayMenuview();"><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
         <li><a href="javascript:void(0);" onclick="OrderFormCreateviewModule.showTodayMenuview();">查看今日菜单<span>^0</span></a></li>
 
 
         <li style="float: right;margin-right: 60px;"><a href="#" onclick="IndexIndexModule.closeOperateTab();">关闭</a>
         </li>
-        <li style="float:right;"><a href="javascript:;" onclick="IndexIndexModule.closeOperateTab();"><img src=".__PUBLIC__/Images/closeBtn.png"
-                    alt="" title="" border="0"></a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="IndexIndexModule.closeOperateTab();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
     </ul>
 </div>
 <div id="l-map" style="display: none;"></div>
@@ -56,8 +52,7 @@
             <tr>
                 <td valign="top" align="center">
                     <div class="BaseForm" style="border: 1px solid #e0dddd; background: white;">
-                        <table style="BORDER-COLLAPSE: collapse" borderColor="#A9A9A9" cellSpacing="0" width="100%"
-                            align="center" border="1">
+                        <table style="BORDER-COLLAPSE: collapse" borderColor="#A9A9A9" cellSpacing="0" width="100%" align="center" border="1">
                             <tr>
                                 <td colspan="4" class="tabBlockViewHeader">
                                     订单基本信息
@@ -84,16 +79,13 @@
                                 </td>
                                 <td width="50%" align="left">
                                     <!-- 百度地址选择器 -->
-                                    <input type="text" id="suggestId" size="20" value="" style="width:60%;font-size:16px;"
-                                        autocomplete="off" />
+                                    <input type="text" id="suggestId" size="20" value="" style="width:60%;font-size:16px;" autocomplete="off" />
                                     <div id="searchResultPanel" style="border:1px solid #C0C0C0;width:150px;height:auto; display:none;"></div>
                                     <!-- 地址坐标  -->
                                     <input type="hidden" id="longitude-create" name="longitude">
                                     <input type="hidden" id="latitude-create" name="latitude">
-                                    <a href="#"> <img id="createcoordShow" src="./__PUBLIC__/Images/map-marker-icon.png"
-                                            style="width:21px;height:21px;"></a>
-                                    <a href="#" onclick="selectMapCoord();" style="float: right;margin-right: 20px;"><img
-                                            src="./__PUBLIC__/Images/maps1.gif" style="width:21px;height:21px;border:1px solid #FFD2D2;margin-bottom:0px;margin-top:0px;padding: 0px;"
+                                    <a href="#"> <img id="createcoordShow" src="./__PUBLIC__/Images/map-marker-icon.png" style="width:21px;height:21px;"></a>
+                                    <a href="#" onclick="selectMapCoord();" style="float: right;margin-right: 20px;"><img src="./__PUBLIC__/Images/maps1.gif" style="width:21px;height:21px;border:1px solid #FFD2D2;margin-bottom:0px;margin-top:0px;padding: 0px;"
                                             align="absmiddle">选图</a>
                                 </td>
                                 <td width="15%" align="right">
@@ -119,13 +111,11 @@
                                 <td width="20%" align="left">
                                     <table>
                                         <tr>
-                                            <td><input type="text" name="custtime_1" id="custtime_1" value="<?php echo ($custtime_1); ?>"
-                                                    size="2" maxlength="2" tabindex="<?php echo ($vt_tab); ?>" class="detailedViewTextBox"
+                                            <td><input type="text" name="custtime_1" id="custtime_1" value="<?php echo ($custtime_1); ?>" size="2" maxlength="2" tabindex="<?php echo ($vt_tab); ?>" class="detailedViewTextBox"
                                                     AUTOCOMPLETE="off" style="width: 30px;" />
                                             </td>
                                             <td><label style="font-size: 14px;">:</label></td>
-                                            <td><input type="text" name="custtime_2" id="custtime_2" value="<?php echo ($custtime_2); ?>"
-                                                    size="2" maxlength="2" tabindex="<?php echo ($vt_tab); ?>" class="detailedViewTextBox"
+                                            <td><input type="text" name="custtime_2" id="custtime_2" value="<?php echo ($custtime_2); ?>" size="2" maxlength="2" tabindex="<?php echo ($vt_tab); ?>" class="detailedViewTextBox"
                                                     AUTOCOMPLETE="off" style="width:30px;" />
                                             </td>
                                             <td><span style="font-size: 18px;">:00</span></td>
@@ -152,25 +142,21 @@
                                     <span style="font-size:14px;margin-right:10px;">订单金额:</span>
                                 </td>
                                 <td width="50%" align="left">
-                                    <table width="100%" border="1" style="BORDER-COLLAPSE: collapse" borderColor="#A9A9A9"
-                                        cellSpacing="0" width="100%">
+                                    <table width="100%" border="1" style="BORDER-COLLAPSE: collapse" borderColor="#A9A9A9" cellSpacing="0" width="100%">
                                         <tr>
                                             <td width="10%"><span style="font-size:14px;">总金额:</span></td>
                                             <td width="20%"><span id="OrderFormCreateviewFormTotalMoney" style="font-size:16px;"></span>
-                                                <input type="text" name="totalmoney" readonly="true" hidden="true"
-                                                    style="font-size:16px;" size="10" />
+                                                <input type="text" name="totalmoney" readonly="true" hidden="true" style="font-size:16px;" size="10" />
                                             </td>
                                             <td width="10%"><span style="font-size:14px;">已收金额:</span></td>
                                             <td width="20%">
                                                 <span id="OrderFormCreateviewFormPaidMoney" style="font-size:16px;"></span>
-                                                <input type="text" name="moneypaid" readonly="true" hidden="true" style="font-size:16px;"
-                                                    size="10" />
+                                                <input type="text" name="moneypaid" readonly="true" hidden="true" style="font-size:16px;" size="10" />
                                             </td>
                                             <td width="10%"><span style="font-size:14px;">应收金额:</span></td>
                                             <td width="15%">
                                                 <span id="OrderFormCreateviewFormShouldMoney" style="font-size:16px;"></span>
-                                                <input type="text" name="shouldmoney" readonly="true" hidden="true"
-                                                    style="font-size:16px;" size="10" />
+                                                <input type="text" name="shouldmoney" readonly="true" hidden="true" style="font-size:16px;" size="10" />
                                             </td>
                                         </tr>
                                     </table>
@@ -227,7 +213,7 @@
         <td width="15%" align="center" class="productsTableHeaderLeftTd">金额</td>
         <td width="10%" align="center" class="productsTableHeaderRightTd">操作</td>
     </tr>
-    <?php if(empty($orderproducts)): $__FOR_START_454630705__=0;$__FOR_END_454630705__=3;for($key=$__FOR_START_454630705__;$key < $__FOR_END_454630705__;$key+=1){ ?><tr>
+    <?php if(empty($orderproducts)): $__FOR_START_825807254__=0;$__FOR_END_825807254__=3;for($key=$__FOR_START_825807254__;$key < $__FOR_END_825807254__;$key+=1){ ?><tr>
                 <td width="5%" align="center" ><?php echo ($key+1); ?></td>
                 <td width="15%" align="center" > 
                     <input id="<?php echo ($moduleName); echo (ucfirst(ACTION_NAME)); ?>productsNumber_<?php echo ($key+1); ?>" name="productsNumber_<?php echo ($key+1); ?>" type="text" size="5" tabindex="1"
@@ -321,7 +307,7 @@
         <td class="productsTableXiaojiRightTd" style="font-size: 14px;"> 
             <span>小计</span>
             <input id="<?php echo ($moduleName); echo (ucfirst(ACTION_NAME)); ?>productsTotalMoney" name="productsTotalMoney" type="text" size="10" readonly="readonly"
-                   style="border: 0px;font-size: 14px;" value="<?php echo ($info["goodsmoney"]); ?>"/>
+                   style="border: 0px;font-size: 14px;" value="<?php echo ($orderproductsmoney); ?>"/>
         </td>
     </tr>
 </table>
@@ -422,7 +408,7 @@
             $('#globel-dialog-div').dialog({
                 title: '选择产品',
                 iconCls: 'icons-application-application_add',
-                width: 900,
+                width: 600,
                 height: 540,
                 cache: false,
                 href: url,
@@ -782,7 +768,7 @@
         <td width="25%" align="center" class="accountsTableHeaderLeftTd">备注</td>
         <td width="10%" align="center" class="accountsTableHeaderRightTd">操作</td>
     </tr>
-    <?php if(empty($orderaccountpayment)): $__FOR_START_165602297__=0;$__FOR_END_165602297__=1;for($key=$__FOR_START_165602297__;$key < $__FOR_END_165602297__;$key+=1){ ?><tr>
+    <?php if(empty($orderaccountpayment)): $__FOR_START_1197512187__=0;$__FOR_END_1197512187__=1;for($key=$__FOR_START_1197512187__;$key < $__FOR_END_1197512187__;$key+=1){ ?><tr>
                 <td width="5%" align="center"><?php echo ($key+1); ?></td>
                 <td width="10%" align="center"> 
                     <input id="OrderFormAccountsCode_<?php echo ($key+1); ?>" name="accountpaymentCode_<?php echo ($key+1); ?>" type="text" size="6"
@@ -1143,10 +1129,8 @@
 
             <tr style="line-height: 5px;">
                 <td colspan="4" align="center">
-                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-other-tick'" onclick="OrderFormCreateviewModule.insert();"
-                        style="width:100px;margin-right:40px;">确认</a>
-                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-arrow-cross'" onclick="IndexIndexModule.updateOperateTab('__URL__/listview');"
-                        style="width:100px;">放弃</a>
+                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-other-tick'" onclick="OrderFormCreateviewModule.insert();" style="width:100px;margin-right:40px;">确认</a>
+                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-arrow-cross'" onclick="IndexIndexModule.updateOperateTab('__URL__/listview');" style="width:100px;">放弃</a>
                 </td>
             </tr>
 </div>
@@ -1239,7 +1223,7 @@
                     if (accountpaymentMoney > 0) {
                         if (productsMoney !== checkactivitypaymentMoney) {
                             alert('活动金额和支付金额不等于订餐金额，请检查！');
-                            OrderFormEditviewModule.checkSubmitFlg = false;
+                            OrderFormCreateviewModule.checkSubmitFlg = false;
                             return false;
                         }
                     }

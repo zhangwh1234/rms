@@ -1,33 +1,26 @@
 <?php if (!defined('THINK_PATH')) exit();?><div class="moduleMenu">
     <ul>
         <li><?php echo (L("$navName")); ?></li>
-        <li><a href="javascript:void(0);" class="moduleName"
-               onclick="IndexIndexModule.updateOperateTab('__URL__/listview');">&nbsp;&gt;<?php echo (L("$moduleName")); ?></a>
+        <li><a href="javascript:void(0);" class="moduleName" onclick="IndexIndexModule.updateOperateTab('__URL__/listview');">&nbsp;&gt;<?php echo (L("$moduleName")); ?></a>
         </li>
         <li>&nbsp;&gt;新建操作</li>
         <li style="width: 50px;">&nbsp;</li>
 
-        <li style="margin-left: 20px;"><a href="javascript:;" onclick="<?php echo ($moduleName); ?>CreateviewModule.insert();"><img
-                src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li style="margin-left: 20px;"><a href="javascript:;" onclick="<?php echo ($moduleName); ?>CreateviewModule.insert();"><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
         <li><a href="javascript:void(0);" onclick="<?php echo ($moduleName); ?>CreateviewModule.insert();">保存<span>^9</span></a></li>
 
-        <li style="margin-left: 10px;"><a href="javascript:;"
-                                          onclick="IndexIndexModule.updateOperateTab('__URL__/listview');"><img
-                src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
-        <li><a href="javascript:void(0);"
-               onclick="IndexIndexModule.updateOperateTab('__URL__/listview');">放弃新建,返回列表<span>^4</span></a></li>
+        <li style="margin-left: 10px;"><a href="javascript:;" onclick="IndexIndexModule.updateOperateTab('__URL__/listview');"><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a>
+        </li>
+        <li><a href="javascript:void(0);" onclick="IndexIndexModule.updateOperateTab('__URL__/listview');">放弃新建,返回列表<span>^4</span></a></li>
 
-        <li style="float: right;margin-right: 60px;"><a href="javascript:void(0);"
-                                                        onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
-        <li style="float:right;"><a href="javascript:;" onclick="IndexIndexModule.closeOperateTab();"><img
-                src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
+        <li style="float: right;margin-right: 60px;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="IndexIndexModule.closeOperateTab();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
     </ul>
 </div>
 
 <div class="moduleoperator">
-    <form id="YingshouIncomeMgrCreateviewForm" name="<?php echo ($moduleName); ?>CreateviewForm" method="post"
-          style="border:1px solid white;margin-top: 0px;">
-        <input id="<?php echo ($moduleName); ?>Action" type="hidden" value="Createview"/>
+    <form id="YingshouIncomeMgrCreateviewForm" name="<?php echo ($moduleName); ?>CreateviewForm" method="post" style="border:1px solid white;margin-top: 0px;">
+        <input id="<?php echo ($moduleName); ?>Action" type="hidden" value="Createview" />
         <table border="0" cellspacing="0" cellpadding="0" width="99%" align="center" bgcolor="">
             <tr>
                 <td>
@@ -44,8 +37,7 @@
             <tr>
                 <td valign="top" align="center">
                     <div id="basicTab" style="border: 1px solid #e0dddd; background: white;">
-                        <table border="0" cellspacing="0" cellpadding="0" width="98%" class="small"
-                               style="padding-top: 10px;">
+                        <table border="0" cellspacing="0" cellpadding="0" width="98%" class="small" style="padding-top: 10px;">
                             <?php if(is_array($blocks)): $i = 0; $__LIST__ = $blocks;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$data): $mod = ($i % 2 );++$i;?><tr>
                                     <td colspan="4" class="tabBlockViewHeader">
                                         <?php echo (L("$key")); ?>
@@ -353,7 +345,7 @@
                                                                            onclick="clearTelAddress('<?php echo ($key+1); ?>');">清空地址</a>
                     </td>
                 </tr><?php endforeach; endif; ?>
-            <?php if(empty($teladdress)): $__FOR_START_545301626__=1;$__FOR_END_545301626__=4;for($key=$__FOR_START_545301626__;$key < $__FOR_END_545301626__;$key+=1){ ?><tr style="height:25px;border: 1px solid black;background: #F0F0F0;" class="CaseRow">
+            <?php if(empty($teladdress)): $__FOR_START_2128971522__=1;$__FOR_END_2128971522__=4;for($key=$__FOR_START_2128971522__;$key < $__FOR_END_2128971522__;$key+=1){ ?><tr style="height:25px;border: 1px solid black;background: #F0F0F0;" class="CaseRow">
                         <td width="10%" align="center" class="dvtCellLabel"><?php echo ($key); ?></td>
                         <td width="70%" align="left" class="dvtCellLabel"><input id="telAddress_<?php echo ($key); ?>"
                                                                                  name="telAddress_<?php echo ($key); ?>" type="text"
@@ -416,7 +408,7 @@
         <td width="15%" align="center" class="productsTableHeaderLeftTd">金额</td>
         <td width="10%" align="center" class="productsTableHeaderRightTd">操作</td>
     </tr>
-    <?php if(empty($orderproducts)): $__FOR_START_1733148172__=0;$__FOR_END_1733148172__=3;for($key=$__FOR_START_1733148172__;$key < $__FOR_END_1733148172__;$key+=1){ ?><tr>
+    <?php if(empty($orderproducts)): $__FOR_START_2103875935__=0;$__FOR_END_2103875935__=3;for($key=$__FOR_START_2103875935__;$key < $__FOR_END_2103875935__;$key+=1){ ?><tr>
                 <td width="5%" align="center" ><?php echo ($key+1); ?></td>
                 <td width="15%" align="center" > 
                     <input id="<?php echo ($moduleName); echo (ucfirst(ACTION_NAME)); ?>productsNumber_<?php echo ($key+1); ?>" name="productsNumber_<?php echo ($key+1); ?>" type="text" size="5" tabindex="1"
@@ -510,7 +502,7 @@
         <td class="productsTableXiaojiRightTd" style="font-size: 14px;"> 
             <span>小计</span>
             <input id="<?php echo ($moduleName); echo (ucfirst(ACTION_NAME)); ?>productsTotalMoney" name="productsTotalMoney" type="text" size="10" readonly="readonly"
-                   style="border: 0px;font-size: 14px;" value="<?php echo ($info["goodsmoney"]); ?>"/>
+                   style="border: 0px;font-size: 14px;" value="<?php echo ($orderproductsmoney); ?>"/>
         </td>
     </tr>
 </table>
@@ -611,7 +603,7 @@
             $('#globel-dialog-div').dialog({
                 title: '选择产品',
                 iconCls: 'icons-application-application_add',
-                width: 900,
+                width: 600,
                 height: 540,
                 cache: false,
                 href: url,
@@ -924,7 +916,7 @@
         <td width="75%" align="center">打印订单内容</td>
         <td width="10%" align="center">操作</td>
     </tr>
-    <?php if(empty($orderPrintHandle)): $__FOR_START_1370225775__=0;$__FOR_END_1370225775__=30;for($key=$__FOR_START_1370225775__;$key < $__FOR_END_1370225775__;$key+=1){ ?><tr>
+    <?php if(empty($orderPrintHandle)): $__FOR_START_235715116__=0;$__FOR_END_235715116__=30;for($key=$__FOR_START_235715116__;$key < $__FOR_END_235715116__;$key+=1){ ?><tr>
                 <td width="5%" align="center"><?php echo ($key+1); ?></td>
                 <td width="10%" align="center"><input id="orderPrintHandleid_<?php echo ($key+1); ?>" name="orderPrintHandleid_<?php echo ($key+1); ?>"
                                                       type="text" size="10" value="" autocomplete="off"
@@ -1208,14 +1200,53 @@
              align="absmiddle"
              onclick="YingshouIncomeMgrListviewModule.accountsPickList('__URL__/popupAccountsview/module/Accounts/row/<?php echo ($key+1); ?>');"/><a
             href="javascript:YingshouIncomeMgrListviewModule.accountsPickList('__URL__/popupAccountsview/module/Accounts/row/<?php echo ($key+1); ?>')">选择</a>
-    </td><?php endif; endforeach; endif; else: echo "" ;endif; ?>
+    </td>
+
+    
+    <?php elseif($uitype == 67): ?>
+    <td width=15% class="dvtCellLabel" align=right>
+        <font color="red"><?php echo ($mandatory_field); ?>*</font><?php echo ($label); ?>
+    </td>
+    <td width=35% align=left class="dvtCellInfo">
+        <input type="text" name="invoicecode" id="invoicecode" <?php echo ($readonly); ?> size="<?php echo ($length); ?>" class="detailedViewTextBox" onFocus="this.className='detailedViewTextBoxOn'"
+            onBlur="this.className='detailedViewTextBox'" onkeydown="YingshouInvoiceListviewModule.getAccountsByCode(event,this,'<?php echo ($module); ?>');" AUTOCOMPLETE="off">
+        <img id="YingshouRoomServicesearchIcon1" title="选择" src="./__PUBLIC__/Images/products.gif" style="cursor: pointer;" align="absmiddle"
+            onclick="YingshouInvoiceListviewModule.accountsPickList('__URL__/popupAccountsview/module/Accounts/row/<?php echo ($key+1); ?>');" /><a
+            href="javascript:YingshouIncomeMgrListviewModule.accountsPickList('__URL__/popupAccountsview/module/Accounts/row/<?php echo ($key+1); ?>')">选择</a>
+    </td>
+
+
+      
+      <?php elseif($uitype == 68): ?>
+      <td width=15% class="dvtCellLabel" align=right>
+          <font color="red"><?php echo ($mandatory_field); ?>*</font><?php echo ($label); ?>
+      </td>
+      <td width=35% align=left class="dvtCellInfo">
+          <input type="text" name="paymentcode" id="innercarrypaymentcode" <?php echo ($readonly); ?> size="<?php echo ($length); ?>" class="detailedViewTextBox" onFocus="this.className='detailedViewTextBoxOn'"
+              onBlur="this.className='detailedViewTextBox'" onkeydown="YingshouInnerCarryListviewModule.getAccountsByCode(event,this,'<?php echo ($module); ?>');" AUTOCOMPLETE="off">
+          <img id="YingshouRoomServicesearchIcon1" title="选择" src="./__PUBLIC__/Images/products.gif" style="cursor: pointer;" align="absmiddle"
+              onclick="YingshouInnerCarryListviewModule.accountsPickList('__URL__/popupAccountsview/module/Accounts/row/<?php echo ($key+1); ?>');" /><a
+              href="javascript:YingshouInnerCarryListviewModule.accountsPickList('__URL__/popupAccountsview/module/Accounts/row/<?php echo ($key+1); ?>')">选择</a>
+      </td>
+
+      
+      <?php elseif($uitype == 69): ?>
+      <td width=15% class="dvtCellLabel" align=right>
+          <font color="red"><?php echo ($mandatory_field); ?>*</font><?php echo ($label); ?>
+      </td>
+      <td width=35% align=left class="dvtCellInfo">
+          <input type="text" name="inneraccount" id="innercarrypaymentcode" <?php echo ($readonly); ?> size="<?php echo ($length); ?>" class="detailedViewTextBox" onFocus="this.className='detailedViewTextBoxOn'"
+              onBlur="this.className='detailedViewTextBox'" onkeydown="YingshouInnerCarryListviewModule.getAccountsByCode(event,this,'<?php echo ($module); ?>');" AUTOCOMPLETE="off">
+          <img id="YingshouRoomServicesearchIcon1" title="选择" src="./__PUBLIC__/Images/products.gif" style="cursor: pointer;" align="absmiddle"
+              onclick="YingshouInnerCarryListviewModule.accountsPickList('__URL__/popupAccountsview/module/Accounts/row/<?php echo ($key+1); ?>');" /><a
+              href="javascript:YingshouInnerCarryListviewModule.accountsPickList('__URL__/popupAccountsview/module/Accounts/row/<?php echo ($key+1); ?>')">选择</a>
+      </td><?php endif; endforeach; endif; else: echo "" ;endif; ?>
                                     </tr><?php endforeach; endif; else: echo "" ;endif; ?>
                                 <tr style="line-height: 5px;">
-                                    <td>&nbsp;</td>
+                                    <td colspan="4" class="tabBlockViewHeader">&nbsp;还欠直接输入金额，预付输入金额为负，期初金额，客户欠为正，如果有客户预付款，期初为负</td>
                                 </tr><?php endforeach; endif; else: echo "" ;endif; ?>
 
-                            <table border="0" cellspacing="0" cellpadding="0" width="98%"
-                                   style="margin-top:5px; border: 1px solid #e0dddd; ">
+                            <table border="0" cellspacing="0" cellpadding="0" width="98%" style="margin-top:5px; border: 1px solid #e0dddd; ">
                                 <tr>
                                     <td colspan="4" class="tabBlockViewHeader">
                                         客户支付
@@ -1231,12 +1262,10 @@
 
                             <tr>
                                 <td colspan="4" align="center">
-                                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-other-tick'"
-                                       onclick="<?php echo ($moduleName); ?>CreateviewModule.insert();"
-                                       style="width:100px;margin-right:40px;">确认</a>
-                                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-arrow-cross'"
-                                       onclick="IndexIndexModule.updateOperateTab('__URL__/listview');"
-                                       style="width:100px;">放弃</a>
+                                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-other-tick'" onclick="<?php echo ($moduleName); ?>CreateviewModule.insert();"
+                                        style="width:100px;margin-right:40px;">确认</a>
+                                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-arrow-cross'" onclick="IndexIndexModule.updateOperateTab('__URL__/listview');"
+                                        style="width:100px;">放弃</a>
                                 </td>
                             </tr>
                         </table>
@@ -1251,7 +1280,7 @@
 
 <script>
     var YingshouIncomeMgrCreateviewModule = {
-
+        checkSubmitFlg: false,
         //初始化
         init: function () {
             $('.moduleoperator').height(IndexIndexModule.operationHeight);
@@ -1264,12 +1293,19 @@
                 url: '__URL__/insert',
                 onSubmit: function () {
                     //进行表单验证
-                    if($('#code').val() == ''){
-                        alert('产品编码不能为空!');
+                    if ($('#code').val() == '') {
+                        alert('支付编码不能为空!');
+                        YingshouIncomeMgrCreateviewModule.checkSubmitFlg = false;
                         return false;
                     }
-                    if($('#name').val() == ''){
-                        alert('产品名称不能为空!');
+                    if ($('#name').val() == '') {
+                        alert('名称不能为空!');
+                        YingshouIncomeMgrCreateviewModule.checkSubmitFlg = false;
+                        return false;
+                    }
+                    if ($('#YingshouIncomeMgrCreateviewForm select[name=operation]').val().trim() == '') {
+                        alert('收入类型不能为空!');
+                        YingshouIncomeMgrCreateviewModule.checkSubmitFlg = false;
                         return false;
                     }
                     var isValid = $(this).form('validate');
@@ -1317,6 +1353,30 @@
     $(function () {
 
         YingshouIncomeMgrCreateviewModule.init();
-        $('#YingshouIncomeMgrCreateviewForm input[name=incomemgrcode]').focus();
+        //启动焦点
+        setTimeout(function () {
+            $('#YingshouIncomeMgrCreateviewForm input[name=paymentcode]').focus();
+            $('#date').datebox('setValue', '<?php echo ($currentDate); ?>');
+            //$('#date').datebox('readonly', true);
+            $('#ap').val('<?php echo ($currentAp); ?>');
+            //$('#date').datebox().datebox('calendar').calendar({
+            //    validator: function (date) {
+            //        var now = new Date();
+            //        var d1 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            //        var d2 = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 10);
+            //        return d1 <= date && date <= d2;
+            //    }
+            //});
+        }, 200);
+
+        $('#date').datebox().datebox('calendar').calendar({
+            validator: function (date) {
+                var now = new Date();
+                var d1 = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 2);
+                var d2 = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 10);
+                return d1 <= date && date <= d2;
+            }
+        });
+
     })
 </script>

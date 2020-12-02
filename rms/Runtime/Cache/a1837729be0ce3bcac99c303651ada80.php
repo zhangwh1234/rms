@@ -26,6 +26,16 @@
                 font-weight: 300;
                 color:red;
             }
+
+            .footer{
+                height: 50px;
+                width: 100%;
+                background-color:white;
+                position:fixed;
+                bottom:0;
+                font-size:14px;
+                
+            }
         </style>
 
         <script type="text/javascript">
@@ -153,6 +163,8 @@
                 </tr>
             </table>
         </div>
+
+        <div class="footer"><a style="align:bottom;" href="http://www.beian.miit.gov.cn" target="_blank">京ICP备05007639-1号</a></div>
 
     </body>
     </html>

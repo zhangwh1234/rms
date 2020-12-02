@@ -42,7 +42,12 @@
                                           onclick="OrderDistributionSearchviewCompanyModule.searchCompanyInput();"><img
                 src=".__PUBLIC__/Images/addressBtn.jpg" alt="" title="" border="0"></a></li>
         <li><a href="javascript:void(0);" onclick="OrderDistributionSearchviewCompanyModule.searchCompanyInput();">配送店查询<span>^7</span></a></li>
-
+        
+        <if condition="$cancelenable eq 1">
+            <li style="margin-left: 20px;"><img
+                src=".__PUBLIC__/Images/addressBtn.jpg" alt="" title="" border="0"></a></li>
+            <li><a href="javascript:void(0);" onclick="OrderDistributionSearchviewCompanyModule.cancelAllOrder('{$companyName}');">一键作废订单<span></span></a></li>
+        </if>
 
         <li style="float: right;margin-right: 40px;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
         <li style="float:right;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();"><img
@@ -300,7 +305,7 @@
                 }else{
                     rowIndex += 1;
                 }
-//行选中
+                //行选中
                 $(this.datagrid).datagrid('selectRow', rowIndex);
                 $('#orderDistributionCompanyTask' + rowIndex).focus(); //下一个节点获得焦点
 
@@ -369,6 +374,31 @@
             IndexIndexModule.updateOperateTab(url);
         },
 
+        /**
+        *  一键作废订单
+        */
+        cancelAllOrder:function(companyName){
+            
+            var that = this;
+            $.messager.confirm('提示信息', '确定要作废订单吗？', function (result) {
+                if (!result) return false;
+
+                $.messager.progress({
+                    text: '处理中，请稍候...'
+                });
+                $.post("{:U('OrderDistribution/cancelAllOrder')}", {
+                    company : companyName
+                }, function (res) {
+                    $.messager.progress('close');                    
+                    $.app.method.tip('提示信息', res.info, 'info');
+                    
+                    setTimeout(function () {
+                        that.firstGetOrderForm();
+                    }, 100)
+                }, 'json');
+            });
+        },
+
         //分配配送店输入
         searchCompanyInput: function () {
             var that = this;
@@ -416,6 +446,33 @@
                     iconCls:'icons-arrow-cross',
                     handler: function(){
                         $(that.dialog).dialog('close');
+                    }
+                },{
+                    text:'未派单查询',
+                    iconCls:'icons-other-time_go',
+                    handler: function(){
+
+                        var companyName = $('#orderDistributionListviewSearchInputCompanyName').val();
+                        if(companyName){
+
+                        }else{
+                            alert('查询内容不能为空');
+                            return false;
+                        }
+                        $(that.dialog).find('form').eq(0).form('submit', {
+                            onSubmit: function(){
+
+                                var formArray = $(this).serializeArray();
+                                var url = '__URL__/searchviewCompanyNoPaidan/';
+                                $.each(formArray, function (key, value) {
+                                    url = url + value.name + '/' + value.value + '/';
+                                });
+                                url = encodeURI(url);
+                                IndexIndexModule.updateOperateTab(url);
+                                $(that.dialog).dialog('close');
+                                return false;
+                            }
+                        });
                     }
                 }]
             });

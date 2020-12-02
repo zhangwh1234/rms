@@ -1,0 +1,18 @@
+<table id="table{$actionName}" border="1" cellspacing="1" cellpadding="3" width="100%" class="lvt" align="center">
+    <tr class="listHeader">
+        <td class="" width="10%">序号</td>
+        <td class="listHeader" width="30%">名称</td>
+        <td class="listHeader" width="30%">订单量</td>
+        <td class="listHeader" width="30%">金额</td>
+        <td class="listHeader">分公司</td>
+    </tr>
+    <foreach item="entity" name="orderpayment">
+        <assign name='record' value="$key" />
+        <tr bgcolor="white" onMouseOver="this.className='lvtColDataHover'" onMouseOut="this.className='lvtColData'" ondblclick="alert('row_{$record}');" id="row_{$entity_id}">
+            <td class="listColData" align="center">{$key+1}</td>
+            <foreach name="entity" item="id">
+                <td class="listColData" align="center">{$id}</td>
+            </foreach>
+        </tr>
+    </foreach>
+</table>

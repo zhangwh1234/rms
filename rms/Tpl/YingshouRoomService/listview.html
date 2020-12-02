@@ -6,7 +6,8 @@
         <li>&nbsp;&gt;列表操作</li>
         <li style="width: 30px;">&nbsp;</li>
 
-        <li style="margin-left: 10px;"><a href="javascript:void(0);" onclick="YingshouRoomServiceListviewModule.createview();"><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li style="margin-left: 10px;"><a href="javascript:void(0);" onclick="YingshouRoomServiceListviewModule.createview();"><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a>
+        </li>
         <li><a href="javascript:void(0);" onclick="YingshouRoomServiceListviewModule.createview();">生成报数单</a></li>
 
         <li style="margin-left: 20px;"><input type="text" id="roomservicebillCreateviewDateInput" class="easyui-datebox" name="roomservicebillCreateviewDateInput" style="font-size: 16px;width:150px;"
@@ -36,6 +37,8 @@
     var YingshouRoomServiceListviewModule = {
         dialog: '#globel-dialog-div',
         datagrid: '#yingshouroomservice_index_datagrid',
+        referListview: 0, //刷新变量
+        calculateRoom: 0,
 
         init: function () {
             //设置div的高度
@@ -43,7 +46,10 @@
             this.quickKeyboardAction();
             $('#yingshouroomservice_index_datagrid').datagrid({
                 rowStyler: YingshouRoomServiceListviewModule.rowStyler
-            })
+            });
+            //this.firstRoom();
+            //this.refreshListview();
+            //this.calculateOrder();
         },
 
         //操作格式化
@@ -71,6 +77,9 @@
 
         //查看送餐员的所送的订单
         checkorder: function (name, rowIndex, date, ap) {
+            //关闭定时
+            clearInterval(this.referListview);
+
             var url = '__URL__/checkOrder/name/' + name +
                 '/room_date/' + date + '/room_ap/' + ap;
 
@@ -132,10 +141,29 @@
                                     var queryParams = $(that.datagrid).datagrid('options').queryParams;
                                     queryParams['getDate'] = room_date;
                                     queryParams['getAp'] = room_ap;
+                                    if ($('#companyselect').length > 0) {
+                                        var company = $('#companyselect').combotree('getValues');
+                                        var companyArr = '';
+                                        for (var i = 0; i < company.length; i++) {
+                                            companyArr += company[i] + ',';
+                                        }
+                                        queryParams['companyArr'] = companyArr;
+                                    }
                                     $(that.datagrid).datagrid({
                                         pageNumber: 1,
-                                        rowStyler: this.rowStyler
+                                        rowStyler: this.rowStyler,
+                                        url: "__URL__/listview"
                                     });
+
+
+
+                                    //var queryParams = $(that.datagrid).datagrid('options').queryParams;
+                                    //queryParams['getDate'] = room_date;
+                                    //queryParams['getAp'] = room_ap;
+                                    //$(that.datagrid).datagrid({
+                                    //    pageNumber: 1,
+                                    //    rowStyler: this.rowStyler
+                                    //});
                                 }
                             }
                         });
@@ -167,6 +195,93 @@
             });
         },
 
+        //定时刷新列表
+        refreshListview: function () {
+            var that = this;
+            //获取日期
+            var getDate = $('#roomservicebillCreateviewDateInput').datebox('getValue');
+            var getAp = $('#roomservicebillCreateviewApInput').val();
+            var data = {
+                'getDate': getDate,
+                'getAp': getAp
+            };           
+            this.referListview = setInterval(function () {
+                $.ajax({
+                    type: "POST",
+                    url: "__URL__/listview",
+                    dataType: "json",
+                    data: data,
+                    success: function (data) {
+                        if (data.rows.length > 0) {
+                            //选择第一行焦点
+                            $('#yingshouroomservice_index_datagrid').datagrid('loadData', data);
+                        }
+                    }
+                })
+            }, 60000);
+        },
+
+        //定时计算外送结账单
+        calculateOrder: function () {
+            var that = this;
+            this.calculateRoom = setInterval(function () {
+                //获取日期
+                var room_date = $('#roomservicebillCreateviewDateInput').datebox('getValue'); //
+                var room_ap = $('#roomservicebillCreateviewApInput').val();
+                var data = {
+                    'room_date': room_date,
+                    'room_ap': room_ap
+                };
+                $.ajax({
+                    type: "POST",
+                    url: "__URL__/roomCalculate",
+                    data: data,
+                    dataType: "json",
+                    success: function (res) {
+
+                    }
+                });
+            }, 160000);
+
+        },
+
+        //第一次执行
+        firstRoom: function () {
+            setTimeout(function () {
+                //获取日期
+                var room_date = $('#roomservicebillCreateviewDateInput').datebox('getValue'); //
+                var room_ap = $('#roomservicebillCreateviewApInput').val();
+                var data = {
+                    'room_date': room_date,
+                    'room_ap': room_ap
+                };
+                $.ajax({
+                    type: "POST",
+                    url: "__URL__/roomCalculate",
+                    data: data,
+                    dataType: "json",
+                    success: function (res) {
+
+                    }
+                });
+            }, 300);
+
+            setTimeout(function () {
+                $.ajax({
+                    type: "POST",
+                    url: "__URL__/listview",
+                    dataType: "json",
+                    data: data,
+                    success: function (data) {
+                        if (data.rows.length > 0) {
+                            //选择第一行焦点
+                            $('#yingshouroomservice_index_datagrid').datagrid('loadData', data);
+                        }
+                    }
+                })
+            }, 30000);
+        },
+
         //新建的快捷操作
         quickKeyboardAction: function () {
             var that = this;
@@ -190,7 +305,7 @@
                 };
             });
 
-         
+
             // ESC键
             Mousetrap.bind('esc', function (e) {
                 // 返回选项卡
@@ -200,6 +315,20 @@
                     $(IndexIndexModule.dialog).dialog('close');
                 }
             });
+        },
+
+        /**
+         * 关闭页面
+         */
+        closeTab: function () {
+            var tab = $('#operation').tabs('getSelected');
+            //返回选项卡的index
+            var index = $('#operation').tabs('getTabIndex', tab);
+            //关闭选项卡
+            $('#operation').tabs('close', index);
+            //关闭定时
+            clearInterval(this.referListview);
+            clearInterval(this.calculateRoom);
         }
     }
 
@@ -208,6 +337,7 @@
 
         setTimeout(function () {
             YingshouRoomServiceListviewModule.setRowSelect(); //显示行定位
+            YingshouRoomServiceListviewModule.refreshListview();
         }, 600)
     })
 </script>

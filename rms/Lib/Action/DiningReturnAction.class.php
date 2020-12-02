@@ -10,15 +10,14 @@
 class DiningReturnAction extends ModuleAction
 {
 
-
     // 返回一些其他的数据,比如下拉列表框等的数据
     public function returnMainFnPara()
     {
         // 分公司的数据
         $companymgr_model = D('companymgr');
         $where = array();
-       // $where['telphoneauto'] = '营业';
-       // $where['domain'] = $this->getDomain();
+        // $where['telphoneauto'] = '营业';
+        $where['domain'] = $this->getDomain();
         $companymgr = $companymgr_model->field('name')->where($where)->select();
         // 在company字段中写入值
         $this->assign('companymgr', $companymgr);
@@ -30,7 +29,8 @@ class DiningReturnAction extends ModuleAction
      * @param sequence
      * @param company
      */
-    public  function getMoney(){
+    public function getMoney()
+    {
         //序号
         $sequence = $_REQUEST['sequence'];
         //分公司
@@ -42,9 +42,9 @@ class DiningReturnAction extends ModuleAction
         $where['company'] = $company;
 
         $diningsaleResult = $diningsaleModel->where($where)->find();
-        if($diningsaleResult){
+        if ($diningsaleResult) {
             $money = $diningsaleResult['money'];
-        }else{
+        } else {
             $money = 0;
         }
 
@@ -62,50 +62,85 @@ class DiningReturnAction extends ModuleAction
         return array(
             array(
                 'time',
-                date('Y-m-d H:i:s')
+                date('Y-m-d H:i:s'),
             ),
             array(
                 'domain',
-                $this->getDomain()
-            )
+                $this->getDomain(),
+            ),
         );
     }
 
     /**
      * 保存附件
      */
-    public function save_slave_table($record){
+    public function save_slave_table($record)
+    {
 
         $company = $_REQUEST['company'];
-        $ap   = $this->getAp();
+        $ap = $this->getAp();
         $money = $_REQUEST['money'];
 
         //将金额保存到diningcollect表中
         $where = array();
-        $where ['domain'] = $this->getDomain();
-        $where ['company'] = $company;
-        $where ['date'] = date('H-m-d');
-        $where ['ap'] = $ap;
+        $where['domain'] = $this->getDomain();
+        $where['company'] = $company;
+        $where['date'] = date('H-m-d');
+        $where['ap'] = $ap;
 
         $diningcollectModel = D('diningcollect');
         $diningcollectResult = $diningcollectModel->where($where)->find();
-        if(empty($diningcollectResult)){
+        if (empty($diningcollectResult)) {
             $data = array();
             $data['domain'] = $this->getDomain();
             $data['company'] = $company;
-            $data['date'] = date('H-m-d');
+            $data['date'] = date('Y-m-d');
             $data['ap'] = $ap;
             $data['money'] = -$money;
             $diningcollectModel->add($data);
-        }else{
+        } else {
             $where = array();
             $where['diningcollectid'] = $diningcollectResult['diningcollectid'];
             $data = array();
-            $data ['money'] = $diningcollectResult['money'] - $money;
+            $data['money'] = $diningcollectResult['money'] - $money;
             $diningcollectModel->where($where)->save($data);
         }
 
     }
 
-    
+    //定义删除从表
+    public function delete_slave_table($record)
+    {
+        $company = $_REQUEST['company'];
+        $ap = $this->getAp();
+        $money = $_REQUEST['money'];
+
+        //将金额保存到diningcollect表中
+        $where = array();
+        $where['domain'] = $this->getDomain();
+        $where['company'] = $company;
+        $where['date'] = date('H-m-d');
+        $where['ap'] = $ap;
+        $where[''] = $record;
+
+        $diningcollectModel = D('diningcollect');
+        $diningcollectResult = $diningcollectModel->where($where)->find();
+        if (empty($diningcollectResult)) {
+            $data = array();
+            $data['domain'] = $this->getDomain();
+            $data['company'] = $company;
+            $data['date'] = date('Y-m-d');
+            $data['ap'] = $ap;
+            $data['money'] = -$money;
+            $diningcollectModel->add($data);
+        } else {
+            $where = array();
+            $where['diningcollectid'] = $diningcollectResult['diningcollectid'];
+            $data = array();
+            $data['money'] = $diningcollectResult['money'] - $money;
+            $diningcollectModel->where($where)->save($data);
+        }
+
+    }
+
 }

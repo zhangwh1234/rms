@@ -13,51 +13,41 @@
         <li>&nbsp;&gt;列表操作</li>
         <li style="width: 30px;">&nbsp;</li>
 
-        <li style="margin-left: 10px;"><a href="javascript:void(0);"
-                                          onclick="IndexIndexModule.updateOperateTab('__URL__/createview/returnAction/<?php echo ($returnAction); ?>');"><img
-                src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
-        <li><a href="javascript:void(0);"
-               onclick="IndexIndexModule.updateOperateTab('__URL__/createview/returnAction/<?php echo ($returnAction); ?>');">新建订单<span>^1</span></a></li>
+        <li style="margin-left: 10px;"><a href="javascript:void(0);" onclick="IndexIndexModule.updateOperateTab('__URL__/createview/returnAction/<?php echo ($returnAction); ?>');"><img
+                    src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);" onclick="IndexIndexModule.updateOperateTab('__URL__/createview/returnAction/<?php echo ($returnAction); ?>');">新建订单<span>^1</span></a></li>
 
-        <li style="margin-left: 10px;"><a href="javascript:void(0);"
-                                          onclick="OrderFormListviewModule.addressSearchInput();"><img
-                src=".__PUBLIC__/Images/addressBtn.jpg" alt="" title="" border="0"></a></li>
-        <li><a href="javascript:void(0);"
-               onclick="OrderFormListviewModule.addressSearchInput();">地址查询<span>^6</span></a></li>
+        <li style="margin-left: 10px;"><a href="javascript:void(0);" onclick="OrderFormListviewModule.addressSearchInput();"><img src=".__PUBLIC__/Images/addressBtn.jpg" alt="" title=""
+                    border="0"></a></li>
+        <li><a href="javascript:void(0);" onclick="OrderFormListviewModule.addressSearchInput();">地址查询<span>^6</span></a></li>
 
-        <li style="margin-left: 10px;"><a href="javascript:void(0);"
-                                          onclick="OrderFormListviewModule.telphoneSearchInput();"><img
-                src=".__PUBLIC__/Images/phone.png" alt="" title="" border="0"></a></li>
-        <li><a href="javascript:void(0);"
-               onclick="OrderFormListviewModule.telphoneSearchInput();">电话号码查询<span>^7</span></a>
+        <li style="margin-left: 10px;"><a href="javascript:void(0);" onclick="OrderFormListviewModule.telphoneSearchInput();"><img src=".__PUBLIC__/Images/phone.png" alt="" title="" border="0"></a>
+        </li>
+        <li><a href="javascript:void(0);" onclick="OrderFormListviewModule.telphoneSearchInput();">电话号码查询<span>^7</span></a>
         </li>
 
-        <li style="margin-left: 10px;"><a href="javascript:void(0);"
-                                          onclick="OrderFormListviewModule.comeinTelphoneSearchInput();"><img
-                src=".__PUBLIC__/Images/phone.png" alt="" title="" border="0"></a></li>
+        <li style="margin-left: 10px;"><a href="javascript:void(0);" onclick="OrderFormListviewModule.comeinTelphoneSearchInput();"><img src=".__PUBLIC__/Images/phone.png" alt="" title=""
+                    border="0"></a></li>
         <li><a href="javascript:void(0);" onclick="OrderFormListviewModule.comeinTelphoneSearchInput();">来电记录查询<span>^8</span></a>
         </li>
 
-        <li style="margin-left: 10px;"><a href="javascript:;" onMouseOver=""><img
-                src=".__PUBLIC__/Images/addressBtn.jpg" alt="" title="" border="0"></a></li>
-        <li><a href="#" class="moduleName"
-               onclick="OrderFormListviewModule.otherSearchInput();">综合查询<span>^9</span></a>
+        <li style="margin-left: 10px;"><a href="javascript:;" onMouseOver=""><img src=".__PUBLIC__/Images/addressBtn.jpg" alt="" title="" border="0"></a></li>
+        <li><a href="#" class="moduleName" onclick="OrderFormListviewModule.otherSearchInput();">综合查询<span>^9</span></a>
         </li>
         <li style="float: right;margin-right: 10px;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
-        <li style="float:right;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();"><img
-                src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
+        <li style="float:right;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
     </ul>
 </div>
 
 <div id="OrderFormListviewDiv" style="height:400px;width:100%;clear:both;">
     <table id="orderform_index_datagrid" class="easyui-datagrid" data-options='<?php $dataOptions = array_merge(array ( 'border' => true, 'fit' => true, 'fitColumns' => true, 'rownumbers' => true, 'singleSelect' => true, 'striped' => true, 'pagination' => true, 'pageList' => array ( 0 => 10, 1 => 20, 2 => 30, 3 => 50, 4 => 80, 5 => 100, ), 'pageSize' => 10, ), $datagrid["options"]);if(isset($dataOptions['toolbar']) && substr($dataOptions['toolbar'],0,1) != '#'): unset($dataOptions['toolbar']); endif; echo trim(json_encode($dataOptions), '{}[]').((isset($datagrid["options"]['toolbar']) && substr($datagrid["options"]['toolbar'],0,1) != '#')?',"toolbar":'.$datagrid["options"]['toolbar']:null); ?>' style=""><thead><tr><?php if(is_array($datagrid["fields"])):foreach ($datagrid["fields"] as $key=>$arr):if(isset($arr['formatter'])):unset($arr['formatter']);endif;echo "<th data-options='".trim(json_encode($arr), '{}[]').(isset($datagrid["fields"][$key]['formatter'])?",\"formatter\":".$datagrid["fields"][$key]['formatter']:null)."'>".$key."</th>";endforeach;endif; ?></tr></thead></table>
 </div>
-<input id="<?php echo ($moduleName); ?>Action" type="hidden"  value="Listview" />
+<input id="<?php echo ($moduleName); ?>Action" type="hidden" value="Listview" />
 <script>
     var OrderFormListviewModule = {
         dialog: '#globel-dialog-div',
         datagrid: '#orderform_index_datagrid',
-        screenWidth:0,  //屏幕宽度
+        screenWidth: 0, //屏幕宽度
 
         init: function () {
             //设置div的高度
@@ -70,51 +60,67 @@
         },
 
         //重新设置page
-        setPagination:function(){
+        setPagination: function () {
             //定义订单分页表
             var pager = $('#orderform_index_datagrid').datagrid().datagrid('getPager');
             pager.pagination({
                 showRefresh: false,
-                pageSize : IndexIndexModule.gridRowsNumber,
-                layout: ['sep','first','prev','manual','links','next','last'],
+                pageSize: IndexIndexModule.gridRowsNumber,
+                layout: ['sep', 'first', 'prev', 'manual', 'links', 'next', 'last'],
                 buttons: [{
                     id: 'orderformOtherMsg',
                     text: '<?php echo ($orderformOtherMsg); ?>'
-
                 }]
             });
         },
 
         //操作格式化
         operate: function (val, rowData, rowIndex) {
-            if(window.screen.availWidth < 1280){
+            if (window.screen.availWidth < 1280) {
                 var btn = [];
-                btn.push('<a href="javascript:void(0);" onclick="OrderFormListviewModule.detailview(' + rowData.orderformid +','+ rowIndex+ ')">查看</a>');
-                btn.push('<a href="javascript:void(0);" onclick="OrderFormListviewModule.editview(' + rowData.orderformid +','+ rowIndex+  ')">改单</a>');
-                btn.push('<a href="javascript:void(0);" onclick="OrderFormListviewModule.hurry(' + rowData.orderformid +','+ rowIndex+ ')">催送</a>');
+                btn.push('<a href="javascript:void(0);" onclick="OrderFormListviewModule.detailview(' + rowData.orderformid + ',' + rowIndex + ')">查看</a>');
+                if (rowData['rolename'] == 'dispatcher') {
+
+                } else {
+                btn.push('<a href="javascript:void(0);" onclick="OrderFormListviewModule.editview(' + rowData.orderformid + ',' + rowIndex + ')">改单</a>');
+                btn.push('<a href="javascript:void(0);" onclick="OrderFormListviewModule.hurry(' + rowData.orderformid + ',' + rowIndex + ')">催送</a>');
+                }
+
                 return btn.join(' ');
-            }else{
+            } else {
                 var btn = [];
-                btn.push('<a href="javascript:void(0);" onclick="OrderFormListviewModule.detailview(' + rowData.orderformid +','+ rowIndex+ ')">查看</a>');
-                btn.push('<a href="javascript:void(0);" onclick="OrderFormListviewModule.editview(' + rowData.orderformid +','+ rowIndex+  ')">改单</a>');
-                btn.push('<a href="javascript:void(0);" onclick="OrderFormListviewModule.hurry(' + rowData.orderformid +','+ rowIndex+ ')">催送</a>');
+                btn.push('<a href="javascript:void(0);" onclick="OrderFormListviewModule.detailview(' + rowData.orderformid + ',' + rowIndex + ')">查看</a>');
+                if (rowData['rolename'] == 'dispatcher') {
+
+                } else {
+                btn.push('<a href="javascript:void(0);" onclick="OrderFormListviewModule.editview(' + rowData.orderformid + ',' + rowIndex + ')">改单</a>');
+                btn.push('<a href="javascript:void(0);" onclick="OrderFormListviewModule.hurry(' + rowData.orderformid + ',' + rowIndex + ')">催送</a>');
+                }
                 return btn.join(' | ');
             }
         },
 
         //送餐员的格式化操作
-        sendname:function(val,rowData,rowIndex){
-            if((rowData.longitude) && (rowData.latitude) && (!rowData.sendlongitude)){
+        sendname: function (val, rowData, rowIndex) {
+            if ((rowData.longitude) && (rowData.latitude) && (!rowData.sendname)) {
                 var btn = [];
-                btn.push( val +
-                '<a href="javascript:void(0);" onclick="OrderFormListviewModule.mapshowview(' + rowData.orderformid +','+ rowIndex+ ')" ><img src=".__PUBLIC__/Images/lhkc/location.png" style="height: 20px;" /></a>');
+                btn.push(val +
+                    '<a href="javascript:void(0);" onclick="OrderFormListviewModule.mapshowview(' + rowData.orderformid + ',' + rowIndex +
+                    ')" ><img src=".__PUBLIC__/Images/lhkc/location.png" style="height: 20px;" /></a>');
                 return btn.join('');
-            }else if((rowData.sendlongitude) && (rowData.sendlatitude)){
+            } else if ((rowData.sendlongitude) && (rowData.sendlatitude) && (rowData.sendname)) {
                 var btn = [];
-                btn.push( val +
-                '<a href="javascript:void(0);" onclick="OrderFormListviewModule.sendmapshowview(' + rowData.orderformid +','+ rowIndex+ ')" ><img src=".__PUBLIC__/Images/lhkc/sendlocation.png" style="height: 20px;" /></a>');
+                btn.push(val +
+                    '<a href="javascript:void(0);" onclick="OrderFormListviewModule.sendmapshowview(' + rowData.orderformid + ',' + rowIndex +
+                    ')" ><img src=".__PUBLIC__/Images/lhkc/sendlocation.png" style="height: 20px;" /></a>');
                 return btn.join('');
-            }else{
+            } else if ((rowData.longitude) && (rowData.latitude) && (rowData.sendname) && !(rowData.sendlatitude)) {
+                var btn = [];
+                btn.push(val +
+                    '<a href="javascript:void(0);" onclick="OrderFormListviewModule.mapshowview(' + rowData.orderformid + ',' + rowIndex +
+                    ')"><img src=".__PUBLIC__/Images/lhkc/location.png" style="height: 20px;" /></a>');
+                return btn.join('');
+            } else {
                 var btn = [];
                 btn.push(val);
                 return btn.join(' | ');
@@ -123,7 +129,7 @@
         },
 
         //初始返回,定位行操作,但是在翻页是,就不操作
-        setRowSelect :function(){
+        setRowSelect: function () {
             $('#orderform_index_datagrid').datagrid('selectRow', <?php echo ($rowIndex); ?>);
         },
 
@@ -133,33 +139,37 @@
         },
 
         //查看记录
-        detailview: function (id,rowIndex) {
-            var url = '__URL__/detailview/returnAction/<?php echo ($returnAction); ?>/record/'+id
-                    + '/rowIndex/' + rowIndex+'/pagetype/listview';
+        detailview: function (id, rowIndex) {
+            var url = '__URL__/detailview/returnAction/<?php echo ($returnAction); ?>/record/' + id +
+                '/rowIndex/' + rowIndex + '/pagetype/listview';
             IndexIndexModule.updateOperateTab(url);
         },
 
         //修改订单
-        editview: function (id ,rowIndex) {
-            var url = '__URL__/editview/returnAction/<?php echo ($returnAction); ?>/record/'+id
-                    + '/rowIndex/' + rowIndex+'/pagetype/listview';
+        editview: function (id, rowIndex) {
+            var url = '__URL__/editview/returnAction/<?php echo ($returnAction); ?>/record/' + id +
+                '/rowIndex/' + rowIndex + '/pagetype/listview';
             IndexIndexModule.updateOperateTab(url);
         },
 
         //催送订单
-        hurry:function(id ,rowIndex){
+        hurry: function (id, rowIndex) {
             var that = this;
-            $.messager.confirm('提示信息', '确定要催送订单吗？', function(result){
-                if(!result) return false;
+            $.messager.confirm('提示信息', '确定要催送订单吗？', function (result) {
+                if (!result) return false;
 
-                $.messager.progress({text:'处理中，请稍候...'});
-                $.post("<?php echo U('OrderForm/hurry');?>", {record: id}, function(res){
+                $.messager.progress({
+                    text: '处理中，请稍候...'
+                });
+                $.post("<?php echo U('OrderForm/hurry');?>", {
+                    record: id
+                }, function (res) {
                     $.messager.progress('close');
                     $('#orderform_index_datagrid').datagrid('reload');
                     $.app.method.tip('提示信息', res.info, 'info');
-                    setTimeout(function(){
-                        $('#orderform_index_datagrid').datagrid('selectRow', rowIndex);  //显示行定位
-                    },200)
+                    setTimeout(function () {
+                        $('#orderform_index_datagrid').datagrid('selectRow', rowIndex); //显示行定位
+                    }, 200)
                 }, 'json');
             });
         },
@@ -179,8 +189,7 @@
                 minimizable: false,
                 resizable: false,
                 maximizable: false,
-                buttons: [
-                    {
+                buttons: [{
                     text: '确定',
                     iconCls: 'icons-other-tick',
                     handler: function () {
@@ -192,7 +201,7 @@
                                 var formArray = $(this).serializeArray();
                                 var url = '__URL__/searchviewAddress/';
                                 $.each(formArray, function (key, value) {
-                                    if((value.name == 'searchTextAddress') && (value.value == '')){
+                                    if ((value.name == 'searchTextAddress') && (value.value == '')) {
                                         value.value = '全部';
                                     }
                                     url = url + value.name + '/' + value.value;
@@ -228,8 +237,7 @@
                 minimizable: false,
                 resizable: false,
                 maximizable: false,
-                buttons: [
-                    {
+                buttons: [{
                     text: '确定',
                     iconCls: 'icons-other-tick',
                     handler: function () {
@@ -241,7 +249,7 @@
                                 var formArray = $(this).serializeArray();
                                 var url = '__URL__/searchviewTelphone/';
                                 $.each(formArray, function (key, value) {
-                                    if((value.name == 'searchTextTelphone') && (value.value == '')){
+                                    if ((value.name == 'searchTextTelphone') && (value.value == '')) {
                                         value.value = '全部';
                                     }
                                     url = url + value.name + '/' + value.value;
@@ -263,7 +271,7 @@
         },
 
         //来电记录查询
-        comeinTelphoneSearchInput: function(){
+        comeinTelphoneSearchInput: function () {
             var that = this;
             $(that.dialog).dialog({
                 title: '来电记录查询',
@@ -336,7 +344,7 @@
                                 var formArray = $(this).serializeArray();
                                 var url = '__URL__/searchviewOther/';
                                 $.each(formArray, function (key, value) {
-                                    if((value.name == 'searchTextOther') && (value.value == '')){
+                                    if ((value.name == 'searchTextOther') && (value.value == '')) {
                                         value.value = '全部';
                                     }
                                     url = url + value.name + '/' + value.value;
@@ -360,7 +368,7 @@
 
         //订单坐标地址显示
         mapshowview: function (id) {
-            var url = '__URL__/mapshowview/record/'+id;
+            var url = '__URL__/mapshowview/record/' + id;
             var that = this;
             $(that.dialog).dialog({
                 title: '显示',
@@ -386,10 +394,10 @@
 
         //送餐员坐标地址显示
         sendmapshowview: function (id) {
-            var url = '__URL__/sendmapshowview/record/'+id;
+            var url = '__URL__/sendmapshowview/record/' + id;
             var that = this;
             $(that.dialog).dialog({
-                title: '显示',
+                title: '送餐员显示',
                 iconCls: 'icons-application-application_add',
                 width: 800,
                 height: 540,
@@ -412,10 +420,10 @@
 
 
         //新建的快捷操作
-        quickKeyboardAction:function(){
+        quickKeyboardAction: function () {
             var that = this;
             // ctrl+1快捷键,新建公告
-            Mousetrap.bind(['ctrl+1','ctrl+f1','f1'], function(e) {
+            Mousetrap.bind(['ctrl+1', 'ctrl+f1', 'f1'], function (e) {
                 // 返回选项卡
                 var tab = $('#operation').tabs('getSelected');
                 var tabOptions = tab.panel('options');
@@ -425,7 +433,7 @@
             });
 
             // ctrl+6快捷键, 地址查询
-            Mousetrap.bind(['ctrl+6','ctrl+f6','f6'], function(e) {
+            Mousetrap.bind(['ctrl+6', 'ctrl+f6', 'f6'], function (e) {
                 // 返回选项卡
                 var tab = $('#operation').tabs('getSelected');
                 var tabOptions = tab.panel('options');
@@ -465,7 +473,7 @@
             });
 
             // ESC键
-            Mousetrap.bind('esc', function(e) {
+            Mousetrap.bind('esc', function (e) {
                 // 返回选项卡
                 var tab = $('#operation').tabs('getSelected');
                 var tabOptions = tab.panel('options');
@@ -480,13 +488,12 @@
 
     $(function () {
         OrderFormListviewModule.init();
-        setTimeout(function(){
-            OrderFormListviewModule.setPagination();
-        },100);
+        setTimeout(function () {
+        //    OrderFormListviewModule.setPagination();
+        }, 100);
 
-        setTimeout(function(){
-            OrderFormListviewModule.setRowSelect();  //显示行定位
-        },600)
+        //setTimeout(function () {
+        //    OrderFormListviewModule.setRowSelect(); //显示行定位
+        //}, 600)
     })
-
 </script>

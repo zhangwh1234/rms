@@ -1,4 +1,731 @@
 <?php
+	/*+**********************************************************************************
+	*  产生财务分录的程序
+	*  
+	************************************************************************************/
+	global $current_user, $currentModule,$memc;
+	global $adb;
+	$jiezhang_success = true;  //定义结账是否成功，true是成功，默认是成功
+	require_once('include/DatabaseUtil.php');
+	require_once("modules/Journal/Journal.php");
+	//$adb = PearDatabase::getInstance();
+	$focus = new Journal();
+
+	//查询分公司
+	$area    = $current_user->area;
+
+	$returnJournal = "<font size=3><br><br>取得结账的地区和分公司,地区:".$area." 分公司:".$company."<br>";
+
+	//取得日期和午别
+	$firstdate = $_REQUEST['firstdate'];
+	$enddate = $_REQUEST['enddate'];
+	$company = $_REQUEST['company'];
+	$returnJournal .= "取得开始日期和结束日期和分公司,开始日期:<font color='red'>".$firstdate."</font> 结束日期:<font color='red'>".$enddate."</font> 分公司 <".$company ."> <br>";
+	
+	//判断开始日期和结束日期是否在同一年
+	$firstyear = substr($firstdate,0,4);
+	$endyear = substr($enddate,0,4);
+	if($firstyear !== $endyear){
+		$returnJournal .= "开始日期和结束日期不在同一年，必须在"."<font color='red'>同一年</font>"."......................"."<br>";
+		echo $returnJournal;
+		return;
+	}
+	//是否在同一个月
+	$firstmonth = substr($firstdate,5,2);
+	$endmonth = substr($enddate,5,2);
+	if($firstmonth !== $endmonth){
+		$returnJournal .= "开始日期和结束日期不在同一个月，必须在"."<font color='red'>同一个月</font>"."......................"."<br>";
+		echo $returnJournal;
+		return;
+	}
+	//开始日期必须大于结束日期
+	if( strtotime($firstdate) >  strtotime($enddate)){
+		$returnJournal .= "开始日期和结束日期比较，必须是"."<font color='red'>开始日期大于结束日期</font>"."......................"."<br>";
+		echo $returnJournal;
+		return;
+	}
+	
+	$returnJournal .= "开始计算......................"."<br>"; 
+	
+	if($company == '全部'){ //需要计算所有分公司的记录
+		$query = "select distinct company from revparmgr_".$firstmonth. "  where date >='". $firstdate . "' and date<='" . $enddate."' ";
+		$params = array();
+		$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+		$foonows = $focus->getBusinessAdb($firstdate)->num_rows($result);
+		for($i=0;$i<$foonows; $i++){
+			if ($focus->getBusinessAdb($firstdate)->query_result($result,$i,'company') != ''){
+				$companyname[] = $focus->getBusinessAdb($firstdate)->query_result($result,$i,'company');
+			}
+		}
+	}else{
+		//计算单个分公司的记录
+		$companyname[] = $company;
+	}
+	
+	$companyname = array();
+	//查询部门信息
+	$query = "select * from vtiger_role where length(departcode) > 0 order by departcode";
+	$params = array();
+	$result = $adb->pquery($query,$params);
+	$foonows = $adb->num_rows($result);
+	for($i=0;$i<$foonows; $i++){
+		if ($adb->query_result($result,$i,'rolename') != ''){
+			$tmp = array();
+			$tmp['company'] =  $adb->query_result($result,$i,'rolename');
+			$tmp['departcode'] = $adb->query_result($result,$i,'departcode');
+			if(empty($tmp['departcode'])){
+				$tmp['departcode'] = '';
+			}else{
+				
+			}					
+		}
+		$companyname[] = $tmp;
+	}
+	
+	
+	//餐券的科目余额
+	$mealtickname = array();
+	$query = "select code,name,subject from mealticket ";
+	$params = array();
+	$result = $adb->pquery($query,$params);
+	$foonows = $adb->num_rows($result);
+	for($i=0;$i<$foonows; $i++){
+		if ($adb->query_result($result,$i,'name') != ''){
+			$tmp = array();
+			$tmp['code'] =  $adb->query_result($result,$i,'code');
+			$tmp['name'] = $adb->query_result($result,$i,'name');
+			$tmp['subject'] = $adb->query_result($result,$i,'subject');
+		}
+		$mealtickname[] = $tmp;
+	}
+	
+	//查询赠卡科目
+	$freebiename = array();
+	$query = "select code,name,subject from freebie ";
+	$params = array();
+	$result = $adb->pquery($query,$params);
+	$foonows = $adb->num_rows($result);
+	for($i=0;$i<$foonows; $i++){
+		if ($adb->query_result($result,$i,'name') != ''){
+			$tmp = array();
+			$tmp['code'] =  $adb->query_result($result,$i,'code');
+			$tmp['name'] = $adb->query_result($result,$i,'name');
+			$tmp['subject'] = $adb->query_result($result,$i,'subject');
+		}
+		$freebiename[] = $tmp;
+	}
+	
+	
+	$companynumber = 1;  //一次保存六家
+	$companyMaxNumber = 0;
+	$order = 1;  //定义项次
+	$journalid = uniqid('journalid_',true); // 定义id
+	$journalCompany = '';
+	//定义借贷金额
+	$debitmoney = 0;  //借方
+	$creditmoney = 0; //贷方
+	$journalcontent = array();
+	foreach($companyname as $companykey => $company){
+			
+		$companyValue = $company['company'];
+		$departmentCode = $company['departcode'];
+		
+		if($firstdate == $enddate){
+			$summary = $companyValue .'分'. substr($firstdate,5,2) . '-' . substr($enddate,8,2) . '日营收';
+		}else{
+			$summary = $companyValue .'分'. substr($firstdate,5,2).'月' .substr($firstdate,8,2) . '-' . substr($enddate,8,2) . '日营收';
+		}
+		
+        $journalCompany = $journalCompany . $companyValue . ' ';		
+		
+		
+		//客户科目  
+		$accountname = array();		
+		$query = "select code,name,accountingcode as subject,project  from account where company='" . $companyValue . "'";
+		$params = array();
+		$result = $adb->pquery($query,$params);
+		$foonows = $adb->num_rows($result);
+		for($i=0;$i<$foonows; $i++){
+			if ($adb->query_result($result,$i,'name') != ''){
+				$tmp = array();
+				$tmp['code'] =  $adb->query_result($result,$i,'code');
+				$tmp['name'] = $adb->query_result($result,$i,'name');
+				$tmp['subject'] = $adb->query_result($result,$i,'subject');
+				$tmp['project'] = $adb->query_result($result,$i,'project');
+			}
+			$accountname[] = $tmp;
+		}
+		
+		
+		//先计算现金
+		$query = "select sum(cash) as cash from revparmgr_".$firstmonth. "  where date >='". $firstdate . "' and date<='" . $enddate."' and company='".$companyValue . "'";
+		$params = array();
+		$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+		$cash = $focus->getBusinessAdb($firstdate)->query_result($result,0,'cash');
+		$debitmoney = $debitmoney + $cash;
+		if($cash > 0){
+			$journalcontent[] = array($journalid,$order,$summary,'113311','其他应收款-营业款',$departmentCode,'',1,(float)$cash,'','');
+			$order = $order + 1;
+		}
+		
+		
+		//查询客户
+		foreach ($accountname as $accountValue){
+			$query = "select sum(billsmoney) as money from roomserviceaccountsbills_".$firstmonth . "  where date >='". $firstdate . "' and date<='" . $enddate .
+			"' and company='".$companyValue . "' and code='".$accountValue['code']."' and not ap is null" ;
+			$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+			$money = $focus->getBusinessAdb($firstdate)->query_result($result,0,'money');
+			$debitmoney = $debitmoney + $money;
+			$d = $d + $money;
+			if((float)$money > 0){
+				$journalcontent[] = array($journalid,$order,$summary,$accountValue['subject'],$accountValue['name'],$departmentCode,'',1,(float)$money,$accountValue['project'],'');
+				$order = $order + 1;
+			}
+		}
+		
+		///查询赠卡,赠卡算免收，营销费用
+		$freebiemoney = 0;
+		foreach($freebiename as $freebieValue){
+			$query = "select sum(money) as money from roomservicefreebiebills_".$firstmonth . "  where date >='". $firstdate . "' and date<='" . $enddate .
+			"' and company='".$companyValue . "' and code='".$freebieValue['code']."'";
+			$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+			$money = $focus->getBusinessAdb($firstdate)->query_result($result,0,'money');
+			$debitmoney = $debitmoney + $money;
+			$freebiemoney = $freebiemoney + $money;
+			//if((float)$money > 0){
+			//	$journalcontent[] = array($journalid,$order,$summary,$freebieValue['subject'],$freebieValue['name'],'','',1,(float)$money,'','');
+			//	$order = $order + 1;
+			//}
+		}
+		
+				
+		///免收收入
+		$nochargemoney = 0;
+		$query = "select sum(nocharge) as nocharge from revparmgr_".$firstmonth. "  where date >='". $firstdate . "' and date<='" . $enddate."' and company='".$companyValue . "'";
+		$params = array();
+		$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+		$nochargemoney = $focus->getBusinessAdb($firstdate)->query_result($result,0,'nocharge');
+		$debitmoney = $debitmoney + nochargemoney;
+		
+		
+		///车票电话
+		$chequetelphonemoney = 0;
+		$query = "select sum(chequetelphone) as chequetelphone from revparmgr_".$firstmonth. "  where date >='". $firstdate . "' and date<='" . $enddate."' and company='".$companyValue . "'";
+		$params = array();
+		$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+		$chequetelphonemoney = $focus->getBusinessAdb($firstdate)->query_result($result,0,'chequetelphone');
+		$debitmoney = $debitmoney + $chequetelphonemoney ;
+				
+		
+		//营业费用 ***
+		$revparmgrmoney = $freebiemoney + $nochargemoney + $chequetelphonemoney;
+		if($revparmgrmoney > 0){
+			$revparmgrmoney = $freebiemoney + $nochargemoney + $chequetelphonemoney;
+			$journalcontent[] = array($journalid,$order,$summary,'550109','营业费用-免收',$departmentCode,'',1,(float)$revparmgrmoney ,'','');
+			$order = $order + 1;
+		}
+		
+		//应收支票
+		$sandcardmoney = 0;
+		$query = "select sum(cheque) as cash from revparmgr_".$firstmonth. "  where date >='". $firstdate . "' and date<='" . $enddate."' and company='".$companyValue . "'";
+		$params = array();
+		$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+		$cash = $focus->getBusinessAdb($firstdate)->query_result($result,0,'cash');
+		$debitmoney = $debitmoney + $cash;
+		if($cash > 0){
+			$journalcontent[] = array($journalid,$order,$summary,'113305','其他应收款-应收支票',$departmentCode,'',1,(float)$cash,'','');
+			$order = $order + 1;
+		}
+		
+		//贵宾卡的消费
+		$sandcardmoney = 0;
+		$query = "select sum(sandbank) as cash from revparmgr_".$firstmonth. "  where date >='". $firstdate . "' and date<='" . $enddate."' and company='".$companyValue . "'";
+		$params = array();
+		$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+		$cash = $focus->getBusinessAdb($firstdate)->query_result($result,0,'cash');
+		$debitmoney = $debitmoney + $cash;
+		if($cash > 0){
+			$journalcontent[] = array($journalid,$order,$summary,'113306','其他应收款-银联卡',$departmentCode,'',1,(float)$cash,'','');
+			$order = $order + 1;
+		}		
+		
+		//贵宾卡的消费
+		$sandcardmoney = 0;
+		$query = "select sum(sandcard) as cash from revparmgr_".$firstmonth. "  where date >='". $firstdate . "' and date<='" . $enddate."' and company='".$companyValue . "'";
+		$params = array();
+		$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+		$cash = $focus->getBusinessAdb($firstdate)->query_result($result,0,'cash');
+		$debitmoney = $debitmoney + $cash;
+		if($cash > 0){
+			$journalcontent[] = array($journalid,$order,$summary,'213105','预收账款-丽华卡',$departmentCode,'',1,(float)$cash,'','');
+			$order = $order + 1;
+		}
+		
+		
+		//促销金额
+		$promotionmoney = 0;
+		$query = "select sum(promotion) as promotion from revparmgr_".$firstmonth. "  where date >='". $firstdate . "' and date<='" . $enddate."' and company='".$companyValue . "'";
+		$params = array();
+		$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+		$promotionmoney = $focus->getBusinessAdb($firstdate)->query_result($result,0,'promotion');
+		
+		//门市IC卡，借方
+		$query = "select sum(consume) as diningroom from iccardbills_".$firstmonth. "  where date >='". $firstdate . "' and date<='" . $enddate."' and company='".$companyValue . "'";
+		$params = array();
+		$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+		$diningroom = $focus->getBusinessAdb($firstdate)->query_result($result,0,'diningroom');
+		$debitmoney = $debitmoney + $diningroom;
+		
+		if($diningroom > 0){
+			$journalcontent[] = array($journalid,$order,$summary,'213102','预收账款-IC卡',$departmentCode,'',1,(float)$diningroom,'','');
+			$order = $order + 1;
+		}
+		
+		//换购品，需要加到外送收入中
+		$query = "select sum(redemption) as redemption from revparmgr_".$firstmonth. "  where date >='". $firstdate . "' and date<='" . $enddate."' and company='".$companyValue . "'";
+		$params = array();
+		$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+		$redemption = $focus->getBusinessAdb($firstdate)->query_result($result,0,'redemption');
+				
+		//外送收人,贷方
+		$query = "select sum(deliveryincome) as deliveryincome from revparmgr_".$firstmonth. "  where date >='". $firstdate . "' and date<='" . $enddate."' and company='".$companyValue . "'";
+		$params = array();
+		$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+		$deliveryincome = $focus->getBusinessAdb($firstdate)->query_result($result,0,'deliveryincome');
+		$deliveryincome = $deliveryincome + $revparmgrmoney + $redemption;  
+		$creditmoney = $creditmoney + $deliveryincome;		
+		if($deliveryincome > 0){
+			$journalcontent[] = array($journalid,$order,$summary,'510101','外送收入',$departmentCode,'',2,(float)$deliveryincome,'','');
+			$order = $order + 1;
+		}
+		
+		//工作餐，贷方
+		$query = "select sum(workinglunch) as workinglunch from revparmgr_".$firstmonth. "  where date >='". $firstdate . "' and date<='" . $enddate."' and company='".$companyValue . "'";
+		$params = array();
+		$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+		$workinglunch = $focus->getBusinessAdb($firstdate)->query_result($result,0,'workinglunch');
+		$creditmoney = $creditmoney + $workinglunch;
+		
+		if($workinglunch > 0){
+			$journalcontent[] = array($journalid,$order,$summary,'510102','工作餐',$departmentCode,'',2,(float)$workinglunch,'','');
+			$order = $order + 1;
+		}
+		
+		//送餐费,改名团定餐
+		$query = "select sum(roomservice) as roomservice from revparmgr_".$firstmonth. "  where date >='". $firstdate . "' and date<='" . $enddate."' and company='".$companyValue . "'";
+		$params = array();
+		$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+		$roomservice = $focus->getBusinessAdb($firstdate)->query_result($result,0,'roomservice');
+		$creditmoney = $creditmoney + $roomservice;
+	
+		if($roomservice > 0){
+			$journalcontent[] = array($journalid,$order,$summary,'510103','团定餐',$departmentCode,'',2,(float)$roomservice,'','');
+			$order = $order + 1;
+		}
+		
+		//门市，贷方
+		$query = "select sum(consume) as diningroom from iccardbills_".$firstmonth. "  where date >='". $firstdate . "' and date<='" . $enddate."' and company='".$companyValue . "'";
+		$params = array();
+		$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+		$diningroom = $focus->getBusinessAdb($firstdate)->query_result($result,0,'diningroom');
+		$creditmoney = $creditmoney + $diningroom;
+		
+		if($diningroom > 0){
+			$journalcontent[] = array($journalid,$order,$summary,'510104','门市',$departmentCode,'',2,(float)$diningroom,'','');
+			$order = $order + 1;
+		}
+		
+		//还欠支票科目
+		$query = "select sum(returncheque) as returncheque from revparmgr_".$firstmonth. "  where date >='". $firstdate . "' and date<='" . $enddate."' and company='".$companyValue . "'";
+		$params = array();
+		$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+		$returncheque = $focus->getBusinessAdb($firstdate)->query_result($result,0,'returncheque');
+		///借方
+		if($returncheque > 0){
+			$debitmoney = $debitmoney + $returncheque;
+			$journalcontent[] = array($journalid,$order,$summary,'113305','其他应收款-应收支票',$departmentCode,'',1,(float)$returncheque ,'','');
+			$order = $order + 1;
+		}
+		//还欠支票科目
+		$query = "select  code,name,money from  accountspaymentmgr_".$firstmonth. "  where (accountstype='还欠' or accountstype='预付') and currency='支票' and  date >='". $firstdate . "' and date<='" . $enddate."' and company='".$companyValue . "' and isjiezhang=1";
+		$params = array();
+		$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+		$foonows = $focus->getBusinessAdb($firstdate)->num_rows($result);
+		for($i=0;$i<$foonows; $i++){
+			$code = $focus->getBusinessAdb($firstdate)->query_result($result,$i,'code');
+			$money = $focus->getBusinessAdb($firstdate)->query_result($result,$i,'money');
+			foreach($accountname as $accounttmp){
+				if($code ==  $accounttmp['code']){
+					///还欠支票贷方					
+					$creditmoney = $creditmoney + $returncheque;
+					$journalcontent[] = array($journalid,$order,$summary,'1131','应收账款',$departmentCode,'',2,(float)$money ,$accounttmp['project'],'');
+					$order = $order + 1;
+				}
+			}
+		}
+		
+				
+		//现金还欠  ***
+		$query = "select sum(returncash) as returncash from revparmgr_".$firstmonth. "  where date >='". $firstdate . "' and date<='" . $enddate."' and company='".$companyValue . "'";
+		$params = array();
+		$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+		$returncash = $focus->getBusinessAdb($firstdate)->query_result($result,0,'returncash');
+		///借方
+		if($returncash > 0){
+			$debitmoney = $debitmoney + $returncash;
+			$journalcontent[] = array($journalid,$order,$summary,'113311','其他应收款-营业款',$departmentCode,'',1,(float)$returncash ,'','');
+			$order = $order + 1;
+		}
+		
+		//现金还欠贷方
+		$query = "select  code,name,money from  accountspaymentmgr_".$firstmonth. "  where (accountstype='还欠' or accountstype='预付') and currency='现金' and  date >='". $firstdate . "' and date<='" . $enddate."' and company='".$companyValue . "' and isjiezhang=1";
+		$params = array();
+		$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+		$foonows = $focus->getBusinessAdb($firstdate)->num_rows($result);
+		for($i=0;$i<$foonows; $i++){
+			$code = $focus->getBusinessAdb($firstdate)->query_result($result,$i,'code');
+			$money = $focus->getBusinessAdb($firstdate)->query_result($result,$i,'money');
+			foreach($accountname as $accounttmp){
+				if($code ==  $accounttmp['code']){
+					///还欠现金贷方
+					$creditmoney = $creditmoney + $returncheque;
+					$journalcontent[] = array($journalid,$order,$summary,'1131','应收账款',$departmentCode,'',2,(float)$money ,$accounttmp['project'],'');
+					$order = $order + 1;
+				}
+			}
+		}
+		
+		
+		
+		//银联卡还欠  ***
+		$query = "select sum(returnbank) as returnbank from revparmgr_".$firstmonth. "  where date >='". $firstdate . "' and date<='" . $enddate."' and company='".$companyValue . "'";
+		$params = array();
+		$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+		$returnbank = $focus->getBusinessAdb($firstdate)->query_result($result,0,'returnbank');
+		///借方
+		if($returnbank > 0){
+			$debitmoney = $debitmoney + $returnbank;
+			$journalcontent[] = array($journalid,$order,$summary,'113306','其他应收款-银联刷卡',$departmentCode,'',1,(float)$returnbank ,'','');
+			$order = $order + 1;
+		}
+		//还欠银联卡贷方科目
+		$query = "select  code,name,money from  accountspaymentmgr_".$firstmonth. "  where (accountstype='还欠' or accountstype='预付') and currency='银联卡' and  date >='". $firstdate . "' and date<='" . $enddate."' and company='".$companyValue . "' and isjiezhang=1";
+		$params = array();
+		$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+		$foonows = $focus->getBusinessAdb($firstdate)->num_rows($result);
+		for($i=0;$i<$foonows; $i++){
+			$code = $focus->getBusinessAdb($firstdate)->query_result($result,$i,'code');
+			$money = $focus->getBusinessAdb($firstdate)->query_result($result,$i,'money');
+			foreach($accountname as $accounttmp){
+				if($code ==  $accounttmp['code']){
+					///还欠支票贷方
+					$creditmoney = $creditmoney + $returncheque;
+					$journalcontent[] = array($journalid,$order,$summary,'1131','应收账款',$departmentCode,'',2,(float)$money ,$accounttmp['project'],'');
+					$order = $order + 1;
+				}
+			}
+		}
+		
+		///贷方
+		//if($returnbank > 0){
+		///	$creditmoney = $creditmoney + $returnbank;
+		//	$journalcontent[] = array($journalid,$order,$summary,'1131','应收账款',$departmentCode,'',2,(float)$returnbank ,'','');
+		//	$order = $order + 1;
+		//}
+		
+		//现金购卡  ***
+		$query = "select sum(cardcashincome) as cardcashincome from revparmgr_".$firstmonth. "  where date >='". $firstdate . "' and date<='" . $enddate."' and company='".$companyValue . "'";
+		$params = array();
+		$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+		$cardcashincome = $focus->getBusinessAdb($firstdate)->query_result($result,0,'cardcashincome');
+		///借方
+		if($cardcashincome > 0){
+			$debitmoney = $debitmoney + $cardcashincome;
+			$journalcontent[] = array($journalid,$order,$summary,'113311','其他应收款-营业款',$departmentCode,'',1,(float)$cardcashincome ,'','');
+			$order = $order + 1;
+		}
+		///贷方
+		if($cardcashincome > 0){
+			$creditmoney = $creditmoney + $cardcashincome;
+			$journalcontent[] = array($journalid,$order,$summary,'213105','预收账款-丽华卡',$departmentCode,'',2,(float)$cardcashincome ,'','');
+			$order = $order + 1;
+		}
+		
+		//支票购卡  ***
+		$query = "select sum(cardchequeincome) as cardchequeincome from revparmgr_".$firstmonth. "  where date >='". $firstdate . "' and date<='" . $enddate."' and company='".$companyValue . "'";
+		$params = array();
+		$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+		$cardchequeincome = $focus->getBusinessAdb($firstdate)->query_result($result,0,'cardchequeincome');
+		///借方
+		if($cardchequeincome > 0){
+			$debitmoney = $debitmoney + $returnbank;
+			$journalcontent[] = array($journalid,$order,$summary,'113305','其他应收款-应收支票',$departmentCode,'',1,(float)$cardchequeincome ,'','');
+			$order = $order + 1;
+		}
+		///贷方
+		if($cardchequeincome > 0){
+			$creditmoney = $creditmoney + $returnbank;
+			$journalcontent[] = array($journalid,$order,$summary,'213105','预收账款-丽华卡',$departmentCode,'',2,(float)$cardchequeincome ,'','');
+			$order = $order + 1;
+		}
+		
+		
+		//银联购卡  ***
+		$query = "select sum(cardbankincome) as cardbankincome from revparmgr_".$firstmonth. "  where date >='". $firstdate . "' and date<='" . $enddate."' and company='".$companyValue . "'";
+		$params = array();
+		$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+		$cardbankincome = $focus->getBusinessAdb($firstdate)->query_result($result,0,'cardbankincome');
+		///借方
+		if($cardbankincome > 0){
+			$debitmoney = $debitmoney + $cardbankincome;
+			$journalcontent[] = array($journalid,$order,$summary,'113306','其他应收款-银联刷卡',$departmentCode,'',1,(float)$cardbankincome ,'','');
+			$order = $order + 1;
+		}
+		///贷方
+		if($cardbankincome > 0){
+			$creditmoney = $creditmoney + $cardbankincome;
+			$journalcontent[] = array($journalid,$order,$summary,'213105','预收账款-丽华卡',$departmentCode,'',2,(float)$cardbankincome ,'','');
+			$order = $order + 1;
+		}
+		
+		///获取IC卡充值金额
+		$query = "select sum(icrecharge) as icrecharge from revparmgr_".$firstmonth. "  where date >='". $firstdate . "' and date<='" . $enddate."' and company='".$companyValue . "'";
+		$params = array();
+		$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+		$icrecharge = $focus->getBusinessAdb($firstdate)->query_result($result,0,'icrecharge');
+		
+		//IC卡取款  ***
+		$query = "select sum(icgetmoney) as icgetmoney from revparmgr_".$firstmonth. "  where date >='". $firstdate . "' and date<='" . $enddate."' and company='".$companyValue . "'";
+		$params = array();
+		$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+		$icgetmoney = $focus->getBusinessAdb($firstdate)->query_result($result,0,'icgetmoney');
+		
+		//IC卡优惠  ***
+		$query = "select sum(iccoupon) as iccoupon from revparmgr_".$firstmonth. "  where date >='". $firstdate . "' and date<='" . $enddate."' and company='".$companyValue . "'";
+		$params = array();
+		$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+		$iccoupon = $focus->getBusinessAdb($firstdate)->query_result($result,0,'iccoupon');
+		///借方
+		if($iccoupon > 0){
+			$debitmoney = $debitmoney + $iccoupon ;
+			$journalcontent[] = array($journalid,$order,$summary,'550109','营业费用-免收(IC)',$departmentCode,'',1,(float)$iccoupon,'','');
+			$order = $order + 1;
+		}
+		
+		
+		//IC卡补助  ***
+		$query = "select sum(icassistance) as icassistance from revparmgr_".$firstmonth. "  where date >='". $firstdate . "' and date<='" . $enddate."' and company='".$companyValue . "'";
+		$params = array();
+		$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+		$icassistance = $focus->getBusinessAdb($firstdate)->query_result($result,0,'icassistance');
+		///借方
+		if($icassistance > 0){
+			$debitmoney = $debitmoney + $icassistance;
+			$journalcontent[] = array($journalid,$order,$summary,'213103','预收账款-IC卡补助',$departmentCode,'',1,(float)$icassistance ,'','');
+			$order = $order + 1;
+		}
+		
+		//IC卡实收现金  ***
+		///借方
+		$iccash =  $icrecharge - $icassistance -$icgetmoney - $iccoupon ;
+		$query = "select sum(icrecharge) as icrecharge from revparmgr_".$firstmonth. "  where date >='". $firstdate . "' and date<='" . $enddate."' and company='".$companyValue . "'";
+		$params = array();
+		$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+		$icrecharge = $focus->getBusinessAdb($firstdate)->query_result($result,0,'icrecharge');
+		if($iccash > 0){
+			$debitmoney = $debitmoney + $iccash ;
+			$journalcontent[] = array($journalid,$order,$summary,'113311','其他应收款-营业款',$departmentCode,'',1,(float)$iccash ,'','');
+			$order = $order + 1;
+		}
+		
+		$icmoney = $iccoupon + $icgetmoney + $icassistance;
+		///贷方
+		if($icrecharge > 0){
+			$creditmoney = $creditmoney + $icmoney;
+			$journalcontent[] = array($journalid,$order,$summary,'213102','预收账款-IC卡',$departmentCode,'',2,(float)$icrecharge ,'','');
+			$order = $order + 1;
+		}
+		///贷方
+		if($icgetmoney > 0){
+			$creditmoney = $creditmoney + $icgetmoney;
+			$journalcontent[] = array($journalid,$order,$summary,'213102','预收账款-IC卡',$departmentCode,'',2,-$icgetmoney ,'','');
+			$order = $order + 1;
+		}
+		
+			
+		//判断借方和贷方金额是否相同
+		$returnJournal .= "借方金额：".$debitmoney.' 贷方金额:'.$creditmoney."<br>";
+
+		$companynumber = $companynumber + 1; 
+		$companyMaxNumber = $companyMaxNumber + 1;
+		//var_dump('number' .$companynumber);
+		//var_dump($companyMaxNumber . ': ' . $companykey);
+		
+		if(($companynumber == 7) or ($companyMaxNumber == count($companyname) )){  
+			
+			//保存到主表journal
+			//先查询可能存在的重复
+			$journalSummary = substr($firstdate,5,2) . '-' . substr($enddate,8,2) . '日营收'; 
+			$query = "select journalid from journal_".$firstmonth . " where  company=? and summary=?";
+			$params = array($journalCompany ,$journalSummary);
+			$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+			$deleteid = $focus->getBusinessAdb($firstdate)->query_result($result,0,'journalid');
+			if(!empty($deleteid)){
+				//删除可能存在的重复
+				$query = "delete from journal_".$firstmonth . " where journalid=?";
+				$params = array($deleteid);
+				$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+					
+				$query = "delete from journalcontent_".$firstmonth . " where journalid=?";
+				$params = array($deleteid);
+				$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+			}
+						
+			//保存
+			$query = "insert into journal_" . $firstmonth . " (journalid,summary,company,date,money,logdatetime) values (?,?,?,?,?,?) ";
+			$params = array($journalid,$journalSummary,$journalCompany,$firstdate,$creditmoney,date('Y-m-d H:i:s'));
+			$result = $focus->getBusinessAdb($firstdate)->pquery($query,$params);
+			
+			
+			//保存入
+			foreach ($journalcontent as $journalValue){
+				//保存
+				$query = "insert into journalcontent_".$firstmonth . " (journalid,journalorder,summary,subject,subjectname,department,departname,debitcredit,money,checks,checkname) values
+			 	 (?,?,?,?,?,?,?,?,?,?,?)";
+				$params = $journalValue;
+				$focus->getBusinessAdb($firstdate)->pquery($query,$params);
+			}
+			//恢复初始化
+			$companynumber = 1 ;
+			$order = 1;  //定义项次
+			$journalid = uniqid('journalid_',true); // 定义id
+			$journalCompany = '';
+			//定义借贷金额
+			$debitmoney = 0;  //借方
+			$creditmoney = 0; //贷方
+			$journalcontent = array();
+			
+		}
+		
+		
+	}
+	
+	$parenttab = getParentTab();
+	if($_REQUEST['return_module'] != '') {
+		$return_module = $_REQUEST['return_module'];
+	} else {
+		$return_module = $currentModule;
+	}
+	
+	
+		$return_action = "ListView";
+	
+	
+	if($_REQUEST['return_id'] != '') {
+		$return_id = vtlib_purify($_REQUEST['return_id']);
+	}
+	
+	
+	//结账成功,返回数据
+	header("Location: index.php?action=$return_action&module=$return_module&ajax=AJAX&record=$return_id&parenttab=$parenttab&date=".$enddate);
+
+?>
+ 
+ 
+ function getAccountinout($out){
+            
+            global $adb, $current_user;
+            $startdate = $_REQUEST ['startdate'];
+            $enddate = $_REQUEST ['enddate'];
+            //清理数据
+            $query = 'delete from accountinout where 1';
+            $params = array();
+            $this->getBusinessAdb($startdate)->pquery($query,$params);
+            //置1
+            $query = 'alter table accountinout auto_increment=1';
+            $params = array();
+            $this->getBusinessAdb($startdate)->pquery($query,$params);
+            
+            //本期余额
+            $query = "select code,name,sum(money) as summoney,company from accountsbillsmingxi
+                     where date<='".$enddate."' and length(name)>2 group by code,company  order by company";
+            $params = array();
+            $result =$this->getBusinessAdb($startdate)->pquery($query,$params);
+            $rows = $adb->num_rows($result);
+            
+            for($i=0;$i<$rows;$i++){
+                $code =  $this->getBusinessAdb($startdate)->query_result($result,$i,'code');
+                $name =  $this->getBusinessAdb($startdate)->query_result($result,$i,'name');
+                $money =  $this->getBusinessAdb($startdate)->query_result($result,$i,'summoney');
+                $company = $this->getBusinessAdb($startdate)->query_result($result,$i,'company');
+                //$insertquery = "update accountinout set currentmoney = ".$money . " where code=? and company=?";
+                //$params  = array($code,$company);
+                $insertquery = "insert into accountinout (code,name,currentmoney,company,firstdate,enddate) values (?,?,?,?,?,?)";
+                $params  = array($code,$name,$money,$company, $startdate,$enddate);
+                $this->getBusinessAdb($startdate)->pquery($insertquery,$params);
+            }
+            
+            
+            //上期余额
+            $query = "select code,name,sum(money) as summoney,company from accountsbillsmingxi
+                     where date<'".$startdate."' and length(name)>2   group by code,company  order by company";
+            $params = array();
+            $result =$this->getBusinessAdb($startdate)->pquery($query,$params);
+            $rows = $adb->num_rows($result);
+            
+            for($i=0;$i<$rows;$i++){
+                $code =  $this->getBusinessAdb($startdate)->query_result($result,$i,'code');
+                $name =  $this->getBusinessAdb($startdate)->query_result($result,$i,'name');
+                $money =  $this->getBusinessAdb($startdate)->query_result($result,$i,'summoney');
+                $company = $this->getBusinessAdb($startdate)->query_result($result,$i,'company');
+                //$insertquery = "insert into accountinout (code,name,periodmoney,company,firstdate,enddate) values (?,?,?,?,?,?)";
+                //$params  = array($code,$name,$money,$company, $startdate,$enddate);
+                $insertquery = "update accountinout set periodmoney = ".$money . " where code=? and company=?";
+                $params  = array($code,$company);
+                $this->getBusinessAdb($startdate)->pquery($insertquery,$params);
+            }
+            
+            
+            //本期欠额
+            $query = "select code,name,sum(money) as summoney,company from accountsbillsmingxi
+                     where date<='".$enddate."' and date>='".$startdate."' and beizhu not like '%还欠%'  group by code,company  order by company";
+            $params = array();
+            $result =$this->getBusinessAdb($startdate)->pquery($query,$params);
+            $rows = $adb->num_rows($result);
+            for($i=0;$i<$rows;$i++){
+                $code =  $this->getBusinessAdb($startdate)->query_result($result,$i,'code');
+                $name =  $this->getBusinessAdb($startdate)->query_result($result,$i,'name');
+                $money =  $this->getBusinessAdb($startdate)->query_result($result,$i,'summoney');
+                $company = $this->getBusinessAdb($startdate)->query_result($result,$i,'company');
+                $insertquery = "update accountinout set outmoney = ".$money . " where code=? and company=?";
+                $params  = array($code,$company);
+                $this->getBusinessAdb($startdate)->pquery($insertquery,$params);
+            }
+            
+            //本期还额
+            $query = "select code,name,sum(money) as summoney,company from accountsbillsmingxi
+                     where date<='".$enddate."' and date>='".$startdate."' and beizhu  like '%还欠%' group by code,company  order by company";
+            $params = array();
+            $result =$this->getBusinessAdb($startdate)->pquery($query,$params);
+            $rows = $adb->num_rows($result);
+            for($i=0;$i<$rows;$i++){
+                $code =  $this->getBusinessAdb($startdate)->query_result($result,$i,'code');
+                $name =  $this->getBusinessAdb($startdate)->query_result($result,$i,'name');
+                $money =  $this->getBusinessAdb($startdate)->query_result($result,$i,'summoney');
+                $company = $this->getBusinessAdb($startdate)->query_result($result,$i,'company');
+                $insertquery = "update accountinout set inmoney = ".$money . " where code=? and company=?";
+                $params  = array($code,$company);
+                $this->getBusinessAdb($startdate)->pquery($insertquery,$params);
+            }
+            
+                    
+            $reportquery = 'select accountinoutid,company,name,type,periodmoney,outmoney,inmoney,currentmoney,beizhu from accountinout where  currentmoney<>0 ';
+            return $reportquery;
+        }
+        
+
+
+<?php
 //应该从装箱表中获得统计的产品名
 $zhuangxiangModel = D('Zhuangxiangform');
 $zhuangxiangproductsModel = D('Zhuangxiangproducts');

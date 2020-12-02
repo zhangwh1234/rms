@@ -1420,9 +1420,6 @@
 
             }
 
-
-
-
             //然后找出按周重复的订单
             $where = array();
             $where['repeattype'] = '按周重复';
@@ -1527,6 +1524,7 @@
                 $data['totalmoney'] = $orderValue['totalmoney'];
                 $data['paidmoney'] = $orderValue['paidmoney'];
                 $data['shouldmoney'] = $orderValue['shouldmoney'];
+                $data['goodsmoney'] = $orderValue['shouldmoney'];
                 $data['custtime'] = $orderValue['custtime'];
                 $data['custdate'] = date('Y-m-d');
                 $data['ap'] = $orderValue['ap'];
@@ -1541,6 +1539,7 @@
                 $data['invoicetype'] = $orderValue['invoicetype'];
                 $data['shippingname'] = $orderValue['shippingname'];
                 $data['shippingmoney'] = $orderValue['shippingmoney'];
+                $data['origin'] = '电话';
                 $data['domain'] = $this->getDomain();
                 $data['lastdatetime'] = date('Y-m-d H:i:s');
                 $orderformModel->create();

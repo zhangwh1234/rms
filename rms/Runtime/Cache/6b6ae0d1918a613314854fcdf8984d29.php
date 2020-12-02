@@ -64,7 +64,7 @@
         <td width="10%" align="center" class="productsTableHeaderLeftTd">金额</td>
         <td width="10%" align="center" class="productsTableHeaderRightTd">操作</td>
     </tr>
-    <?php $__FOR_START_243582400__=0;$__FOR_END_243582400__=12;for($key=$__FOR_START_243582400__;$key < $__FOR_END_243582400__;$key+=1){ ?><tr>
+    <?php $__FOR_START_1563586815__=0;$__FOR_END_1563586815__=12;for($key=$__FOR_START_1563586815__;$key < $__FOR_END_1563586815__;$key+=1){ ?><tr>
             <td width="5%" align="center"><?php echo ($key+1); ?></td>
             <td width="8%" align="center"> 
                 <input id="DiningSaleCreateviewproductsNumber_<?php echo ($key+1); ?>" name="productsNumber_<?php echo ($key+1); ?>" type="text" size="5"
@@ -78,8 +78,8 @@
                     AUTOCOMPLETE="off" style="font-size:16px;" />
 
                 <img id="DiningSaleCreateviewsearchIcon1" title="产品选择" src="./__PUBLIC__/Images/products.gif" style="cursor: pointer;"
-                    align="absmiddle" onclick="DiningSaleCreateviewGoodsModule.productsPickList('__URL__/popupProductsview/module/Products/row/<?php echo ($key+1); ?>');" /><a
-                    href="javascript:DiningSaleCreateviewGoodsModule.productsPickList('__URL__/popupProductsview/module/Products/row/<?php echo ($key+1); ?>')">选择</a>
+                    align="absmiddle" onclick="DiningSaleCreateviewGoodsModule.productsPickList('__URL__/popupProductsview/row/<?php echo ($key+1); ?>');" /><a
+                    href="javascript:DiningSaleCreateviewGoodsModule.productsPickList('__URL__/popupProductsview/row/<?php echo ($key+1); ?>')">选择</a>
             </td>
             <td width="15%" align="center"> 
                 <input id="DiningSaleCreateviewproductsName_<?php echo ($key+1); ?>" name="productsName_<?php echo ($key+1); ?>" type="text" size="20"
@@ -267,11 +267,11 @@
         /* 弹出窗口，选择产品 */
         //moduleName:产品名称  rowNum:行号 moduleName,rowNum
         productsPickList: function (url) {
-            url = url + '/returnModule/' + 'DiningSaleCreateview';
+            url = url ;
             $('#globel-dialog-div').dialog({
                 title: '选择产品',
                 iconCls: 'icons-application-application_add',
-                width: 900,
+                width: 600,
                 height: 540,
                 cache: false,
                 href: url,
@@ -610,7 +610,7 @@
                     }
                     checkactivitypaymentMoney = paymentOneMoney + paymentTwoMoney;
                     if (productsMoney !== checkactivitypaymentMoney) {
-                        alert('输入金额和支付金额不等于堂扣金额，请检查！');
+                        alert('输入金额和支付金额不等于堂口金额，请检查！');
                         return false;
                     }
                 },

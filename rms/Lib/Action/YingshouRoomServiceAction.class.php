@@ -15,15 +15,21 @@ class YingshouRoomServiceAction extends YingshouAction
         if (IS_POST) {
             // 取得模块的名称
             $moduleName = $this->getActionName();
-            $this->assign('moduleName', $moduleName); // 模块名称
 
             // 启动当前模块的模型
             $focus = D($moduleName);
 
+            // 配送店（分公司）的信息
+            // 分公司的名称
+            $company = $this->userInfo['department'];
+
             //结账日期
             $getDate = $_REQUEST['getDate'];
+            $roomDate = $getDate;
             //结账午别
             $getAp = $_REQUEST['getAp'];
+
+            $domain = $this->getDomain();
 
             //当前日期和当前午别
             $currentDate = date('Y-m-d');
@@ -34,11 +40,42 @@ class YingshouRoomServiceAction extends YingshouAction
             }
 
             //连接字符串
-            $connectionDb = $this->connectReveueDb('');
+            $reveueConnectDb = $this->connectReveueDb($roomDate);
             //连接的数据表
             $tableName = $focus->getTableName();
             // 连接数据库
-            $Model = M($tableName . substr($getDate, 5, 2), " ", $connectionDb);
+            // 连接结账的数据库
+            if ($roomDate == $currentDate) {
+                switch ($domain) {
+                    case 'bj.lihuaerp.com':
+                        $roomserviceModel = M("roomservice_bj", " ", $reveueConnectDb);
+                        break;
+                    case 'nj.lihuaerp.com':
+                        $roomserviceModel = M("roomservice_nj", " ", $reveueConnectDb);
+                        break;
+                    case 'cz.lihuaerp.com':
+                        $roomserviceModel = M("roomservice_cz", " ", $reveueConnectDb);
+                        break;
+                    case 'wx.lihuaerp.com':
+                        $roomserviceModel = M("roomservice_wx", " ", $reveueConnectDb);
+                        break;
+                    case 'sz.lihuaerp.com':
+                        $roomserviceModel = M("roomservice_sz", " ", $reveueConnectDb);
+
+                        break;
+                    case 'sh.lihuaerp.com':
+                        $roomserviceModel = M("roomservice_sh", " ", $reveueConnectDb);
+                        break;
+                    case 'gz.lihuaerp.com':
+                        $roomserviceModel = M("roomservice_gz", " ", $reveueConnectDb);
+                        break;
+                    default:
+                        $roomserviceModel = M("roomservice_" . substr($roomDate, 5, 2), " ", $reveueConnectDb);
+                        break;
+                }
+            } else {
+                $roomserviceModel = M("roomservice_" . substr($roomDate, 5, 2), " ", $reveueConnectDb);
+            }
 
             // 生成list字段列表
             $listFields = $focus->listFields;
@@ -49,9 +86,10 @@ class YingshouRoomServiceAction extends YingshouAction
             $where = array();
             $where['date'] = $getDate;
             $where['ap'] = $getAp;
+            $where['company'] = $company;
             $where['domain'] = $this->getDomain();
 
-            $total = $Model->where($where)->count(); // 查询满足要求的总记录数
+            $total = $roomserviceModel->where($where)->count(); // 查询满足要求的总记录数
 
             //使用cookie读取rows
             $listMaxRows = $_COOKIE['listMaxRows'];
@@ -82,7 +120,7 @@ class YingshouRoomServiceAction extends YingshouAction
                 array_unshift($selectFields, $otherFields);
             }
 
-            $listResult = $Model->where($where)->field($selectFields)->limit($Page->firstRow . ',' . $Page->listRows)->order("$moduleId asc")->select(); //lastdatetime desc,
+            $listResult = $roomserviceModel->where($where)->field($selectFields)->limit($Page->firstRow . ',' . $Page->listRows)->order(" (totalmoney -jiezhangmoney) desc,name")->select(); //lastdatetime desc,
             //判断结账金额和交账金额是否相等，做提示用
             foreach ($listResult as $key => $value) {
                 if ($value['totalmoney'] != $value['jiezhangmoney']) {
@@ -92,13 +130,13 @@ class YingshouRoomServiceAction extends YingshouAction
                 }
             }
 
-            $orderHandleArray['total'] = $total;
+            $orderHandleArray = array();
             if (count($listResult) > 0) {
                 $orderHandleArray = $listResult;
             } else {
                 $orderHandleArray = array();
             }
-            $data = array('total' => $total, 'rows' => $orderHandleArray, 'sql' => $Model->getLastSql());
+            $data = array('total' => $total, 'rows' => $orderHandleArray, 'sql' => $roomserviceModel->getLastSql());
             $this->ajaxReturn($data);
 
         } else {
@@ -225,6 +263,8 @@ class YingshouRoomServiceAction extends YingshouAction
      */
     public function roomCalculate()
     {
+        $domain = $this->getDomain();
+
         // 取得模块的名称
         $moduleName = $this->getActionName();
         $this->assign('moduleName', $moduleName); // 模块名称
@@ -252,19 +292,54 @@ class YingshouRoomServiceAction extends YingshouAction
         $reveueConnectDb = $this->connectReveueDb($roomDate);
         $roomserviceresultModel = M("roomserviceresult", " ", $reveueConnectDb);
         // 连接结账的数据库
-        $roomserviceModel = M("roomservice_" . substr($roomDate, 5, 2), " ", $reveueConnectDb);
+        if ($roomDate == $currentDate) {
+            switch ($domain) {
+                case 'bj.lihuaerp.com':
+                    $roomserviceModel = M("roomservice_bj", " ", $reveueConnectDb);
+                    break;
+                case 'nj.lihuaerp.com':
+                    $roomserviceModel = M("roomservice_nj", " ", $reveueConnectDb);
+                    break;
+                case 'cz.lihuaerp.com':
+                    $roomserviceModel = M("roomservice_cz", " ", $reveueConnectDb);
+                    break;
+                case 'wx.lihuaerp.com':
+                    $roomserviceModel = M("roomservice_wx", " ", $reveueConnectDb);
+                    break;
+                case 'sz.lihuaerp.com':
+                    $roomserviceModel = M("roomservice_sz", " ", $reveueConnectDb);
+                    break;
+                case 'sh.lihuaerp.com':
+                    $roomserviceModel = M("roomservice_sh", " ", $reveueConnectDb);
+                    break;
+                case 'gz.lihuaerp.com':
+                    $roomserviceModel = M("roomservice_gz", " ", $reveueConnectDb);
+                    break;
+                default:
+                    $roomserviceModel = M("roomservice_" . substr($roomDate, 5, 2), " ", $reveueConnectDb);
+                    break;
+            }
+        } else {
+            $roomserviceModel = M("roomservice_" . substr($roomDate, 5, 2), " ", $reveueConnectDb);
+        }
 
         //根据日期和午别来选择不同的数据库，如果是当前日期和午别，就选择当前数据库
         //如果不是，就要选择备份库
         if (($currentDate != $roomDate) || ($currentAp != $roomAp)) {
             $orderformModel = M("orderform_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
             $ordergoodsModel = M("orderproducts_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
+            $orderfinanceModel = M("orderfinance_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
+            $diningsaleModel = M("diningsale_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
+            $diningsalepaymentModel = M("diningsalepayment_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
             $orderpaymentModel = M("orderpayment_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
             $orderactivityModel = M("orderactivity_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
         } else {
             //连接当前库和表
             $orderformModel = D('orderform');
             $ordergoodsModel = D('orderproducts');
+            $orderfinanceModel = D('orderfinance');
+            $diningsaleModel = D('diningsale');
+            $diningsalepaymentModel = D('diningsalepayment');
             $orderpaymentModel = D('orderpayment');
             $orderactivityModel = D('orderactivity');
         }
@@ -272,7 +347,64 @@ class YingshouRoomServiceAction extends YingshouAction
         // 配送店（分公司）的信息
         // 分公司的名称
         $company = $this->userInfo['department'];
-        $company = '怀南';
+        $username = $this->userInfo['truename'];
+
+        /** 将堂口输入拷贝到结账堂口中 */
+        $doorbillModel = M("doorbill_" . substr($roomDate, 5, 2), " ", $reveueConnectDb);
+        $doorbillpayModel = M("doorbillpay_" . substr($roomDate, 5, 2), " ", $reveueConnectDb);
+        $where = array();
+        $where['company'] = $company;
+        $where['domain'] = $this->getDomain();
+        $where['noupdate'] = 1;
+        //清除以前到记录
+        $doorbillModel->where($where)->delete();
+        $salepayment = array();
+        $saletotalmoney = 0;
+        //查询堂口数据
+        $where = array();
+        $where['company'] = $company;
+        $where['domain'] = $this->getDomain();
+        $diningsaleResult = $diningsaleModel->where($where)->select();
+        foreach ($diningsaleResult as $diningValue) {
+            $saletotalmoney += $diningValue['money'];
+            $where = array();
+            $where['diningsaleid'] = $diningValue['diningsaleid'];
+            $diningsalepaymentResult = $diningsalepaymentModel->where($where)->select();
+            foreach ($diningsalepaymentResult as $diningpaymentValue) {
+                if (empty($salepayment[$diningpaymentValue['name']])) {
+                    $salepayment[$diningpaymentValue['name']] = 0;
+                }
+                $salepayment[$diningpaymentValue['name']] += $diningpaymentValue['money'];
+            }
+        }
+        //保存到结账的堂口数据中
+        $data = array();
+        $data['code'] = '00';
+        $data['name'] = $company;
+        $data['money'] = $saletotalmoney;
+        $data['operator'] = $username;
+        $data['date'] = date('Y-m-d');
+        $data['ap'] = $this->getAp();
+        $data['company'] = $company;
+        $data['domain'] = $this->getDomain();
+        $data['noupdate'] = 1;
+        $data['create_time'] = date('Y-m-d H:i:s');
+        $doorbillModel->create();
+        $doorbillid = $doorbillModel->add($data);
+        //保存到堂口支付表中
+        foreach ($salepayment as $key => $value) {
+            $data = array();
+            $data['doorbillid'] = $doorbillid;
+            $data['code'] = '';
+            $data['name'] = $key;
+            $data['money'] = $value;
+            $data['company'] = $company;
+            $data['domain'] = $this->getDomain();
+            $doorbillpayModel->create();
+            $doorbillpayModel->add($data);
+        }
+
+        /************************************ */
 
         //首先查询订单是否已经结账，如果有结账，就返回,只要有有个订单结账，就不能结账
         $where = array();
@@ -295,7 +427,7 @@ class YingshouRoomServiceAction extends YingshouAction
             $res = array();
             $res['state'] = 0;
             $res['sql'] = $orderformResult;
-            //$this->ajaxReturn($res);
+            $this->ajaxReturn($res);
         }
 
         //判断是否有要结账的订单，如果没有，就跳出错误
@@ -334,6 +466,10 @@ class YingshouRoomServiceAction extends YingshouAction
         //遍历送餐员统计
         foreach ($sendnameResult as $value) {
             $sendname = $value['sendname'];
+            //初始化计算送餐员的数据
+            $sendnameTotalMoney[$sendname] = 0;
+            $sendnameJiezhangMoney[$sendname] = 0;
+            //计算条件
             $where = array();
             $where['custdate'] = $roomDate;
             $where['ap'] = $roomAp;
@@ -350,12 +486,16 @@ class YingshouRoomServiceAction extends YingshouAction
                 foreach ($ordergoodsResult as $ordergoods) {
                     $goodsMoney += $ordergoods['number'] * $ordergoods['price'];
                 }
-                //判断有下，赋值
-                if (empty($sendnameTotalMoney[$sendname])) {
-                    $sendnameTotalMoney[$sendname] = 0;
-                }
-
                 $sendnameTotalMoney[$sendname] += $goodsMoney;
+
+                //从原来的支付表和活动表中获取数据
+                //改成从财务表中获取数据
+                $jiezhangmoney = 0;
+                $orderfinanceResult = $orderfinanceModel->where($where)->select();
+                foreach ($orderfinanceResult as $orderfinance) {
+                    $sendnameJiezhangMoney[$sendname] += $orderfinance['money'];
+                    $jiezhangmoney += $orderfinance['money'];
+                }
 
                 //从orderpayment获取支付金额
                 $orderpaymentMoney = 0;
@@ -365,7 +505,6 @@ class YingshouRoomServiceAction extends YingshouAction
                     $orderpaymentMoney += $orderpayment['money'];
                     $orderpaymentName = $orderpayment['name'];
                 }
-                $sendnameJiezhangMoney[$sendname] += $orderpaymentMoney;
 
                 //从活动中获取营销金额
                 $orderactivityMoney = 0;
@@ -376,28 +515,14 @@ class YingshouRoomServiceAction extends YingshouAction
                 foreach ($orderactivityResult as $orderactivity) {
                     $orderactivityMoney += $orderactivity['money'];
                 }
-                $sendnameJiezhangMoney[$sendname] += $orderactivityMoney;
 
                 //将金额保存在订单的结账金额中
-                if (($orderpaymentMoney + $orderactivityMoney) > 0) {
-                    $data = array();
-                    $data['jiezhangmoney'] = $orderpaymentMoney + $orderactivityMoney;
-                    if ($orderpaymentName == '支付宝') {
-                        $data['needjiezhang'] = 1;
-                    }
-                    if ($orderpaymentName == '美支付') {
-                        $data['needjiezhang'] = 1;
-                    }
-                    if ($orderpaymentName == '饿支付') {
-                        $data['needjiezhang'] = 1;
-                    }
-                    $orderformModel->where($where)->save($data);
-                } else {
-                    $data = array();
-                    $data['jiezhangmoney'] = 0;
-                    $orderformModel->where($where)->save($data);
+                $data = array();
+                $data['jiezhangmoney'] = $jiezhangmoney;
+                $where = array();
+                $where['ordersn'] = $orderform['ordersn'];
+                $orderformModel->where($where)->save($data);
 
-                }
             }
         }
 
@@ -476,7 +601,6 @@ class YingshouRoomServiceAction extends YingshouAction
             // 配送店（分公司）的信息
             // 分公司的名称
             $company = $this->userInfo['department'];
-            $company = '怀南';
 
             //当前日期和当前午别
             $currentDate = date('Y-m-d');
@@ -516,6 +640,7 @@ class YingshouRoomServiceAction extends YingshouAction
             $where['company'] = $company;
             $where['custdate'] = $roomDate;
             $where['ap'] = $roomAp;
+            // $where['totalmoney'] = array('gt', 0);
             $where['domain'] = $this->getDomain();
 
             $total = $orderformModel->where($where)->count(); // 查询满足要求的总记录数
@@ -546,7 +671,7 @@ class YingshouRoomServiceAction extends YingshouAction
             array_unshift($selectFields, $moduleId);
             array_unshift($selectFields, 'custdate');
 
-            $listResult = $orderformModel->where($where)->limit($Page->firstRow . ',' . $Page->listRows)->order("orderformid asc")->select(); //lastdatetime desc,
+            $listResult = $orderformModel->where($where)->limit($Page->firstRow . ',' . $Page->listRows)->order("jiezhangmoney,orderformid asc")->select(); //lastdatetime desc,
 
             $orderHandleArray['total'] = $total;
             if (count($listResult) > 0) {
@@ -647,7 +772,7 @@ class YingshouRoomServiceAction extends YingshouAction
     /**
      * 送餐员的订单,返回其他信息
      */
-    public function checkOrderGetPayment()
+    public function checkOrderGetFinance()
     {
 
         $data = array();
@@ -665,11 +790,11 @@ class YingshouRoomServiceAction extends YingshouAction
         //如果不是，就要选择备份库
         if (($currentDate != $roomDate) || ($currentAp != $roomAp)) {
             $orderactivityModel = M("orderactivity_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
-            $orderpaymentModel = M("orderpayment_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
+            $orderfinanceModel = M("orderfinance_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
         } else {
             //连接当前库和表
             $orderactivityModel = D('orderactivity');
-            $orderpaymentModel = D('orderpayment');
+            $orderfinanceModel = D('orderfinance');
         }
 
         $data = array();
@@ -677,23 +802,13 @@ class YingshouRoomServiceAction extends YingshouAction
         $where['ordersn'] = $ordersn;
 
         $i = 0;
-        $paymentResult = $orderpaymentModel->where($where)->select();
-        foreach ($paymentResult as $payment) {
+        $orderfinanceResult = $orderfinanceModel->where($where)->select();
+        foreach ($orderfinanceResult as $finance) {
             $data[] = array(
                 'id' => $i + 1,
-                'code' => $payment['paymentid'],
-                'name' => $payment['name'],
-                'money' => $payment['money'],
-            );
-        }
-
-        $orderactivityResult = $orderactivityModel->where($where)->select();
-        foreach ($orderactivityResult as $orderactivity) {
-            $data[] = array(
-                'id' => $i + 1,
-                'code' => $orderactivity['activityid'],
-                'name' => $orderactivity['name'],
-                'money' => $orderactivity['money'],
+                'code' => $finance['paymentid'],
+                'name' => $finance['name'],
+                'money' => $finance['money'],
             );
         }
 
@@ -703,10 +818,24 @@ class YingshouRoomServiceAction extends YingshouAction
     /* 弹出客户支付选择窗口 */
     public function popupPaymentMgrview()
     {
+        // 配送店（分公司）的信息
+        // 分公司的名称
+        $company = $this->userInfo['department'];
+        $this->assign('company', $company);
+        // 取得父窗口的表格行数
+        $row = $_REQUEST['row'];
+        $this->assign('row', $row); //返回点击的订购商品行
+        $this->display('YingshouRoomService/selectpaymentmgrview');
+
+        return;
+
         if (IS_POST) {
             // 取得模块的名称
             $moduleName = $this->getActionName();
             $this->assign('moduleName', $moduleName); // 模块名称
+            // 配送店（分公司）的信息
+            // 分公司的名称
+            $company = $this->userInfo['department'];
 
             // 启动当前模块
             $focus = D($moduleName);
@@ -719,7 +848,6 @@ class YingshouRoomServiceAction extends YingshouAction
             // 启动弹出选择的模块
             $popupModule = D($popupModuleName);
 
-        
             // 取得父窗口的表格行数
             $row = $_REQUEST['row'];
 
@@ -735,6 +863,7 @@ class YingshouRoomServiceAction extends YingshouAction
             $this->assign('returnAction', 'listview'); // 定义返回的方法
 
             $where = array();
+            $where['company'] = $company;
             $where['domain'] = $this->getDomain();
 
             // 导入分页类
@@ -771,13 +900,13 @@ class YingshouRoomServiceAction extends YingshouAction
 
             $listResult = $popupModule->field($selectFields)->where($where)->limit($Page->firstRow . ',' . $Page->listRows)->order("$moduleId desc")->select();
 
-            $orderHandleArray['total'] = count($listResult);
+            $total = count($listResult);
             if (count($listResult) > 0) {
                 $orderHandleArray['rows'] = $listResult;
             } else {
                 $orderHandleArray['rows'] = array();
             }
-            $data = array('total' => $total, 'rows' => $listResult,'sql'=>$popupModule->getLastSql());
+            $data = array('total' => $total, 'rows' => $listResult, 'sql' => $popupModule->getLastSql());
 
             $this->ajaxReturn($data);
 
@@ -827,7 +956,7 @@ class YingshouRoomServiceAction extends YingshouAction
                 'field' => 'id',
                 'width' => 20,
                 'align' => 'center',
-                'formatter' =>  'YingshouRoomServicePopupPaymentMgrviewModule.operate',
+                'formatter' => 'YingshouRoomServicePopupPaymentMgrviewModule.operate',
             );
             $this->assign('datagrid', $datagrid);
             $this->assign('returnModule', $_REQUEST['returnModule']);
@@ -839,6 +968,20 @@ class YingshouRoomServiceAction extends YingshouAction
         }
     }
 
+    /* 批量处理的弹出客户支付选择窗口 */
+    public function batchPopupPaymentMgrview()
+    {
+        // 配送店（分公司）的信息
+        // 分公司的名称
+        $company = $this->userInfo['department'];
+        $this->assign('company', $company);
+        // 取得父窗口的表格行数
+        $row = $_REQUEST['row'];
+        $this->assign('row', $row); //返回点击的订购商品行
+        $this->display('YingshouRoomService/batchSelectpaymentmgrview');
+
+        return;
+    }
     // 返回结账从表的内容:产品，活动促销
     public function get_slave_table($record, $roomDate, $roomAp)
     {
@@ -846,21 +989,22 @@ class YingshouRoomServiceAction extends YingshouAction
         $currentDate = date('Y-m-d');
         $currentAp = $this->getDbAp();
 
-
         $rmsConnectDb = $this->connectHistoryRmsDb($roomDate);
         //根据日期和午别来选择不同的数据库，如果是当前日期和午别，就选择当前数据库
         //如果不是，就要选择备份库
         if (($currentDate != $roomDate) || ($currentAp != $roomAp)) {
             $orderformModel = M("orderform_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
             $orderproductsModel = M("orderproducts_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
-            $orderactivityModel = M("orderactivity_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
+            $orderfinanceModel = M("orderfinance_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
             $orderpaymentModel = M("orderpayment_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
+            $orderactivityModel = M("orderactivity_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
         } else {
             //连接当前库和表
             $orderformModel = D('orderform');
             $orderproductsModel = D('orderproducts');
-            $orderactivityModel = D('orderactivity');
+            $orderfinanceModel = D('orderfinance');
             $orderpaymentModel = D('orderpayment');
+            $orderactivityModel = D('orderactivity');
         }
 
         $where = array();
@@ -868,6 +1012,14 @@ class YingshouRoomServiceAction extends YingshouAction
         // 取得产品信息
         $orderproducts = $orderproductsModel->field('orderformid,code,name,shortname,price,number,money')->where($where)->select();
         $this->assign('orderproducts', $orderproducts);
+
+        //财务结算金额
+        $orderfinance = $orderfinanceModel->where($where)->select();
+        $this->assign('orderfinance', $orderfinance);
+
+        //总金额 -- 财务结算
+        $orderfinancemoney = $orderfinanceModel->where($where)->sum('money');
+        $this->assign('orderfinancemoney', $orderfinancemoney);
 
         //促销表活动表
         $activity = $orderactivityModel->where($where)->select();
@@ -925,19 +1077,7 @@ class YingshouRoomServiceAction extends YingshouAction
         $this->display($moduleName . '/resultview');
     }
 
-    //根据客户代码，查询客户支付名称
-    public function getAccountsByCode()
-    {
-        $code = $_REQUEST['code'];
-        $accountsModel = D('PaymentMgr');
-        $where = array();
-        $where['code'] = $code;
-        $where['domain'] = $this->getDomain();
-        $accounts = $accountsModel->field('name')->where($where)->find();
-        $this->ajaxReturn($accounts, 'JSON');
-    }
-
-    // 查看结账数据的页面
+    // 编辑结账数据的页面
     public function paymentEditview()
     {
         // 取得模块的名称
@@ -954,12 +1094,10 @@ class YingshouRoomServiceAction extends YingshouAction
         // 配送店（分公司）的信息
         // 分公司的名称
         $company = $this->userInfo['department'];
-        $company = '怀南';
 
         //当前日期和当前午别
         $currentDate = date('Y-m-d');
         $currentAp = $this->getDbAp();
-
 
         $roomDate = $_REQUEST['room_date'];
         $roomAp = $_REQUEST['room_ap'];
@@ -997,11 +1135,15 @@ class YingshouRoomServiceAction extends YingshouAction
 
         // 返回从表的内容
         $this->get_slave_table($record, $roomDate, $roomAp);
+        //判断结账金额>0,并且结账金额不等于订单金额，那么多显示一条支付表格
+        if (($result['jiezhangmoney'] > 0) && ($result['jiezhangmoney'] != $result['totalmoney'])) {
+            $this->assign('paymenttwoshow', 1);
+        }
         $this->display('YingshouRoomService' . '/paymenteditview');
     }
 
-    // 批量结账
-    public function batchPaymentEditview()
+    //查看结账数据的页面
+    public function payment_detailview()
     {
         // 取得模块的名称
         $moduleName = $this->getActionName();
@@ -1017,7 +1159,6 @@ class YingshouRoomServiceAction extends YingshouAction
         // 配送店（分公司）的信息
         // 分公司的名称
         $company = $this->userInfo['department'];
-        $company = '怀南';
 
         //当前日期和当前午别
         $currentDate = date('Y-m-d');
@@ -1041,6 +1182,317 @@ class YingshouRoomServiceAction extends YingshouAction
         $returnAction = $_REQUEST['returnAction'];
         $this->assign('returnAction', $returnAction);
 
+        // 取得记录ID
+        $record = $_REQUEST['record'];
+        $where['ordersn'] = $record;
+
+        // 返回模块的行记录
+        $result = $orderformModel->where($where)->find();
+
+        $this->assign('info', $result);
+        $this->assign('record', $record);
+        $this->assign('pagenumber', $_SESSION[$moduleName . $_REQUEST['pagetype'] . 'page']);
+        $this->assign('rowIndex', $_REQUEST['rowIndex']); //选中的行号
+        $this->assign('pagetype', $_REQUEST['pagetype']);
+        $this->assign('name', $result['sendname']);
+        $this->assign('custdate', $roomDate);
+        $this->assign('custap', $roomAp);
+
+        // 返回从表的内容
+        $this->get_slave_table($record, $roomDate, $roomAp);
+        //判断结账金额>0,并且结账金额不等于订单金额，那么多显示一条支付表格
+        if (($result['jiezhangmoney'] > 0) && ($result['jiezhangmoney'] != $result['totalmoney'])) {
+            $this->assign('paymenttwoshow', 1);
+        }
+        $this->display('YingshouRoomService' . '/payment_detailview');
+    }
+
+    //支付详情
+    // 查看结账数据的页面
+    public function paymentDetailview()
+    {
+        if (IS_POST) {
+            // 取得模块的名称
+            $moduleName = $this->getActionName();
+            $this->assign('moduleName', $moduleName); // 模块名称
+
+            // 启动当前模块的模型
+            $focus = D($moduleName);
+
+            // 配送店（分公司）的信息
+            // 分公司的名称
+            $company = $this->userInfo['department'];
+
+            //当前日期和当前午别
+            $currentDate = date('Y-m-d');
+            $currentAp = $this->getDbAp();
+
+            $roomDate = $_REQUEST['room_date'];
+            $roomAp = $_REQUEST['room_ap'];
+
+            $rmsConnectDb = $this->connectHistoryRmsDb($roomDate);
+            //根据日期和午别来选择不同的数据库，如果是当前日期和午别，就选择当前数据库
+            //如果不是，就要选择备份库
+            if (($currentDate != $roomDate) || ($currentAp != $roomAp)) {
+                $orderformModel = M("orderform_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
+                $ordergoodsModel = M("orderproducts_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
+                $orderfinanceModel = M("orderfinance_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
+            } else {
+                //连接当前库和表
+                $orderformModel = D('orderform');
+                $ordergoodsModel = D('orderproducts');
+                $orderfinanceModel = D('orderfinance');
+            }
+
+            // 生成list字段列表
+            $listFields = $focus->paymentDetailListFields;
+
+            //送餐员姓名
+            $sendname = $_REQUEST['name'];
+            if (empty($sendname)) {
+                $sendname = '';
+            }
+
+            // 建立查询条件
+            $where = array();
+            $where['sendname'] = $sendname;
+            $where['company'] = $company;
+            $where['custdate'] = $roomDate;
+            $where['ap'] = $roomAp;
+            $where['totalmoney'] = array('gt', 0);
+            $where['domain'] = $this->getDomain();
+            $domain = $this->getDomain();
+            //根据日期和午别来选择不同的数据库，如果是当前日期和午别，就选择当前数据库
+            //查询所有支付类型
+            if (($currentDate != $roomDate) || ($currentAp != $roomAp)) {
+                $sql = " select ordersn from rms_orderform_" . substr($roomDate, 5, 2) .
+                    " as a
+                          where a.sendname='$sendname' and a.company='$company'
+                         and a.custdate = '$roomDate' and a.ap = '$roomAp' and a.domain = '$domain' order by a.orderformid ";
+                $orderformResult = $orderformModel->query($sql);
+            } else {
+                $sql = " select ordersn from rms_orderform" .
+                    " as a
+                          where a.sendname='$sendname' and a.company='$company'
+                         and a.custdate = '$roomDate' and a.ap = '$roomAp' and a.domain = '$domain' order by a.orderformid ";
+
+                $orderformResult = $orderformModel->query($sql);
+            }
+
+            $orderfinanceList = array();
+            $orderfinanceTotalMoney = 0; //总的合计金额
+            foreach ($orderformResult as $value) {
+                $ordersn = $value['ordersn'];
+                $orderfinanceMoney = 0; //合计金额
+                //根据日期和午别来选择不同的数据库，如果是当前日期和午别，就选择当前数据库
+                //如果不是，就要选择备份库
+                if (($currentDate != $roomDate) || ($currentAp != $roomAp)) {
+                    $sql = " select a.code,a.name,a.money,b.address,b.ordertxt,b.sendname,b.company from rms_orderform_" . substr($roomDate, 5, 2) .
+                    " as b
+                         left join rms_orderfinance_" . substr($roomDate, 5, 2) . " as a on a.ordersn = b.ordersn where b.sendname='$sendname' and b.company='$company'
+                         and b.custdate = '$roomDate' and b.ap = '$roomAp' and b.domain = '$domain' and b.ordersn = '$ordersn'  ";
+                    $orderfinanceResult = $orderfinanceModel->query($sql);
+                } else {
+                    $sql = " select a.code,a.name,a.money,b.address,b.ordertxt,b.sendname,b.company from rms_orderfinance " .
+                        " as a
+                         left join rms_orderform  as b on a.ordersn = b.ordersn where b.sendname='$sendname' and b.company='$company'
+                         and b.custdate = '$roomDate' and b.ap = '$roomAp' and b.domain = '$domain' and b.ordersn = '$ordersn'  ";
+                    $orderfinanceResult = $orderfinanceModel->query($sql);
+                }
+                foreach ($orderfinanceResult as $finance) {
+                    $orderfinanceMoney += $finance['money'];
+                    $listResult[] = $finance;
+                }
+                if ($orderfinanceMoney > 0) {
+                    $hejiArray = array(
+                        'code' => '',
+                        'name' => '',
+                        'money' => $orderfinanceMoney,
+                        'address' => '金额合计',
+                        'ap' => '',
+                        'company' => '',
+                    );
+                    $listResult[] = $hejiArray;
+                };
+                $orderfinanceTotalMoney += $orderfinanceMoney;
+            }
+
+            if ($orderfinanceTotalMoney > 0) {
+                $hejiArray = array(
+                    'code' => '',
+                    'name' => '',
+                    'money' => '总合计金额',
+                    'address' => $orderfinanceTotalMoney,
+                    'ap' => '',
+                    'company' => '',
+                );
+                $listResult[] = $hejiArray;
+            };
+
+            //查询总的订单金额
+            $orderformTotalMoney = 0;
+            if (($currentDate != $roomDate) || ($currentAp != $roomAp)) {
+                $sql = " select sum(b.totalmoney) as totalmoney from rms_orderform_" . substr($roomDate, 5, 2) .
+                    " as b
+                         where b.sendname='$sendname' and b.company='$company'
+                         and b.custdate = '$roomDate' and b.ap = '$roomAp' and b.domain = '$domain'   ";
+                $orderformTotalMoney = $orderformModel->query($sql);
+            } else {
+                $sql = " select sum(b.totalmoney) a totalmoney from rms_orderfinance " .
+                    " as b
+                         where b.sendname='$sendname' and b.company='$company'
+                         and b.custdate = '$roomDate' and b.ap = '$roomAp' and b.domain = '$domain' ";
+                $orderformTotalMoney = $orderformModel->query($sql);
+            }
+            if ($orderformTotalMoney[0]['totalmoney'] > 0) {
+                $hejiArray = array(
+                    'code' => '',
+                    'name' => '',
+                    'money' => '订单总金额',
+                    'address' => $orderformTotalMoney[0]['totalmoney'],
+                    'ap' => '',
+                    'company' => '',
+                );
+                $listResult[] = $hejiArray;
+            };
+
+            $total = $orderformModel->where($where)->count(); // 查询满足要求的总记录数
+
+            $orderHandleArray['total'] = $total;
+            if (count($listResult) > 0) {
+                $orderHandleArray = $listResult;
+            } else {
+                $orderHandleArray = array();
+            }
+            $data = array('total' => $total, 'rows' => $orderHandleArray, 'sql' => $sql);
+            $this->ajaxReturn($data);
+        } else {
+            // 取得模块的名称
+            $moduleName = $this->getActionName();
+            $this->assign('moduleName', $moduleName); // 模块名称
+
+            // 启动当前模块
+            $focus = D($moduleName);
+
+            // 取得对应的导航名称
+            $navName = $focus->getNavName($moduleName);
+            $this->assign('navName', $navName); // 导航名称
+
+            // 生成list字段列表
+            $listFields = $focus->paymentDetailListFields;
+            // 模块的ID
+            $moduleId = 'orderformid';
+
+            // 配送店（分公司）的信息
+            // 分公司的名称
+            $company = $this->userInfo['department'];
+
+            // 取得返回的是列表还是查询列表
+            $returnAction = $_REQUEST['returnAction'];
+            $this->assign('returnAction', $returnAction);
+
+            $roomDate = $_REQUEST['room_date'];
+            $roomAp = $_REQUEST['room_ap'];
+            $sendname = $_REQUEST['sendname'];
+
+            $param = array(
+                'room_date' => $roomDate,
+                'room_ap' => $roomAp,
+                'name' => $sendname,
+            );
+
+            $datagrid = array(
+                'options' => array(
+                    'url' => U($moduleName . '/paymentDetailview', $param),
+                    'pageNumber' => $pageNumber,
+                    'pageSize' => 10,
+                ),
+            );
+            foreach ($listFields as $key => $value) {
+                $header = L($key);
+                $datagrid['fields'][$header] = array(
+                    'field' => $key,
+                    'align' => $value['align'],
+                    'width' => $value['width'],
+                );
+            }
+
+            foreach ($listFields as $key => $value) {
+                $header = L($key);
+                $datagrid['fields'][$header] = array(
+                    'field' => $key,
+                    'align' => $value['align'],
+                    'width' => $value['width'],
+                );
+            }
+
+            $datagrid['fields']['操作'] = array(
+                'field' => 'id',
+                'width' => 20,
+                'align' => 'center',
+                'formatter' => 'PaymentDetailviewModule.operate',
+            );
+
+            $this->assign('datagrid', $datagrid);
+            $this->assign('moduleId', $moduleId);
+
+            $this->assign('info', $result);
+            $this->assign('record', $record);
+            $this->assign('pagenumber', $_SESSION[$moduleName . $_REQUEST['pagetype'] . 'page']);
+            $this->assign('rowIndex', $_REQUEST['rowIndex']); //选中的行号
+            $this->assign('pagetype', $_REQUEST['pagetype']);
+            $this->assign('sendname', $sendname);
+            $this->assign('custdate', $roomDate);
+            $this->assign('custap', $roomAp);
+
+            // 返回从表的内容
+            $this->get_slave_table($record, $roomDate, $roomAp);
+
+            $this->display('YingshouRoomService' . '/paymentdetailview');
+        }
+    }
+
+    // 批量结账
+    public function batchPaymentEditview()
+    {
+        // 取得模块的名称
+        $moduleName = $this->getActionName();
+        $this->assign('moduleName', $moduleName); // 模块名称
+
+        // 启动当前模块
+        $focus = D($moduleName);
+
+        // 取得对应的导航名称
+        $navName = $focus->getNavName($moduleName);
+        $this->assign('navName', $navName); // 导航名称
+
+        // 配送店（分公司）的信息
+        // 分公司的名称
+        $company = $this->userInfo['department'];
+
+        //当前日期和当前午别
+        $currentDate = date('Y-m-d');
+        $currentAp = $this->getDbAp();
+
+        $roomDate = $_REQUEST['room_date'];
+        $roomAp = $_REQUEST['room_ap'];
+
+        $rmsConnectDb = $this->connectHistoryRmsDb($roomDate);
+        //根据日期和午别来选择不同的数据库，如果是当前日期和午别，就选择当前数据库
+        //如果不是，就要选择备份库
+        if (($currentDate != $roomDate) || ($currentAp != $roomAp)) {
+            $orderformModel = M("orderform_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
+            $orderfinanceModel = M("orderfinance_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
+        } else {
+            //连接当前库和表
+            $orderformModel = D('orderform');
+            $orderfinanceModel = D("orderfinance");
+        }
+
+        // 取得返回的是列表还是查询列表
+        $returnAction = $_REQUEST['returnAction'];
+        $this->assign('returnAction', $returnAction);
+
         //送餐员姓名
         $sendname = $_REQUEST['sendname'];
 
@@ -1049,6 +1501,7 @@ class YingshouRoomServiceAction extends YingshouAction
         $where['sendname'] = $sendname;
         $where['company'] = $company;
         $where[] = 'totalmoney <> jiezhangmoney';
+        //$where[] = " jiezhangmoney = 0 ";
         $where['custdate'] = $roomDate;
         $where['ap'] = $roomAp;
         $where['domain'] = $this->getDomain();
@@ -1056,7 +1509,19 @@ class YingshouRoomServiceAction extends YingshouAction
         // 返回模块的行记录
         $result = $orderformModel->where($where)->select();
 
-        $this->assign('info', $result);
+        // 查询支付，同时支付返回，支持有支付也能结账
+        $orderResult = array();
+        foreach ($result as $value) {
+            $where = array();
+            $where['ordersn'] = $value['ordersn'];
+            $orderfinanceResult = $orderfinanceModel->where($where)->select();
+            if ($orderfinanceResult) {
+                $value['finance'] = $orderfinanceResult;
+            }
+            $orderResult[] = $value;
+        }
+
+        $this->assign('info', $orderResult);
         $this->assign('record', $record);
         $this->assign('pagenumber', $_SESSION[$moduleName . $_REQUEST['pagetype'] . 'page']);
         $this->assign('rowIndex', $_REQUEST['rowIndex']); //选中的行号
@@ -1066,9 +1531,10 @@ class YingshouRoomServiceAction extends YingshouAction
         $this->assign('custap', $roomAp);
 
         // 返回从表的内容
-        $this->get_slave_table($record, $roomDate, $roomAp);
+        //$this->get_slave_table($record, $roomDate, $roomAp);
         $this->display('YingshouRoomService' . '/batchpaymenteditview');
     }
+
     //保存数据
     public function update()
     {
@@ -1076,6 +1542,10 @@ class YingshouRoomServiceAction extends YingshouAction
         // 返回当前的模块名
         $moduleName = $this->getActionName();
 
+        // 配送店（分公司）的信息
+        // 分公司的名称
+        $company = $this->userInfo['department'];
+        $domain = $this->getDomain();
         //结账日期
         $roomDate = $_REQUEST['custdate'];
         //结账午别
@@ -1098,17 +1568,19 @@ class YingshouRoomServiceAction extends YingshouAction
         $roomserviceresultModel = M("roomserviceresult", " ", $reveueConnectDb);
         //根据日期和午别来选择不同的数据库，如果是当前日期和午别，就选择当前数据库
         //如果不是，就要选择备份库
-
         if (($currentDate != $roomDate) || ($currentAp != $roomAp)) {
             $orderformModel = M("orderform_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
-            $ordergoodsModel = M("orderproducts_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
+            $orderproductsModel = M("orderproducts_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
+            $orderfinanceModel = M("orderfinance_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
             $orderpaymentModel = M("orderpayment_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
-
+            $orderactivityModel = M("orderactivity_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
         } else {
             //连接当前库和表
             $orderformModel = D('orderform');
-            $ordergoodsModel = D('orderproducts');
+            $orderproductsModel = D('orderproducts');
+            $orderfinanceModel = D('orderfinance');
             $orderpaymentModel = D('orderpayment');
+            $orderactivityModel = D('orderactivity');
         }
 
         $roomserviceresultModel = M("roomserviceresult", " ", $reveueConnectDb);
@@ -1118,66 +1590,105 @@ class YingshouRoomServiceAction extends YingshouAction
 
         $where = array();
         $where['ordersn'] = $ordersn;
+        //获取订单号orderformid
+        $orderformResult = $orderformModel->field('orderformid,sendname')->where($where)->find();
+
+        $where = array();
+        $where['ordersn'] = $ordersn;
+        //先删除订单支付表中的数据
+        $orderfinanceModel->where($where)->delete();
+        //保存在订单支付表中
+        $jiezhangmoney = 0;
+        $accountLength = $_REQUEST['accountsLength'];
+        for ($i = 1; $i < $accountLength; $i++) {
+            $code = $_REQUEST['accountsCode_' . $i];
+            $name = $_REQUEST['accountsName_' . $i];
+            $money = $_REQUEST['accountsMoney_' . $i];
+            $note = $_REQUEST['accountsNote_' . $i];
+            $data = array();
+            if (($currentDate != $roomDate) || ($currentAp != $roomAp)) {
+                // 支付编号
+                $data['financeid'] = 'finance_' . date('YmdHis') . $domain . $i;
+            }
+            if (empty($note)) {
+                $note = '营收结账输入';
+            }
+
+            if (empty($code)) {
+                $code = '00';
+            }
+            $data['code'] = $code;
+            $data['name'] = $name;
+            $data['money'] = $money;
+            $data['note'] = $note;
+            $data['date'] = date('Y-m-d H:i:s');
+            $data['ordersn'] = $ordersn;
+            $data['domain'] = $this->getDomain();
+            if (!empty($name)) {
+                $orderfinanceModel->create();
+                $orderfinanceModel->add($data);
+            }
+            $jiezhangmoney += $money;
+        };
+
+        $where = array();
+        $where['ordersn'] = $ordersn;
 
         //保存结账金额到订单中
         $data = array();
         $data['jiezhangmoney'] = $jiezhangmoney;
         $orderformModel->where($where)->save($data);
 
-        //获取订单号orderformid
-        $orderformResult = $orderformModel->field('orderformid')->where($where)->find();
-
-        //先删除订单支付表中的数据
-        $orderpaymentModel->where($where)->delete();
-        //保存在订单支付表中
-        $accountLength = $_REQUEST['accountsLength'];
-        for ($i = 1; $i <= $accountLength; $i++) {
-            $code = $_REQUEST['accountsCode_' . $i];
-            $name = $_REQUEST['accountsName_' . $i];
-            $money = $_REQUEST['accountsMoney_' . $i];
-            $note = $_REQUEST['accountsNote_' . $i];
-            if (empty($note)) {
-                $note = '营收结账输入';
-            }
-            $data = array();
-            $data['paymentid'] = $code;
-            $data['name'] = $name;
-            $data['money'] = $money;
-            $data['note'] = $note;
-            $data['date'] = date('Y-m-d H:i:s');
-            $data['orderformid'] = $orderformResult['orderformid'];
-            $data['ordersn'] = $ordersn;
-            $data['domain'] = $this->getDomain();
-            if (!empty($code) && !empty($name)) {
-                $orderpaymentModel->create();
-                $orderpaymentModel->add($data);
-            }
-        };
-
         //这个金额是要累计的,所以累计计算送餐员的交账金额
         $where = array();
-        $where['sendname'] = $_REQUEST['name'];
+        $where['sendname'] = $orderformResult['sendname'];
         $where['custdate'] = $roomDate;
         $where['ap'] = $roomAp;
+        $where['company'] = $company;
         $where['domain'] = $this->getDomain();
         $turnover = $orderformModel->where($where)->sum('jiezhangmoney');
 
         // 连接结账的数据库
-        $roomserviceModel = M("roomservice_" . substr($roomDate, 5, 2), " ", $reveueConnectDb);
+        if ($roomDate == $currentDate) {
+            switch ($domain) {
+                case 'bj.lihuaerp.com':
+                    $roomserviceModel = M("roomservice_bj", " ", $reveueConnectDb);
+                    break;
+                case 'nj.lihuaerp.com':
+                    $roomserviceModel = M("roomservice_nj", " ", $reveueConnectDb);
+                    break;
+                case 'cz.lihuaerp.com':
+                    $roomserviceModel = M("roomservice_cz", " ", $reveueConnectDb);
+                    break;
+                case 'wx.lihuaerp.com':
+                    $roomserviceModel = M("roomservice_wx", " ", $reveueConnectDb);
+                    break;
+                case 'sz.lihuaerp.com':
+                    $roomserviceModel = M("roomservice_sz", " ", $reveueConnectDb);
+                    break;
+                case 'sh.lihuaerp.com':
+                    $roomserviceModel = M("roomservice_sh", " ", $reveueConnectDb);
+                    break;
+                case 'gz.lihuaerp.com':
+                    $roomserviceModel = M("roomservice_gz", " ", $reveueConnectDb);
+                    break;
+                default:
+                    $roomserviceModel = M("roomservice_" . substr($roomDate, 5, 2), " ", $reveueConnectDb);
+                    break;
+            }
+        } else {
+            $roomserviceModel = M("roomservice_" . substr($roomDate, 5, 2), " ", $reveueConnectDb);
+        }
         $where = array();
-        $where['name'] = $_REQUEST['name'];
+        $where['name'] = $orderformResult['sendname'];
         $where['date'] = $roomDate;
         $where['ap'] = $roomAp;
+        $where['company'] = $company;
         $where['domain'] = $this->getDomain();
 
         $data = array();
         $data['jiezhangmoney'] = $turnover;
         $roomserviceModel->where($where)->save($data);
-
-        // 配送店（分公司）的信息
-        // 分公司的名称
-        $company = $this->userInfo['department'];
-        $company = '测试';
 
         // 生成查看的url
         $detailviewUrl = U("$moduleName/checkorder", array(
@@ -1190,6 +1701,173 @@ class YingshouRoomServiceAction extends YingshouAction
         $info['status'] = 1;
         $info['info'] = $this->info . ' 保存成功';
         $info['url'] = $return;
+        $this->ajaxReturn($info);
+    }
+
+    //批量结账的单独保存数据
+    public function singleUpdate()
+    {
+
+        // 返回当前的模块名
+        $moduleName = $this->getActionName();
+
+        // 配送店（分公司）的信息
+        // 分公司的名称
+        $company = $this->userInfo['department'];
+        $domain = $this->getDomain();
+        //结账日期
+        $roomDate = $_REQUEST['custdate'];
+        //结账午别
+        $roomAp = $_REQUEST['custap'];
+        //判断日期和无别是否为空，如果为空，就要跳出，显示结果
+        if (empty($roomDate) || empty($roomAp)) {
+            $res = array();
+            $res['state'] = 2;
+            $this->ajaxReturn($res);
+        }
+
+        //当前日期和当前午别
+        $currentDate = date('Y-m-d');
+        $currentAp = $this->getDbAp();
+
+        //连接订单dns
+        $rmsConnectDb = $this->connectHistoryRmsDb($roomDate);
+        //连接结账库dns
+        $reveueConnectDb = $this->connectReveueDb($roomDate);
+        $roomserviceresultModel = M("roomserviceresult", " ", $reveueConnectDb);
+        //根据日期和午别来选择不同的数据库，如果是当前日期和午别，就选择当前数据库
+        //如果不是，就要选择备份库
+        if (($currentDate != $roomDate) || ($currentAp != $roomAp)) {
+            $orderformModel = M("orderform_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
+            $orderproductsModel = M("orderproducts_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
+            $orderfinanceModel = M("orderfinance_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
+            $orderpaymentModel = M("orderpayment_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
+            $orderactivityModel = M("orderactivity_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
+        } else {
+            //连接当前库和表
+            $orderformModel = D('orderform');
+            $orderproductsModel = D('orderproducts');
+            $orderfinanceModel = D('orderfinance');
+            $orderpaymentModel = D('orderpayment');
+            $orderactivityModel = D('orderactivity');
+        }
+
+        $roomserviceresultModel = M("roomserviceresult", " ", $reveueConnectDb);
+
+        $ordersn = $_REQUEST['record'];
+        $jiezhangmoney = $_REQUEST['paymentjiezhangmoney'];
+
+        $where = array();
+        $where['ordersn'] = $ordersn;
+        //获取订单号orderformid
+        $orderformResult = $orderformModel->field('orderformid,sendname')->where($where)->find();
+
+        $where = array();
+        $where['note'] = '批量';
+        $where['ordersn'] = $ordersn;
+        //先删除订单支付表中的数据
+        $orderfinanceModel->where($where)->delete();
+        $sql = $orderfinanceModel->getLastSql();
+        $accountLength = $_REQUEST['accountsLength'];
+        for ($i = 1; $i < $accountLength; $i++) {
+            $code = $_REQUEST['accountsCode_' . $i];
+            $name = $_REQUEST['accountsName_' . $i];
+            $money = $_REQUEST['accountsMoney_' . $i];
+            $note = $_REQUEST['accountsNote_' . $i];
+            $data = array();
+            if (($currentDate != $roomDate) || ($currentAp != $roomAp)) {
+                // 支付编号
+                $data['financeid'] = 'finance_' . date('YmdHis') . $domain . $i;
+            }
+            
+            if (empty($code)) {
+                $code = '00';
+            }
+            $data['code'] = $code;
+            $data['name'] = $name;
+            $data['money'] = $money;
+            $data['note'] = '批量';
+            $data['date'] = date('Y-m-d H:i:s');
+            $data['ordersn'] = $ordersn;
+            $data['domain'] = $this->getDomain();
+            if (!empty($name)) {
+                $orderfinanceModel->create();
+                $orderfinanceModel->add($data);
+            }
+            break;
+        };
+
+        $where = array();
+        $where['ordersn'] = $ordersn;
+
+        //保存结账金额到订单中
+        $data = array();
+        $data['jiezhangmoney'] = $jiezhangmoney;
+        $orderformModel->where($where)->save($data);
+
+        //这个金额是要累计的,所以累计计算送餐员的交账金额
+        $where = array();
+        $where['sendname'] = $orderformResult['sendname'];
+        $where['custdate'] = $roomDate;
+        $where['ap'] = $roomAp;
+        $where['company'] = $company;
+        $where['domain'] = $this->getDomain();
+        $turnover = $orderformModel->where($where)->sum('jiezhangmoney');
+
+        // 连接结账的数据库
+        if ($roomDate == $currentDate) {
+            switch ($domain) {
+                case 'bj.lihuaerp.com':
+                    $roomserviceModel = M("roomservice_bj", " ", $reveueConnectDb);
+                    break;
+                case 'nj.lihuaerp.com':
+                    $roomserviceModel = M("roomservice_nj", " ", $reveueConnectDb);
+                    break;
+                case 'cz.lihuaerp.com':
+                    $roomserviceModel = M("roomservice_cz", " ", $reveueConnectDb);
+                    break;
+                case 'wx.lihuaerp.com':
+                    $roomserviceModel = M("roomservice_wx", " ", $reveueConnectDb);
+                    break;
+                case 'sz.lihuaerp.com':
+                    $roomserviceModel = M("roomservice_sz", " ", $reveueConnectDb);
+                    break;
+                case 'sh.lihuaerp.com':
+                    $roomserviceModel = M("roomservice_sh", " ", $reveueConnectDb);
+                    break;
+                case 'gz.lihuaerp.com':
+                    $roomserviceModel = M("roomservice_gz", " ", $reveueConnectDb);
+                    break;
+                default:
+                    $roomserviceModel = M("roomservice_" . substr($roomDate, 5, 2), " ", $reveueConnectDb);
+                    break;
+            }
+        } else {
+            $roomserviceModel = M("roomservice_" . substr($roomDate, 5, 2), " ", $reveueConnectDb);
+        }
+        $where = array();
+        $where['name'] = $orderformResult['sendname'];
+        $where['date'] = $roomDate;
+        $where['ap'] = $roomAp;
+        $where['company'] = $company;
+        $where['domain'] = $this->getDomain();
+
+        $data = array();
+        $data['jiezhangmoney'] = $turnover;
+        $roomserviceModel->where($where)->save($data);
+
+        // 生成查看的url
+        $detailviewUrl = U("$moduleName/checkorder", array(
+            'name' => $_REQUEST['name'], 'room_date' => $roomDate,
+            'room_ap' => $roomAp,
+            'rowIndex' => $_REQUEST['rowIndex'], 'pagetype' => $pagetype,
+        ));
+        $return = $detailviewUrl;
+        $info = array();
+        $info['status'] = 1;
+        $info['info'] = $this->info . ' 保存成功';
+        $info['url'] = $return;
+        $info['sql'] = $sql;
         $this->ajaxReturn($info);
     }
 
@@ -1215,17 +1893,17 @@ class YingshouRoomServiceAction extends YingshouAction
         //计算应该用哪个库和表
         if ($currentDate !== $roomDate) {
             $orderformModel = M("orderform_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
-            $orderpaymentModel = M("orderpayment_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
+            $orderfinanceModel = M("orderfinance_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
         } else {
             //连接当前库和表
             $orderformModel = D('orderform');
-            $orderpaymentModel = D('orderpayment');
+            $orderfinanceModel = D('orderfinance');
         }
 
         //午别不同,也必须连接下午
         if ($currentAp != $roomAp) {
             $orderformModel = M("orderform_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
-            $orderpaymentModel = M("orderpayment_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
+            $orderfinanceModel = M("orderfinance_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
         }
 
         // 模块的ID
@@ -1234,7 +1912,6 @@ class YingshouRoomServiceAction extends YingshouAction
         // 配送店（分公司）的信息
         // 分公司的名称
         $company = $this->userInfo['department'];
-        $company = '怀南';
 
         //送餐员姓名
         $sendname = $_REQUEST['sendname'];
@@ -1250,26 +1927,26 @@ class YingshouRoomServiceAction extends YingshouAction
         //返回订单号
         $listResult = $orderformModel->field('ordersn')->where($where)->select();
 
-        $paymentArray = array();
-        $alreadyPaymentMoney = 0;
+        $financeArray = array();
+        $alreadyFinanceMoney = 0;
         //查询支付
         foreach ($listResult as $value) {
             $where = array();
             $where['ordersn'] = $value['ordersn'];
-            $paymentResult = $orderpaymentModel->field('name,money')->where($where)->select();
-            foreach ($paymentResult as $paymentValue) {
-                if (empty($paymentArray[$paymentValue['name']])) {
-                    $paymentArray[$paymentValue['name']] = $paymentValue['money'];
+            $financeResult = $orderfinanceModel->field('name,money')->where($where)->select();
+            foreach ($financeResult as $financeValue) {
+                if (empty($financeArray[$financeValue['name']])) {
+                    $financeArray[$financeValue['name']] = $financeValue['money'];
                 } else {
-                    $paymentArray[$paymentValue['name']] += $paymentValue['money'];
+                    $financeArray[$financeValue['name']] += $financeValue['money'];
                 }
-                $alreadyPaymentMoney += $paymentValue['money'];
+                $alreadyfinanceMoney += $financeValue['money'];
             }
         }
 
-        $totalpaymentArray = array();
+        $totalfinanceArray = array();
         //已经支付金额汇总
-        $totalpaymentArray['已经支付金额'] = $alreadyPaymentMoney;
+        $totalfinanceArray['已经支付金额'] = $alreadyfinanceMoney;
 
         //订单总额
         $where = array();
@@ -1279,13 +1956,13 @@ class YingshouRoomServiceAction extends YingshouAction
         $where['ap'] = $roomAp;
         $where['domain'] = $this->getDomain();
         $totalmoney = $orderformModel->where($where)->sum('totalmoney');
-        $totalpaymentArray['订单总金额'] = $totalmoney;
+        $totalfinanceArray['订单总金额'] = $totalmoney;
 
-        $payment = array();
-        $payment[] = $paymentArray;
-        $payment[] = $totalpaymentArray;
+        $finance = array();
+        $finance[] = $financeArray;
+        $finance[] = $totalfinanceArray;
 
-        $this->assign('payment', $payment);
+        $this->assign('finance', $finance);
         $this->display($moduleName . '/payableview');
     }
 
@@ -1294,8 +1971,13 @@ class YingshouRoomServiceAction extends YingshouAction
      */
     public function getSendnameView()
     {
+        // 配送店（分公司）的信息
+        // 分公司的名称
+        $company = $this->userInfo['department'];
+
         $sendnameModel = D('sendnamemgr');
         $where = array();
+        $where['company'] = $company;
         $where['domain'] = $this->getDomain();
         $sendnamemgrResult = $sendnameModel->field('name')->where($where)->select();
         $this->assign('sendnamemgr', $sendnamemgrResult);
@@ -1307,15 +1989,450 @@ class YingshouRoomServiceAction extends YingshouAction
      */
     public function setSendname()
     {
+        //当前日期和当前午别
+        $currentDate = date('Y-m-d');
+        $currentAp = $this->getDbAp();
+        $roomDate = $_REQUEST['custdate'];
+        $roomAp = $_REQUEST['custap'];
+
+        $rmsConnectDb = $this->connectHistoryRmsDb($roomDate);
+        //根据日期和午别来选择不同的数据库，如果是当前日期和午别，就选择当前数据库
+        //如果不是，就要选择备份库
+        if (($currentDate != $roomDate) || ($currentAp != $roomAp)) {
+            $orderformModel = M("orderform_" . substr($roomDate, 5, 2), "rms_", $rmsConnectDb);
+        } else {
+            //连接当前库和表
+            $orderformModel = D('orderform');
+        }
+
         $sendname = $_REQUEST['sendname'];
         $ordersn = $_REQUEST['ordersn'];
 
-        $orderformModel = D('orderform');
         $where = array();
         $where['ordersn'] = $ordersn;
         $data = array();
         $data['sendname'] = $sendname;
         $orderformModel->where($where)->save($data);
+    }
+
+    /**
+     * 获取分公司支付方式
+     */
+    public function getCompanyPayment()
+    {
+        // 分公司的名称
+        $company = $this->userInfo['department'];
+        $getCompany = $company;
+        $domain = $this->getDomain();
+
+        //如果有缓存，就直接返回缓存
+        $payment_cache = F('yingshouroomserver' . $company . $domain);
+        if (!empty($payment_cache)) {
+            $this->ajaxReturn($payment_cache, 'JSON');
+        }
+
+        $revparType = $this->getRevparType();
+
+        $paymentmgrModel = D('paymentmgr');
+        $where = array();
+        if ($revparType == 'Finance') {
+
+            if (!empty($getCompany)) {
+                if ($getCompany == '总部') {
+                    $where['company'] = '总部';
+                } else {
+                    $where['company'] = $getCompany;
+                }
+            }
+
+        } else {
+            if (!empty($company)) {
+                $where['company'] = array(
+                    array('EQ', '$company'),
+                    array('EQ', '总部'),
+                    'or',
+                );
+            }
+        }
+        $where['domain'] = $this->getDomain();
+        $where['is_shenhe'] = 1; //只有经过审核的，才可以使用
+        $paymentmgr = $paymentmgrModel->where($where)->select();
+
+        import('@.Extend.ChinesePinyin');
+        $Pinyin = new ChinesePinyin();
+
+        //定义返回全部payment，以便点击name的搜索code
+        $payment_all = array();
+
+        $companyArr = array();
+        foreach ($paymentmgr as $value) {
+            //搜索赋值
+            $payment_all[$value['name']] = $value['code'];
+
+            //$py = $this->getFirstCharter(trim($value['name']));
+            $py = $Pinyin->TransformUcwords(trim($value['name']));
+            $py = $py[0];
+            if ($py == 'A') {
+                $A[] = trim($value['name']);
+            }
+
+            if ($py == 'B') {
+                $B[] = trim($value['name']);
+            }
+
+            if ($py == 'C') {
+                $C[] = trim($value['name']);
+            }
+
+            if ($py == 'D') {
+                $D[] = trim($value['name']);
+            }
+
+            if ($py == 'E') {
+                $E[] = trim($value['name']);
+            }
+
+            if ($py == 'F') {
+                $F[] = trim($value['name']);
+
+            }
+
+            if ($py == 'G') {
+                $G[] = trim($value['name']);
+            }
+
+            if ($py == 'H') {
+                $H[] = trim($value['name']);
+
+            }
+
+            if ($py == 'I') {
+                $I[] = trim($value['name']);
+
+            }
+
+            if ($py == 'J') {
+                $J[] = trim($value['name']);
+
+            }
+
+            if ($py == 'K') {
+                $K[] = trim($value['name']);
+
+            }
+
+            if ($py == 'L') {
+                $L[] = trim($value['name']);
+
+            }
+
+            if ($py == 'M') {
+                $M[] = trim($value['name']);
+
+            }
+
+            if ($py == 'N') {
+                $N[] = trim($value['name']);
+
+            }
+
+            if ($py == 'O') {
+                $O[] = trim($value['name']);
+
+            }
+
+            if ($py == 'P') {
+                $P[] = trim($value['name']);
+
+            }
+
+            if ($py == 'Q') {
+                $Q[] = trim($value['name']);
+
+            }
+
+            if ($py == 'R') {
+                $R[] = trim($value['name']);
+
+            }
+
+            if ($py == 'S') {
+                $S[] = trim($value['name']);
+
+            }
+
+            if ($py == 'T') {
+                $T[] = trim($value['name']);
+
+            }
+
+            if ($py == 'U') {
+                $U[] = trim($value['name']);
+
+            }
+
+            if ($py == 'V') {
+                $V[] = trim($value['name']);
+
+            }
+
+            if ($py == 'W') {
+                $W[] = trim($value['name']);
+
+            }
+
+            if ($py == 'X') {
+                $X[] = trim($value['name']);
+
+            }
+
+            if ($py == 'Y') {
+                $Y[] = trim($value['name']);
+
+            }
+
+            if ($py == 'Z') {
+                $Z[] = trim($value['name']);
+            }
+
+        }
+        if (!empty($A)) {
+            $A_arr = array(
+                'key' => 'A',
+                'data' => $A,
+            );
+            $companyArr[] = $A_arr;
+        }
+
+        if (!empty($B)) {
+            $B_arr = array(
+                'key' => 'B',
+                'data' => $B,
+            );
+            $companyArr[] = $B_arr;
+        }
+
+        if (!empty($C)) {
+            $C_arr = array(
+                'key' => 'C',
+                'data' => $C,
+            );
+            $companyArr[] = $C_arr;
+        }
+
+        if (!empty($D)) {
+            $D_arr = array(
+                'key' => 'D',
+                'data' => $D,
+            );
+            $companyArr[] = $D_arr;
+        }
+
+        if (!empty($E)) {
+            $E_arr = array(
+                'key' => 'E',
+                'data' => $E,
+            );
+            $companyArr[] = $E_arr;
+        }
+
+        if (!empty($F)) {
+            $F_arr = array(
+                'key' => 'F',
+                'data' => $F,
+            );
+            $companyArr[] = $F_arr;
+        }
+
+        if (!empty($G)) {
+            $G_arr = array(
+                'key' => 'G',
+                'data' => $G,
+            );
+            $companyArr[] = $G_arr;
+        }
+
+        if (!empty($H)) {
+            $H_arr = array(
+                'key' => 'H',
+                'data' => $H,
+            );
+            $companyArr[] = $H_arr;
+        }
+
+        if (!empty($I)) {
+            $I_arr = array(
+                'key' => 'I',
+                'data' => $I,
+            );
+            $companyArr[] = $I_arr;
+        }
+
+        if (!empty($J)) {
+            $J_arr = array(
+                'key' => 'J',
+                'data' => $J,
+            );
+            $companyArr[] = $J_arr;
+        }
+
+        if (!empty($K)) {
+            $K_arr = array(
+                'key' => 'K',
+                'data' => $K,
+            );
+            $companyArr[] = $K_arr;
+        }
+
+        if (!empty($L)) {
+            $L_arr = array(
+                'key' => 'L',
+                'data' => $L,
+            );
+            $companyArr[] = $L_arr;
+        }
+
+        if (!empty($M)) {
+            $M_arr = array(
+                'key' => 'M',
+                'data' => $M,
+            );
+            $companyArr[] = $M_arr;
+        }
+
+        if (!empty($N)) {
+            $N_arr = array(
+                'key' => 'N',
+                'data' => $N,
+            );
+            $companyArr[] = $N_arr;
+        }
+
+        if (!empty($O)) {
+            $O_arr = array(
+                'key' => 'O',
+                'data' => $O,
+            );
+            $companyArr[] = $O_arr;
+        }
+
+        if (!empty($P)) {
+            $P_arr = array(
+                'key' => 'P',
+                'data' => $P,
+            );
+            $companyArr[] = $P_arr;
+        }
+
+        if (!empty($Q)) {
+            $Q_arr = array(
+                'key' => 'Q',
+                'data' => $Q,
+            );
+            $companyArr[] = $Q_arr;
+        }
+
+        if (!empty($R)) {
+            $R_arr = array(
+                'key' => 'R',
+                'data' => $R,
+            );
+            $companyArr[] = $R_arr;
+        }
+
+        if (!empty($S)) {
+            $S_arr = array(
+                'key' => 'S',
+                'data' => $S,
+            );
+            $companyArr[] = $S_arr;
+        }
+
+        if (!empty($T)) {
+            $T_arr = array(
+                'key' => 'T',
+                'data' => $T,
+            );
+            $companyArr[] = $T_arr;
+        }
+
+        if (!empty($U)) {
+            $U_arr = array(
+                'key' => 'U',
+                'data' => $U,
+            );
+            $companyArr[] = $U_arr;
+        }
+
+        if (!empty($V)) {
+            $V_arr = array(
+                'key' => 'V',
+                'data' => $V,
+            );
+            $companyArr[] = $V_arr;
+        }
+
+        if (!empty($W)) {
+            $W_arr = array(
+                'key' => 'W',
+                'data' => $W,
+            );
+            $companyArr[] = $W_arr;
+        }
+
+        if (!empty($X)) {
+            $X_arr = array(
+                'key' => 'X',
+                'data' => $X,
+            );
+            $companyArr[] = $X_arr;
+        }
+
+        if (!empty($Y)) {
+            $Y_arr = array(
+                'key' => 'Y',
+                'data' => $Y,
+            );
+            $companyArr[] = $Y_arr;
+        }
+
+        if (!empty($Z)) {
+            $Z_arr = array(
+                'key' => 'Z',
+                'data' => $Z,
+            );
+            $companyArr[] = $Z_arr;
+        }
+
+        $returnArr['city'] = $companyArr;
+
+        /**
+         * 获取总部
+         */
+        $companyArr = array();
+        $where = array();
+        if ($revparType == 'finance') {
+            $where['company'] = '总部';
+
+        } else {
+            $where['company'] = '总部';
+        }
+        $where['domain'] = $this->getDomain();
+
+        $paymentmgr = $paymentmgrModel->where($where)->select();
+
+        foreach ($paymentmgr as $value) {
+            //搜索赋值
+            $payment_all[$value['name']] = $value['code'];
+
+            $companyArr[] = trim($value['name']);
+        }
+        $returnArr['area'] = $companyArr;
+        $returnArr['findcode'] = $payment_all;
+
+        F('yingshouroomserver' . $company . $domain, $returnArr);
+
+        $this->ajaxReturn($returnArr, 'JSON');
     }
 
 }

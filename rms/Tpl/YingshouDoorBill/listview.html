@@ -4,8 +4,18 @@
         <li><a href="javascript:void(0);" onclick="IndexIndexModule.updateOperateTab('__URL__/listview/delsession/del');">&nbsp;&gt;{$Think.lang.$moduleName}</a></li>
         <li>&nbsp;&gt;<a href="javascript:void(0);" onclick="IndexIndexModule.updateOperateTab('__URL__/listview/delsession/del');">列表操作</a></li>
         <li style="width: 50px;">&nbsp;</li>
-        <li style="margin-left: 10px;"><a href="javascript:void(0);" onclick="IndexIndexModule.updateOperateTab('__URL__/createview');"><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
-        <li><a href="javascript:void(0);" onclick="IndexIndexModule.updateOperateTab('__URL__/createview');">新建<span>^1</span></a></li>
+        
+        <if condition="$revparType eq 'finance'">
+            <li style="margin-left: 50px;">
+                <div class="easyui-panel" style="width:100%;max-width:400px;padding:2px 60px 0px 60px;">
+                    <div style="margin-bottom:2px">
+                        <input id="diningsalecompanyselect" class="easyui-combotree"
+                            data-options="url:'__URL__/tree',method:'get',label:'Select Nodes:',labelPosition:'top',multiple:false,value:[''],onlyLeafCheck:true" style="width:100%">
+                    </div>
+                </div>
+            </li>
+        </if>
+
         <li style="margin-left: 20px;"><input type="text" id="yingshoudoorbillListviewDateInput" class="easyui-datebox" name="yingshoudoorbillListviewDateInput" style="font-size: 16px;width:150px;"
                 value="getDate" /></li>
 
@@ -16,6 +26,7 @@
                 <option value="上午">上午</option>
                 <option value="下午">下午</option>
             </select></li>
+
         <li style="margin-left: 10px;"><a href="javascript:;" onclick="YingshouDoorBillListviewModule.search(this);" class="easyui-linkbutton" iconCls="icons-table-table">查询</a></li>
 
         <li style="float: right;margin-right: 60px;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
@@ -43,14 +54,15 @@
         //操作格式化
         operate: function (val, rowData, rowIndex) {
             var btn = [];
-            btn.push('<a href="javascript:void(0);" onclick="YingshouDoorBillListviewModule.detailview(' + rowData.doorbillid + ',\'' + rowData.date + '\')">查看</a>');
-            if (rowData.noupdate == 1) {
-
-            } else {
-                btn.push('<a href="javascript:void(0);" onclick="YingshouDoorBillListviewModule.editview(' + rowData.doorbillid + ',\'' + rowData.date + '\')">编辑</a>');
-                btn.push('<a href="javascript:void(0);" onclick="YingshouDoorBillListviewModule.deleteRecord(' + rowData.doorbillid + ',\'' + rowData.date + '\')">删除</a>');
-
+            if(rowData.revparType == 'finance'){
+                if(rowData.state ==  '正常'){
+                    btn.push('<a href="javascript:void(0);" onclick="YingshouDoorBillListviewModule.changeRecord(' + rowData.diningsaleid + ',\'' + rowData.date + '\')">改状态</a>');
+                }else{
+                    btn.push('<a href="javascript:void(0);" onclick="YingshouDoorBillListviewModule.reChangeRecord(' + rowData.diningsaleid + ',\'' + rowData.date + '\')">恢复</a>');
+                }
+                btn.push('<a href="javascript:void(0);" onclick="YingshouDoorBillListviewModule.changepayView(' + rowData.diningsaleid + ',\'' + rowData.date + '\')">改支付</a>');
             }
+            //btn.push('<a href="javascript:void(0);" onclick="YingshouDoorBillListviewModule.deleteRecord(' + rowData.noticeid + ')">删除</a>');
             return btn.join(' | ');
         },
 
@@ -78,14 +90,36 @@
 
 
         //删除
-        deleteRecord: function (id, getDate) {
+        changeRecord: function (id, getDate) {
             var that = this;
-            $.messager.confirm('提示信息', '确定要删除吗？', function (result) {
+            $.messager.confirm('提示信息', '确定要改为无效吗？', function (result) {
                 if (!result) return false;
                 $.messager.progress({
                     text: '处理中，请稍候...'
                 });
-                $.post("{:U('YingshouDoorBill/delete')}", {
+                $.post("{:U('YingshouDoorBill/change')}", {
+                    record: id,
+                    getDate: getDate
+                }, function (res) {
+                    $.messager.progress('close');
+                    if (!res.status) {
+                        $.app.method.tip('提示信息', res.info, 'error');
+                    } else {
+                        $.app.method.tip('提示信息', res.info, 'info');
+                        that.refresh();
+                    };
+                }, 'json');
+            });
+        },
+        //恢复
+        reChangeRecord: function (id, getDate) {
+            var that = this;
+            $.messager.confirm('提示信息', '确定要改为无效吗？', function (result) {
+                if (!result) return false;
+                $.messager.progress({
+                    text: '处理中，请稍候...'
+                });
+                $.post("{:U('YingshouDoorBill/rechange')}", {
                     record: id,
                     getDate: getDate
                 }, function (res) {
@@ -108,8 +142,20 @@
             });
             var getDate = $('#yingshoudoorbillListviewDateInput').datebox('getValue');
             var getAp = $('#yingshoudoorbillListviewApInput').val();
+
             queryParams['getDate'] = getDate;
             queryParams['getAp'] = getAp;
+
+            if ($('#diningsalecompanyselect').length > 0) {
+                var company = $('#diningsalecompanyselect').combotree('getValues');
+                console.log(company);
+                var companyArr = '';
+                for (var i = 0; i < company.length; i++) {
+                    companyArr += company[i] + ',';
+                }
+                queryParams['companyArr'] = companyArr;
+            }
+            console.log(queryParams);
             $(this.datagrid).datagrid({
                 pageNumber: 1,
                 queryParams: queryParams,
@@ -150,6 +196,64 @@
                 if (tabOptions.title == '公告') {
                     $(NoticeListviewModule.dialog).dialog('close');
                 }
+            });
+        },
+
+         //修改支付状态
+        changepayView: function (diningid,getDate) {
+            var that = this;
+            $(that.dialog).dialog({
+                title: '支付修改',
+                iconCls: 'icons-application-application_add',
+                width: 300,
+                height: 140,
+                cache: false,
+                href: "__URL__/getPaymentMgr",
+                modal: true,
+                collapsible: false,
+                minimizable: false,
+                resizable: false,
+                maximizable: false,
+                buttons: [{
+                    text: '确定',
+                    iconCls: 'icons-other-tick',
+                    handler: function () {
+                        $(that.dialog).find('form').eq(0).form('submit', {
+                            onSubmit: function () {
+                                var isValid = $(this).form('validate');
+                                if (!isValid) return false;
+
+                                var formArray = $(this).serializeArray();
+                                var url = '__URL__/resetPay/';
+                                $.each(formArray, function (key, value) {
+                                    url = url + value.name + '/' + value.value + '/';
+                                });
+                                url = encodeURI(url);
+                                $.post(url, {
+                                        diningid: diningid,
+                                        getDate: getDate
+                                    }, function (res) {
+                                        $(that.dialog).dialog('close');
+                                        that.refresh();
+                                        return false;                                  
+                                }, 'json');
+
+                                                               
+                                $(that.dialog).dialog('close');
+                                that.refresh();
+                                return false;
+                            }
+                        });
+                    }
+                }, {
+                    text: '取消',
+                    iconCls: 'icons-arrow-cross',
+                    handler: function () {
+                        $(that.dialog).dialog('close');
+                        that.setRefresh();
+                        return false;
+                    }
+                }]
             });
         }
 

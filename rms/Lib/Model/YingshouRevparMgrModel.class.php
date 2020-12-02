@@ -42,6 +42,14 @@ class YingshouRevparMgrModel extends CRMEntityModel{
 
     var $detailFields = array();
 
+    public $revparDetailListFields = array(
+        'code' => array('width' => 10),
+        'name' => array('width' => 20),
+        'money' => array('width' => 20),
+        'sendname' => array('width' => 10, 'align' => 'center'),
+        'company' => array('width' => 10, 'align' => 'center'),
+    );
+
     // 回调方法 ，初始化
     protected function _initialize() {
         $this->editFields = $this->createFields; //编辑字段

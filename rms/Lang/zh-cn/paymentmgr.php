@@ -16,5 +16,8 @@ return array(
     'subject' => '科目',
     'company' => '分公司',
     'type' => '支付类型',
+    'invoiceheader' => '发票抬头',
+    'payment_notice' => '账期说明',
+    'balance' => '余额',
     
 );

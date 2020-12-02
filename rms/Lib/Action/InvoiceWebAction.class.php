@@ -6,15 +6,15 @@
  * Time: 上午10:03
  * 发票开具页面
  * http://localhost/rms/index.php?s=/InvoiceWeb/index.html
+ * 2019-05-20 兼容国信电子的发票系统
  */
 
 class InvoiceWebAction extends Action
 {
     //定义链接字符串
-    protected $connect_str = 'mysql://root:@localhost/rms#utf8';
-    protected $bjconnect_str = 'mysql://root:@localhost/rms#utf8';
-    protected $webconnect_str = 'mysql://root:@localhost/invoice#utf8';
-
+    protected $connect_str = 'mysql://rootlihua:zhangwh0731@rdsq6jvauvez7rq618.mysql.rds.aliyuncs.com/czrms#utf8';
+    protected $bjconnect_str = 'mysql://rootlihua:zhangwh0731@rdsq6jvauvez7rq618.mysql.rds.aliyuncs.com/bjrms#utf8';
+    protected $webconnect_str = 'mysql://rootlihua:zhangwh0731@rdsjj7vrrnaby2m955.mysql.rds.aliyuncs.com/invoice#utf8';
 
     public function test()
     {
@@ -89,7 +89,6 @@ class InvoiceWebAction extends Action
     public function testshow()
     {
 
-
         //ob_end_clean();
         //Header("Content-type:image/gif");
         //header('Content-Disposition: attachment; filename="'.$invoicewebResult['ordersn'].'.pdf"');
@@ -114,7 +113,6 @@ class InvoiceWebAction extends Action
 
     }
 
-
     /**
      * 显示发票提取码,让客户输入发票提取码
      */
@@ -122,9 +120,38 @@ class InvoiceWebAction extends Action
     {
         //发票提取码
         $invoicenumber = I('get.number', '', 'strip_tags');
+
+        //提取发票提取码的第一个字，判断是哪个城市
+        $firstCode = substr($invoicenumber, 0, 1);
+        if ($firstCode == '1') {
+            $rmsinvoicewebModel = M('invoiceweb', 'rms_', $this->bjconnect_str);
+            $invoiceweblogModel = M('invoiceweblog', 'rms_', $this->bjconnect_str);
+        } else {
+            $rmsinvoicewebModel = M('invoiceweb', 'rms_', $this->connect_str);
+            $invoiceweblogModel = M('invoiceweblog', 'rms_', $this->connect_str);
+        }
+
+        //对发票提取码进行验证
+        $where = array();
+        $where['eticketno'] = $invoicenumber;
+        $invoicewebResult = $rmsinvoicewebModel->where($where)->find();
+
+        if (($invoicewebResult['state'] == 2) and ($invoicewebResult['download_state'] == 2)) {
+            $url = U('InvoiceWeb/show_invoice', 'number=' . $invoicenumber);
+            header('Location:' . $url);
+        }
+
         if (!empty($invoicenumber)) {
             $this->assign('invoicenumber', $invoicenumber);
         }
+
+        //保存到日志中,方便查询
+        $data = array();
+        $data['ordersn'] = $invoicewebResult['ordersn'];
+        $data['date'] = date('Y-m-d H:i:s');
+        $data['log'] = '用户申请开票';
+        $invoiceweblogModel->create();
+        $invoiceweblogModel->add($data);
 
         $this->display('verifyinvoice');
     }
@@ -134,7 +161,6 @@ class InvoiceWebAction extends Action
      */
     public function verifynumber()
     {
-
 
         $invoicenumber = I('get.invoicenumber', '', 'strip_tags');
         $vCodeId = $_REQUEST['vCodeId'];
@@ -153,14 +179,13 @@ class InvoiceWebAction extends Action
 
         if ($_SESSION['verify'] != md5($vCodeId)) {
             $data['error'] = 1;
-            $data['info'] = '验证码错误！' ;
-            $this->ajaxReturn($data);
+            $data['info'] = '验证码错误！';
+            // $this->ajaxReturn($data);
         }
 
-
         //提取发票提取码的第一个字，判断是哪个城市
-        $firstCode = substr($invoicenumber,0,1);
-        if($firstCode == '1'){
+        $firstCode = substr($invoicenumber, 0, 1);
+        if ($firstCode == '1') {
             $rmsinvoicewebModel = M('invoiceweb', 'rms_', $this->bjconnect_str);
         } else {
             $rmsinvoicewebModel = M('invoiceweb', 'rms_', $this->connect_str);
@@ -184,34 +209,38 @@ class InvoiceWebAction extends Action
             $where = array();
             $where['eticketno'] = $invoicenumber;
             $data = array();
-            $data['state'] = 1;  //1为开票
+            $data['state'] = 1; //1为开票
             $rmsinvoicewebModel->where($where)->save($data);
             $data = array();
             $data['error'] = 0;
             $data['info'] = '启动开票！';
-            $data['url'] = 'http://'.$_SERVER['SERVER_NAME'] . U('InvoiceWeb/shatus_invoice','number=' . $invoicenumber);
+            $data['url'] = U('InvoiceWeb/status_invoice', 'number=' . $invoicenumber);
             $this->ajaxReturn($data);
         }
-
 
         //发票还没有开，现在正在处理状态
         if ($invoicewebResult['state'] == 1) {
             $data['error'] = 0;
             $data['info'] = '启动开票！';
-            $data['url'] = 'http://'.$_SERVER['SERVER_NAME'] . U('InvoiceWeb/status_invoice','number=' . $invoicenumber);
+            $data['url'] = U('InvoiceWeb/status_invoice', 'number=' . $invoicenumber);
             $this->ajaxReturn($data);
         }
 
+        if (($invoicewebResult['state'] == 2) and ($invoicewebResult['download_state'] == 1)) {
+            $data['error'] = 0;
+            $data['info'] = '启动开票！';
+            $data['url'] = U('InvoiceWeb/status_invoice', 'number=' . $invoicenumber);
+            $this->ajaxReturn($data);
+        }
 
         //发票已经开，显示发票
-        if ($invoicewebResult['state'] == 2) {
+        if (($invoicewebResult['state'] == 2) and ($invoicewebResult['download_state'] == 2)) {
             $data['error'] = 0;
             $data['info'] = '显示发票！';
             //$data['url'] = APP_PATH .'index.php?s=/InvoiceWeb/show_invoice/number/' . $invoicenumber;
-            $data['url'] = 'http://'.$_SERVER['SERVER_NAME'] . U('InvoiceWeb/show_invoice','number=' . $invoicenumber);
+            $data['url'] = U('InvoiceWeb/show_invoice', 'number=' . $invoicenumber);
             $this->ajaxReturn($data);
         }
-
 
         //发票退票
         if ($invoicewebResult['state'] == 3) {
@@ -222,7 +251,7 @@ class InvoiceWebAction extends Action
             //电子发票不存在,不能开具
             $data['error'] = 0;
             $data['info'] = '电子发票退票！';
-            $data['url'] = 'http://'.$_SERVER['SERVER_NAME'] . U('InvoiceWeb/cancel_invoice','number=' . $invoicenumber);
+            $data['url'] = U('InvoiceWeb/cancel_invoice', 'number=' . $invoicenumber);
             $this->ajaxReturn($data);
         }
 
@@ -231,7 +260,7 @@ class InvoiceWebAction extends Action
             //电子发票错误
             $data['error'] = 0;
             $data['info'] = '启动开票！';
-            $data['url'] = 'http://'.$_SERVER['SERVER_NAME'] . U('InvoiceWeb/error_invoice','number=' . $invoicenumber);
+            $data['url'] = U('InvoiceWeb/error_invoice', 'number=' . $invoicenumber);
             $this->ajaxReturn($data);
         }
 
@@ -242,6 +271,7 @@ class InvoiceWebAction extends Action
      */
     public function status_invoice()
     {
+
         //发票提取码
         $invoicenumber = I('get.number', '', 'strip_tags');
         //显示错误
@@ -267,7 +297,6 @@ class InvoiceWebAction extends Action
         }
         $invoicewebModel = M('invoiceweb', 'rms_', $this->webconnect_str);
 
-
         //对发票提取码进行验证
         $where = array();
         $where['eticketno'] = $invoicenumber;
@@ -278,14 +307,14 @@ class InvoiceWebAction extends Action
             //电子发票不存在,不能开具
             $data['error'] = 1;
             $data['info'] = '电子发票提取码不存在！';
-            $this->assign('invoicenumber',$invoicenumber);
-            $this->assign('errorInfo','电子发票提取码不存在！');
+            $this->assign('invoicenumber', $invoicenumber);
+            $this->assign('errorInfo', '电子发票提取码不存在！');
             $this->display('errorinvoice');
         }
 
         //提取发票提取码的第一个字，判断是哪个城市
-        $firstCode = substr($invoicenumber,0,1);
-        if($firstCode == '1'){
+        $firstCode = substr($invoicenumber, 0, 1);
+        if ($firstCode == '1') {
             $rmsinvoicewebModel = M('invoiceweb', 'rms_', $this->bjconnect_str);
         } else {
             $rmsinvoicewebModel = M('invoiceweb', 'rms_', $this->connect_str);
@@ -295,16 +324,15 @@ class InvoiceWebAction extends Action
         $where = array();
         $where['eticketno'] = $invoicenumber;
         $invoicewebResult = $rmsinvoicewebModel->where($where)->find();
-        $this->assign('invoiceinfo',$invoicewebResult);
+        $this->assign('invoiceinfo', $invoicewebResult);
         $this->display('cancelinvoice');
     }
 
     /**
      * 显示已经开好的发票
      */
-    public function show_invoice(){
-
-
+    public function show_invoice()
+    {
 
         $invoicenumber = I('get.number', '', 'strip_tags');
         $invoicewebModel = M('invoiceweb', 'rms_', $this->webconnect_str);
@@ -319,9 +347,20 @@ class InvoiceWebAction extends Action
             //电子发票不存在,不能开具
             $data['error'] = 1;
             $data['info'] = '电子发票提取码不存在！';
-            $this->assign('invoicenumber',$invoicenumber);
-            $this->assign('errorInfo','电子发票提取码不存在！');
+            $this->assign('invoicenumber', $invoicenumber);
+            $this->assign('errorInfo', '电子发票提取码不存在！');
             $this->display('errorinvoice');
+        }
+
+        //提取发票提取码的第一个字，判断是哪个城市
+        //如果不是北京，是其他城市，改成微信
+        $firstCode = substr($invoicenumber, 0, 1);
+        if ($firstCode == '1') {
+
+        } else {
+            $weixin_url = $invoicewebResult['pdf_url_weixin'];
+
+            header("Location:" . $weixin_url);
         }
 
         if (!empty($invoicewebResult['pdf_content'])) {
@@ -346,7 +385,7 @@ class InvoiceWebAction extends Action
             $invoicewebResult['invoiceid'] = $invoicewebResult['invoicewebid'];
             //计算金额(不含税)
             //不含税单价
-            $xmdj = ($invoicewebResult['money'] / (1 + 0.6 ));  //$invoiceelectronResult['sl'] = 0.6
+            $xmdj = ($invoicewebResult['money'] / (1 + 0.6)); //$invoiceelectronResult['sl'] = 0.6
             $xmdj = round($xmdj, 2);
             $invoicewebResult['xmdj'] = $xmdj; //金额(不含税)
             //税额
@@ -358,11 +397,11 @@ class InvoiceWebAction extends Action
 
         //获取电子发票的参数
         $where = array();
-        $where['domain'] = 'localhost';  //$invoicewebResult['domain'];
+        $where['domain'] = 'localhost'; //$invoicewebResult['domain'];
         $invoiceeleparaModel = M('invoiceelepara', 'rms_', $this->connect_str);
         $invoiceeleparaResult = $invoiceeleparaModel->where($where)->find();
-        $invoicewebResult['xsf_mc'] = mb_substr($invoiceeleparaResult['xsf_mc'],0,20);
-        $invoicewebResult['xsf_dzdh'] = mb_substr($invoiceeleparaResult['xsf_dzdh'],0,20);
+        $invoicewebResult['xsf_mc'] = mb_substr($invoiceeleparaResult['xsf_mc'], 0, 20);
+        $invoicewebResult['xsf_dzdh'] = mb_substr($invoiceeleparaResult['xsf_dzdh'], 0, 20);
 
         //发票已经开具
         $this->assign('invoiceinfo', $invoicewebResult);
@@ -372,7 +411,8 @@ class InvoiceWebAction extends Action
     /**
      * 显示发票错误的原因
      */
-    public function error_invoice(){
+    public function error_invoice()
+    {
         $invoicenumber = I('get.number', '', 'strip_tags');
         $invoicewebModel = M('invoiceweb', 'rms_', $this->connect_str);
 
@@ -388,8 +428,8 @@ class InvoiceWebAction extends Action
         $invoiceweblogModel = M('invoiceweblog', 'rms_', $this->connect_str);
         $invoiceweblogResult = $invoiceweblogModel->where($where)->select();
 
-        $this->assign('invoicenumber',$invoicenumber);
-        $this->assign('errorInfo',$invoiceweblogResult);
+        $this->assign('invoicenumber', $invoicenumber);
+        $this->assign('errorInfo', $invoiceweblogResult);
         $this->display('errorinvoice');
     }
 
@@ -399,8 +439,8 @@ class InvoiceWebAction extends Action
     public function downloadPDF()
     {
         $invoicenumber = I('get.invoicenumber', '', 'strip_tags');
-        $connect_str = 'mysql://rootlihua:zhangwh0731@rdsq6jvauvez7rq.mysql.rds.aliyuncs.com/bjrms#utf8';
-        $invoicewebModel = M('invoiceweb', 'rms_', $connect_str);
+        // $connect_str = 'mysql://rootlihua:zhangwh0731@rdsq6jvauvez7rq.mysql.rds.aliyuncs.com/bjrms#utf8';
+        $invoicewebModel = M('invoiceweb', 'rms_', $this->bjconnect_str);
         //对发票提取码进行验证
         $where = array();
         $where['eticketno'] = $invoicenumber;
@@ -411,15 +451,16 @@ class InvoiceWebAction extends Action
         ob_end_clean();
         header('Content-type: application/pdf');
         header('Content-Disposition: attachment; filename="' . $invoicenumber . '.pdf"');
-        echo($invoicewebResult['pdf_content']);
+        echo ($invoicewebResult['pdf_content']);
     }
 
     /**
      * 直接查看PDF文件
      */
-    public function getpdf(){
-        $connect_str = 'mysql://rootlihua:zhangwh0731@rdsq6jvauvez7rq.mysql.rds.aliyuncs.com/bjrms#utf8';
-        $invoicewebModel = M('invoiceweb','rms_',$connect_str);
+    public function getpdf()
+    {
+        //$connect_str = 'mysql://rootlihua:zhangwh0731@rdsq6jvauvez7rq.mysql.rds.aliyuncs.com/bjrms#utf8';
+        $invoicewebModel = M('invoiceweb', 'rms_', $this->bjconnect_str);
         $where = array();
         $where['ordersn'] = $_REQUEST['ordersn'];
         $invoicewebResult = $invoicewebModel->where($where)->find();
@@ -428,8 +469,6 @@ class InvoiceWebAction extends Action
         //header('Content-Disposition: attachment; filename="'.$invoicewebResult['ordersn'].'.pdf"');
         echo $invoicewebResult['pdf_content'];
     }
-
-
 
     /**
      * 开具发票,将状态设置为1
@@ -477,7 +516,6 @@ class InvoiceWebAction extends Action
 
     }
 
-
     /**
      * 验证码
      */
@@ -487,7 +525,6 @@ class InvoiceWebAction extends Action
         import('ORG.Util.Image');
         Image::buildImageVerify(4, 1, 'png', 120, 25);
     }
-
 
     //
     public function bak()

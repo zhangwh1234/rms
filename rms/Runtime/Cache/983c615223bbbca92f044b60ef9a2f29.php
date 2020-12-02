@@ -11,7 +11,6 @@
         <li style="margin-left: 15px;"><a href="javascript:;" id="showSubMenu" onMouseOver=""><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
         <li><a href="javascript:void(0);" class="moduleName" onclick="IndexIndexModule.updateOperateTab('__URL__/checkOrder/name/<?php echo ($name); ?>/room_date/<?php echo ($custdate); ?>/room_ap/<?php echo ($custap); ?>');">返回列表</a><span>^4</span></li>
 
-
         <li style="float: right;margin-right: 60px;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
         <li style="float:right;"><a href="javascript:;" onclick="IndexIndexModule.closeOperateTab();"><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
         <div style="clear:both;"></div>
@@ -134,8 +133,7 @@
             <tr>
                 <td valign="top" align="center">
                     <div class="detailviewForm">
-                        <table id="detailviewOrderFormBaseTable" style="BORDER-COLLAPSE: collapse" borderColor="#A9A9A9"
-                            cellSpacing="0" width="100%" align="center" border="1">
+                        <table id="detailviewOrderFormBaseTable" style="BORDER-COLLAPSE: collapse" borderColor="#A9A9A9" cellSpacing="0" width="100%" align="center" border="1">
                             <thead>
                 <td colspan="4" class="tabBlockViewHeader">
                     订单基本信息
@@ -227,7 +225,7 @@
         <table border="0" cellspacing="0" cellpadding="0" width="100%" style="margin-top:5px; border: 1px solid #e0dddd; ">
             <tr>
                 <td colspan="4" class="tabBlockViewHeader">
-                    支付输入
+                    客户结账输入
                 </td>
             </tr>
 
@@ -250,7 +248,6 @@
     #accountsTable input {
         font-size: 16px;
     }
-
 </style>
 <table id="YingshouRoomServiceAccountsTable" style="BORDER-COLLAPSE: collapse" borderColor="#CCCCCC" cellSpacing="0" width="100%" align="center" border="1">
     <tr class="accountsTableHeader">
@@ -261,43 +258,49 @@
         <td width="25%" align="center" class="accountsTableHeaderLeftTd">备注</td>
         <td width="10%" align="center" class="accountsTableHeaderRightTd">操作</td>
     </tr>
-    <?php if(empty($roomserviceaccounts)): $__FOR_START_530373977__=0;$__FOR_END_530373977__=1;for($key=$__FOR_START_530373977__;$key < $__FOR_END_530373977__;$key+=1){ ?><tr>
+    <?php if(empty($orderfinance)): $__FOR_START_914857930__=0;$__FOR_END_914857930__=1;for($key=$__FOR_START_914857930__;$key < $__FOR_END_914857930__;$key+=1){ $keytwo = $key+2; ?>
+            <tr>
                 <td width="5%" align="center"><?php echo ($key+1); ?></td>
                 <td width="10%" align="center"> 
-                    <input id="YingshouRoomServiceAccountsCode_<?php echo ($key+1); ?>" name="accountsCode_<?php echo ($key+1); ?>" type="text" size="6" tabindex="1" onkeydown="YingshouRoomServiceAccountsEditViewModule.getAccountsByCode(<?php echo ($key+1); ?>,event,this);"
-                        AUTOCOMPLETE="off" style="font-size:16px;" />
+                    <input id="YingshouRoomServiceAccountsCode_<?php echo ($key+1); ?>" name="accountsCode_<?php echo ($key+1); ?>" type="text" size="6" tabindex="1"
+                        onkeydown="YingshouRoomServiceAccountsEditViewModule.getAccountsByCode('<?php echo ($key+1); ?>',event,this);" AUTOCOMPLETE="off" style="font-size:16px;" />
 
-                    <img id="YingshouRoomServicesearchIcon1" title="选择" src="./__PUBLIC__/Images/products.gif" style="cursor: pointer;" align="absmiddle" onclick="YingshouRoomServiceAccountsEditViewModule.accountsPickList('__URL__/popupAccountsview/module/Accounts/row/<?php echo ($key+1); ?>');" /><a
-                        href="javascript:YingshouRoomServiceAccountsEditViewModule.accountsPickList('__URL__/popupAccountsview/module/Accounts/row/<?php echo ($key+1); ?>')">选择</a>
+                    <img id="YingshouRoomServicesearchIcon1" title="选择" src="./__PUBLIC__/Images/products.gif" style="cursor: pointer;" align="absmiddle"
+                        onclick="YingshouRoomServiceAccountsEditViewModule.accountsPickList('__URL__/popupPaymentMgrview/module/PaymentMgr/row/<?php echo ($key+1); ?>');" /><a
+                        href="javascript:YingshouRoomServiceAccountsEditViewModule.accountsPickList('__URL__/popupPaymentMgrview/module/PaymentMgr/row/<?php echo ($key+1); ?>')">选择</a>
                 </td>
                 <td width="30%" align="center"> 
                     <input id="YingshouRoomServiceAccountsName_<?php echo ($key+1); ?>" name="accountsName_<?php echo ($key+1); ?>" type="text" size="30" readonly="readonly" style="font-size:16px;" />
                 </td>
                 <td width="15%" align="center"> 
-                    <input id="YingshouRoomServiceAccountsMoney_<?php echo ($key+1); ?>" name="accountsMoney_<?php echo ($key+1); ?>" type="text" size="10" onkeydown="YingshouRoomServiceAccountsEditViewModule.keydownSumAccountsMoney('<?php echo ($key+1); ?>',event,this);"
-                        onblur="YingshouRoomServiceAccountsEditViewModule.blurSumAccountsMoney();" tabindex="1" value="" style="font-size:16px;" />
+                    <input id="YingshouRoomServiceAccountsMoney_<?php echo ($key+1); ?>" name="accountsMoney_<?php echo ($key+1); ?>" type="text" size="10"
+                        onkeydown="YingshouRoomServiceAccountsEditViewModule.keydownSumAccountsMoney(<?php echo ($key+1); ?>,event,this);"
+                        onblur="YingshouRoomServiceAccountsEditViewModule.blurSumAccountsMoney(<?php echo ($key+1); ?>,event);" tabindex="1" value="" style="font-size:16px;" />
                 </td>
                 <td width="25%" align="center"> 
-                    <input id="YingshouRoomServiceAccountsNote_<?php echo ($key+1); ?>" name="accountsNote_<?php echo ($key+1); ?>" type="text" size="30" onkeydown="YingshouRoomServiceAccountsEditViewModule.keydownAccountsNote('<?php echo ($key+2); ?>',event);"
-                        style="font-size:16px;" />
+                    <input id="YingshouRoomServiceAccountsNote_<?php echo ($key+1); ?>" name="accountsNote_<?php echo ($key+1); ?>" type="text" size="30"
+                        onkeydown="YingshouRoomServiceAccountsEditViewModule.keydownAccountsNote('<?php echo ($key+2); ?>',event);" style="font-size:16px;" />
                 </td>
                 <td width="10%" align="center"><a href="#" onclick="YingshouRoomServiceAccountsEditViewModule.clearAccounts(<?php echo ($key+1); ?>);">清空</a>
                 </td>
             </tr><?php } endif; ?>
-    <?php if(is_array($roomserviceaccounts)): foreach($roomserviceaccounts as $key=>$vo): ?><tr>
+    <?php if(is_array($orderfinance)): foreach($orderfinance as $key=>$vo): $keytwo = $key+2; ?>
+        <tr>
             <td width="5%" align="center"><?php echo ($key+1); ?></td>
             <td width="10%" align="center"> 
-                <input id="YingshouRoomServiceAccountsCode_<?php echo ($key+1); ?>" name="accountsCode_<?php echo ($key+1); ?>" type="text" size="6" tabindex="1" value="<?php echo ($vo["paymentid"]); ?>" onkeydown="YingshouRoomServiceAccountsEditViewModule.getAccountsByCode(<?php echo ($key+1); ?>,event,this);"
-                    AUTOCOMPLETE="off" style="font-size:16px;" />
-                <img id="YingshouRoomServiceAccountssearchIcon1" title="客户选择" src="./__PUBLIC__/Images/products.gif" style="cursor: pointer;" align="absmiddle" onclick="YingshouRoomServiceAccountsEditViewModule.accountsPickList('__URL__/popupAccountsview/module/Accounts/row/<?php echo ($key+1); ?>');" /><a
+                <input id="YingshouRoomServiceAccountsCode_<?php echo ($key+1); ?>" name="accountsCode_<?php echo ($key+1); ?>" type="text" size="6" tabindex="1" value="<?php echo ($vo["code"]); ?>"
+                    onkeydown="YingshouRoomServiceAccountsEditViewModule.getAccountsByCode('<?php echo ($key+1); ?>',event,this);" AUTOCOMPLETE="off" style="font-size:16px;" />
+                <img id="YingshouRoomServiceAccountssearchIcon1" title="客户选择" src="./__PUBLIC__/Images/products.gif" style="cursor: pointer;" align="absmiddle"
+                    onclick="YingshouRoomServiceAccountsEditViewModule.accountsPickList('__URL__/popupPaymentMgrview/module/PaymentMgr/row/<?php echo ($key+1); ?>');" /><a
                     href="javascript:YingshouRoomServiceAccountsEditViewModule.accountsPickList('__URL__/popupPaymentMgrview/module/PaymentMgr/row/<?php echo ($key+1); ?>')">选择</a>
             </td>
             <td width="30%" align="center"> 
                 <input id="YingshouRoomServiceAccountsName_<?php echo ($key+1); ?>" name="accountsName_<?php echo ($key+1); ?>" type="text" size="30" readonly="readonly" value="<?php echo ($vo["name"]); ?>" style="font-size:16px;" />
             </td>
             <td width="15%" align="center"> 
-                <input id="YingshouRoomServiceAccountsMoney_<?php echo ($key+1); ?>" name="accountsMoney_<?php echo ($key+1); ?>" type="text" size="10" onkeydown="YingshouRoomServiceAccountsEditViewModule.keydownSumAccountsMoney();"
-                    onblur="YingshouRoomServiceAccountsEditViewModule.blurSumAccountsMoney();" tabindex="1" value="<?php echo ($vo["money"]); ?>" style="font-size:16px;" />
+                <input id="YingshouRoomServiceAccountsMoney_<?php echo ($key+1); ?>" name="accountsMoney_<?php echo ($key+1); ?>" type="text" size="10"
+                    onkeydown="YingshouRoomServiceAccountsEditViewModule.keydownSumAccountsMoney(<?php echo ($key+1); ?>,event,this);"
+                    onblur="YingshouRoomServiceAccountsEditViewModule.blurSumAccountsMoney(<?php echo ($key+1); ?>,event);" tabindex="1" value="<?php echo ($vo["money"]); ?>" style="font-size:16px;" />
             </td>
             <td width="25%" align="center"> 
                 <input id="YingshouRoomServiceAccountsNote_<?php echo ($key+1); ?>" name="accountsNote_<?php echo ($key+1); ?>" type="text" size="30" value="<?php echo ($vo["note"]); ?>" style="font-size:16px;" />
@@ -305,20 +308,48 @@
             <td width="10%" align="center"><a href="#" onclick="YingshouRoomServiceAccountsEditViewModule.clearAccounts('<?php echo ($key+1); ?>');">清空</a>
             </td>
         </tr><?php endforeach; endif; ?>
+    <?php if($paymenttwoshow == 1): ?><tr>
+            <td width="5%" align="center"><?php echo ($keytwo); ?></td>
+            <td width="10%" align="center"> 
+                <input id="YingshouRoomServiceAccountsCode_<?php echo ($keytwo); ?>" name="accountsCode_<?php echo ($keytwo); ?>" type="text" size="6" tabindex="1"
+                    onkeydown="YingshouRoomServiceAccountsEditViewModule.getAccountsByCode('<?php echo ($keytwo); ?>',event,this);" AUTOCOMPLETE="off" style="font-size:16px;" />
+
+                <img id="YingshouRoomServicesearchIcon1" title="选择" src="./__PUBLIC__/Images/products.gif" style="cursor: pointer;" align="absmiddle"
+                    onclick="YingshouRoomServiceAccountsEditViewModule.accountsPickList('__URL__/popupPaymentMgrview/module/PaymentMgr/row/<?php echo ($keytwo); ?>');" /><a
+                    href="javascript:YingshouRoomServiceAccountsEditViewModule.accountsPickList('__URL__/popupPaymentMgrview/module/PaymentMgr/row/<?php echo ($keytwo); ?>')">选择</a>
+            </td>
+            <td width="30%" align="center"> 
+                <input id="YingshouRoomServiceAccountsName_<?php echo ($keytwo); ?>" name="accountsName_<?php echo ($keytwo); ?>" type="text" size="30" readonly="readonly" style="font-size:16px;" />
+            </td>
+            <td width="15%" align="center"> 
+                <input id="YingshouRoomServiceAccountsMoney_<?php echo ($keytwo); ?>" name="accountsMoney_<?php echo ($keytwo); ?>" type="text" size="10"
+                    onkeydown="YingshouRoomServiceAccountsEditViewModule.keydownSumAccountsMoney(<?php echo ($keytwo); ?>,event,this);"
+                    onblur="YingshouRoomServiceAccountsEditViewModule.blurSumAccountsMoney(<?php echo ($keytwo); ?>,event);" tabindex="1" value="" style="font-size:16px;" />
+            </td>
+            <td width="25%" align="center"> 
+                <input id="YingshouRoomServiceAccountsNote_<?php echo ($keytwo); ?>" name="accountsNote_<?php echo ($keytwo); ?>" type="text" size="30"
+                    onkeydown="YingshouRoomServiceAccountsEditViewModule.keydownAccountsNote('<?php echo ($keytwo); ?>',event);" style="font-size:16px;" />
+            </td>
+            <td width="10%" align="center"><a href="#" onclick="YingshouRoomServiceAccountsEditViewModule.clearAccounts(<?php echo ($keytwo); ?>);">清空</a>
+            </td>
+            <?php $keytwo = $keytwo+1; ?>
+        </tr><?php endif; ?>
 </table>
 <table width="100%" style="BORDER-COLLAPSE: collapse" borderColor="#CCCCCC" cellSpacing="0" width="100%" align="center" border="1">
     <tr>
         <td class="accountsTableXiaojiLeftTd" width="65%">
-            <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-car_cart_basket-basket_add'" onclick="YingshouRoomServiceAccountsEditViewModule.addAccounts();" style="font-size:16px;">添加项目</a>
-            <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-car_cart_basket-basket_delete'" onclick="YingshouRoomServiceAccountsEditViewModule.delAccounts();" style="font-size:16px;margin-left:30px;">删除项目最后一行</a>
-            <input id="YingshouRoomServiceAccountsLength" name="accountsLength" type="hidden" value="<?php echo ($key+1); ?>" />
+            <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-car_cart_basket-basket_add'" onclick="YingshouRoomServiceAccountsEditViewModule.addAccounts();"
+                style="font-size:16px;">添加项目</a>
+            <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-car_cart_basket-basket_delete'" onclick="YingshouRoomServiceAccountsEditViewModule.delAccounts();"
+                style="font-size:16px;margin-left:30px;">删除项目最后一行</a>
+            <input id="YingshouRoomServiceAccountsLength" name="accountsLength" type="hidden" value="<?php echo ($keytwo); ?>" />
         </td>
 
         <td style="font-size: 16px; display: none;">
         </td>
         <td class="accoutsTableXiaojiRightTd" style="font-size: 14px;"> 
             <span>小计</span>
-            <input id="YingshouRoomServiceAccountsTotalMoney" name="paymentTotalMoney" type="text" size="10" readonly="readonly" style="border: 0px;font-size: 14px;" value="<?php echo ($orderpaymentmoney); ?>" />
+            <input id="YingshouRoomServiceAccountsTotalMoney" name="paymentTotalMoney" type="text" size="10" readonly="readonly" style="border: 0px;font-size: 14px;" value="<?php echo ($orderfinancemoney); ?>" />
             <input id="YingshouRoomServiceActivityMoney" name="activityTotalMoney" value="<?php echo ($activitymoney); ?>" hidden />
         </td>
     </tr>
@@ -329,9 +360,6 @@
 
         init: function () {},
 
-        test: function () {
-            alert('ok');
-        },
 
         //添加产品
         addAccounts: function () {
@@ -346,10 +374,10 @@
                 "'  type='text' size='6' tabindex='1' onkeyup='YingshouRoomServiceAccountsEditViewModule.getAccountsByCode(" +
                 rowNum + ",event,this)' style='font-size:16px;' />";
             tableTrAppend += "<img id='YingshouRoomServicesearchIcon1' title='客户选择' src='./" + PUBLIC +
-                "/Images/products.gif' style='cursor: pointer;' align='absmiddle' onclick='YingshouRoomServiceAccountsEditViewModule.accountsPickList(\"__URL__/popupAccountsview/module/Accounts/row/" +
+                "/Images/products.gif' style='cursor: pointer;' align='absmiddle' onclick='YingshouRoomServiceAccountsEditViewModule.accountsPickList(\"__URL__/popupPaymentMgrview/module/PaymentMgr/row/" +
                 rowNum + "\");' />";
             tableTrAppend +=
-                "<a href='javascript:YingshouRoomServiceAccountsEditViewModule.accountsPickList(\"__URL__/popupAccountsview/module/Accounts/row/" +
+                "<a href='javascript:YingshouRoomServiceAccountsEditViewModule.accountsPickList(\"__URL__/popupPaymentMgrview/module/Accounts/row/" +
                 rowNum + "\");' >选择</a>";
             tableTrAppend += "</td>";
             tableTrAppend += "<td width='30%' align='center' class='accountsTableLeftTd'>";
@@ -359,8 +387,9 @@
             tableTrAppend += "<td width='15%' align='center' class='accountsTableLeftTd'>";
             tableTrAppend += "<input id='YingshouRoomServiceAccountsMoney_" + rowNum + "' name='accountsMoney_" +
                 rowNum +
-                "' type='text' size='10'   tabindex='1' value='' style='font-size:16px;' onkeydown=\"YingshouRoomServiceAccountsEditViewModule.keydownSumAccountsMoney();\"\n" +
-                "                       onblur=\"YingshouRoomServiceAccountsEditViewModule.blurSumAccountsMoney();\" />";
+                "' type='text' size='10' tabindex='1' value='' style='font-size:16px;' onkeydown='YingshouRoomServiceAccountsEditViewModule.keydownSumAccountsMoney(" + rowNum +
+                ",event);' \n" +
+                " onblur='YingshouRoomServiceAccountsEditViewModule.blurSumAccountsMoney(" + rowNum + ",event);' />";
             tableTrAppend += "</td>";
             tableTrAppend += "<td width='25%' align='center' class='accountsTableLeftTd'>";
             tableTrAppend += "<input id='YingshouRoomServiceAccountsNote_" + rowNum + "' name='accountsNote_" +
@@ -375,11 +404,11 @@
         },
 
         /* 键盘回车计算产品金额 */
-        keydownSumAccountsMoney: function (rowNum, evt, obj) {
+        keydownSumAccountsMoney: function (rowNum, evt) {
             evt = evt ? evt : ((window.event) ? window.event : null);
             var key = evt.keyCode ? evt.keyCode : evt.which;
             if (key == 13) {
-                if ($("#YingshouRoomServiceAccountsName_" + rowNum).val() != '') { //如果不为空，才计算
+                if (!!$("#YingshouRoomServiceAccountsName_" + rowNum).val()) { //如果不为空，才计算
                     this.sumAccountsMoney(rowNum);
                 }
                 $("#YingshouRoomServiceAccountsNote_" + rowNum).focus();
@@ -393,7 +422,8 @@
             }
             //向下移动
             if (key == 40) {
-                $("#YingshouRoomServiceAccountsCode_" + rowNum).focus();
+                var focusNum = rowNum + 1;
+                $("#YingshouRoomServiceAccountsCode_" + focusNum).focus();
             }
         },
 
@@ -408,10 +438,6 @@
             }
         },
 
-        //产品数量输入框失去焦点
-        blurkeydownSumProductsMoney: function (rowNum, obj) {
-            this.sumProductsMoney(rowNum);
-        },
 
         /* 通过产品代码取得产品 */
         // rowNum 是行号，evt是firefox下的event事件，obj是this指针
@@ -435,9 +461,29 @@
 
         },
 
+
+        /* 弹出窗口，选择产品 */
+        //moduleName:产品名称 rowNum:行号 moduleName,rowNum
+        accountsPickList: function(url) {            
+            $('#globel-dialog-div').dialog({
+                title: '选择客户',
+                iconCls: 'icons-application-application_add',
+                width: 600,
+                height: 610,
+                top:30,
+                cache: false,
+                href: url,
+                modal: true,
+                collapsible: false,
+                minimizable: false,
+                resizable: false,
+                maximizable: false
+            });
+        },
+
         /* 弹出窗口，选择产品 */
         //moduleName:产品名称  rowNum:行号 moduleName,rowNum
-        accountsPickList: function (url) {
+        accountsPickList_bak: function (url) {
             url = url + '/returnModule/' + '<?php echo ($moduleName); echo (ucfirst(ACTION_NAME)); ?>';
             $('#globel-dialog-div').dialog({
                 title: '选择客户',
@@ -452,27 +498,6 @@
                 resizable: false,
                 maximizable: false,
                 buttons: [{
-                    text: '确定',
-                    iconCls: 'icons-other-tick',
-                    handler: function () {
-                        $(that.dialog).find('form').eq(0).form('submit', {
-                            onSubmit: function () {
-                                var isValid = $(this).form('validate');
-                                if (!isValid) return false;
-
-                                var formArray = $(this).serializeArray();
-                                var url = '__URL__/searchviewAddress/';
-                                $.each(formArray, function (key, value) {
-                                    url = url + value.name + '/' +
-                                        value.value;
-                                })
-                                IndexIndexModule.openOperateTab(url, '订单地址查询');
-                                $(that.dialog).dialog('close');
-                                return false;
-                            }
-                        });
-                    }
-                }, {
                     text: '取消',
                     iconCls: 'icons-arrow-cross',
                     handler: function () {
@@ -524,7 +549,7 @@
                 beforeSend: function () {},
                 success: function (mydata) {
                     var accountsName = '';
-                    var jiezhangmoney = 0; //结账金额
+                    var jiezhangmoney_tmp = 0; //结账金额
                     if (mydata) {
                         //首先检查父窗口表格是否有存在输入的代码和产品
                         var rowLength = $("#YingshouRoomServiceAccountsTable tr").length;
@@ -534,48 +559,41 @@
                                 alert('客户已经存在,不能添加！');
                                 return;
                             }
-                            if ($("#YingshouRoomServiceAccountsMoney_" + i).val() != '') {
-                                jiezhangmoney = jiezhangmoney + parseFloat($("#YingshouRoomServiceAccountsMoney_" + i).val());
+                            if (!!$("#YingshouRoomServiceAccountsMoney_" + i).val()) {
+                                jiezhangmoney_tmp = jiezhangmoney_tmp + parseFloat($("#YingshouRoomServiceAccountsMoney_" + i).val());
                             }
-                            console.log(i);
-                            console.log($("#YingshouRoomServiceAccountsMoney_" + i).val());
                         }
                         $("#YingshouRoomServiceAccountsName_" + rowNum).val(mydata.name);
 
-                        jiezhangmoney = parseFloat($('#paymenttotalmoney').val()) - jiezhangmoney;
+                        jiezhangmoney_tmp = parseFloat($('#paymenttotalmoney').val()) - jiezhangmoney_tmp;
                         //跳转到下一行
-                        $("#YingshouRoomServiceAccountsMoney_" + rowNum).val(jiezhangmoney);
+                        if (jiezhangmoney_tmp != 0) {
+                            $("#YingshouRoomServiceAccountsMoney_" + rowNum).val(jiezhangmoney_tmp);
+                        }
+
+                        that.sumAccountsMoney(rowNum);
                         $("#YingshouRoomServiceAccountsMoney_" + rowNum).focus();
                     } else {
                         alert("输入的客户代码有错误，请重新输入！");
                         return;
                     }
                 }
-
             })
         },
 
 
         /* 计算产品金额 */
         sumAccountsMoney: function (rowNum) {
-
             //计算全部的金额
             var totalMoney = 0;
             //取得表格行的长度
             var rowLength = $("#YingshouRoomServiceAccountsTable tr").length;
             for (i = 1; i < rowLength; i++) {
-                if ($("#YingshouRoomServiceAccountsMoney_" + i).val() > 0) {
+                if (!!$("#YingshouRoomServiceAccountsMoney_" + i).val()) {
                     totalMoney = totalMoney + parseFloat($("#YingshouRoomServiceAccountsMoney_" + i).val());
                 }
             }
             $("#YingshouRoomServiceAccountsTotalMoney").val(totalMoney); //小计
-
-            //活动金额
-            activitymoney = $('#YingshouRoomServiceActivityMoney').val();
-            //计算总金额
-            if (activitymoney) {
-                totalMoney = totalMoney + parseFloat(activitymoney);
-            }
 
             //写入总的金额
             totalMoney = totalMoney.toFixed(2);
@@ -583,14 +601,14 @@
             $('#PaymentEditviewForm input[name=paymentjiezhangmoney]').val(totalMoney);
 
             $('#YingshouRoomServiceEditviewForm input[name=note]').val(totalMoney);
-
         },
 
 
         //产品代码失去焦点的计算金额
         blurSumAccountsMoney: function (rowNum, obj) {
+            return;
             if ($("#YingshouRoomServiceAccountsName_" + rowNum).val() != '') { //如果不为空，才计算
-                this.sumAccountsMoney(rowNum);
+                //this.sumAccountsMoney(rowNum);
             }
         },
 
@@ -612,15 +630,115 @@
             </tr>
         </table>
 
-        <table border="0" cellspacing="0" cellpadding="0" width="100%" style="margin-top:5px; border: 1px solid #e0dddd; ">
-            <tr>
-                <td colspan="4" class="tabBlockViewHeader">
-                    促销信息
+        <?php if(!empty($roomserviceaccounts)): ?><table border="0" cellspacing="0" cellpadding="0" width="100%" style="margin-top:5px; border: 1px solid #e0dddd; ">
+                <tr>
+                    <td colspan="4" class="tabBlockViewHeader">
+                        客户支付（供参考）
+                    </td>
+                </tr>
+
+                <tr style="background: #FFFFFF;">
+                    <td colspan="4">
+                        <style>
+    #accountsTable {
+        background-color: transparent;
+    }
+
+    .accountsTableHeader {
+        background-color: #95CACA;
+        font-size: 12px;
+    }
+
+    .accountsTableHeaderLeftTd {
+        border-style: solid none none solid;
+        border-width: 1px;
+        border-color: #CCCCCC;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        font-size: 14px;
+    }
+
+    .accountsTableXiaojiLeftTd {
+        border-style: solid none solid solid;
+        border-width: 1px;
+        border-color: #CCCCCC;
+        padding-top: 1px;
+        padding-bottom: 1px;
+        padding-left: 40px;
+        height: 22px;
+    }
+
+    .accountsTableXiaojiRightTd {
+        border-style: solid solid solid solid;
+        border-width: 1px;
+        border-color: #CCCCCC;
+        padding-top: 1px;
+        padding-bottom: 1px;
+        padding-left: 20px;
+    }
+
+    #accountsTable td {
+        height: 25px;
+        border-style: solid none none solid;
+        border-width: 1px;
+        border-color: #CCCCCC;
+    }
+
+    #accountsTable span {
+        font-size: 16px;
+    }
+
+</style>
+<table id="accountsTable" width="100%" border="0" cellspacing="0" cellpadding="0" borderColor="white" border="1">
+    <thead class="accountsTableHeader">
+    <td width="5%" align="center" class="accountsTableHeaderLeftTd">序号</td>
+    <td width="15%" align="center" class="accountsTableHeaderLeftTd">客户代码</td>
+    <td width="30%" align="center" class="accountsTableHeaderLeftTd">客户名称</td>
+    <td width="15%" align="center" class="accountsTableHeaderLeftTd">金额</td>
+    </thead>
+
+    <?php if(is_array($roomserviceaccounts)): foreach($roomserviceaccounts as $key=>$vo): ?><tr style="background-color: #F5F5F5;">
+                <td width="5%" align="center" class="dvtCellLabel"><?php echo ($key+1); ?></td>
+                <td width="10%" align="center" class="dvtCellLabel"> 
+                    <span><?php echo ($vo["code"]); ?></span>
                 </td>
-            </tr>
-            <tr style="background: #FFFFFF;">
-                <td colspan="4">
-                    <style>
+                <td width="30%" align="center" class="dvtCellLabel"> 
+                    <span><?php echo ($vo["name"]); ?></span>
+                </td>
+                <td width="15%" align="center" class="dvtCellLabel"> 
+                    <span><?php echo ($vo["money"]); ?></span>
+                </td>
+            </tr><?php endforeach; endif; ?>
+
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+        <td class="accountsTableXiaojiLeftTd" width="65%">
+
+        </td>
+        <td style="font-size: 16px;" class="accountsTableXiaojiRightTd">
+        </td>
+
+        <td class="accountsTableXiaojiRightTd"> 
+            <span style="font-size:14px;">小计</span>
+            <span style="font-size:16px;"><?php echo ($info["goodsmoney"]); ?></span>
+        </td>
+    </tr>
+</table>
+
+                    </td>
+                </tr>
+            </table><?php endif; ?>
+
+        <?php if(!empty($orderactivity)): ?><table border="0" cellspacing="0" cellpadding="0" width="100%" style="margin-top:5px; border: 1px solid #e0dddd; ">
+                <tr>
+                    <td colspan="4" class="tabBlockViewHeader">
+                        客户促销（供参考）
+                    </td>
+                </tr>
+                <tr style="background: #FFFFFF;">
+                    <td colspan="4">
+                        <style>
     #DetailOrderFormActivity td{
         height: 25px;
         border-style:solid none none solid;
@@ -646,10 +764,9 @@
         </td>
     </tr><?php endforeach; endif; ?>
 </table>
-                </td>
-            </tr>
-        </table>
-
+                    </td>
+                </tr>
+            </table><?php endif; ?>
         <table border="0" cellspacing="0" cellpadding="0" width="100%" style="margin-top:5px; border: 1px solid #e0dddd; ">
             <tr>
                 <td colspan="4" class="tabBlockViewHeader">
@@ -752,7 +869,7 @@
 
         <td class="productsTableXiaojiRightTd"> 
             <span style="font-size:14px;">小计</span>
-            <span style="font-size:16px;"><?php echo ($info["goodsmoney"]); ?></span>
+            <span style="font-size:16px;"><?php echo ($orderproductsmoney); ?></span>
         </td>
     </tr>
 </table>
@@ -769,10 +886,8 @@
 
         <tr style="line-height: 5px;">
             <td colspan="4" align="center">
-                <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-other-tick'" onclick="OrderFormEditviewModule.update();"
-                    style="width:100px;margin-right:40px;">确认</a>
-                <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-arrow-cross'" onclick="IndexIndexModule.updateOperateTab('__URL__/<?php echo ($returnAction); ?>');"
-                    style="width:100px;">放弃</a>
+                <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-other-tick'" onclick="PaymentEditviewModule.update();" style="width:100px;margin-right:40px;">确认</a>
+                <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-arrow-cross'" onclick="IndexIndexModule.updateOperateTab('__URL__/<?php echo ($returnAction); ?>');" style="width:100px;">放弃</a>
             </td>
         </tr>
 
@@ -793,7 +908,7 @@
         init: function () {
             $('.moduleOperater').height(IndexIndexModule.operationHeight);
             this.quickKeyboardAction();
-            $("#YingshouRoomServiceAccountsCode_1").focus();
+            $("#YingshouRoomServiceAccountsCode_<?php echo ($keytwo-1); ?>").focus();
         },
 
         //保存记录
@@ -869,7 +984,7 @@
                         $('#globel-dialog-div').dialog('close');
                         //写入数据库
                         url = "__URL__/setSendname/sendname/" + sendname + "/ordersn/" +
-                            ordersn;
+                            ordersn+"/custdate/"+custdate+"/custap/"+custap;
                         $.ajax({
                             type: "GET",
                             url: url,

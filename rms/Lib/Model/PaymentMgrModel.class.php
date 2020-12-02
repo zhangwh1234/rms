@@ -13,12 +13,14 @@ class PaymentMgrModel extends CRMEntityModel
     public $fieldsFocus = 'code';
 
     public $listFields = array(
-        'code' => array('width' => 20),
+        'code' => array('width' => 10),
         'name' => array('width' => 20),
-        'accounting' => array('width' => 20),
-        'subject' => array('width' => 20),
-        'type' => array('width' => 20),
-        'company' => array('width' => 20),
+        'subject' => array('width' => 10),
+        'accounting' => array('width' => 10),
+        'type' => array('width' => 10),
+        'payment_notice' => array('width' => 20),
+        'balance' => array('width' => 5),
+        'company' => array('width' => 5),
     );
 
    
@@ -33,21 +35,25 @@ class PaymentMgrModel extends CRMEntityModel
                 'name' => 'code', 'uitype' => 21, 'readonley' => 1, 'length' => 24,
             ), array(
                 'name' => 'name', 'uitype' => 1, 'readonly' => 1, 'length' => 30,
-            ), array(
-                'name' => 'accounting', 'uitype' => 1, 'readonly' => 1, 'length' => 30,
-            ), array(
+            ),array(
                 'name' => 'subject', 'uitype' => 1, 'readonly' => 1, 'length' => 30,
             ), array(
+                'name' => 'accounting', 'uitype' => 1, 'readonly' => 1, 'length' => 30,
+            ),  array(
                 'name' => 'type', 'uitype' => 64, 'readonly' => 1, 'length' => 30,
             ), array(
                 'name' => 'company', 'uitype' => 64, 'readonly' => 1, 'length' => 30,
+            ),array(
+                'name' => 'invoiceheader', 'uitype' => 1, 'readonly' => 1, 'length' => 50,
+            ),array(
+                'name' => 'payment_notice', 'uitype' => 1, 'readonly' => 1, 'length' => 50,
             ),
 
         ),
     );
 
     public $otherListFiels = array(
-        'is_use'
+        'is_use','is_shenhe'
     );
 
     public $editFields = array();

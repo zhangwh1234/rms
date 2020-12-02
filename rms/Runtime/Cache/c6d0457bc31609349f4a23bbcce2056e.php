@@ -6,27 +6,34 @@
         <li>&nbsp;&gt;列表操作</li>
         <li style="width: 30px;">&nbsp;</li>
 
-        <li style="margin-left: 10px;"><a href="javascript:void(0);" onclick="YingshouRevparMgrListviewModule.createview();"><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li style="margin-left: 10px;"><a href="javascript:void(0);" onclick="YingshouRevparMgrListviewModule.createview();"><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a>
+        </li>
         <li><a href="javascript:void(0);" onclick="YingshouRevparMgrListviewModule.createview();">结账操作</a></li>
 
         <?php if($revparType == 'finance'): ?><li style="margin-left: 50px;">
                 <div class="easyui-panel" style="width:100%;max-width:400px;padding:2px 60px 0px 60px;">
                     <div style="margin-bottom:2px">
-                        <input id="cc" class="easyui-combotree" data-options="url:'__URL__/tree',method:'get',label:'Select Nodes:',labelPosition:'top',multiple:true,value:[122,124]" style="width:100%">
+                        <input id="companyselect" class="easyui-combotree"
+                            data-options="url:'__URL__/tree',method:'get',label:'Select Nodes:',labelPosition:'top',multiple:true,value:['总部'],onlyLeafCheck:true" style="width:100%">
                     </div>
                 </div>
             </li><?php endif; ?>
 
         <li style="margin-left: 50px;"><input type="text" id="yingshouRevparMgrListviewDateInput" class="easyui-datebox" name="yingshouRevparMgrListviewDateInput" style="font-size: 16px;width:150px;"
-                value="cdate" /></li>
+                value="<?php echo ($getDate); ?>" /></li>
 
         <li style="margin-left: 20px;"><select name="yingshouRevparMgrListviewApInput" id="yingshouRevparMgrListviewApInput" class="txtBox" style="width:100px;font-size: 14px;margin-top: 5px;">
-                <?php if($searchAp): ?><option value="<?php echo ($cap); ?>"><?php echo ($cp); ?></option><?php endif; ?>
+                <?php if($searchAp): ?><option value="<?php echo ($getAp); ?>"><?php echo ($getAp); ?></option><?php endif; ?>
                 <option value="上午">上午</option>
                 <option value="下午">下午</option>
+                <option value="全天">全天</option>
             </select></li>
         <li style="margin-left: 10px;"><a href="javascript:;" onclick="YingshouRevparMgrListviewModule.search(this);" class="easyui-linkbutton" iconCls="icons-table-table">查询</a></li>
 
+        <li style="width: 30px;">&nbsp;</li>
+        <?php if($revparType == 'finance'): ?><li style="margin-left: 10px;"><a href="javascript:;" onclick="YingshouRevparMgrListviewModule.delete();" class="easyui-linkbutton" iconCls="icons-table-table">删除结账</a></li>
+            <li style="width: 20px;">&nbsp;</li>
+            <li style="margin-left: 10px;"><a href="javascript:;" onclick="YingshouRevparMgrListviewModule.revparList();" class="easyui-linkbutton" iconCls="icons-table-table">分公司结账情况</a></li><?php endif; ?>
 
         <li style="float: right;margin-right: 10px;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
         <li style="float:right;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
@@ -47,13 +54,46 @@
             //设置div的高度
             $('#YingshouRevparMgrListviewDiv').height(IndexIndexModule.operationHeight);
             this.quickKeyboardAction();
+            $('#yingshourevparmgr_index_datagrid').datagrid({
+                rowStyler: YingshouRevparMgrListviewModule.rowStyler
+            });
         },
 
         //操作格式化
         operate: function (val, rowData, rowIndex) {
+            if (rowData.date == '营收情况') {
+                return [];
+            }
+            if (rowData.date == '贷方合计营收') {
+                return [];
+            }
+            if (rowData.date == '借方合计营收') {
+                return [];
+            }
+            if ((rowData.name == '外送收入') || (rowData.name == '工作餐金额') || (rowData.name == '门市金额')) {
+                return [];
+            }
+            if (rowData.company == '多公司') {
+                return [];
+            }
+
             var btn = [];
-            btn.push('<a href="javascript:void(0);" onclick="YingshouDoorBillListviewModule.deleteRecord(' + rowData.doorbillid + ',\'' + rowData.date + '\')">删除</a>');
+            btn.push('<a href="javascript:void(0);" onclick="YingshouRevparMgrListviewModule.revparDetailview(\'' + rowData.name + '\',\'' + rowData.date + '\',\'' + rowData.ap +
+                '\')">详细</a>');
             return btn.join(' | ');
+            return [];
+        },
+
+        rowStyler: function (index, row) { //就改变背景颜色，以便区别     
+            if (row.date == '营收情况') {
+                return 'background-color:#99CCFF; color:black'; // return inline style
+            }
+            if (row.date == '贷方合计营收') {
+                return 'background-color:#99CCFF; color:black'; // return inline style
+            }
+            if (row.date == '借方合计营收') {
+                return 'background-color:#99CCFF; color:black'; // return inline style
+            }
         },
 
 
@@ -78,24 +118,53 @@
 
 
         //删除
-        deleteRecord: function (id) {
+        delete: function () {
             var that = this;
             $.messager.confirm('提示信息', '确定要删除吗？', function (result) {
                 if (!result) return false;
                 $.messager.progress({
                     text: '处理中，请稍候...'
                 });
-                $.post("<?php echo U('YingshouRevpar/delete');?>", {
-                    record: id
-                }, function (res) {
-                    $.messager.progress('close');
-                    if (!res.status) {
-                        $.app.method.tip('提示信息', res.info, 'error');
-                    } else {
-                        $.app.method.tip('提示信息', res.info, 'info');
-                        that.refresh();
-                    };
-                }, 'json');
+                //获取日期
+                var revpar_date = $('#yingshouRevparMgrListviewDateInput').datebox('getValue');
+                var revpar_ap = $('#yingshouRevparMgrListviewApInput').val();
+                var data = {
+                    'revpar_date': revpar_date,
+                    'revpar_ap': revpar_ap
+                };
+                $.ajax({
+                    type: "POST",
+                    url: "__URL__/delete",
+                    data: data,
+                    dataType: "json",
+                    success: function (res) {
+                        $.messager.progress('close');
+                        if (res.status) {
+                            $.app.method.tip('提示信息', res.info, 'error');
+                        } else {
+                            $.app.method.tip('提示信息', res.info, 'info');
+                            $.messager.progress('close');
+
+                            var queryParams = $(that.datagrid).datagrid('options').queryParams;
+                            queryParams['getDate'] = revpar_date;
+                            queryParams['getAp'] = revpar_ap;
+                            if ($('#companyselect').length > 0) {
+                                var company = $('#companyselect').combotree('getValues');
+                                var companyArr = '';
+                                for (var i = 0; i < company.length; i++) {
+                                    companyArr += company[i] + ',';
+                                }
+                                queryParams['companyArr'] = companyArr;
+                            }
+                            $(that.datagrid).datagrid({
+                                pageNumber: 1,
+                                queryParams: queryParams,
+                                url: "__URL__/listview"
+                            });
+                        };
+                    }
+                });
+
             });
         },
 
@@ -141,8 +210,24 @@
                                     IndexIndexModule.updateOperateTab(url);
                                 } else { //state = 1就是success
                                     $.messager.progress('close');
-                                    $('#roomservicebillCreateviewDateInput').datebox('setValue', room_date);
-                                    $(that.datagrid).datagrid('reload');
+                                    $('#yingshouRevparMgrListviewDateInput').datebox('setValue', revpar_date);
+                                    $('#yingshouRevparMgrListviewApInput').val(revpar_ap);
+                                    var queryParams = $(that.datagrid).datagrid('options').queryParams;
+                                    queryParams['getDate'] = revpar_date;
+                                    queryParams['getAp'] = revpar_ap;
+                                    if ($('#companyselect').length > 0) {
+                                        var company = $('#companyselect').combotree('getValues');
+                                        var companyArr = '';
+                                        for (var i = 0; i < company.length; i++) {
+                                            companyArr += company[i] + ',';
+                                        }
+                                        queryParams['companyArr'] = companyArr;
+                                    }
+                                    $(that.datagrid).datagrid({
+                                        pageNumber: 1,
+                                        rowStyler: this.rowStyler,
+                                        url: "__URL__/listview"
+                                    });
                                 }
                             }
                         });
@@ -165,13 +250,39 @@
             });
             var getDate = $('#yingshouRevparMgrListviewDateInput').datebox('getValue');
             var getAp = $('#yingshouRevparMgrListviewApInput').val();
+            if ($('#companyselect').length > 0) {
+                var company = $('#companyselect').combotree('getValues');
+                var companyArr = '';
+                for (var i = 0; i < company.length; i++) {
+                    companyArr += company[i] + ',';
+                }
+                queryParams['companyArr'] = companyArr;
+            }
+
+
             queryParams['getDate'] = getDate;
             queryParams['getAp'] = getAp;
+
             $(this.datagrid).datagrid({
                 pageNumber: 1,
                 queryParams: queryParams,
                 url: "__URL__/listview"
             });
+        },
+
+        //显示详细的结账条目
+        revparDetailview: function (name, date, ap) {
+            var url = '__URL__/revparDetailview/name/' + name + '/date/' + date + '/ap/' + ap;
+            IndexIndexModule.updateOperateTab(url);
+        },
+
+        //查看分公司结账完成的情况
+        revparList: function () {
+            //获取日期
+            var revpar_date = $('#yingshouRevparMgrListviewDateInput').datebox('getValue');
+            var revpar_ap = $('#yingshouRevparMgrListviewApInput').val();
+            var url = '__URL__/revparList/revpar_date/' + revpar_date + '/revpar_ap/' + revpar_ap;
+            IndexIndexModule.updateOperateTab(url);
         },
 
         //新建的快捷操作

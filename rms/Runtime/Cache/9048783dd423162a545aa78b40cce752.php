@@ -701,6 +701,35 @@
                         that.ODrefreshOrder = true;   //开启刷新
                         $('#orderTask' + that.focusNumberOD).focus();
                     }
+                },{
+                    text: '未派单查询',
+                    iconCls: 'icons-other-time_go',
+                    handler: function () {
+                        $(that.dialog).find('form').eq(0).form('submit', {
+                            onSubmit: function () {
+                                var companyName = $('#orderDistributionListviewSearchInputCompanyName').val();
+                                if(!companyName){
+                                    alert('查询内容不能为空');
+                                    return false;
+                                }
+
+                                var isValid = $(this).form('validate');
+                                if (!isValid) return false;
+
+                                var formArray = $(this).serializeArray();
+                                var url = '__URL__/searchviewCompanyNoPaidan/';
+                                $.each(formArray, function (key, value) {
+                                    url = url + value.name + '/' + value.value + '/';
+                                });
+                                url = encodeURI(url);
+                                IndexIndexModule.openOperateTab(url, '分配配送店查询');
+                                $(that.dialog).dialog('close');
+                                that.ODrefreshOrder = true;   //开启刷新
+                                $('#orderTask' + that.focusNumberOD).focus();
+                                return false;
+                            }
+                        });
+                    }
                 }]
             });
 

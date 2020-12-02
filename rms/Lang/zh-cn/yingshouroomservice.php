@@ -31,6 +31,7 @@ return array(
     'telname' => '接线员',
     'rectime' => '录入时间',
     'ap' => '午别',
+    'money' => '金额',
     'LBL_ORDERFORM_INFORMATION' => '订单基本信息',
     'LBL_PRODUCTS_INFORMATION' => '产品信息',
     'LBL_ORDERACTION_INFORMATION' => '订单日志',
@@ -48,4 +49,5 @@ return array(
     'mealticketname' => '名称',
     'mealticketprice' => '单价',
     'code' => '编号',
+    'goodsmoney' => '商品金额',
 );

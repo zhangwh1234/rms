@@ -113,7 +113,7 @@
 <script>
     var YingshouWorklunchCreateviewModule;
     YingshouWorklunchCreateviewModule = {
-
+        checkSubmitFlg: false,
         //初始化
         init: function () {
             $('.moduleoperator').height(IndexIndexModule.operationHeight);
@@ -122,17 +122,25 @@
 
         //保存记录
         insert: function () {
+            //防止重复提交
+            if (this.checkSubmitFlg == false) {
+            this.checkSubmitFlg = true;
+            } else {
+            return;
+            }
             $('#YingshouWorklunchCreateviewForm').form('submit', {
                 url: '__URL__/insert',
                 onSubmit: function () {
                     //进行表单验证
                     if ($('#code').val() == '') {
                         alert('产品编码不能为空!');
-                        return false;
+                         OrderFormCreateviewModule.checkSubmitFlg = false;
+                         return false;
                     }
                     if ($('#name').val() == '') {
                         alert('产品名称不能为空!');
-                        return false;
+                         OrderFormCreateviewModule.checkSubmitFlg = false;
+                         return false;
                     }
                     var isValid = $(this).form('validate');
                     if (!isValid) {

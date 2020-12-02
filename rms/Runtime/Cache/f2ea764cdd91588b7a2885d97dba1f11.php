@@ -7,26 +7,26 @@
         <li>&nbsp;&gt;列表操作</li>
         <li style="width: 30px;">&nbsp;</li>
 
-        <li style="margin-left: 10px;"><a href="javascript:void(0);" onclick="YingshouFinanceListviewModule.createview();"><img
-                    src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li style="margin-left: 10px;"><a href="javascript:void(0);" onclick="YingshouFinanceListviewModule.createview();"><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
         <li><a href="javascript:void(0);" onclick="YingshouFinanceListviewModule.createview();">生成分录</a></li>
 
-        <li style="margin-left: 50px;"><input type="text" id="yingshouRevparMgrListviewDateInput" class="easyui-datebox"
-                name="yingshouRevparMgrListviewDateInput" style="font-size: 16px;width:150px;" value="cdate" /></li>
+        <li style="margin-left: 50px;"><input type="text" id="yingshouFinanceListviewDateInput" class="easyui-datebox" name="yingshouFinanceListviewDateInput" style="font-size: 16px;width:150px;"
+                value="<?php echo ($getDate); ?>" /></li>
 
-        <li style="margin-left: 10px;"><a href="javascript:;" onclick="YingshouFinanceListviewModule.search(this);"
-                class="easyui-linkbutton" iconCls="icons-table-table">查询</a></li>
-        <li style="margin-left: 10px;"><a href="javascript:;" onclick="YingshouFinanceMgrListviewModule.allExport(this);"
-                class="easyui-linkbutton" iconCls="icons-table-table">导出分录</a></li>
+        <li style="margin-left: 10px;"><a href="javascript:;" onclick="YingshouFinanceListviewModule.search(this);" class="easyui-linkbutton" iconCls="icons-table-table">查询</a></li>
+        <li style="width: 20px;">&nbsp;</li>
+        <li style="margin-left: 10px;display: none;"><a href="javascript:;" onclick="YingshouFinanceListviewModule.seeAllDetailview(this);" class="easyui-linkbutton"
+                iconCls="icons-table-table">查看全部分录</a></li>
+        <li style="width: 30px;">&nbsp;</li>
+        <li style="margin-left: 10px;display: none;"><a href="javascript:;" onclick="YingshouFinanceListviewModule.allExport(this);" class="easyui-linkbutton" iconCls="icons-table-table">导出分录</a></li>
 
 
         <li style="float: right;margin-right: 10px;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
-        <li style="float:right;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();"><img src=".__PUBLIC__/Images/closeBtn.png"
-                    alt="" title="" border="0"></a></li>
+        <li style="float:right;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
     </ul>
 </div>
 
-<div id="YingshouRevparMgrListviewDiv" style="height:400px;width:100%;clear:both;">
+<div id="YingshouFinanceMgrListviewDiv" style="height:400px;width:100%;clear:both;">
     <table id="yingshoufinance_index_datagrid" class="easyui-datagrid" data-options='<?php $dataOptions = array_merge(array ( 'border' => true, 'fit' => true, 'fitColumns' => true, 'rownumbers' => true, 'singleSelect' => true, 'striped' => true, 'pagination' => true, 'pageList' => array ( 0 => 10, 1 => 20, 2 => 30, 3 => 50, 4 => 80, 5 => 100, ), 'pageSize' => 10, ), $datagrid["options"]);if(isset($dataOptions['toolbar']) && substr($dataOptions['toolbar'],0,1) != '#'): unset($dataOptions['toolbar']); endif; echo trim(json_encode($dataOptions), '{}[]').((isset($datagrid["options"]['toolbar']) && substr($datagrid["options"]['toolbar'],0,1) != '#')?',"toolbar":'.$datagrid["options"]['toolbar']:null); ?>' style=""><thead><tr><?php if(is_array($datagrid["fields"])):foreach ($datagrid["fields"] as $key=>$arr):if(isset($arr['formatter'])):unset($arr['formatter']);endif;echo "<th data-options='".trim(json_encode($arr), '{}[]').(isset($datagrid["fields"][$key]['formatter'])?",\"formatter\":".$datagrid["fields"][$key]['formatter']:null)."'>".$key."</th>";endforeach;endif; ?></tr></thead></table>
 </div>
 <input id="<?php echo ($moduleName); ?>Action" type="hidden" value="Listview" />
@@ -37,18 +37,26 @@
         datagrid: '#yingshoufinance_index_datagrid',
 
         init: function () {
+            var that = this;
             //设置div的高度
-            $('#YingshouRevparMgrListviewDiv').height(IndexIndexModule.operationHeight);
+            $('#YingshouFinanceMgrListviewDiv').height(IndexIndexModule.operationHeight);
             this.quickKeyboardAction();
+            $('#yingshouFinanceListviewDateInput').datebox({
+                onSelect: function (date) {
+                    that.search();
+                }
+            });
         },
 
         //操作格式化
         operate: function (val, rowData, rowIndex) {
             var btn = [];
+            btn.push('<a href="javascript:void(0);" onclick="YingshouFinanceListviewModule.deleteRecord(' +
+                rowData.financeid + ',\'' + rowData.date + '\'' + ')">删除</a>');
             btn.push('<a href="javascript:void(0);" onclick="YingshouFinanceListviewModule.detailview(' +
-                rowData.financeid + ')">查看</a>');
-            btn.push('<a href="javascript:void(0);" onclick="YingshouFinanceListviewModule.singleExport(' +
-                rowData.financeid + ')">导出</a>');
+                rowData.financeid + ',\'' + rowData.date + '\'' + ')">查看</a>');
+            btn.push('<a href="javascript:void(0);" onclick="YingshouFinanceListviewModule.allExport(' +
+                rowData.financeid + ',\'' + rowData.date + '\',\'' + rowData.company + '\'' + ')">导出</a>');
             return btn.join(' | ');
         },
 
@@ -59,10 +67,42 @@
         },
 
         //查看记录
-        detailview: function (id) {
-            var url = "<?php echo U('YingshouFinance/detailview');?>";
-            url += url.indexOf('?') != -1 ? '&record=' + id : '?id=' + id;
+        detailview: function (id, date) {
+            var url = '__URL__/detailview/record/' + id + '/getDate/' + date;
             IndexIndexModule.updateOperateTab(url);
+        },
+
+        //查看全部分录
+        seeAllDetailview: function (id) {
+            var date = $('#yingshouFinanceListviewDateInput').datebox('getValue'); //
+            var url = '__URL__/detailview/record/' + id + '/getDate/' + date + "/company/全部";
+            IndexIndexModule.updateOperateTab(url);
+
+        },
+
+        //删除
+        deleteRecord: function (id, date) {
+            var that = this;
+            var url = '__URL__/delete';
+            var data = { 
+                'record' : id ,
+                'getDate' : date
+            };
+            $.messager.confirm('提示信息', '确定要删除吗？', function (result) {
+                if (!result) return false;
+                $.messager.progress({
+                    text: '处理中，请稍候...'
+                });
+                $.post(url, data, function (res) {
+                    $.messager.progress('close');
+                    if (!res.status) {
+                        $.app.method.tip('提示信息', res.info, 'error');
+                    } else {
+                        $.app.method.tip('提示信息', res.info, 'info');
+                        that.refresh();
+                    };
+                }, 'json');
+            });
         },
 
         //生成生成分录底稿的对话框
@@ -89,10 +129,13 @@
                             text: '处理中，请稍候...'
                         });
                         //获取日期
-                        var finance_date = $('#yingshouFinanceGeneralviewDateInput').datebox(
+                        var start_date = $('#yingshouFinanceGeneralviewStartDateInput').datebox(
                             'getValue'); //
+                        var end_date = $('#yingshouFinanceGeneralviewEndDateInput').datebox(
+                            'getValue');
                         var data = {
-                            'finance_date': finance_date
+                            'start_date': start_date,
+                            'end_date': end_date
                         };
                         $.ajax({
                             type: "POST",
@@ -101,10 +144,9 @@
                             dataType: "json",
                             success: function (res) {
                                 if (res.state == 0) { //0就是错误
+
                                     $.messager.progress('close');
-                                    var url =
-                                        '__URL__/resultview/module/finance/getdate/' +
-                                        finance_date;
+                                    var url = '__URL__/resultview/getdate/'+start_date;
                                     IndexIndexModule.updateOperateTab(url);
                                 } else { //state = 1就是success
                                     $.messager.progress('close');
@@ -132,8 +174,9 @@
         },
 
         //导出全部分公司的分录
-        allExport: function () {
-
+        allExport: function (id, date) {
+            url = '__URL__/outputExcel/record/' + id + '/getDate/' + date;
+            window.location.href = url;
         },
 
 
@@ -143,13 +186,13 @@
             $.each($(that).parent('form').serializeArray(), function () {
                 queryParams[this['name']] = this['value'];
             });
-            var cdate = $('#yingshouRevparMgrListviewDateInput').datebox('getValue');
-            var cap = $('#yingshouRevprMgrListviewApInput').val();
+            var cdate = $('#yingshouFinanceListviewDateInput').datebox('getValue');
 
-            queryParams['cdate'] = cdate;
-            queryParams['cap'] = cap;
+            queryParams['getDate'] = cdate;
             $(this.datagrid).datagrid({
-                pageNumber: 1
+                pageNumber: 1,
+                queryParams: queryParams,
+                url: "__URL__/listview"
             });
         },
 

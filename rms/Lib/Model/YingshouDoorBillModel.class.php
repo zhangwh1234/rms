@@ -12,12 +12,15 @@ class YingshouDoorBillModel extends CRMEntityModel{
 
     var $focusFields = 'name';
     var $listFields = array(
-        'code'=>array('width'=>20),
-        'name'=>array('width'=>20),
+        'diningsaleid'=>array('width'=>10),
+        'productstxt'=>array('width'=>40),
         'money'=>array('width'=>20),
-        'operator'=>array('width'=>20),
-        'date' => array('width'=>20),
-        'ap' => array('width' =>20));
+        'name'=>array('width'=>10),
+        'date' => array('width'=>10),
+        'ap' => array('width' =>10),
+        'saletime'=>array('width'=>10),
+        'state'=>array('width'=>8),
+        'company'=>array('width'=>10));
 
     var $otherListFields = array(
         'noupdate' => 'noupdate',
@@ -27,8 +30,7 @@ class YingshouDoorBillModel extends CRMEntityModel{
     //焦点字段
     var $fieldsFocus = 'name';
 
-    //定义查询的字段
-    var $searchFields = array('rms_telcustomer.telphone','rms_teladdress.address');
+    
 
 
     //定义新建，浏览，编辑数据的字段

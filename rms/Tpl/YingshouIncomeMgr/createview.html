@@ -1,33 +1,26 @@
 <div class="moduleMenu">
     <ul>
         <li>{$Think.lang.$navName}</li>
-        <li><a href="javascript:void(0);" class="moduleName"
-               onclick="IndexIndexModule.updateOperateTab('__URL__/listview');">&nbsp;&gt;{$Think.lang.$moduleName}</a>
+        <li><a href="javascript:void(0);" class="moduleName" onclick="IndexIndexModule.updateOperateTab('__URL__/listview');">&nbsp;&gt;{$Think.lang.$moduleName}</a>
         </li>
         <li>&nbsp;&gt;新建操作</li>
         <li style="width: 50px;">&nbsp;</li>
 
-        <li style="margin-left: 20px;"><a href="javascript:;" onclick="{$moduleName}CreateviewModule.insert();"><img
-                src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li style="margin-left: 20px;"><a href="javascript:;" onclick="{$moduleName}CreateviewModule.insert();"><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
         <li><a href="javascript:void(0);" onclick="{$moduleName}CreateviewModule.insert();">保存<span>^9</span></a></li>
 
-        <li style="margin-left: 10px;"><a href="javascript:;"
-                                          onclick="IndexIndexModule.updateOperateTab('__URL__/listview');"><img
-                src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
-        <li><a href="javascript:void(0);"
-               onclick="IndexIndexModule.updateOperateTab('__URL__/listview');">放弃新建,返回列表<span>^4</span></a></li>
+        <li style="margin-left: 10px;"><a href="javascript:;" onclick="IndexIndexModule.updateOperateTab('__URL__/listview');"><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a>
+        </li>
+        <li><a href="javascript:void(0);" onclick="IndexIndexModule.updateOperateTab('__URL__/listview');">放弃新建,返回列表<span>^4</span></a></li>
 
-        <li style="float: right;margin-right: 60px;"><a href="javascript:void(0);"
-                                                        onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
-        <li style="float:right;"><a href="javascript:;" onclick="IndexIndexModule.closeOperateTab();"><img
-                src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
+        <li style="float: right;margin-right: 60px;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="IndexIndexModule.closeOperateTab();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
     </ul>
 </div>
 
 <div class="moduleoperator">
-    <form id="YingshouIncomeMgrCreateviewForm" name="{$moduleName}CreateviewForm" method="post"
-          style="border:1px solid white;margin-top: 0px;">
-        <input id="{$moduleName}Action" type="hidden" value="Createview"/>
+    <form id="YingshouIncomeMgrCreateviewForm" name="{$moduleName}CreateviewForm" method="post" style="border:1px solid white;margin-top: 0px;">
+        <input id="{$moduleName}Action" type="hidden" value="Createview" />
         <table border="0" cellspacing="0" cellpadding="0" width="99%" align="center" bgcolor="">
             <tr>
                 <td>
@@ -44,8 +37,7 @@
             <tr>
                 <td valign="top" align="center">
                     <div id="basicTab" style="border: 1px solid #e0dddd; background: white;">
-                        <table border="0" cellspacing="0" cellpadding="0" width="98%" class="small"
-                               style="padding-top: 10px;">
+                        <table border="0" cellspacing="0" cellpadding="0" width="98%" class="small" style="padding-top: 10px;">
                             <volist name="blocks" id="data">
                                 <tr>
                                     <td colspan="4" class="tabBlockViewHeader">
@@ -57,17 +49,16 @@
                                 <volist key="label" id="subdata" name="data">
                                     <tr style="border: 1px solid black;background: #F0F0F0;">
                                         <volist key="mainlabel" id="maindata" name="subdata">
-                                            <include file='Module/editviewUI'/>
+                                            <include file='Module/editviewUI' />
                                         </volist>
                                     </tr>
                                 </volist>
                                 <tr style="line-height: 5px;">
-                                    <td>&nbsp;</td>
+                                    <td colspan="4" class="tabBlockViewHeader">&nbsp;还欠直接输入金额，预付输入金额为负，期初金额，客户欠为正，如果有客户预付款，期初为负</td>
                                 </tr>
                             </volist>
 
-                            <table border="0" cellspacing="0" cellpadding="0" width="98%"
-                                   style="margin-top:5px; border: 1px solid #e0dddd; ">
+                            <table border="0" cellspacing="0" cellpadding="0" width="98%" style="margin-top:5px; border: 1px solid #e0dddd; ">
                                 <tr>
                                     <td colspan="4" class="tabBlockViewHeader">
                                         客户支付
@@ -83,12 +74,10 @@
 
                             <tr>
                                 <td colspan="4" align="center">
-                                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-other-tick'"
-                                       onclick="{$moduleName}CreateviewModule.insert();"
-                                       style="width:100px;margin-right:40px;">确认</a>
-                                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-arrow-cross'"
-                                       onclick="IndexIndexModule.updateOperateTab('__URL__/listview');"
-                                       style="width:100px;">放弃</a>
+                                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-other-tick'" onclick="{$moduleName}CreateviewModule.insert();"
+                                        style="width:100px;margin-right:40px;">确认</a>
+                                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-arrow-cross'" onclick="IndexIndexModule.updateOperateTab('__URL__/listview');"
+                                        style="width:100px;">放弃</a>
                                 </td>
                             </tr>
                         </table>
@@ -103,7 +92,7 @@
 
 <script>
     var YingshouIncomeMgrCreateviewModule = {
-
+        checkSubmitFlg: false,
         //初始化
         init: function () {
             $('.moduleoperator').height(IndexIndexModule.operationHeight);
@@ -116,12 +105,19 @@
                 url: '__URL__/insert',
                 onSubmit: function () {
                     //进行表单验证
-                    if($('#code').val() == ''){
-                        alert('产品编码不能为空!');
+                    if ($('#code').val() == '') {
+                        alert('支付编码不能为空!');
+                        YingshouIncomeMgrCreateviewModule.checkSubmitFlg = false;
                         return false;
                     }
-                    if($('#name').val() == ''){
-                        alert('产品名称不能为空!');
+                    if ($('#name').val() == '') {
+                        alert('名称不能为空!');
+                        YingshouIncomeMgrCreateviewModule.checkSubmitFlg = false;
+                        return false;
+                    }
+                    if ($('#YingshouIncomeMgrCreateviewForm select[name=operation]').val().trim() == '') {
+                        alert('收入类型不能为空!');
+                        YingshouIncomeMgrCreateviewModule.checkSubmitFlg = false;
                         return false;
                     }
                     var isValid = $(this).form('validate');
@@ -169,7 +165,30 @@
     $(function () {
 
         YingshouIncomeMgrCreateviewModule.init();
-        $('#YingshouIncomeMgrCreateviewForm input[name=incomemgrcode]').focus();
+        //启动焦点
+        setTimeout(function () {
+            $('#YingshouIncomeMgrCreateviewForm input[name=paymentcode]').focus();
+            $('#date').datebox('setValue', '{$currentDate}');
+            //$('#date').datebox('readonly', true);
+            $('#ap').val('{$currentAp}');
+            //$('#date').datebox().datebox('calendar').calendar({
+            //    validator: function (date) {
+            //        var now = new Date();
+            //        var d1 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            //        var d2 = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 10);
+            //        return d1 <= date && date <= d2;
+            //    }
+            //});
+        }, 200);
+
+        $('#date').datebox().datebox('calendar').calendar({
+            validator: function (date) {
+                var now = new Date();
+                var d1 = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 10);
+                var d2 = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 10);
+                return d1 <= date && date <= d2;
+            }
+        });
+
     })
 </script>
-

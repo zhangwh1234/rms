@@ -70,7 +70,7 @@
 
         <div class="login-left">
             <h4>发票请求</h4>
-            <span>发票提取码</span> <input id="invoicenumber" maxlength="50" value="118141123676897700"
+            <span>发票提取码</span> <input id="invoicenumber" maxlength="50" value="{$invoicenumber}"
                                       type="number" placeholder="请输入发票提取码"> <span>验证码</span> <input
                 id="vCodeId" type="number" class="small" maxlength="4" placeholder="请输入验证码">
             <font><img id="vCode" alt="验证码" src="__URL__/verifyCode/"  onclick="fleshVerify();"></font> <a
@@ -95,6 +95,7 @@
                         alert('系统错误!');
                     },
                     success: function (data) {
+                    	  
                         //有错误，显示错误
                         if(data.error === 1){
                             $('#showerror').html(data.info);

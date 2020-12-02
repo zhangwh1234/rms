@@ -5,24 +5,25 @@
         <li>&nbsp;&gt;送餐订单交账</li>
         <li style="width: 50px;">&nbsp;</li>
 
-        <li style="margin-left: 15px;"><a href="javascript:;" id="showSubMenu" onMouseOver=""><img src=".__PUBLIC__/Images/allpay.png"
-                    alt="" title="" border="0"></a></li>
+        <li style="width: 20px;">&nbsp;</li>
+        <li style="margin-left: 15px;"><a href="javascript:;" id="showSubMenu" onMouseOver=""><img src=".__PUBLIC__/Images/batchpay.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);" class="moduleName" onclick="YingshouRoomServiceCheckOrderModule.batchPayment('{$sendname}','{$custdate}','{$custap}');">批量交账</a><span></span></li>
+        <li style="width: 20px;">&nbsp;</li>
+
+        <li style="margin-left: 15px;"><a href="javascript:;" id="showSubMenu" onMouseOver=""><img src=".__PUBLIC__/Images/allpay.png" alt="" title="" border="0"></a></li>
         <li><a href="javascript:void(0);" class="moduleName" onclick="YingshouRoomServiceCheckOrderModule.payable('{$sendname}','{$custdate}','{$custap}');">应交账款</a><span></span></li>
 
-        <li style="width: 50px;">&nbsp;</li>
-        <li style="margin-left: 15px;"><a href="javascript:;" id="showSubMenu" onMouseOver=""><img src=".__PUBLIC__/Images/batchpay.png"
-                    alt="" title="" border="0"></a></li>
-        <li><a href="javascript:void(0);" class="moduleName" onclick="YingshouRoomServiceCheckOrderModule.batchPayment('{$sendname}','{$custdate}','{$custap}');">批量交账</a><span></span></li>
-        <li style="width: 50px;">&nbsp;</li>
+        <li style="width: 20px;">&nbsp;</li>
+        <li style="margin-left: 15px;"><a href="javascript:;" id="showSubMenu" onMouseOver=""><img src=".__PUBLIC__/Images/batchpay.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);" class="moduleName" onclick="YingshouRoomServiceCheckOrderModule.detailPayment('{$sendname}','{$custdate}','{$custap}');">支付详情</a><span></span></li>
+        <li style="width: 20px;">&nbsp;</li>
 
-        <li style="margin-left: 15px;"><a href="javascript:;" id="showSubMenu" onMouseOver=""><img src=".__PUBLIC__/Images/newBtn.png"
-                    alt="" title="" border="0"></a></li>
+        <li style="margin-left: 15px;"><a href="javascript:;" id="showSubMenu" onMouseOver=""><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
         <li><a href="javascript:void(0);" class="moduleName" onclick="IndexIndexModule.updateOperateTab('__URL__/{$returnAction}/getDate/{$custdate}/getAp/{$custap}');">返回列表</a><span>^4</span></li>
 
 
         <li style="float: right;margin-right: 40px;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
-        <li style="float:right;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();"><img src=".__PUBLIC__/Images/closeBtn.png"
-                    alt="" title="" border="0"></a></li>
+        <li style="float:right;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
     </ul>
 </div>
 
@@ -45,8 +46,13 @@
         //操作格式化
         operate: function (val, rowData, rowIndex) {
             var btn = [];
-            if (rowData.needjiezhang == 1) {
-
+            if (rowData.isjiezhang == 1) {
+                btn.push('<label>已结账</label>');
+                btn.push(
+                    '<a href="javascript:void(0);" style="color:blue;" onclick="YingshouRoomServiceCheckOrderModule.detail(' +
+                    "'" + rowData.ordersn + "'" + ',' + rowIndex + ',\'' + rowData.custdate + '\',\'' +
+                    rowData.ap +
+                    '\')">查看</a>');
             } else {
                 if (rowData.totalmoney != rowData.jiezhangmoney) {
                     btn.push(
@@ -62,7 +68,6 @@
                         '\')">结账</a>');
                 }
             }
-
             return btn.join(' | ');
         },
 
@@ -73,16 +78,29 @@
             IndexIndexModule.updateOperateTab(url);
         },
 
+        //查看结账结果
+        detail: function (id, rowIndex, date, ap) {
+            var url = '__URL__/payment_detailview/returnAction/{$returnAction}/record/' + id +
+                '/rowIndex/' + rowIndex + '/pagetype/listview/room_date/' + date + '/room_ap/' + ap;
+            IndexIndexModule.updateOperateTab(url);
+        },
+
         //批量编辑支付功能
         batchPayment: function (sendname, date, ap) {
             var url = '__URL__/batchPaymentEditview/sendname/' + sendname + '/room_date/' + date + '/room_ap/' + ap;
             IndexIndexModule.updateOperateTab(url);
         },
 
+        //显示送餐员的结账详情
+        detailPayment: function (sendname, date, ap) {
+            var url = '__URL__/paymentdetailview/sendname/' + sendname + '/room_date/' + date + '/room_ap/' + ap;
+            IndexIndexModule.updateOperateTab(url);
+        },
+
         //应交账款
         payable: function (sendname, date, ap) {
             url = '__URL__/payable/sendname/' + sendname + '/room_date/' + date + '/room_ap/' + ap;
-      
+
             $('#globel-dialog-div').dialog({
                 title: '显示应交账款',
                 iconCls: 'icons-application-application_add',
@@ -158,7 +176,7 @@
             onExpandRow: function (index, row) {
                 var ddv = $('#yingshouroomservice_checkorder_datagrid').datagrid('getRowDetail',
                     index).find('table.ddv');
-                url = "__URL__/checkOrderGetPayment/ordersn/" + row.ordersn +
+                url = "__URL__/checkOrderGetFinance/ordersn/" + row.ordersn +
                     "/room_date/" + row.custdate + "/room_ap/" + row.ap;
                 ddv.datagrid({
                     url: url,

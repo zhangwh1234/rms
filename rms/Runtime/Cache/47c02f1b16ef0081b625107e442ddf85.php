@@ -1076,6 +1076,28 @@
                         that.setRefresh();
                         return false;
                     }
+                },{
+                    text: '未派单查询',
+                    iconCls: 'icons-other-timeline_marker',
+                    handler: function () {
+                        $(that.dialog).find('form').eq(0).form('submit', {
+                            onSubmit: function () {
+                                var isValid = $(this).form('validate');
+                                if (!isValid) return false;
+
+                                var formArray = $(this).serializeArray();
+                                var url = '__URL__/searchviewSendnameNoPaidan/';
+                                $.each(formArray, function (key, value) {
+                                    url = url + value.name + '/' + value.value + '/';
+                                });
+                                url = encodeURI(url);
+                                IndexIndexModule.openOperateTab(url, '配送送餐员查询');
+                                $(that.dialog).dialog('close');
+                                that.setRefresh();
+                                return false;
+                            }
+                        });
+                    }
                 }]
             });
         },
@@ -1289,8 +1311,7 @@
         /**
          * 打印电子票二维码
          **/
-        printEticketQRcode: function(orderformid){
-            console.log("__URL__/getInvoiceInfo/orderformid/" + orderformid);
+        printEticketQRcode: function(orderformid){    
             //电子发票的处理  *********************
             $.ajax({
                 type: "GET",

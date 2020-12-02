@@ -22,14 +22,14 @@
 <div id="orderhistory-searchview-datagrid-toolbar" style="padding:5px;height:auto">
     <form>
         查询选项
-        <select name="searchOption" id="searchOption" class="txtBox" style="width:100px">
+        <select name="searchOption" id="searchOption" class="txtBox" style="width:60px">
             <?php if($searchOptionValue): ?><option value="<?php echo ($searchOptionValue); ?>"><?php echo (L("$searchOptionValue")); ?></option>
                 <?php else: ?>
                 <option>全部</option><?php endif; ?>
             <?php if(is_array($searchOption)): foreach($searchOption as $key=>$value): ?><option value="<?php echo ($value); ?>"><?php echo (L("$value")); ?></option><?php endforeach; endif; ?>
         </select>
         查询内容
-        <input id="searchText" name="searchText" type="text" style="width:240px" value="<?php echo ($searchTextValue); ?>">
+        <input id="searchText" name="searchText" type="text" style="width:140px" value="<?php echo ($searchTextValue); ?>">
         开始日期:
         <input id="startDate" name="startDate" type="text" class="easyui-datebox" required="required"
                value="<?php echo ($startDate); ?>" style="width:100px">
@@ -37,11 +37,17 @@
         <input id="endDate" name="endDate" type="text" class="easyui-datebox" required="required" value="<?php echo ($endDate); ?>"
                style="width:100px">
         午别：
-        <select name="searchAp" id="searchAp" class="txtBox" style="width:150px">
+        <select name="searchAp" id="searchAp" class="txtBox" style="width:50px">
             <?php if($searchAp): ?><option value="<?php echo ($searchAp); ?>"><?php echo ($searchAp); ?></option><?php endif; ?>
             <option value="全天">全天</option>
             <option value="上午">上午</option>
             <option value="下午">下午</option>
+        </select>
+        票
+        <select name="searchInvoice" id="searchInvoice" class="txtBox" style="width:50px">            
+            <option value="全部">全部</option>
+            <option value="未开">未开</option>
+            <option value="已开">已开</option>
         </select>
         <a href="javascript:;" onclick="OrderHistorySearchviewModule.search(this);" class="easyui-linkbutton"
            iconCls="icons-table-table">查询</a>

@@ -60,13 +60,12 @@
                 alert("非日期");
                 return;
             }
-            console.info(d);
+           
             // 当前日期的毫秒数 + 天数 * 一天的毫秒数
             var n = d.getTime() + 1 * 24 * 60 * 60 * 1000  ;
             var result = new Date(n);
             // 格式化日期
-            var month = result.getMonth() + 1;
-            console.info(month);
+            
             if (month < 10) {
                 month = '0' + month;
             }

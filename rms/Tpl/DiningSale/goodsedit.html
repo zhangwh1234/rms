@@ -46,8 +46,8 @@
                     AUTOCOMPLETE="off" style="font-size:16px;" />
 
                 <img id="DiningSaleCreateviewsearchIcon1" title="产品选择" src="./__PUBLIC__/Images/products.gif" style="cursor: pointer;"
-                    align="absmiddle" onclick="DiningSaleCreateviewGoodsModule.productsPickList('__URL__/popupProductsview/module/Products/row/{$key+1}');" /><a
-                    href="javascript:DiningSaleCreateviewGoodsModule.productsPickList('__URL__/popupProductsview/module/Products/row/{$key+1}')">选择</a>
+                    align="absmiddle" onclick="DiningSaleCreateviewGoodsModule.productsPickList('__URL__/popupProductsview/row/{$key+1}');" /><a
+                    href="javascript:DiningSaleCreateviewGoodsModule.productsPickList('__URL__/popupProductsview/row/{$key+1}')">选择</a>
             </td>
             <td width="15%" align="center"> {//产品名称}
                 <input id="DiningSaleCreateviewproductsName_{$key+1}" name="productsName_{$key+1}" type="text" size="20"
@@ -90,6 +90,7 @@
         <td style="font-size: 16px;">收银类型</td>
         <td style="font-size: 14px;">
             <select style="width:100px;" name="diningpaymenttypeone" id="diningpaymenttypeone">
+                <option></option>
                 <foreach name="paymentmgr" item="vo">
                     <option>{$vo.name}</option>
                 </foreach>
@@ -102,7 +103,7 @@
             <input id="diningpaymentmoneyone" name="diningpaymentmoneyone" style="font-size: 16px;" />
         </td>
     </tr>
-    <tr>
+    <tr style="display:none;">
         <td style="font-size: 16px;">收银类型</td>
         <td style="font-size: 14px;">
             <select style="width:100px;" name="diningpaymenttypetwo" id="diningpaymenttypetwo">
@@ -240,11 +241,11 @@
         /* 弹出窗口，选择产品 */
         //moduleName:产品名称  rowNum:行号 moduleName,rowNum
         productsPickList: function (url) {
-            url = url + '/returnModule/' + 'DiningSaleCreateview';
+            url = url ;
             $('#globel-dialog-div').dialog({
                 title: '选择产品',
                 iconCls: 'icons-application-application_add',
-                width: 900,
+                width: 600,
                 height: 540,
                 cache: false,
                 href: url,

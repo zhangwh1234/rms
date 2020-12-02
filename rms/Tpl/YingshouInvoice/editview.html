@@ -1,0 +1,160 @@
+<div class="moduleMenu">
+    <ul>
+        <li>{$Think.lang.$navName}</li>
+        <li><a href="javascript:void(0);" class="moduleName" onclick="IndexIndexModule.updateOperateTab('__URL__/listview');">&nbsp;&gt;{$Think.lang.$moduleName}</a></li>
+        <li>&nbsp;&gt;新建操作</li>
+        <li style="width: 50px;">&nbsp;</li>
+        <li style="margin-left: 10px;"><a href="javascript:;" onclick="{$moduleName}EditviewModule.update();"><img
+                src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);" onclick="{$moduleName}EditviewModule.update();">保存订单<span>^9</span></a></li>
+        <li style="width: 50px;">&nbsp;</li>
+        <li style="margin-left: 1px;"><a href="javascript:void(0);" onclick="IndexIndexModule.updateOperateTab('__URL__/listview')" ><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);" class="moduleName" onclick="IndexIndexModule.updateOperateTab('__URL__/listview');">返回列表 ^4</a></li>
+
+        <li style="float: right;margin-right: 40px;"><a href="javascript:void(0);" class="moduleName" onclick="IndexIndexModule.closeOperateTab('__URL__/listview');">关闭</a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="IndexIndexModule.closeOperateTab();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
+    </ul>
+</div>
+
+<div class="moduleoperator" style="border: 1px solid white;">
+    <input id="{$moduleName}Action" type="hidden" value="Detailview" />
+    <input type="hidden" id="{$moduleName}record" value="{$record}">
+    <input type="hidden" id="{$moduleName}returnAction" value="{$returnAction}">
+    <table border="0" cellspacing="0" cellpadding="0" width="99%" align="0" bgcolor="">
+        <tr>
+            <td>
+                <table border=0 cellspacing=0 cellpadding=3 width=100% class="small">
+                    <tr>
+                        <td class="dvtTabCache" style="width:20px" nowrap>&nbsp;</td>
+                        <td class="dvtSelectedCell" align="center" nowrap> 查看 </td>
+                        <td class="dvtTabCache" style="width:80%">&nbsp;</td>
+                    <tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td valign=top align="center" >
+                <div id="basicTab" style="border: 1px solid #e0dddd; background: white;">
+                    <table border=0 cellspacing=0 cellpadding=0 width="98%" class="small" style="padding-top: 10px;">
+
+                        <volist name="blocks"  id="data" >
+                            <tr>
+                                <td colspan=4 class="tabBlockViewHeader">
+                                    {$Think.lang.$key}
+                                </td>
+                            </tr>
+
+                            <!-- Here we should include the uitype handlings-->
+                            <volist key="label" id="subdata" name="data">
+                                <tr style="height:30px;border: 1px solid black;background: #F0F0F0;">
+                                    <volist key="mainlabel" id="maindata" name="subdata">
+                                        <include file='Module/editviewUI' />
+                                    </volist>
+                                </tr>
+                            </volist>
+                            <tr style="line-height: 2px;"><td>&nbsp;</td></tr>
+                        </volist>
+
+                        <table border="0" cellspacing="0" cellpadding="0" width="100%"
+                               style="margin-top:5px; border: 1px solid #e0dddd; ">
+                            <tr>
+                                <td colspan="4" class="tabBlockViewHeader">
+                                    支付输入
+                                </td>
+                            </tr>
+
+                            <tr style="background: #FFFFFF;">
+                                <td colspan="4">
+                                    <include file='accountseditviewUI'/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <tr style="line-height: 5px;">
+                            <td colspan="4" align="center">
+                                <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-arrow-cross'"
+                                   onclick="IndexIndexModule.updateOperateTab('__URL__/listview');" style="width:100px;">返回列表</a>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+
+
+<script>
+    var YingshouInvoiceEditviewModule = {
+
+        //初始化
+        init: function () {
+            $('.moduleoperator').height(IndexIndexModule.operationHeight);
+            this.quickKeyboardAction();
+        },
+
+        //保存记录
+        update: function () {
+            $('#NoticeEditviewForm').form('submit', {
+                url: '__URL__/update',
+                onSubmit: function () {
+                    //进行表单验证
+                    if($('#code').val() == ''){
+                        alert('产品编码不能为空!');
+                        return false;
+                    }
+                    if($('#name').val() == ''){
+                        alert('产品名称不能为空!');
+                        return false;
+                    }
+                    var isValid = $(this).form('validate');
+                    if (!isValid) {
+                        alert('error');
+                        return false;
+                    }
+                },
+                success : function(res){
+                    var data = eval('(' + res + ')');
+                    if(!data.status){
+                        $.app.method.tip('提示信息', data.info, 'error');
+                    }else{
+                        $.app.method.tip('提示信息', data.info, 'info');
+                        IndexIndexModule.updateOperateTab(data.url);
+                    }
+                }
+            });
+        },
+
+        //新建的快捷操作
+        quickKeyboardAction: function () {
+            // ctrl+9快捷键,新建公告
+            Mousetrap.bind(['ctrl+9','ctrl+f9','f9'], function(e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '公告' && ($('#NoticeAction').val() == 'Editview')) {
+                    NoticeEditviewModule.update();
+                };
+            });
+
+            // ctrl+4快捷键,放弃
+            Mousetrap.bind(['ctrl+4', 'ctrl+f4', 'f4'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '公告' && ($('#NoticeAction').val() == 'Editview')) {
+                    IndexIndexModule.updateOperateTab('__URL__/listview');
+                };
+            });
+        }
+    }
+
+    $(function(){
+        $('#YingshouAccountsEditviewForm input[name=content]').focus();
+        YingshouInvoiceEditviewModule.init();
+
+    })
+</script>
+

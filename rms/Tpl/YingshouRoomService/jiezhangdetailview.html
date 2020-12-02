@@ -1,0 +1,54 @@
+<style>
+    .jiezhangTableHeader {
+        background-color: rgb(120, 133, 243);
+        font-size: 12px;
+    }
+
+    #accountsTable td {
+        height: 25px;
+    }
+
+    #accountsTable span {
+        font-size: 16px;
+    }
+
+    #accountsTable input {
+        font-size: 16px;
+    }
+</style>
+
+<table id="YingshouRoomServiceAccountsTable" style="BORDER-COLLAPSE: collapse" borderColor="#CCCCCC" cellSpacing="0" width="100%" align="center" border="1">
+    <tr class="jiezhangTableHeader">
+        <td width="5%" align="center" class="accountsTableHeaderLeftTd">序号</td>
+        <td width="10%" align="center" class="accountsTableHeaderLeftTd">编号</td>
+        <td width="30%" align="center" class="accountsTableHeaderLeftTd">名称</td>
+        <td width="15%" align="center" class="accountsTableHeaderLeftTd">金额</td>
+        <td width="25%" align="center" class="accountsTableHeaderLeftTd">备注</td>
+        <td width="10%" align="center" class="accountsTableHeaderRightTd">操作</td>
+    </tr>
+   
+    <foreach name="orderfinance" item="vo">
+        <assign name="keytwo" value="$key+2" />
+        <tr>
+            <td width="5%" align="center">{$key+1}</td>
+            <td width="10%" align="center"> {//产品代码}
+                <input id="YingshouRoomServiceAccountsCode_{$key+1}" name="accountsCode_{$key+1}" type="text" size="6" tabindex="1" value="{$vo.code}"
+                   AUTOCOMPLETE="off" style="font-size:16px;" readonly />
+                
+            </td>
+            <td width="30%" align="center"> {//产品名称}
+                <input id="YingshouRoomServiceAccountsName_{$key+1}" name="accountsName_{$key+1}" type="text" size="30" readonly="readonly" value="{$vo.name}" style="font-size:16px;" />
+            </td>
+            <td width="15%" align="center"> {//金额}
+                <input id="YingshouRoomServiceAccountsMoney_{$key+1}" name="accountsMoney_{$key+1}" type="text" size="10"
+                     tabindex="1" value="{$vo.money}" style="font-size:16px;" readonly />
+            </td>
+            <td width="25%" align="center"> {//备注}
+                <input id="YingshouRoomServiceAccountsNote_{$key+1}" name="accountsNote_{$key+1}" type="text" size="30" value="{$vo.note}" 
+                style="font-size:16px;" readonly />
+            </td>
+            
+        </tr>
+    </foreach>
+    
+</table>

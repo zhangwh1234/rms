@@ -1,0 +1,104 @@
+<?php if (!defined('THINK_PATH')) exit();?><div class="moduleMenu">
+    <ul>
+        <li><?php echo (L("$navName")); ?></li>
+        <li><a href="javascript:void(0);" class="moduleName" onclick="IndexIndexModule.updateOperateTab('__URL__/listview');">&nbsp;&gt;<?php echo (L("$moduleName")); ?></a></li>
+        <li>&nbsp;&gt;查看操作</li>
+        <li style="width: 50px;">&nbsp;</li>
+        
+        <li style="margin-left: 10px;"><a href="javascript:void(0);" onclick="IndexIndexModule.updateOperateTab('__URL__/createview');"><img src=".__PUBLIC__/Images/newBtn.gif" alt="" title="" border="0"></a></li>
+        <li><a id="create<?php echo ($moduelName); ?>" href="javascript:void(0);"  onclick="updateTab('__URL__/createview');">新建<span>^1</span></a></li>
+        
+        <li style="margin-left: 10px;"><a href="javascript:;" onclick="IndexIndexModule.updateOperateTab('__URL__/listview');" ><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);"  onclick="IndexIndexModule.updateOperateTab('__URL__/listview');">返回列表<span>^4</span></a></li>
+        
+
+        <li style="float: right;margin-right: 60px;"><a href="javascript:void(0);"   onclick="closeTab();" >关闭</a></li>
+        <li style="float:right;"><a href="javascript:;" onclick="closeTab();"><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <div style="clear:both;"></div>
+    </ul>
+</div>
+<div class="moduleoperator" id="detailview<?php echo ($moduleName); ?>" style="border: 1px solid white;">
+    <input id="NoticeAction" type="hidden" value="Detailview"/>
+	<input type="hidden" id="<?php echo ($moduleName); ?>record" value="<?php echo ($record); ?>">
+    <input type="hidden" id="<?php echo ($moduleName); ?>returnAction" value="<?php echo ($returnAction); ?>">
+    <table border="0" cellspacing="0" cellpadding="0" width="99%" align="0" bgcolor="">
+        <tr>
+            <td>
+                <table border="0" cellspacing="0" cellpadding="3" width="100%" class="small">
+                    <tr>
+                    <td class="dvtTabCache" style="width:20px" nowrap>&nbsp;</td>
+                    <td class="dvtSelectedCell" align="center" nowrap> 查看 </td>
+                    <td class="dvtTabCache" style="width:80%">&nbsp;</td>
+                    <tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td valign=top align="center" >
+                <div id="basicTab" style="border: 1px solid #e0dddd; background: white;">
+                    <table border=0 cellspacing=0 cellpadding=0 width="98%" class="small" style="margin:10px;">
+ 
+                            <tr>
+                                <td colspan=4 class="tabBlockViewHeader">
+                                   公告基本信息
+                                </td>
+                            </tr>
+
+                                <tr style="height:30px;border: 1px solid black;background: #F0F0F0;">
+ 
+                                        <td width="20%" class="dvtCellLabel" align=right>
+                                            公告内容
+                                        </td>
+                                        <td width="40%" align="left" class="dvtCellInfo" colspan="2">
+                                            <textarea class="detailedViewTextBox"  readonly="readonly"  rows="10" style="width:100%;"><?php echo ($info["content"]); ?></textarea>
+                                        </td>
+                                        <td></td>
+                                </tr>
+                            <tr style="line-height: 2px;"><td>&nbsp;</td></tr>                       
+                    </table>
+
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+
+
+<script>
+    var NoticeDetailviewModule = {
+
+        //初始化
+        init: function () {
+            $('.moduleoperator').height(IndexIndexModule.operationHeight);
+            this.quickKeyboardAction();
+        },
+
+        //新建的快捷操作
+        quickKeyboardAction: function () {
+            // ctrl+1快捷键,新建公告
+            Mousetrap.bind(['ctrl+1','ctrl+f1','f1'], function(e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '公告' && ($('#NoticeAction').val() == 'Detailview')) {
+                    IndexIndexModule.updateOperateTab('__URL__/createview');
+                };
+            });
+
+            // ctrl+4快捷键,放弃
+            Mousetrap.bind(['ctrl+4', 'ctrl+f4', 'f4'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '公告' && ($('#NoticeAction').val() == 'Detailview')) {
+                    IndexIndexModule.updateOperateTab('__URL__/listview');
+                };
+            });
+        }
+    }
+
+    $(function () {
+        NoticeDetailviewModule.init();
+    })
+</script>

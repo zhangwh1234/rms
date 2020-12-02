@@ -1150,6 +1150,7 @@ class BookOrderAction extends ModuleAction
             $data['gmf_yhzh'] = $orderValue['gmf_yhzh'];
             $data['shippingname'] = $orderValue['shippingname'];
             $data['shippingmoney'] = $orderValue['shippingmoney'];
+            $data['origin'] = '电话';
             $data['domain'] = $this->getDomain();
             $data['lastdatetime'] = date('Y-m-d H:i:s');
             $orderformModel->create();

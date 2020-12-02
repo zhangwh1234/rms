@@ -36,7 +36,7 @@
                 <div class="" style="width:69%;height: 40px;line-height: 40px;text-align: center;
                     border:0px solid black;position: fixed;bottom: 25px;margin: 0px; "
                     onclick="diningsaleCreateviewModule.insert();">
-                    <a class="easyui-linkbutton" style="width:100%;height: 40px;">
+                    <a class="easyui-linkbutton" style="width:100%;height: 40px;" id="output_order_diningsale">
                         <label style="font-size: 20px;">出单</label>
                     </a>
                 </div>
@@ -129,32 +129,41 @@
                 return false;
             }
             var that = this;
+            $('#output_order_diningsale').attr("disabled", true);
             $('#DiningSaleCreateviewForm').form('submit', {
                 url: '__URL__/insert',
                 type: 'post',
                 onSubmit: function () {
                     //对金额进行校验
-                    productsMoney = $('#DiningSaleCreateviewproductsTotalMoney').val(); //产品金额
+                    var productsMoney = $('#DiningSaleCreateviewproductsTotalMoney').val(); //产品金额
                     if (!productsMoney) {
                         productsMoney = 0;
                     } else {
                         productsMoney = parseFloat(productsMoney);
                     }
-                    paymentOneMoney = $('#diningpaymentmoneyone').val(); //活动金额
+                    var paymentOneMoney = $('#diningpaymentmoneyone').val(); //活动金额
                     if (!paymentOneMoney) {
                         paymentOneMoney = 0;
                     } else {
                         paymentOneMoney = parseFloat(paymentOneMoney);
                     }
-                    paymentTwoMoney = $("#diningpaymentmoneytwo").val(); //客户支付金额
+                    var paymentTwoMoney = $("#diningpaymentmoneytwo").val(); //客户支付金额
                     if (!paymentTwoMoney) {
                         paymentTwoMoney = 0;
                     } else {
                         paymentTwoMoney = parseFloat(paymentTwoMoney);
                     }
-                    checkactivitypaymentMoney = paymentOneMoney + paymentTwoMoney;
+                    var checkactivitypaymentMoney = paymentOneMoney + paymentTwoMoney;
                     if (productsMoney !== checkactivitypaymentMoney) {
-                        alert('输入金额和支付金额不等于堂扣金额，请检查！');
+                        alert('输入金额和支付金额不等于堂口金额，请检查！');
+                        $('#output_order_diningsale').attr("disabled", false);
+                        return false;
+                    }
+                    //支付类型判断
+                    var diningpaymenttypeone  = $('#diningpaymenttypeone').val();
+                    if(!diningpaymenttypeone){
+                        alert('没有选择支付类型，请检查！');
+                        $('#output_order_diningsale').attr("disabled", false);
                         return false;
                     }
                 },
@@ -162,12 +171,13 @@
 
                     var res = eval('(' + res + ')');
                     if (!res.status) {
+                        $('#output_order_diningsale').attr("disabled", false);
                         $.app.method.tip('提示信息', data.info, 'error');
                     } else {
                         that.saleList();
                         //清除内容
                         that.clearProductsTable();
-
+                        $('#output_order_diningsale').attr("disabled", false);
                         //打印
                         that.print_80(res.data);
                     }

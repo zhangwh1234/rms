@@ -345,6 +345,18 @@ class DiningSaleAction extends ModuleAction
     /* 弹出选择窗口 */
     public function popupProductsview()
     {
+        $company = $_REQUEST['company'];
+        if (empty($company)) {
+            $company = '';
+        }
+        $this->assign('company', $company);
+
+        $row = $_REQUEST['row'];
+        $this->assign('row', $row);
+        $this->display('DiningSale/selectproductsview');
+
+        return;
+
         if (IS_POST) {
             // 取得模块的名称
             $moduleName = $this->getActionName();
@@ -486,14 +498,379 @@ class DiningSaleAction extends ModuleAction
     }
 
     /**
+     * 获取产品
+     */
+    public function getProducts()
+    {
+        $company = $_REQUEST['company'];
+        if (empty($company)) {
+            $company = '';
+        }
+        $domain = $this->getDomain();
+        //如果有缓存，就直接返回缓存
+        $products_cache = F('diningsaleProducts' . $company . $domain);
+        if (!empty($products_cache)) {
+            $this->ajaxReturn($products_cache, 'JSON');
+        }
+
+        $prodcutsModel = D('products');
+
+        $where = array();
+        $where['domain'] = $domain;
+        $products = $prodcutsModel->where($where)->select();
+
+        import('@.Extend.ChinesePinyin');
+        $Pinyin = new ChinesePinyin();
+
+        //定义返回全部products，以便点击name的搜索code
+        $products_all = array();
+        $companyArr = array();
+        foreach ($products as $value) {
+            //赋值
+            $products_all[$value['name']] = array(
+                'code' => $value['code'],
+                'price' => $value['price'],
+            );
+            //$py = $this->getFirstCharter(trim($value['name']));
+            $py = $Pinyin->TransformUcwords(trim($value['name']));
+            if (empty($py)) {
+                $py = $this->getFirstCharter(trim($value['name']));
+            }
+            $py = $py[0];
+            if ($py == 'A') {
+                $A[] = trim($value['name']);
+            }
+
+            if ($py == 'B') {
+                $B[] = trim($value['name']);
+            }
+
+            if ($py == 'C') {
+                $C[] = trim($value['name']);
+            }
+
+            if ($py == 'D') {
+                $D[] = trim($value['name']);
+            }
+
+            if ($py == 'E') {
+                $E[] = trim($value['name']);
+            }
+
+            if ($py == 'F') {
+                $F[] = trim($value['name']);
+            }
+
+            if ($py == 'G') {
+                $G[] = trim($value['name']);
+            }
+
+            if ($py == 'H') {
+                $H[] = trim($value['name']);
+            }
+
+            if ($py == 'I') {
+                $I[] = trim($value['name']);
+            }
+
+            if ($py == 'J') {
+                $J[] = trim($value['name']);
+            }
+
+            if ($py == 'K') {
+                $K[] = trim($value['name']);
+            }
+
+            if ($py == 'L') {
+                $L[] = trim($value['name']);
+            }
+
+            if ($py == 'M') {
+                $M[] = trim($value['name']);
+            }
+
+            if ($py == 'N') {
+                $N[] = trim($value['name']);
+            }
+
+            if ($py == 'O') {
+                $O[] = trim($value['name']);
+            }
+
+            if ($py == 'P') {
+                $P[] = trim($value['name']);
+            }
+
+            if ($py == 'Q') {
+                $Q[] = trim($value['name']);
+            }
+
+            if ($py == 'R') {
+                $R[] = trim($value['name']);
+            }
+
+            if ($py == 'S') {
+                $S[] = trim($value['name']);
+            }
+
+            if ($py == 'T') {
+                $T[] = trim($value['name']);
+            }
+
+            if ($py == 'U') {
+                $U[] = trim($value['name']);
+            }
+
+            if ($py == 'V') {
+                $V[] = trim($value['name']);
+            }
+
+            if ($py == 'W') {
+                $W[] = trim($value['name']);
+            }
+
+            if ($py == 'X') {
+                $X[] = trim($value['name']);
+            }
+
+            if ($py == 'Y') {
+                $Y[] = trim($value['name']);
+            }
+
+            if ($py == 'Z') {
+                $Z[] = trim($value['name']);
+            }
+
+        }
+        if (!empty($A)) {
+            $A_arr = array(
+                'key' => 'A',
+                'data' => $A,
+            );
+            $companyArr[] = $A_arr;
+        }
+
+        if (!empty($B)) {
+            $B_arr = array(
+                'key' => 'B',
+                'data' => $B,
+            );
+            $companyArr[] = $B_arr;
+        }
+
+        if (!empty($C)) {
+            $C_arr = array(
+                'key' => 'C',
+                'data' => $C,
+            );
+            $companyArr[] = $C_arr;
+        }
+
+        if (!empty($D)) {
+            $D_arr = array(
+                'key' => 'D',
+                'data' => $D,
+            );
+            $companyArr[] = $D_arr;
+        }
+
+        if (!empty($E)) {
+            $E_arr = array(
+                'key' => 'E',
+                'data' => $E,
+            );
+            $companyArr[] = $E_arr;
+        }
+
+        if (!empty($F)) {
+            $F_arr = array(
+                'key' => 'F',
+                'data' => $F,
+            );
+            $companyArr[] = $F_arr;
+        }
+
+        if (!empty($G)) {
+            $G_arr = array(
+                'key' => 'G',
+                'data' => $G,
+            );
+            $companyArr[] = $G_arr;
+        }
+
+        if (!empty($H)) {
+            $H_arr = array(
+                'key' => 'H',
+                'data' => $H,
+            );
+            $companyArr[] = $H_arr;
+        }
+
+        if (!empty($I)) {
+            $I_arr = array(
+                'key' => 'I',
+                'data' => $I,
+            );
+            $companyArr[] = $I_arr;
+        }
+
+        if (!empty($J)) {
+            $J_arr = array(
+                'key' => 'J',
+                'data' => $J,
+            );
+            $companyArr[] = $J_arr;
+        }
+
+        if (!empty($K)) {
+            $K_arr = array(
+                'key' => 'K',
+                'data' => $K,
+            );
+            $companyArr[] = $K_arr;
+        }
+
+        if (!empty($L)) {
+            $L_arr = array(
+                'key' => 'L',
+                'data' => $L,
+            );
+            $companyArr[] = $L_arr;
+        }
+
+        if (!empty($M)) {
+            $M_arr = array(
+                'key' => 'M',
+                'data' => $M,
+            );
+            $companyArr[] = $M_arr;
+        }
+
+        if (!empty($N)) {
+            $N_arr = array(
+                'key' => 'N',
+                'data' => $N,
+            );
+            $companyArr[] = $N_arr;
+        }
+
+        if (!empty($O)) {
+            $O_arr = array(
+                'key' => 'O',
+                'data' => $O,
+            );
+            $companyArr[] = $O_arr;
+        }
+
+        if (!empty($P)) {
+            $P_arr = array(
+                'key' => 'P',
+                'data' => $P,
+            );
+            $companyArr[] = $P_arr;
+        }
+
+        if (!empty($Q)) {
+            $Q_arr = array(
+                'key' => 'Q',
+                'data' => $Q,
+            );
+            $companyArr[] = $Q_arr;
+        }
+
+        if (!empty($R)) {
+            $R_arr = array(
+                'key' => 'R',
+                'data' => $R,
+            );
+            $companyArr[] = $R_arr;
+        }
+
+        if (!empty($S)) {
+            $S_arr = array(
+                'key' => 'S',
+                'data' => $S,
+            );
+            $companyArr[] = $S_arr;
+        }
+
+        if (!empty($T)) {
+            $T_arr = array(
+                'key' => 'T',
+                'data' => $T,
+            );
+            $companyArr[] = $T_arr;
+        }
+
+        if (!empty($U)) {
+            $U_arr = array(
+                'key' => 'U',
+                'data' => $U,
+            );
+            $companyArr[] = $U_arr;
+        }
+
+        if (!empty($V)) {
+            $V_arr = array(
+                'key' => 'V',
+                'data' => $V,
+            );
+            $companyArr[] = $V_arr;
+        }
+
+        if (!empty($W)) {
+            $W_arr = array(
+                'key' => 'W',
+                'data' => $W,
+            );
+            $companyArr[] = $W_arr;
+        }
+
+        if (!empty($X)) {
+            $X_arr = array(
+                'key' => 'X',
+                'data' => $X,
+            );
+            $companyArr[] = $X_arr;
+        }
+
+        if (!empty($Y)) {
+            $Y_arr = array(
+                'key' => 'Y',
+                'data' => $Y,
+            );
+            $companyArr[] = $Y_arr;
+        }
+
+        if (!empty($Z)) {
+            $Z_arr = array(
+                'key' => 'Z',
+                'data' => $Z,
+            );
+            $companyArr[] = $Z_arr;
+        }
+
+        $returnArr['city'] = $companyArr;
+        $returnArr['products'] = $products_all;
+        F('diningsaleProducts' . $company . $domain ,$returnArr);
+
+        $this->ajaxReturn($returnArr, 'JSON');
+
+    }
+
+    /**
      * 获取客户收银类型
      */
     public function getPaymentMgr()
     {
         $paymentmgrModel = D('PaymentMgr');
         $where = array();
+        $where['company'] = '总部';
+        $where['is_dining'] = 1;
         $where['domain'] = $this->getDomain();
-        $paymentmgrResult = $paymentmgrModel->field('name')->where($where)->select();
+        $paymentmgrResult = $paymentmgrModel->field('name')->where($where)->order('code asc')->select();
         return $paymentmgrResult;
+
     }
+
 }

@@ -15,36 +15,163 @@
 </style>
 <div id="container"></div>
 <script type="text/javascript">
+
     //建立地图模型
-    var map = new BMap.Map("container");
-
-    map.addControl(new BMap.MapTypeControl());   //添加地图类型控件
-    map.setCurrentCity("{$city}");          // 设置地图显示的城市 此项是必须设置的
-    map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
-
-
-    var point = new BMap.Point({$longitude}, {$latitude});
-    map.centerAndZoom(point, 15);
-    var marker = new BMap.Marker(point);  // 创建标注
-    map.addOverlay(marker);               // 将标注添加到地图中
-    marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
-
-    var orderlabel = new BMap.Label("{$address}", {offset: new BMap.Size(18, 10)});
-    marker.setLabel(orderlabel);
-
-    //初始化MARKER，并设置坐标
-    var sendpoint = new BMap.Point({$sendlongitude}, {$sendlatitude});
-    var sendmarker = new BMap.Marker(sendpoint);
-    map.addOverlay(sendmarker);
+    var sendnamemap = new BMap.Map("container");
+    var oneCompany = new Array();
+    var param = '';
+    var sendmanPosition = new Array();
     //显示送餐员的图，和坐标位置
-    var sendmanIcon = new BMap.Icon(".__PUBLIC__/Images/sendman.png", new BMap.Size(28, 28));
-    sendmarker.setIcon(sendmanIcon);
+    var sendmanIcon = new BMap.Icon(".__PUBLIC__/Images/lhkc/icon/sendman.png", new BMap.Size(28, 28));
+    var label = '';
+    var point;
+    
 
-    //加入lable
-    var sendlabel = new BMap.Label("{$sendname} ", {offset: new BMap.Size(18, -16)});
-    sendmarker.setLabel(sendlabel);
+    sendnamemap.addControl(new BMap.MapTypeControl()); //添加地图类型控件
+    sendnamemap.setCurrentCity("{$city}"); // 设置地图显示的城市 此项是必须设置的
+    sendnamemap.enableScrollWheelZoom(true); //开启鼠标滚轮缩放
+    
+
+    oneCompany = {
+        'sendname': "{$sendname}",
+        'company': "{$company}",
+        'domain': "{$domain}",
+        'machineCode': ''
+    };
+    /**
+    oneCompany = {
+        'sendname': "张文惠",
+        'company': "怀南",
+        'domain': "cz.lihuaerp.com",
+        'machineCode': ''
+    };
+    */
+    param = JSON.stringify(oneCompany);
+    
+
+    if ("{$longitude}") {
+        var orderpoint = new BMap.Point("{$longitude}", "{$latitude}");
+        sendnamemap.centerAndZoom(orderpoint, 15);
+        var marker = new BMap.Marker(orderpoint); // 创建标注
+        sendnamemap.addOverlay(marker); // 将标注添加到地图中
+        marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
+        var orderlabel = new BMap.Label("{$address}", {
+        offset: new BMap.Size(18, 10)
+        });
+        marker.setLabel(orderlabel);
+    }
+   
+
+    
+    var output = "送餐预估时间:";
+    var searchComplete = function (results) {
+        if (driving.getStatus() != BMAP_STATUS_SUCCESS) {
+            return;
+        }
+        var plan = results.getPlan(0);
+        output += plan.getDuration(true) + "\n"; //获取时间
+        output += "总路程为：";
+        output += plan.getDistance(true) + "\n"; //获取距离
+    }
+
+    var driving = new BMap.DrivingRoute(sendnamemap, {
+        renderOptions: {
+            map: sendnamemap,
+            autoViewport: true
+        },
+        onSearchComplete: searchComplete,
+        onPolylinesSet: function () {
+            setTimeout(function () {
+                var orderlabel = new BMap.Label(output, {
+                    offset: new BMap.Size(0, -50)
+                });
+                marker.setLabel(orderlabel);
+            }, "1000");
+        }
+    });
+
+
+
+    //获取送餐员的位置信息，并且显示送餐员的送餐情况
+    function moveSendname() {
+
+        var data = {
+            'param': param
+        };
+        $.ajax({
+            type: "post",
+            url: "http://assis.lihua.com/SendnameLocation/getSendnameOne",
+            dataType: "json",
+            data: data,
+            crossDomain: true,
+            success: function (data) {
+                $.each(data, function (key, sendname) {
+                    //动态显示送餐员的情况
+                    if (typeof (sendmanPosition[sendname.id]) == 'object') {
+                        //获取label
+                        label = sendmanPosition[sendname.id].getLabel();
+                        if (sendname.nocomplete_order == 0) {
+                            sendname.nocomplete_order = '';
+                        } else {
+                            sendname.nocomplete_order = "<span id='sendname_nocomplete_order' style='color: red'>" + sendname.nocomplete_order + "</span>"
+                        }
+                        if (sendname.noaccept_order == 0) {
+                            sendname.noaccept_order = '';
+                        } else {
+                            sendname.noaccept_order = "<span id='sendname_noaccept_order' style='color: black'>" + '/' + sendname.noaccept_order + "</span>";
+                        }
+                        //设置lable +sendname.nocomplete_order+sendname.noaccept_order
+                        label.setContent(sendname.name);
+                        //坐标，并设置坐标
+                        sendnamepoint = new BMap.Point(sendname.longitude, sendname.latitude);
+                        sendmanPosition[sendname.id].setPosition(sendnamepoint);
+                        driving.search(sendnamepoint, orderpoint);
+                        //sendnamemap.setCenter(sendnamepoint); //调整视野
+                    } else {
+                        //初始化MARKER，并设置坐标
+                        var point = new BMap.Point(sendname.longitude, sendname.latitude);
+                        sendmanPosition[sendname.id] = new BMap.Marker(point);
+                        sendnamemap.addOverlay(sendmanPosition[sendname.id])
+                        sendmanPosition[sendname.id].setIcon(sendmanIcon); //改变图示
+                        //计算label
+                        if (sendname.nocomplete_order == 0) {
+                            sendname.nocomplete_order = '';
+                        } else {
+                            sendname.nocomplete_order = "<span id='sendname_nocomplete_order' style='color: red'>" + sendname.nocomplete_order + "</span>"
+                        }
+                        if (sendname.noaccept_order == 0) {
+                            sendname.noaccept_order = '';
+                        } else {
+                            sendname.noaccept_order = "<span id='sendname_noaccept_order' style='color: black'>" + '/' + sendname.noaccept_order + "</span>";
+                        }
+                        //加入lable +sendname.nocomplete_order+sendname.noaccept_order
+                        label = new BMap.Label(sendname.name, {
+                            offset: new BMap.Size(18, -16)
+                        });
+                        sendmanPosition[sendname.id].setLabel(label);
+                        //坐标，并设置坐标
+                        sendnamepoint = new BMap.Point(sendname.longitude, sendname.latitude);
+                        sendmanPosition[sendname.id].setPosition(sendnamepoint);
+                        if (orderpoint && sendnamepoint) {
+                            driving.search(sendnamepoint, orderpoint);
+                        }
+                        //加入双击事件
+                        sendmanPosition[sendname.id].addEventListener("dblclick", function (event) {
+                            openSendmanInofDiglog(sendname.id);
+                        });
+
+                    }
+
+                });
+            }
+        });
+    }
+
 
     $(function () {
+       
         //初始化地图
+        setTimeout(moveSendname, 300);
+        //setInterval(moveSendname,3000);
     });
 </script>

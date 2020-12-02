@@ -1,0 +1,226 @@
+<div class="moduleMenu">
+    <ul>
+        <li>{$Think.lang.$navName}</li>
+        <li>
+            <a href="javascript:void(0);" onclick="IndexIndexModule.updateOperateTab('__URL__/listview');">&nbsp;&gt;{$Think.lang.$moduleName}</a>
+        </li>
+        <li>&nbsp;&gt;列表操作</li>
+        <li style="width: 30px;">&nbsp;</li>
+
+       
+            
+
+                <li style="margin-left: 10px;">
+                    <div class="easyui-panel" style="width:100%;max-width:400px;padding:2px 60px 0px 60px;">
+                        <div style="margin-bottom:2px">
+                        <!--
+                            <input id="ElectronInvoicecompanyselect" class="easyui-combotree" data-options="url:'__URL__/tree',method:'get',label:'Select Nodes:',labelPosition:'top',multiple:true,value:['全部'],onlyLeafCheck:true" style="width:100%">
+                            </div>
+                            -->
+
+                            <select name="ElectronInvoicecompanyselect" id="ElectronInvoicecompanyselect" style="width:100%">
+                                <option>全部</option>
+                                <foreach name="companySelect" item="vo">
+                                <option>{$vo.name}</option>
+                                </foreach>
+                            </select>
+                
+                        </div>
+                    </li>
+                
+
+                <li style="margin-left: 20px;">
+                    <input type="text" id="ElectronInvoiceReportListviewDateInput" class="easyui-datebox" name="ElectronInvoiceReportListviewDateInput" style="font-size: 16px;width:150px;" value="{$getDate}" />
+                </li>
+               
+                <li style="margin-left: 10px;">
+                    <a href="javascript:;" onclick="ElectronInvoiceReportListviewModule.search(this);" class="easyui-linkbutton" iconCls="icons-table-table">查询当月统计</a>
+                </li>
+
+                <li style="margin-left: 10px;">
+                    <a href="javascript:;" onclick="ElectronInvoiceReportListviewModule.exportExcel(this);" class="easyui-linkbutton" iconCls="icons-table-table">导出当月统计数据</a>
+                </li>
+
+                <li style="margin-left: 10px;">
+                    <a href="javascript:;" onclick="ElectronInvoiceReportListviewModule.exportMingxiExcel(this);" class="easyui-linkbutton" iconCls="icons-table-table">导出当月发票明细</a>
+                </li>
+
+                <li style="width: 30px;">&nbsp;</li>
+                
+                <li style="float: right;margin-right: 10px;">
+                    <a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();">关闭</a>
+                </li>
+                <li style="float:right;">
+                    <a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();">
+                        <img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a>
+                    </li>
+                </ul>
+            </div>
+
+           
+            <div id="ElectronInvoiceReportListviewDiv" style="width:1900px;height:400px;">
+                <table id="ElectronInvoiceDatagrid" title="" 
+                border="1" cellspacing="1" cellpadding="3" width="100%" class="lvt"
+                style="font-size:14px;">
+                    <thead frozen="true">
+                        <tr>
+                            <th rowspan="2" width="10"  align="center">序号</th>
+                            <th rowspan="2" width="80"  align="center">分公司</th>
+                            <th rowspan="2" width="50" align="center">年</th>
+                            <th rowspan="2" width="30" align="center">月</th>  
+                            <th colspan="2" width="100" align="center">合计发票</th>                     
+                            <th colspan="2" width="100" align="center">1号发票</th>    
+                            <th colspan="2" width="100" align="center">2号发票</th>         
+                            <th colspan="2" width="100" align="center">3号发票</th>    
+                            <th colspan="2" width="100" align="center">4号发票</th>       
+                            <th colspan="2" width="100" align="center">5号发票</th>    
+                            <th colspan="2" width="100" align="center">6号发票</th>       
+                            <th colspan="2" width="100" align="center">7号发票</th>    
+                            <th colspan="2" width="100" align="center">8号发票</th>       
+                            <th colspan="2" width="100" align="center">9号发票</th>    
+                            <th colspan="2" width="100" align="center">10号发票</th>       
+                            <th colspan="2" width="100" align="center">11号发票</th>    
+                            <th colspan="2" width="100" align="center">12号发票</th>       
+                            <th colspan="2" width="100" align="center">13号发票</th>    
+                            <th colspan="2" width="100" align="center">14号发票</th>       
+                            <th colspan="2" width="100" align="center">15号发票</th>                     <th colspan="2" width="100" align="center">16号发票</th>       
+                            <th colspan="2" width="100" align="center">17号发票</th>     
+                            <th colspan="2" width="100" align="center">18号发票</th>     
+                            <th colspan="2" width="100" align="center">19号发票</th>     
+                            <th colspan="2" width="100" align="center">20号发票</th>     
+                            <th colspan="2" width="100" align="center">21号发票</th>     
+                            <th colspan="2" width="100" align="center">22号发票</th>                     
+                            <th colspan="2" width="100" align="center">23号发票</th>     
+                            <th colspan="2" width="100" align="center">24号发票</th>     
+                            <th colspan="2" width="100" align="center">25号发票</th>     
+                            <th colspan="2" width="100" align="center">26号发票</th>     
+                            <th colspan="2" width="100" align="center">27号发票</th>     
+                            <th colspan="2" width="100" align="center">28号发票</th>     
+                            <th colspan="2" width="100" align="center">29号发票</th>     
+                            <th colspan="2" width="100" align="center">30号发票</th>     
+                            <th colspan="2" width="100" align="center">31号发票</th>         
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                  
+                    </tbody>
+                    
+                </table>
+            </div>
+            <input id="{$moduleName}Action" type="hidden" value="Listview" />
+
+            <script type="text/javascript">
+    var ElectronInvoiceReportListviewModule = {
+        dialog: '#globel-dialog-div',
+       
+
+        init: function () {
+            //设置div的高度
+            $('#ElectronInvoiceReportListviewDiv').height(IndexIndexModule.operationHeight);
+           
+        },
+
+        initDatagrid:function(){
+
+       
+        },
+
+        //操作格式化
+        operate: function (val, rowData, rowIndex) {
+           
+            var btn = [];
+          
+            return [];
+        },
+
+        search: function(){
+            var newRow = '';
+            var company = $('#ElectronInvoicecompanyselect').val();
+            var getdate = $('#ElectronInvoiceReportListviewDateInput').datebox('getValue');
+            var date = {
+                'date':getdate,
+                'company':company
+             }
+            $.ajax({
+                type: "GET",
+                url: "__URL__/getInvoiceReport/" ,
+                dataType: "json",
+                data:date,
+                success: function (invoiceData) {
+                    $('#ElectronInvoiceDatagrid tbody tr').remove();
+                    $.each(invoiceData, function (key, value) {
+                        newRow += "<tr style=\"background:white;\">";
+                        newRow += "<td>"+(key+1)+"</td>";
+                        newRow += "<td>"+value.company+"</td><td>"+value.year+"</td><td>"+value.month+"</td>";
+                        newRow += "<td>"+(value.heji_number?value.heji_number:'')+"</td><td>"+(value.heji_money?value.heji_money:'')+"</td>";
+                        newRow += "<td>"+(value.day1_number?value.day1_number:'')+"</td><td>"+(value.day1_money?value.day1_money:'')+"</td>";
+                        newRow += "<td>"+(value.day2_number?value.day2_number:'')+"</td><td>"+(value.day2_money?value.day2_money:'')+"</td>";
+                        newRow += "<td>"+(value.day3_number?value.day3_number:'')+"</td><td>"+(value.day3_money?value.day3_money:'')+"</td>";
+                        newRow += "<td>"+(value.day4_number?value.day4_number:'')+"</td><td>"+(value.day4_money?value.day4_money:'')+"</td>";
+                        newRow += "<td>"+(value.day5_number?value.day5_number:'')+"</td><td>"+(value.day5_money?value.day5_money:'')+"</td>";
+                        newRow += "<td>"+(value.day6_number?value.day6_number:'')+"</td><td>"+(value.day6_money?value.day6_money:'')+"</td>";
+                        newRow += "<td>"+(value.day7_number?value.day7_number:'')+"</td><td>"+(value.day7_money?value.day7_money:'')+"</td>";
+                        newRow += "<td>"+(value.day8_number?value.day8_number:'')+"</td><td>"+(value.day8_money?value.day8_money:'')+"</td>";
+                        newRow += "<td>"+(value.day9_number?value.day9_number:'')+"</td><td>"+(value.day9_money?value.day9_money:'')+"</td>";
+                        newRow += "<td>"+(value.day10_number?value.day10_number:'')+"</td><td>"+(value.day10_money?value.day10_money:'')+"</td>";
+                        newRow += "<td>"+(value.day11_number?value.day11_number:'')+"</td><td>"+(value.day11_money?value.day11_money:'')+"</td>";
+                        newRow += "<td>"+(value.day12_number?value.day12_number:'')+"</td><td>"+(value.day12_money?value.day12_money:'')+"</td>";
+                        newRow += "<td>"+(value.day13_number?value.day13_number:'')+"</td><td>"+(value.day13_money?value.day13_money:'')+"</td>";
+                        newRow += "<td>"+(value.day14_number?value.day14_number:'')+"</td><td>"+(value.day14_money?value.day14_money:'')+"</td>";
+                        newRow += "<td>"+(value.day15_number?value.day15_number:'')+"</td><td>"+(value.day15_money?value.day15_money:'')+"</td>";
+                        newRow += "<td>"+(value.day16_number?value.day16_number:'')+"</td><td>"+(value.day16_money?value.day16_money:'')+"</td>";
+                        newRow += "<td>"+(value.day17_number?value.day17_number:'')+"</td><td>"+(value.day17_money?value.day17_money:'')+"</td>";
+                        newRow += "<td>"+(value.day18_number?value.day18_number:'')+"</td><td>"+(value.day18_money?value.day18_money:'')+"</td>";
+                        newRow += "<td>"+(value.day19_number?value.day19_number:'')+"</td><td>"+(value.day19_money?value.day19_money:'')+"</td>";
+                        newRow += "<td>"+(value.day20_number?value.day20_number:'')+"</td><td>"+(value.day20_money?value.day20_money:'')+"</td>";
+                        newRow += "<td>"+(value.day21_number?value.day21_number:'')+"</td><td>"+(value.day21_money?value.day21_money:'')+"</td>";
+                        newRow += "<td>"+(value.day22_number?value.day22_number:'')+"</td><td>"+(value.day22_money?value.day22_money:'')+"</td>";
+                        newRow += "<td>"+(value.day23_number?value.day23_number:'')+"</td><td>"+(value.day23_money?value.day23_money:'')+"</td>";
+                        newRow += "<td>"+(value.day24_number?value.day24_number:'')+"</td><td>"+(value.day24_money?value.day24_money:'')+"</td>";
+                        newRow += "<td>"+(value.day25_number?value.day25_number:'')+"</td><td>"+(value.day25_money?value.day25_money:'')+"</td>";
+                        newRow += "<td>"+(value.day26_number?value.day26_number:'')+"</td><td>"+(value.day26_money?value.day26_money:'')+"</td>";
+                        newRow += "<td>"+(value.day27_number?value.day27_number:'')+"</td><td>"+(value.day27_money?value.day27_money:'')+"</td>";
+                        newRow += "<td>"+(value.day28_number?value.day28_number:'')+"</td><td>"+(value.day28_money?value.day28_money:'')+"</td>";
+                        newRow += "<td>"+(value.day29_number?value.day29_number:'')+"</td><td>"+(value.day29_money?value.day29_money:'')+"</td>";
+                        newRow += "<td>"+(value.day30_number?value.day30_number:'')+"</td><td>"+(value.day30_money?value.day30_money:'')+"</td>";
+                        newRow += "<td>"+(value.day31_number?value.day31_number:'')+"</td><td>"+(value.day31_money?value.day31_money:'')+"</td>";                       
+                        newRow += "</tr>";
+                        $("#ElectronInvoiceDatagrid tbody").append(newRow);
+                        newRow = '';
+                    });
+                   
+                }
+
+            });
+            
+        },
+
+        //导出excel统计表       
+        exportExcel: function() {
+            var newRow = '';
+            var company = $('#ElectronInvoicecompanyselect').val();
+            var getdate = $('#ElectronInvoiceReportListviewDateInput').datebox('getValue');
+            
+            document.location.href = '__URL__/exportExcel' 
+              +"/date/"+getdate + "/company/"+company;
+        },
+
+        //导出发票明细统计表       
+        exportMingxiExcel: function() {
+            var newRow = '';
+            var company = $('#ElectronInvoicecompanyselect').val();
+            var getdate = $('#ElectronInvoiceReportListviewDateInput').datebox('getValue');
+            
+            document.location.href = '__URL__/exportMingxiExcel' 
+              +"/date/"+getdate + "/company/"+company;
+        },
+      
+    };
+
+    $(function () {
+        ElectronInvoiceReportListviewModule.init();
+        
+    })
+</script>
+

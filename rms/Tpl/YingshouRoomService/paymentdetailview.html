@@ -1,0 +1,92 @@
+<div class="moduleMenu">
+    <ul>
+        <li>{$Think.lang.$navName}</li>
+        <li><a href="#">&nbsp;&gt;{$Think.lang.$moduleName}</a></li>
+        <li>&nbsp;&gt;送餐订单交账</li>
+        <li style="width: 50px;">&nbsp;</li>
+
+        <li style="width: 50px;">&nbsp;</li>
+
+        <li style="margin-left: 15px;"><a href="javascript:;" id="showSubMenu" onMouseOver=""><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);" class="moduleName"
+                onclick="IndexIndexModule.updateOperateTab('__URL__/checkOrder/name/{$sendname}/room_date/{$custdate}/room_ap/{$custap}');">返回列表</a><span>^4</span></li>
+
+        <li style="float: right;margin-right: 40px;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
+        <li style="float:right;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();"><img src=".__PUBLIC__/Images/closeBtn.png" alt="" title="" border="0"></a></li>
+    </ul>
+</div>
+<tagLib name="easyui" />
+<div class="moduleOperatert" style="height:300px;width:100%;clear:both;">
+    <easyui:datagrid options="datagrid.options" fields="datagrid.fields" />
+</div>
+<input id="YingshouRoomServiceCheckOrderAction" type="hidden" value="" />
+<script>
+    var PaymentDetailviewModule = {
+        dialog: '#globel-dialog-div',
+        datagrid: '#yingshouroomservice_paymentdetailview_datagrid',
+
+        //初始化
+        init: function () {
+            $('.moduleOperatert').height(IndexIndexModule.operationHeight);
+            this.quickKeyboardAction();
+            $('#yingshouroomservice_paymentdetailview_datagrid').datagrid({
+                rowStyler: PaymentDetailviewModule.rowStyler
+            });
+        },
+
+        //操作格式化
+        operate: function (val, rowData, rowIndex) {
+            var btn = [];
+            if (rowData.needjiezhang == 1) {}
+            return btn.join(' | ');
+        },
+
+        rowStyler: function (index, row) { //就改变背景颜色，以便区别
+            if (row.address == '金额合计') {
+                return 'background-color:#99CCFF; color:black'; // return inline style
+            }
+            if (row.money == '总合计金额') {
+                return 'background-color:#9966FF; color:black'; // return inline style
+            }
+            if (row.money == '订单总金额') {
+                return 'background-color:#9966FF; color:black'; // return inline style
+            }
+        },
+
+        //新建的快捷操作
+        quickKeyboardAction: function () {
+            var that = this;
+
+            // ctrl+6快捷键, 地址查询
+            Mousetrap.bind(['ctrl+6', 'ctrl+f6', 'f6'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '订餐地址查询') {
+                    that.addressSearchInput();
+                };
+            });
+
+
+            // ESC键
+            Mousetrap.bind('esc', function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '订餐地址查询') {
+                    if ($(that.dialog).parent().is(":hidden") == true) { //隐藏
+                        // 更新一个选项卡面板
+                        $('#operation').tabs('select', '订餐单');
+                    } else { //对话框打开
+                        $(IndexIndexModule.dialog).dialog('close');
+                    }
+                }
+            });
+        }
+    }
+
+
+    $(function () {
+        PaymentDetailviewModule.init();
+    });
+</script>

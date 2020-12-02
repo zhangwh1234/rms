@@ -211,7 +211,7 @@
             <assing name="ccc" value="$currentName"/>
             <?php if($value): ?><option value="<?php echo ($value); ?>"><?php echo ($value); ?></option>
                 <?php else: ?>
-                <option value="  ">&nbsp;</option><?php endif; ?>
+                <option value="">&nbsp;</option><?php endif; ?>
             <?php if(is_array($$name)): foreach($$name as $key=>$pick): ?><option value="<?php echo ($pick["name"]); ?>"><?php echo ($pick["name"]); ?></option><?php endforeach; endif; ?>
         </select>
     </td>
@@ -354,7 +354,7 @@
                                                                            onclick="clearTelAddress('<?php echo ($key+1); ?>');">清空地址</a>
                     </td>
                 </tr><?php endforeach; endif; ?>
-            <?php if(empty($teladdress)): $__FOR_START_1006454659__=1;$__FOR_END_1006454659__=4;for($key=$__FOR_START_1006454659__;$key < $__FOR_END_1006454659__;$key+=1){ ?><tr style="height:25px;border: 1px solid black;background: #F0F0F0;" class="CaseRow">
+            <?php if(empty($teladdress)): $__FOR_START_1160898263__=1;$__FOR_END_1160898263__=4;for($key=$__FOR_START_1160898263__;$key < $__FOR_END_1160898263__;$key+=1){ ?><tr style="height:25px;border: 1px solid black;background: #F0F0F0;" class="CaseRow">
                         <td width="10%" align="center" class="dvtCellLabel"><?php echo ($key); ?></td>
                         <td width="70%" align="left" class="dvtCellLabel"><input id="telAddress_<?php echo ($key); ?>"
                                                                                  name="telAddress_<?php echo ($key); ?>" type="text"
@@ -417,7 +417,7 @@
         <td width="15%" align="center" class="productsTableHeaderLeftTd">金额</td>
         <td width="10%" align="center" class="productsTableHeaderRightTd">操作</td>
     </tr>
-    <?php if(empty($orderproducts)): $__FOR_START_1650152659__=0;$__FOR_END_1650152659__=3;for($key=$__FOR_START_1650152659__;$key < $__FOR_END_1650152659__;$key+=1){ ?><tr>
+    <?php if(empty($orderproducts)): $__FOR_START_2126513934__=0;$__FOR_END_2126513934__=3;for($key=$__FOR_START_2126513934__;$key < $__FOR_END_2126513934__;$key+=1){ ?><tr>
                 <td width="5%" align="center" ><?php echo ($key+1); ?></td>
                 <td width="15%" align="center" > 
                     <input id="<?php echo ($moduleName); echo (ucfirst(ACTION_NAME)); ?>productsNumber_<?php echo ($key+1); ?>" name="productsNumber_<?php echo ($key+1); ?>" type="text" size="5" tabindex="1"
@@ -511,7 +511,7 @@
         <td class="productsTableXiaojiRightTd" style="font-size: 14px;"> 
             <span>小计</span>
             <input id="<?php echo ($moduleName); echo (ucfirst(ACTION_NAME)); ?>productsTotalMoney" name="productsTotalMoney" type="text" size="10" readonly="readonly"
-                   style="border: 0px;font-size: 14px;" value="<?php echo ($info["goodsmoney"]); ?>"/>
+                   style="border: 0px;font-size: 14px;" value="<?php echo ($orderproductsmoney); ?>"/>
         </td>
     </tr>
 </table>
@@ -612,7 +612,7 @@
             $('#globel-dialog-div').dialog({
                 title: '选择产品',
                 iconCls: 'icons-application-application_add',
-                width: 900,
+                width: 600,
                 height: 540,
                 cache: false,
                 href: url,
@@ -925,7 +925,7 @@
         <td width="75%" align="center">打印订单内容</td>
         <td width="10%" align="center">操作</td>
     </tr>
-    <?php if(empty($orderPrintHandle)): $__FOR_START_2083134326__=0;$__FOR_END_2083134326__=30;for($key=$__FOR_START_2083134326__;$key < $__FOR_END_2083134326__;$key+=1){ ?><tr>
+    <?php if(empty($orderPrintHandle)): $__FOR_START_1389856242__=0;$__FOR_END_1389856242__=30;for($key=$__FOR_START_1389856242__;$key < $__FOR_END_1389856242__;$key+=1){ ?><tr>
                 <td width="5%" align="center"><?php echo ($key+1); ?></td>
                 <td width="10%" align="center"><input id="orderPrintHandleid_<?php echo ($key+1); ?>" name="orderPrintHandleid_<?php echo ($key+1); ?>"
                                                       type="text" size="10" value="" autocomplete="off"
@@ -1209,7 +1209,50 @@
              align="absmiddle"
              onclick="YingshouIncomeMgrListviewModule.accountsPickList('__URL__/popupAccountsview/module/Accounts/row/<?php echo ($key+1); ?>');"/><a
             href="javascript:YingshouIncomeMgrListviewModule.accountsPickList('__URL__/popupAccountsview/module/Accounts/row/<?php echo ($key+1); ?>')">选择</a>
-    </td><?php endif; endforeach; endif; else: echo "" ;endif; ?>
+    </td>
+
+    
+    <?php elseif($uitype == 67): ?>
+    <td width=15% class="dvtCellLabel" align=right>
+        <font color="red"><?php echo ($mandatory_field); ?>*</font><?php echo ($label); ?>
+    </td>
+    <td width=35% align=left class="dvtCellInfo">
+        <input type="text" name="invoicecode" id="invoicecode" <?php echo ($readonly); ?> size="<?php echo ($length); ?>" class="detailedViewTextBox" onFocus="this.className='detailedViewTextBoxOn'"
+            onBlur="this.className='detailedViewTextBox'" onkeydown="YingshouInvoiceListviewModule.getAccountsByCode(event,this,'<?php echo ($module); ?>');" AUTOCOMPLETE="off">
+        <img id="YingshouRoomServicesearchIcon1" title="选择" src="./__PUBLIC__/Images/products.gif" style="cursor: pointer;" align="absmiddle"
+            onclick="YingshouInvoiceListviewModule.accountsPickList('__URL__/popupAccountsview/module/Accounts/row/<?php echo ($key+1); ?>');" /><a
+            href="javascript:YingshouIncomeMgrListviewModule.accountsPickList('__URL__/popupAccountsview/module/Accounts/row/<?php echo ($key+1); ?>')">选择</a>
+    </td>
+
+
+      
+      <?php elseif($uitype == 68): ?>
+      <td width=15% class="dvtCellLabel" align=right>
+          <font color="red"><?php echo ($mandatory_field); ?>*</font><?php echo ($label); ?>
+      </td>
+      <td width=35% align=left class="dvtCellInfo">
+          <input type="text" name="paymentcode" id="innercarrypaymentcode" <?php echo ($readonly); ?> size="<?php echo ($length); ?>" class="detailedViewTextBox" onFocus="this.className='detailedViewTextBoxOn'"
+              onBlur="YingshouInnerCarryListviewModule.getBlueByCode(this,'<?php echo ($module); ?>');"
+              onkeydown="YingshouInnerCarryListviewModule.getAccountsByCode(event,this,'<?php echo ($module); ?>');" AUTOCOMPLETE="off">
+          <img id="YingshouRoomServicesearchIcon1" title="选择" src="./__PUBLIC__/Images/products.gif" style="cursor: pointer;" align="absmiddle"
+              onclick="YingshouInnerCarryListviewModule.accountsPickList('__URL__/popupAccountsview/module/Accounts/row/<?php echo ($key+1); ?>');" /><a
+              href="javascript:YingshouInnerCarryListviewModule.accountsPickList('__URL__/popupAccountsview/module/Accounts/row/<?php echo ($key+1); ?>')">选择</a>
+      </td>
+
+      
+      <?php elseif($uitype == 69): ?>
+      <td width=15% class="dvtCellLabel" align=right>
+          <font color="red"><?php echo ($mandatory_field); ?>*</font><?php echo ($label); ?>
+      </td>
+      <td width=35% align=left class="dvtCellInfo">
+          <input type="text" name="innercode" id="innercarryaccountcode" <?php echo ($readonly); ?> size="<?php echo ($length); ?>" class="detailedViewTextBox" onFocus="this.className='detailedViewTextBoxOn'"
+              onBlur="YingshouInnerCarryListviewModule.getInnerBlueByCode(this,'<?php echo ($module); ?>');" onkeydown="YingshouInnerCarryListviewModule.getInnerAccountsByCode(event,this,'<?php echo ($module); ?>');"
+              AUTOCOMPLETE="off">
+                
+              <img id="YingshouRoomServicesearchIcon1" title="选择" src="./__PUBLIC__/Images/products.gif" style="cursor: pointer;" align="absmiddle"
+              onclick="YingshouInnerCarryListviewModule.inneraccountsPickList('__URL__/popupInnerAccountsview/module/Accounts/row/<?php echo ($key+1); ?>');" /><a
+              href="javascript:YingshouInnerCarryListviewModule.inneraccountsPickList('__URL__/popupInnerAccountsview/module/Accounts/row/<?php echo ($key+1); ?>')">选择</a>
+      </td><?php endif; endforeach; endif; else: echo "" ;endif; ?>
                                     </tr><?php endforeach; endif; else: echo "" ;endif; ?>
                                 <tr style="line-height: 5px;">
                                     <td>&nbsp;</td>

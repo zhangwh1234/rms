@@ -13,6 +13,11 @@ class OrderFormAction extends ModuleAction
             // 启动当前模块的模型
             $focus = D($moduleName);
 
+            //权限名称
+            $userInfo = $_SESSION['userInfo'];
+            $rolename = $userInfo['rolename'];
+            $telname = $userInfo['truename'];
+
             // 生成list字段列表
             $listFields = $focus->listFields;
             // 模块的ID
@@ -21,6 +26,9 @@ class OrderFormAction extends ModuleAction
             // 建立查询条件
             $where = array();
             $where['domain'] = $this->getDomain();
+            if ($rolename == '调度员') {
+                $where['telname'] = $telname;
+            }
 
             $total = $focus->where($where)->count(); // 查询满足要求的总记录数
 
@@ -54,12 +62,35 @@ class OrderFormAction extends ModuleAction
 
             $listResult = $focus->where($where)->field($selectFields)->limit($Page->firstRow . ',' . $Page->listRows)->order("$moduleId desc")->select(); //lastdatetime desc,
 
-            $orderHandleArray['total'] = $total;
-            if (count($listResult) > 0) {
-                $orderHandleArray = $listResult;
-            } else {
-                $orderHandleArray = array();
+            $orderHandleArray = array();
+            //查询送餐员坐标
+            $sendnamemgrModel = D('sendnamemgr');
+            $where = array();
+            $where[] = " length(longitude) > 0 ";
+            $where['domain'] = $this->getDomain();
+            $sendnamemgrResult = $sendnamemgrModel->where($where)->select();
+            $sendanmeArr = array();
+            foreach ($sendnamemgrResult as $value) {
+                $sendanmeArr[$value['name']] = array(
+                    'telphone' => $value['telphone'],
+                    'longitude' => $value['longitude'],
+                    'latitude' => $value['latitude'],
+                );
+            };
+
+            foreach ($listResult as $key => $value) {
+                if ($sendanmeArr[$value['sendname']]) {
+                    $value['sendlongitude'] = $sendanmeArr[$value['sendname']]['longitude'];
+                    $value['sendlatitude'] = $sendanmeArr[$value['sendname']]['longitude'];
+                };
+                if ($rolename == '调度员') {
+                    $value['rolename'] = 'dispatcher';
+                } else {
+                    $value['rolename'] = '';
+                }
+                $orderHandleArray[] = $value;
             }
+
             $data = array('total' => $total, 'rows' => $orderHandleArray);
             $this->ajaxReturn($data);
         } else {
@@ -188,6 +219,11 @@ class OrderFormAction extends ModuleAction
             // 启动当前模块
             $focus = D($moduleName);
 
+            //权限名称
+            $userInfo = $_SESSION['userInfo'];
+            $rolename = $userInfo['rolename'];
+            $telname = $userInfo['truename'];
+
             // 取得对应的导航名称
             $navName = $focus->getNavName($moduleName);
             $this->assign('navName', $navName); // 导航民
@@ -231,7 +267,9 @@ class OrderFormAction extends ModuleAction
             }
 
             $where['domain'] = $this->getDomain();
-
+            if ($rolename == '调度员') {
+                $where['telname'] = $telname;
+            }
             $total = $focus->where($where)->count(); // 查询满足要求的总记录数
 
             //使用cookie读取rows
@@ -260,11 +298,34 @@ class OrderFormAction extends ModuleAction
 
             $listResult = $focus->where($where)->field($selectFields)->limit($Page->firstRow . ',' . $Page->listRows)->order("$moduleId desc")->select();
 
-            if ($total > 0) {
-                $orderHandleArray = $listResult;
-            } else {
-                $orderHandleArray = array();
+            //查询送餐员坐标
+            $sendnamemgrModel = D('sendnamemgr');
+            $where = array();
+            $where[] = " length(longitude) > 0 ";
+            $where['domain'] = $this->getDomain();
+            $sendnamemgrResult = $sendnamemgrModel->where($where)->select();
+            $sendanmeArr = array();
+            foreach ($sendnamemgrResult as $value) {
+                $sendanmeArr[$value['name']] = array(
+                    'telphone' => $value['telphone'],
+                    'longitude' => $value['longitude'],
+                    'latitude' => $value['latitude'],
+                );
+            };
+
+            foreach ($listResult as $key => $value) {
+                if ($sendanmeArr[$value['sendname']]) {
+                    $value['sendlongitude'] = $sendanmeArr[$value['sendname']]['longitude'];
+                    $value['sendlatitude'] = $sendanmeArr[$value['sendname']]['longitude'];
+                };
+                if ($rolename == '调度员') {
+                    $value['rolename'] = 'dispatcher';
+                } else {
+                    $value['rolename'] = '';
+                }
+                $orderHandleArray[] = $value;
             }
+
             $data = array('total' => $total, 'rows' => $orderHandleArray);
             $this->ajaxReturn($data);
 
@@ -369,6 +430,10 @@ class OrderFormAction extends ModuleAction
 
             // 启动当前模块
             $focus = D($moduleName);
+            //权限名称
+            $userInfo = $_SESSION['userInfo'];
+            $rolename = $userInfo['rolename'];
+            $telname = $userInfo['truename'];
 
             // 生成list字段列表
             $listFields = $focus->searchListFields;
@@ -406,7 +471,9 @@ class OrderFormAction extends ModuleAction
             }
 
             $where['domain'] = $this->getDomain();
-
+            if ($rolename == '调度员') {
+                $where['telname'] = $telname;
+            }
             $total = $focus->where($where)->count(); // 查询满足要求的总记录数
 
             //使用cookie读取rows
@@ -435,15 +502,37 @@ class OrderFormAction extends ModuleAction
 
             $listResult = $focus->field($selectFields)->where($where)->limit($Page->firstRow . ',' . $Page->listRows)->order("$moduleId desc")->select();
 
-            $this->assign('moduleId', $moduleId);
+            $orderHandleArray = array();
 
-            $orderHandleArray['total'] = $total;
-            if (count($listResult) > 0) {
-                $orderHandleArray['rows'] = $listResult;
-            } else {
-                $orderHandleArray['rows'] = array();
+            //查询送餐员坐标
+            $sendnamemgrModel = D('sendnamemgr');
+            $where = array();
+            $where[] = " length(longitude) > 0 ";
+            $where['domain'] = $this->getDomain();
+            $sendnamemgrResult = $sendnamemgrModel->where($where)->select();
+            $sendanmeArr = array();
+            foreach ($sendnamemgrResult as $value) {
+                $sendanmeArr[$value['name']] = array(
+                    'telphone' => $value['telphone'],
+                    'longitude' => $value['longitude'],
+                    'latitude' => $value['latitude'],
+                );
+            };
+
+            foreach ($listResult as $key => $value) {
+                if ($sendanmeArr[$value['sendname']]) {
+                    $value['sendlongitude'] = $sendanmeArr[$value['sendname']]['longitude'];
+                    $value['sendlatitude'] = $sendanmeArr[$value['sendname']]['longitude'];
+                };
+                if ($rolename == '调度员') {
+                    $value['rolename'] = 'dispatcher';
+                } else {
+                    $value['rolename'] = '';
+                }
+                $orderHandleArray[] = $value;
             }
-            $data = array('total' => $total, 'rows' => $listResult);
+
+            $data = array('total' => $total, 'rows' => $orderHandleArray);
             $this->ajaxReturn($data);
         } else {
             // /取得模块的名称
@@ -698,6 +787,11 @@ class OrderFormAction extends ModuleAction
             // 启动当前模块
             $focus = D($moduleName);
 
+            //权限名称
+            $userInfo = $_SESSION['userInfo'];
+            $rolename = $userInfo['rolename'];
+            $telname = $userInfo['truename'];
+
             // 取得对应的导航名称
             $navName = $focus->getNavName($moduleName);
             $this->assign('navName', $navName); // 导航民
@@ -743,12 +837,19 @@ class OrderFormAction extends ModuleAction
 
             if (count($where) == 0) {
                 $map = array();
+                $map['domain'] = $this->getDomain();
+                if ($rolename == '调度员') {
+                    $map['telname'] = $telname;
+                }
             } else {
                 $where['_logic'] = 'OR';
                 //组成复合查询
                 $map = array();
                 $map['_complex'] = $where;
                 $map['domain'] = $this->getDomain();
+                if ($rolename == '调度员') {
+                    $map['telname'] = $telname;
+                }
             }
             $this->assign('searchTextValue', $searchText);
 
@@ -780,13 +881,36 @@ class OrderFormAction extends ModuleAction
 
             $listResult = $focus->where($map)->field($selectFields)->limit($Page->firstRow . ',' . $Page->listRows)->order('orderformid desc')->select();
 
-            $orderHandleArray['total'] = $total;
-            if (count($listResult) > 0) {
-                $orderHandleArray['rows'] = $listResult;
-            } else {
-                $orderHandleArray['rows'] = array();
+            //查询送餐员坐标
+            $sendnamemgrModel = D('sendnamemgr');
+            $where = array();
+            $where[] = " length(longitude) > 0 ";
+            $where['domain'] = $this->getDomain();
+            $sendnamemgrResult = $sendnamemgrModel->where($where)->select();
+            $sendanmeArr = array();
+            foreach ($sendnamemgrResult as $value) {
+                $sendanmeArr[$value['name']] = array(
+                    'telphone' => $value['telphone'],
+                    'longitude' => $value['longitude'],
+                    'latitude' => $value['latitude'],
+                );
             }
-            $data = array('total' => $total, 'rows' => $listResult);
+            ;
+
+            foreach ($listResult as $key => $value) {
+                if ($sendanmeArr[$value['sendname']]) {
+                    $value['sendlongitude'] = $sendanmeArr[$value['sendname']]['longitude'];
+                    $value['sendlatitude'] = $sendanmeArr[$value['sendname']]['longitude'];
+                };
+                if ($rolename == '调度员') {
+                    $value['rolename'] = 'dispatcher';
+                } else {
+                    $value['rolename'] = '';
+                }
+                $orderHandleArray[] = $value;
+            }
+
+            $data = array('total' => $total, 'rows' => $orderHandleArray);
             $this->ajaxReturn($data);
         } else {
             // 取得模块的名称
@@ -999,6 +1123,13 @@ class OrderFormAction extends ModuleAction
         $orderyingshouexchangeModel->create();
         $orderyingshouexchangeModel->add($data);
 
+        //清除结账的支付记录
+        $where = array();
+        $where['ordersn'] = $ordersn;
+        //$where['domain'] = $this->getDomain();
+        $orderfinanceModel = D('Orderfinance');
+        $res = $orderfinanceModel->where($where)->delete();
+
         //查询电子发票，将电子发票设置为退票状态
         //启动退票
         $where = array();
@@ -1171,6 +1302,20 @@ class OrderFormAction extends ModuleAction
     /* 弹出选择窗口 */
     public function popupProductsview()
     {
+
+        $company = $_REQUEST['company'];
+        if (empty($company)) {
+            $company = '';
+        }
+        $this->assign('company', $company);
+
+        $row = $_REQUEST['row'];
+        $this->assign('row', $row);
+        $this->assign('returnModule', $_REQUEST['returnModule']);
+        $this->display('OrderForm/selectproductsview');
+
+        return;
+
         if (IS_POST) {
             // 取得模块的名称
             $moduleName = $this->getActionName();
@@ -1341,7 +1486,6 @@ class OrderFormAction extends ModuleAction
         $orderpaymentMoney = $orderpayment_model->where("orderformid=$record")->sum('money');
         $this->assign('orderpaymentmoney', $orderpaymentMoney);
 
-
         // 取得订单的状态
         $orderStateModel = D('Orderstate');
         $orderStateResult = $orderStateModel->where("orderformid=$record")->find(); //
@@ -1361,6 +1505,15 @@ class OrderFormAction extends ModuleAction
         $this->assign('totalmoney', $orderformResult['totalmoney']);
         //订单号
         $ordersn = $orderformResult['ordersn'];
+
+        //权限名称
+        $userInfo = $_SESSION['userInfo'];
+        $rolename = $userInfo['rolename'];
+        if ($rolename == '调度员') {
+            $this->assign('rolename', 'dispatcher');
+        } else {
+            $this->assign('rolename', '');
+        }
 
     }
 
@@ -1409,7 +1562,6 @@ class OrderFormAction extends ModuleAction
 
         //保存到支付表中
         $orderpaymentModel = D('orderpayment');
-
         //保存在订单支付表中
         $accountpaymentLength = $_REQUEST['accountpaymentLength'];
         for ($i = 1; $i <= $accountpaymentLength; $i++) {
@@ -1429,6 +1581,28 @@ class OrderFormAction extends ModuleAction
             if (!empty($code) && !empty($name)) {
                 $orderpaymentModel->create();
                 $orderpaymentModel->add($data);
+            }
+        };
+
+        //保存到结账表中orderfinance
+        $orderfinanceModel = D('orderfinance');
+        $accountpaymentLength = $_REQUEST['accountpaymentLength'];
+        for ($i = 1; $i <= $accountpaymentLength; $i++) {
+            $code = $_REQUEST['accountpaymentCode_' . $i];
+            $name = $_REQUEST['accountpaymentName_' . $i];
+            $money = $_REQUEST['accountpaymentMoney_' . $i];
+            $note = $_REQUEST['accountpaymentNote_' . $i];
+            //保存
+            $data = array();
+            $data['code'] = $code;
+            $data['name'] = $name;
+            $data['money'] = $money;
+            $data['note'] = $note;
+            $data['date'] = date('Y-m-d H:i:s');
+            $data['ordersn'] = $ordersn;
+            if (!empty($code) && !empty($name)) {
+                $orderfinanceModel->create();
+                $orderfinanceModel->add($data);
             }
         };
 
@@ -1586,8 +1760,9 @@ class OrderFormAction extends ModuleAction
 
         $orderform_model = D('Orderform');
 
-        $orderformResult = $orderform_model->field('ordersn,company')->where("$entity_id=$record")->find();
+        $orderformResult = $orderform_model->field('ordersn,company,origin')->where("$entity_id=$record")->find();
         $ordersn = $orderformResult['ordersn'];
+        $origin = $orderformResult['origin'];
 
         //判断订单是否已经分配
         $company = '';
@@ -1639,6 +1814,9 @@ class OrderFormAction extends ModuleAction
         $accountpaymentLength = $_REQUEST['accountpaymentLength'];
         for ($i = 1; $i <= $accountpaymentLength; $i++) {
             $code = $_REQUEST['accountpaymentCode_' . $i];
+            if (empty($code)) {
+                $code = '00';
+            }
             $name = $_REQUEST['accountpaymentName_' . $i];
             $money = $_REQUEST['accountpaymentMoney_' . $i];
             $note = $_REQUEST['accountpaymentNote_' . $i];
@@ -1655,8 +1833,39 @@ class OrderFormAction extends ModuleAction
                 $orderpaymentModel->create();
                 $orderpaymentModel->add($data);
             }
+        };
+
+        //保存到财务结账表中
+        //只有电话可以改结账表，其他都不能修改
+        if ($origin == '电话') {
+            $orderfinanceModel = D('orderfinance');
+            $where = array();
+            $where['ordersn'] = $ordersn;
+            $orderfinanceModel->where($where)->delete();
+            //保存在订单支付表中
+            $accountpaymentLength = $_REQUEST['accountpaymentLength'];
+            for ($i = 1; $i <= $accountpaymentLength; $i++) {
+                $code = $_REQUEST['accountpaymentCode_' . $i];
+                if (empty($code)) {
+                    $code = '';
+                }
+                $name = $_REQUEST['accountpaymentName_' . $i];
+                $money = $_REQUEST['accountpaymentMoney_' . $i];
+                $note = $_REQUEST['accountpaymentNote_' . $i];
+                //保存
+                $data = array();
+                $data['code'] = $code;
+                $data['name'] = $name;
+                $data['money'] = $money;
+                $data['note'] = $note;
+                $data['date'] = date('Y-m-d H:i:s');
+                $data['ordersn'] = $ordersn;
+                if (!empty($name)) {
+                    $orderfinanceModel->create();
+                    $orderfinanceModel->add($data);
+                }
+            };
         }
-        ;
 
         // 接线员的姓名
         $userInfo = $_SESSION['userInfo'];
@@ -1722,7 +1931,7 @@ class OrderFormAction extends ModuleAction
 
             $data['ordersn'] = $ordersn;
             $data['orderformtxt'] = $_REQUEST['address'] . ' ' . $orderTxt;
-            $data['ordermoney'] = $totalmoney;
+            $data['ordermoney'] = $totalmoney - $activitymoney;
             $data['ordertime'] = date('H:i:s');
             //先预习建立一下分公司，防止分配后修改的发票
             if (!empty($company)) {
@@ -2313,23 +2522,28 @@ class OrderFormAction extends ModuleAction
 
         $where = array();
         $where['orderformid'] = $record;
-        //查询坐标地址
-        $orderformResult = $focus->field('longitude,latitude,address,sendname,sendlongitude,sendlatitude')->where($where)->find();
+        //查询订单坐标地址
+        $orderformResult = $focus->field('longitude,latitude,address,sendname,company,domain,sendlongitude,sendlatitude')->where($where)->find();
+        //查询送餐员坐标
 
         $this->assign('longitude', $orderformResult['longitude']);
         $this->assign('latitude', $orderformResult['latitude']);
         $this->assign('address', $orderformResult['address']);
         $this->assign('sendname', $orderformResult['sendname']);
+        $this->assign('company', $orderformResult['company']);
+        $this->assign('domain', $orderformResult['domain']);
         $this->assign('sendlongitude', $orderformResult['sendlongitude']);
         $this->assign('sendlatitude', $orderformResult['sendlatitude']);
+        /**
         if (empty($orderformResult['longitude'])) {
-            //为了显示城市
-            require APP_PATH . 'Conf/datapath.php';
-            $HTTP_POST = $this->getDomain();
-            $this->assign('city', $rmsDataPath[$HTTP_POST]['CITY']);
-            $this->display('sendmapview_two');
-            return;
+        //为了显示城市
+        require APP_PATH . 'Conf/datapath.php';
+        $HTTP_POST = $this->getDomain();
+        $this->assign('city', $rmsDataPath[$HTTP_POST]['CITY']);
+        $this->display('sendmapview_two');
+        return;
         }
+         */
         //为了显示城市
         require APP_PATH . 'Conf/datapath.php';
         $HTTP_POST = $this->getDomain();
@@ -2539,6 +2753,367 @@ class OrderFormAction extends ModuleAction
 
             $this->display('YingshouWorklunch/popupAccountsview');
         }
+    }
+
+    /**
+     * 获取产品
+     */
+    public function getProducts()
+    {
+        $company = $_REQUEST['company'];
+        if (empty($company)) {
+            $company = '';
+        }
+        $domain = $this->getDomain();
+        //如果有缓存，就直接返回缓存
+        $products_cache = F('diningsaleProducts' . $company . $domain);
+        if (!empty($products_cache)) {
+            $this->ajaxReturn($products_cache, 'JSON');
+        }
+
+        $prodcutsModel = D('products');
+        
+        $where = array();
+        $where['domain'] = $domain;
+        $products = $prodcutsModel->where($where)->select();
+
+        import('@.Extend.ChinesePinyin');
+        $Pinyin = new ChinesePinyin();
+
+        //定义返回全部products，以便点击name的搜索code
+        $products_all = array();
+        $companyArr = array();
+        foreach ($products as $value) {
+            //赋值
+            $products_all[$value['name']] = array(
+                'code' => $value['code'],
+                'price' => $value['price'],
+            );
+            
+            $py = $Pinyin->TransformUcwords(trim($value['name']));
+            if (empty($py)) {
+                $py = $this->getFirstCharter(trim($value['name']));
+            }
+            $py = $py[0];
+            if ($py == 'A') {
+                $A[] = trim($value['name']);
+            }
+
+            if ($py == 'B') {
+                $B[] = trim($value['name']);
+            }
+
+            if ($py == 'C') {
+                $C[] = trim($value['name']);
+            }
+
+            if ($py == 'D') {
+                $D[] = trim($value['name']);
+            }
+
+            if ($py == 'E') {
+                $E[] = trim($value['name']);
+            }
+
+            if ($py == 'F') {
+                $F[] = trim($value['name']);
+            }
+
+            if ($py == 'G') {
+                $G[] = trim($value['name']);
+            }
+
+            if ($py == 'H') {
+                $H[] = trim($value['name']);
+            }
+
+            if ($py == 'I') {
+                $I[] = trim($value['name']);
+            }
+
+            if ($py == 'J') {
+                $J[] = trim($value['name']);
+            }
+
+            if ($py == 'K') {
+                $K[] = trim($value['name']);
+            }
+
+            if ($py == 'L') {
+                $L[] = trim($value['name']);
+            }
+
+            if ($py == 'M') {
+                $M[] = trim($value['name']);
+            }
+
+            if ($py == 'N') {
+                $N[] = trim($value['name']);
+            }
+
+            if ($py == 'O') {
+                $O[] = trim($value['name']);
+            }
+
+            if ($py == 'P') {
+                $P[] = trim($value['name']);
+            }
+
+            if ($py == 'Q') {
+                $Q[] = trim($value['name']);
+            }
+
+            if ($py == 'R') {
+                $R[] = trim($value['name']);
+            }
+
+            if ($py == 'S') {
+                $S[] = trim($value['name']);
+            }
+
+            if ($py == 'T') {
+                $T[] = trim($value['name']);
+            }
+
+            if ($py == 'U') {
+                $U[] = trim($value['name']);
+            }
+
+            if ($py == 'V') {
+                $V[] = trim($value['name']);
+            }
+
+            if ($py == 'W') {
+                $W[] = trim($value['name']);
+            }
+
+            if ($py == 'X') {
+                $X[] = trim($value['name']);
+            }
+
+            if ($py == 'Y') {
+                $Y[] = trim($value['name']);
+            }
+
+            if ($py == 'Z') {
+                $Z[] = trim($value['name']);
+            }
+
+        }
+        if (!empty($A)) {
+            $A_arr = array(
+                'key' => 'A',
+                'data' => $A,
+            );
+            $companyArr[] = $A_arr;
+        }
+
+        if (!empty($B)) {
+            $B_arr = array(
+                'key' => 'B',
+                'data' => $B,
+            );
+            $companyArr[] = $B_arr;
+        }
+
+        if (!empty($C)) {
+            $C_arr = array(
+                'key' => 'C',
+                'data' => $C,
+            );
+            $companyArr[] = $C_arr;
+        }
+
+        if (!empty($D)) {
+            $D_arr = array(
+                'key' => 'D',
+                'data' => $D,
+            );
+            $companyArr[] = $D_arr;
+        }
+
+        if (!empty($E)) {
+            $E_arr = array(
+                'key' => 'E',
+                'data' => $E,
+            );
+            $companyArr[] = $E_arr;
+        }
+
+        if (!empty($F)) {
+            $F_arr = array(
+                'key' => 'F',
+                'data' => $F,
+            );
+            $companyArr[] = $F_arr;
+        }
+
+        if (!empty($G)) {
+            $G_arr = array(
+                'key' => 'G',
+                'data' => $G,
+            );
+            $companyArr[] = $G_arr;
+        }
+
+        if (!empty($H)) {
+            $H_arr = array(
+                'key' => 'H',
+                'data' => $H,
+            );
+            $companyArr[] = $H_arr;
+        }
+
+        if (!empty($I)) {
+            $I_arr = array(
+                'key' => 'I',
+                'data' => $I,
+            );
+            $companyArr[] = $I_arr;
+        }
+
+        if (!empty($J)) {
+            $J_arr = array(
+                'key' => 'J',
+                'data' => $J,
+            );
+            $companyArr[] = $J_arr;
+        }
+
+        if (!empty($K)) {
+            $K_arr = array(
+                'key' => 'K',
+                'data' => $K,
+            );
+            $companyArr[] = $K_arr;
+        }
+
+        if (!empty($L)) {
+            $L_arr = array(
+                'key' => 'L',
+                'data' => $L,
+            );
+            $companyArr[] = $L_arr;
+        }
+
+        if (!empty($M)) {
+            $M_arr = array(
+                'key' => 'M',
+                'data' => $M,
+            );
+            $companyArr[] = $M_arr;
+        }
+
+        if (!empty($N)) {
+            $N_arr = array(
+                'key' => 'N',
+                'data' => $N,
+            );
+            $companyArr[] = $N_arr;
+        }
+
+        if (!empty($O)) {
+            $O_arr = array(
+                'key' => 'O',
+                'data' => $O,
+            );
+            $companyArr[] = $O_arr;
+        }
+
+        if (!empty($P)) {
+            $P_arr = array(
+                'key' => 'P',
+                'data' => $P,
+            );
+            $companyArr[] = $P_arr;
+        }
+
+        if (!empty($Q)) {
+            $Q_arr = array(
+                'key' => 'Q',
+                'data' => $Q,
+            );
+            $companyArr[] = $Q_arr;
+        }
+
+        if (!empty($R)) {
+            $R_arr = array(
+                'key' => 'R',
+                'data' => $R,
+            );
+            $companyArr[] = $R_arr;
+        }
+
+        if (!empty($S)) {
+            $S_arr = array(
+                'key' => 'S',
+                'data' => $S,
+            );
+            $companyArr[] = $S_arr;
+        }
+
+        if (!empty($T)) {
+            $T_arr = array(
+                'key' => 'T',
+                'data' => $T,
+            );
+            $companyArr[] = $T_arr;
+        }
+
+        if (!empty($U)) {
+            $U_arr = array(
+                'key' => 'U',
+                'data' => $U,
+            );
+            $companyArr[] = $U_arr;
+        }
+
+        if (!empty($V)) {
+            $V_arr = array(
+                'key' => 'V',
+                'data' => $V,
+            );
+            $companyArr[] = $V_arr;
+        }
+
+        if (!empty($W)) {
+            $W_arr = array(
+                'key' => 'W',
+                'data' => $W,
+            );
+            $companyArr[] = $W_arr;
+        }
+
+        if (!empty($X)) {
+            $X_arr = array(
+                'key' => 'X',
+                'data' => $X,
+            );
+            $companyArr[] = $X_arr;
+        }
+
+        if (!empty($Y)) {
+            $Y_arr = array(
+                'key' => 'Y',
+                'data' => $Y,
+            );
+            $companyArr[] = $Y_arr;
+        }
+
+        if (!empty($Z)) {
+            $Z_arr = array(
+                'key' => 'Z',
+                'data' => $Z,
+            );
+            $companyArr[] = $Z_arr;
+        }
+
+        $returnArr['city'] = $companyArr;
+        $returnArr['products'] = $products_all;
+        F('diningsaleProducts' . $company . $domain, $returnArr);
+
+        $this->ajaxReturn($returnArr, 'JSON');
+
     }
 
 }

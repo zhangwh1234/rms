@@ -11,7 +11,6 @@
         <li style="margin-left: 15px;"><a href="javascript:;" id="showSubMenu" onMouseOver=""><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
         <li><a href="javascript:void(0);" class="moduleName" onclick="IndexIndexModule.updateOperateTab('__URL__/checkOrder/name/{$name}/room_date/{$custdate}/room_ap/{$custap}');">返回列表</a><span>^4</span></li>
 
-
         <li style="float: right;margin-right: 60px;"><a href="javascript:void(0);" onclick="IndexIndexModule.closeOperateTab();">关闭</a></li>
         <li style="float:right;"><a href="javascript:;" onclick="IndexIndexModule.closeOperateTab();"><img src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
         <div style="clear:both;"></div>
@@ -30,7 +29,7 @@
         init: function () {
             $('.moduleOperater').height(IndexIndexModule.operationHeight);
             this.quickKeyboardAction();
-            $("#YingshouRoomServiceAccountsCode_1").focus();
+            $("#YingshouRoomServiceAccountsCode_{$keytwo-1}").focus();
         },
 
         //保存记录
@@ -106,7 +105,7 @@
                         $('#globel-dialog-div').dialog('close');
                         //写入数据库
                         url = "__URL__/setSendname/sendname/" + sendname + "/ordersn/" +
-                            ordersn;
+                            ordersn+"/custdate/"+custdate+"/custap/"+custap;
                         $.ajax({
                             type: "GET",
                             url: url,

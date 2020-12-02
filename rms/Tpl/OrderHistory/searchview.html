@@ -22,7 +22,7 @@
 <div id="orderhistory-searchview-datagrid-toolbar" style="padding:5px;height:auto">
     <form>
         查询选项
-        <select name="searchOption" id="searchOption" class="txtBox" style="width:100px">
+        <select name="searchOption" id="searchOption" class="txtBox" style="width:60px">
             <if condition='$searchOptionValue'>
                 <option value="{$searchOptionValue}">{$Think.lang.$searchOptionValue}</option>
                 <else/>
@@ -33,7 +33,7 @@
             </foreach>
         </select>
         查询内容
-        <input id="searchText" name="searchText" type="text" style="width:240px" value="{$searchTextValue}">
+        <input id="searchText" name="searchText" type="text" style="width:140px" value="{$searchTextValue}">
         开始日期:
         <input id="startDate" name="startDate" type="text" class="easyui-datebox" required="required"
                value="{$startDate}" style="width:100px">
@@ -41,13 +41,19 @@
         <input id="endDate" name="endDate" type="text" class="easyui-datebox" required="required" value="{$endDate}"
                style="width:100px">
         午别：
-        <select name="searchAp" id="searchAp" class="txtBox" style="width:150px">
+        <select name="searchAp" id="searchAp" class="txtBox" style="width:50px">
             <if condition="$searchAp">
                 <option value="{$searchAp}">{$searchAp}</option>
             </if>
             <option value="全天">全天</option>
             <option value="上午">上午</option>
             <option value="下午">下午</option>
+        </select>
+        票
+        <select name="searchInvoice" id="searchInvoice" class="txtBox" style="width:50px">            
+            <option value="全部">全部</option>
+            <option value="未开">未开</option>
+            <option value="已开">已开</option>
         </select>
         <a href="javascript:;" onclick="OrderHistorySearchviewModule.search(this);" class="easyui-linkbutton"
            iconCls="icons-table-table">查询</a>
@@ -76,15 +82,18 @@
             });
         },
 
-        //操作格式化
+       //操作格式化
         operate: function (val, rowData, rowIndex) {
             var btn = [];
-            btn.push('<a href="javascript:void(0);" onclick="OrderHistorySearchviewModule.detailview(' + rowData.ordersn + ')">查看</a>');
+            btnstr = "<a href='javascript:void(0);' onclick=\"OrderHistorySearchviewModule.detailview(\'" + rowData.ordersn +"','"+ rowData.custdate + "\')\">查看</a>";
+            btn.push(btnstr);
             return btn.join(' | ');
         },
 
+
         //查看记录
-        detailview: function (id) {
+        detailview: function (id,startdate) {
+            
             var that = this;
             $(that.dialog).dialog({
                 title: '历史订单详情',
@@ -92,7 +101,7 @@
                 width: 1000,
                 height: 540,
                 cache: false,
-                href: "__URL__/detailview/ordersn/" + id,
+                href: "__URL__/detailview/ordersn/" + id +"/startDate/"+startdate,
                 modal: true,
                 collapsible: false,
                 minimizable: false,
@@ -103,7 +112,7 @@
                     iconCls: 'icons-printer-printer',
                     handler: function () {
                         $.messager.progress({text: '打印中，请稍候...'});
-                        that.orderPrintData(id);
+                        that.orderPrintData(id,startdate);
                         setTimeout(function () {
                             $.messager.progress('close');
                         }, 3000);
@@ -119,7 +128,7 @@
             });
         },
 
-        //搜索
+          //搜索
         search: function (that) {
             var queryParams = $(this.datagrid).datagrid('options').queryParams;
             $.each($(that).parent('form').serializeArray(), function () {
@@ -129,12 +138,12 @@
         },
 
         // 调度主界面打印程序
-        orderPrintData: function (ordersn) {
+        orderPrintData: function (ordersn,startdate) {
             var that = this;
             // 取得打印的内容
             $.ajax({
                 type: "POST",
-                url: APP + "/OrderHistory/getPrintOrder/ordersn/" + ordersn,
+                url: APP + "/OrderHistory/getPrintOrder/ordersn/" + ordersn+"/startDate/"+startdate,
                 dataType: "json",
                 success: function (data) {
                     that.printOrderForm(data);
@@ -672,8 +681,3 @@
 
     })
 </script>
-
-
-
-
-

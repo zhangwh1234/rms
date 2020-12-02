@@ -179,7 +179,7 @@
             <if condition="$value">
                 <option value="{$value}">{$value}</option>
                 <else/>
-                <option value="  ">&nbsp;</option>
+                <option value="">&nbsp;</option>
             </if>
             <foreach name="$name" item="pick">
                 <option value="{$pick.name}">{$pick.name}</option>
@@ -541,6 +541,49 @@
              onclick="YingshouIncomeMgrListviewModule.accountsPickList('__URL__/popupAccountsview/module/Accounts/row/{$key+1}');"/><a
             href="javascript:YingshouIncomeMgrListviewModule.accountsPickList('__URL__/popupAccountsview/module/Accounts/row/{$key+1}')">选择</a>
     </td>
+
+    {// --67-- 支付客户}
+    <elseif condition="$uitype eq 67" />
+    <td width=15% class="dvtCellLabel" align=right>
+        <font color="red">{$mandatory_field}*</font>{$label}
+    </td>
+    <td width=35% align=left class="dvtCellInfo">
+        <input type="text" name="invoicecode" id="invoicecode" {$readonly} size="{$length}" class="detailedViewTextBox" onFocus="this.className='detailedViewTextBoxOn'"
+            onBlur="this.className='detailedViewTextBox'" onkeydown="YingshouInvoiceListviewModule.getAccountsByCode(event,this,'{$module}');" AUTOCOMPLETE="off">
+        <img id="YingshouRoomServicesearchIcon1" title="选择" src="./__PUBLIC__/Images/products.gif" style="cursor: pointer;" align="absmiddle"
+            onclick="YingshouInvoiceListviewModule.accountsPickList('__URL__/popupAccountsview/module/Accounts/row/{$key+1}');" /><a
+            href="javascript:YingshouIncomeMgrListviewModule.accountsPickList('__URL__/popupAccountsview/module/Accounts/row/{$key+1}')">选择</a>
+    </td>
+
+
+      {// --68-- 支付客户}
+      <elseif condition="$uitype eq 68" />
+      <td width=15% class="dvtCellLabel" align=right>
+          <font color="red">{$mandatory_field}*</font>{$label}
+      </td>
+      <td width=35% align=left class="dvtCellInfo">
+          <input type="text" name="paymentcode" id="innercarrypaymentcode" {$readonly} size="{$length}" class="detailedViewTextBox" onFocus="this.className='detailedViewTextBoxOn'"
+              onBlur="YingshouInnerCarryListviewModule.getBlueByCode(this,'{$module}');"
+              onkeydown="YingshouInnerCarryListviewModule.getAccountsByCode(event,this,'{$module}');" AUTOCOMPLETE="off">
+          <img id="YingshouRoomServicesearchIcon1" title="选择" src="./__PUBLIC__/Images/products.gif" style="cursor: pointer;" align="absmiddle"
+              onclick="YingshouInnerCarryListviewModule.accountsPickList('__URL__/popupAccountsview/module/Accounts/row/{$key+1}');" /><a
+              href="javascript:YingshouInnerCarryListviewModule.accountsPickList('__URL__/popupAccountsview/module/Accounts/row/{$key+1}')">选择</a>
+      </td>
+
+      {// --69-- 转出的客户}
+      <elseif condition="$uitype eq 69" />
+      <td width=15% class="dvtCellLabel" align=right>
+          <font color="red">{$mandatory_field}*</font>{$label}
+      </td>
+      <td width=35% align=left class="dvtCellInfo">
+          <input type="text" name="innercode" id="innercarryaccountcode" {$readonly} size="{$length}" class="detailedViewTextBox" onFocus="this.className='detailedViewTextBoxOn'"
+              onBlur="YingshouInnerCarryListviewModule.getInnerBlueByCode(this,'{$module}');" onkeydown="YingshouInnerCarryListviewModule.getInnerAccountsByCode(event,this,'{$module}');"
+              AUTOCOMPLETE="off">
+                
+              <img id="YingshouRoomServicesearchIcon1" title="选择" src="./__PUBLIC__/Images/products.gif" style="cursor: pointer;" align="absmiddle"
+              onclick="YingshouInnerCarryListviewModule.inneraccountsPickList('__URL__/popupInnerAccountsview/module/Accounts/row/{$key+1}');" /><a
+              href="javascript:YingshouInnerCarryListviewModule.inneraccountsPickList('__URL__/popupInnerAccountsview/module/Accounts/row/{$key+1}')">选择</a>
+      </td>
 
 
 </if>

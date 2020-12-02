@@ -9,9 +9,11 @@
 
 return array(
     'LBL_REVPARMGR_INFORMATION' => '营收基本信息',
-    'name' => '项目名称',
+    'name' => '名称',
     'money' => '金额',
     'date' => '日期',
     'ap' => '午别',
     'company' => '分公司',
+    'code' => '编号',
+    'sendname' => '送餐员',
 );

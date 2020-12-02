@@ -1,0 +1,192 @@
+<style>
+    .moduleOperatert {
+        clear: both;
+        margin: 0px;
+        padding: 0px;
+        overflow: scroll;
+    }
+
+</style>
+<div class="moduleMenu">
+    <ul>
+        <li>{$Think.lang.$navName}</li>
+        <li><a href="javascript:void(0);" class="moduleName"
+               onclick="IndexIndexModule.updateOperateTab('__URL__/listview');">&nbsp;&gt;{$Think.lang.$moduleName}</a>
+        </li>
+        <li>&nbsp;&gt;新建操作</li>
+        <li style="width: 50px;">&nbsp;</li>
+
+        <li style="margin-left: 10px;"><a href="javascript:;" onclick="InvoiceMgrEditeviewModule.insert();"><img
+                src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);" onclick="InvoiceMgrEditviewModule.insert();">保存订单<span>^9</span></a></li>
+
+        <li style="margin-left: 30px;"><a href="javascript:;"
+                                          onclick="IndexIndexModule.updateOperateTab('__URL__/{$returnAction}');"><img
+                src=".__PUBLIC__/Images/newBtn.png" alt="" title="" border="0"></a></li>
+        <li><a href="javascript:void(0);" onclick="IndexIndexModule.updateOperateTab('__URL__/{$returnAction}');">放弃,返回列表<span>^4</span></a>
+        </li>
+
+
+        <li style="float: right;margin-right: 60px;"><a href="#" onclick="IndexIndexModule.closeOperateTab();">关闭</a>
+        </li>
+        <li style="float:right;"><a href="javascript:;" onclick="IndexIndexModule.closeOperateTab();"><img
+                src=".__PUBLIC__/Images/closeBtn.png"
+                alt="" title="" border="0"></a></li>
+    </ul>
+</div>
+
+<div class="moduleOperatert">
+    <form id="InvoiceMgrEditviewForm" method="post">
+        <input type="hidden" name="returnAction" value="{$returnAction}"/>
+        <input type="hidden" name="record" value="{$record}" />
+        <table border="0" cellspacing="0" cellpadding="0" width="99%" align="center">
+            <tr>
+                <td>
+                    <table border="0" cellspacing="0" cellpadding="3" width="100%" class="small">
+                        <tr>
+                            <td class="dvtTabCache" style="width:20px" nowrap>&nbsp;</td>
+                            <td class="dvtSelectedCell" align="center" nowrap> 编辑 </td>
+                            <td class="dvtTabCache" style="width:80%">&nbsp;</td>
+                        <tr>
+                    </table>
+                </td>
+            </tr>
+
+            <tr>
+                <td valign="top" align="center">
+                    <div class="BaseForm" style="border: 1px solid #e0dddd; background: white;">
+                        <table style="BORDER-COLLAPSE: collapse" borderColor="#A9A9A9" cellSpacing="0" width="100%"
+                               align="center" border="1">
+                            <tr>
+                                <td colspan="4" class="tabBlockViewHeader">
+                                    发票基本信息
+                                </td>
+                            </tr>
+                            <tr style="background: #FFFFFF;">
+                                 <td width="15%" align="right">
+                                     <span style="font-size:14px;margin-right:10px;">发票内容:</span>
+                                 </td>
+                                 <td width="50%" align="left">
+                                     <select type="text" name="body" style="width:100px;font-size:16px;">
+                                         <if condition="$info.body neq ''">
+                                             <option value="{$info.body}">{$info.body}</option>
+                                         </if>
+                                         <option value="工作餐">工作餐</option>
+                                         <option value="盒饭">盒饭</option>
+                                         <option value="餐费">餐费</option>
+                                     </select>
+                                 </td>
+                                <td width="10%" align="right">
+                                    <span style="font-size:14px;margin-right:10px;">发票金额:</span>
+                                </td>
+                                <td width="25%" align="left">
+                                    <input type="text" name="ordermoney" value="{$info.ordermoney}"
+                                           style="font-size:16px;width:150px;"/>
+                                </td>
+                            </tr>
+                            
+                            
+
+                            <tr style="line-height: 5px;">
+                                <td colspan="4" align="center">
+                                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-other-tick'"
+                                       onclick="InvoiceMgrEditviewModule.insert();" style="width:100px;margin-right:40px;">确认</a>
+                                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icons-arrow-cross'"
+                                       onclick="IndexIndexModule.updateOperateTab('__URL__/listview');"
+                                       style="width:100px;">放弃</a>
+                                </td>
+                            </tr>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<input id="InvoiceMgrAction" type="hidden" value="Createview"/>
+<script>
+    var InvoiceMgrEditviewModule = {
+        dialog: '#globel-dialog-div',
+        checkSubmitFlg : false,
+        //初始化
+        init: function () {
+            $('.moduleOperatert').height(IndexIndexModule.operationHeight);
+            this.quickKeyboardAction();
+            //键盘移动
+            this.keyboardMove();
+        },
+
+        //保存记录
+        insert: function () {
+            //防止重复提交
+            if(this.checkSubmitFlg == false){
+                this.checkSubmitFlg = true;
+            }else{
+                return;
+            }
+            $('#InvoiceMgrEditviewForm').form('submit', {
+                url: '__URL__/update',
+                onSubmit: function () {
+                    //如果返回false阻止提交
+                    if ($('#InvoiceMgrEditviewForm input[name=address]').val() == '') {
+                        alert('地址不能为空!');
+                        InvoiceMgrCreateviewModule.checkSubmitFlg = false;
+                        return false;
+                    }
+                },
+                success: function (res) {
+                    var data = eval('(' + res + ')');
+                    if (!data.status) {
+                        $.app.method.tip('提示信息', data.info, 'error');
+                        InvoiceMgrEditviewModule.checkSubmitFlg = false;
+                        return false;
+                    } else {
+                        $.app.method.tip('提示信息', data.info, 'info');
+                        IndexIndexModule.updateOperateTab(data.url);
+                    }
+                }
+            });
+        },
+
+        //新建的快捷操作
+        quickKeyboardAction: function () {
+            // ctrl+9快捷键,保存公告
+            Mousetrap.bind(['ctrl+9', 'ctrl+f9', 'f9'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '发票管理' && ($('#InvoiceMgrAction').val() == 'Editview')) {
+                    InvoiceMgrEditviewModule.insert();
+                };
+            });
+
+            // ctrl+4快捷键,放弃
+            Mousetrap.bind(['ctrl+4', 'ctrl+f4', 'f4'], function (e) {
+                // 返回选项卡
+                var tab = $('#operation').tabs('getSelected');
+                var tabOptions = tab.panel('options');
+                if (tabOptions.title == '发票管理' && ($('#InvoiceMgrAction').val() == 'Editview')) {
+                    IndexIndexModule.updateOperateTab('__URL__/listview');
+                };
+            });
+
+        },
+
+
+        //键盘移动方案
+        keyboardMove: function () {
+
+        }
+
+    }
+
+    $(function () {
+        InvoiceMgrEditviewModule.init();
+        setTimeout(function () {
+            $('#InvoiceMgrEditviewForm input[name=header]').focus();
+            $('#InvoiceMgrEditviewForm input[name=header]').val('');
+            $('#InvoiceMgrEditviewForm input[name=header]').val('{$info.header}');
+        }, 100);
+
+    })
+</script>

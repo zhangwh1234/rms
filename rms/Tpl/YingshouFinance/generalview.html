@@ -1,14 +1,14 @@
 <!-- 分录底稿生成器  -->
 <form style="overflow: hidden;">
-    <table cellspacing="6" width="100%" style="margin-left: 10px;margin-top:10px;">
+    <table cellspacing="2" width="100%" style="margin-left: 10px;margin-top:10px;">
         <tr>
-            <td>
+            <td width="50%">
                 <span style="font-size: 16px;">日期:</span>
-                <input type="text"  id="yingshouFinanceGeneralviewDateInput"
-                       class="easyui-datebox"
-                       name="yingshouFinanceGeneralviewDateInput"
-                       style="font-size: 16px;width:30%;" value="{$cdate}"/>
-                <input type="text" style="width:0px;visibility:hidden;" >
+                <input type="text" id="yingshouFinanceGeneralviewStartDateInput" class="easyui-datebox" name="yingshouFinanceGeneralviewDateInput" style="font-size: 16px;width:70%;" value="{$cdate}" />
+            </td>
+            <td width="50%">
+                <input type="text" id="yingshouFinanceGeneralviewEndDateInput" class="easyui-datebox" name="yingshouFinanceGeneralviewDateInput" style="font-size: 16px;width:70%;" value="{$cdate}" />
+                <input type="text" style="width:0px;visibility:hidden;">
             </td>
         <tr>
     </table>

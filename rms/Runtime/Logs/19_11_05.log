@@ -1,0 +1,388 @@
+[ 2019-11-05T16:56:38+08:00 ] SQL: Headerindex165WRITE的SQL：verify|N;userid|s:1:"3";userInfo|a:5:{s:6:"userid";s:1:"3";s:4:"name";s:5:"admin";s:8:"rolename";s:15:"系统管理员";s:8:"truename";s:15:"系统管理员";s:10:"department";s:0:"";}Noticepage|s:1:"1";YingshouInvoicelistviewpage|s:1:"1";
+[ 2019-11-05T16:56:38+08:00 ] SQL: NoticeACTINO_NAME151READ的SQL：verify|N;userid|s:1:"3";userInfo|a:5:{s:6:"userid";s:1:"3";s:4:"name";s:5:"admin";s:8:"rolename";s:15:"系统管理员";s:8:"truename";s:15:"系统管理员";s:10:"department";s:0:"";}Noticepage|s:1:"1";YingshouInvoicelistviewpage|s:1:"1";
+[ 2019-11-05T16:56:38+08:00 ] 0.0.0.0 /rms/index.php?s=/Notice/listview.html
+INFO: [ route_check ] --START--
+INFO: CheckRoute Behavior ::run [ RunTime:0.000582s ]
+INFO: [ route_check ] --END-- [ RunTime:0.000681s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Core/Dispatcher.class.php 第 132 行.
+INFO: [ app_begin ] --START--
+INFO: ReadHtmlCache Behavior ::run [ RunTime:0.000509s ]
+INFO: CheckLang Behavior ::run [ RunTime:0.000966s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001633s ]
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /Applications/MAMP/htdocs/rms/ThinkPHP/Extend/Driver/Session/SessionDb.class.php 第 116 行.
+NOTIC: [8] Use of undefined constant ACTINO_NAME - assumed 'ACTINO_NAME' /Applications/MAMP/htdocs/rms/ThinkPHP/Extend/Driver/Session/SessionDb.class.php 第 151 行.
+NOTIC: [8] Use of undefined constant new_link - assumed 'new_link' /Applications/MAMP/htdocs/rms/ThinkPHP/Extend/Library/COM/Db/SystemDb.class.php 第 40 行.
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /Applications/MAMP/htdocs/rms/ThinkPHP/Extend/Library/COM/Db/SystemDb.class.php 第 40 行.
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Driver/Db/DbMysql.class.php 第 55 行.
+SQL: SHOW COLUMNS FROM `rms_notice` [ RunTime:0.000619s ]
+NOTIC: [8] Undefined index: searchText /Applications/MAMP/htdocs/rms/rms/Lib/Action/ModuleAction.class.php 第 64 行.
+NOTIC: [8] Undefined index: searchTextNotice /Applications/MAMP/htdocs/rms/rms/Lib/Action/ModuleAction.class.php 第 74 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Core/Db.class.php 第 606 行.
+SQL: SELECT COUNT(*) AS tp_count FROM `rms_notice` WHERE ( `domain` = 'localhost' ) LIMIT 1   [ RunTime:0.000219s ]
+NOTIC: [2] Invalid argument supplied for foreach() /Applications/MAMP/htdocs/rms/rms/Lib/Action/ModuleAction.class.php 第 129 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Core/Db.class.php 第 606 行.
+SQL: SELECT `noticeid`,`content` FROM `rms_notice` WHERE ( `domain` = 'localhost' ) ORDER BY noticeid  desc LIMIT 0,10   [ RunTime:0.000220s ]
+
+[ 2019-11-05T16:56:38+08:00 ] SQL: Noticelistview165WRITE的SQL：verify|N;userid|s:1:"3";userInfo|a:5:{s:6:"userid";s:1:"3";s:4:"name";s:5:"admin";s:8:"rolename";s:15:"系统管理员";s:8:"truename";s:15:"系统管理员";s:10:"department";s:0:"";}Noticepage|s:1:"1";YingshouInvoicelistviewpage|s:1:"1";
+[ 2019-11-05T16:56:39+08:00 ] SQL: NoticeACTINO_NAME151READ的SQL：verify|N;userid|s:1:"3";userInfo|a:5:{s:6:"userid";s:1:"3";s:4:"name";s:5:"admin";s:8:"rolename";s:15:"系统管理员";s:8:"truename";s:15:"系统管理员";s:10:"department";s:0:"";}Noticepage|s:1:"1";YingshouInvoicelistviewpage|s:1:"1";
+[ 2019-11-05T16:56:39+08:00 ] 0.0.0.0 /rms/index.php?s=/Notice/listview.html
+INFO: [ route_check ] --START--
+INFO: CheckRoute Behavior ::run [ RunTime:0.000530s ]
+INFO: [ route_check ] --END-- [ RunTime:0.000629s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Core/Dispatcher.class.php 第 132 行.
+INFO: [ app_begin ] --START--
+INFO: ReadHtmlCache Behavior ::run [ RunTime:0.000411s ]
+INFO: CheckLang Behavior ::run [ RunTime:0.000863s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001407s ]
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /Applications/MAMP/htdocs/rms/ThinkPHP/Extend/Driver/Session/SessionDb.class.php 第 116 行.
+NOTIC: [8] Use of undefined constant ACTINO_NAME - assumed 'ACTINO_NAME' /Applications/MAMP/htdocs/rms/ThinkPHP/Extend/Driver/Session/SessionDb.class.php 第 151 行.
+NOTIC: [8] Use of undefined constant new_link - assumed 'new_link' /Applications/MAMP/htdocs/rms/ThinkPHP/Extend/Library/COM/Db/SystemDb.class.php 第 40 行.
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /Applications/MAMP/htdocs/rms/ThinkPHP/Extend/Library/COM/Db/SystemDb.class.php 第 40 行.
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Driver/Db/DbMysql.class.php 第 55 行.
+SQL: SHOW COLUMNS FROM `rms_notice` [ RunTime:0.000825s ]
+NOTIC: [8] Undefined index: searchText /Applications/MAMP/htdocs/rms/rms/Lib/Action/ModuleAction.class.php 第 64 行.
+NOTIC: [8] Undefined index: searchTextNotice /Applications/MAMP/htdocs/rms/rms/Lib/Action/ModuleAction.class.php 第 74 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Core/Db.class.php 第 606 行.
+SQL: SELECT COUNT(*) AS tp_count FROM `rms_notice` WHERE ( `domain` = 'localhost' ) LIMIT 1   [ RunTime:0.000251s ]
+NOTIC: [2] Invalid argument supplied for foreach() /Applications/MAMP/htdocs/rms/rms/Lib/Action/ModuleAction.class.php 第 129 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Core/Db.class.php 第 606 行.
+SQL: SELECT `noticeid`,`content` FROM `rms_notice` WHERE ( `domain` = 'localhost' ) ORDER BY noticeid  desc LIMIT 0,10   [ RunTime:0.000241s ]
+
+[ 2019-11-05T16:56:39+08:00 ] SQL: Noticelistview165WRITE的SQL：verify|N;userid|s:1:"3";userInfo|a:5:{s:6:"userid";s:1:"3";s:4:"name";s:5:"admin";s:8:"rolename";s:15:"系统管理员";s:8:"truename";s:15:"系统管理员";s:10:"department";s:0:"";}Noticepage|s:1:"1";YingshouInvoicelistviewpage|s:1:"1";
+[ 2019-11-05T16:56:40+08:00 ] SQL: YingshouInvoiceACTINO_NAME151READ的SQL：verify|N;userid|s:1:"3";userInfo|a:5:{s:6:"userid";s:1:"3";s:4:"name";s:5:"admin";s:8:"rolename";s:15:"系统管理员";s:8:"truename";s:15:"系统管理员";s:10:"department";s:0:"";}Noticepage|s:1:"1";YingshouInvoicelistviewpage|s:1:"1";
+[ 2019-11-05T16:56:40+08:00 ] 0.0.0.0 /rms/index.php?s=/YingshouInvoice/index/delsession/del&_=1572944198426
+INFO: [ route_check ] --START--
+INFO: CheckRoute Behavior ::run [ RunTime:0.001014s ]
+INFO: [ route_check ] --END-- [ RunTime:0.001219s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Core/Dispatcher.class.php 第 132 行.
+INFO: [ app_begin ] --START--
+INFO: ReadHtmlCache Behavior ::run [ RunTime:0.000696s ]
+INFO: CheckLang Behavior ::run [ RunTime:0.002073s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.003010s ]
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /Applications/MAMP/htdocs/rms/ThinkPHP/Extend/Driver/Session/SessionDb.class.php 第 116 行.
+NOTIC: [8] Use of undefined constant ACTINO_NAME - assumed 'ACTINO_NAME' /Applications/MAMP/htdocs/rms/ThinkPHP/Extend/Driver/Session/SessionDb.class.php 第 151 行.
+NOTIC: [8] Use of undefined constant new_link - assumed 'new_link' /Applications/MAMP/htdocs/rms/ThinkPHP/Extend/Library/COM/Db/SystemDb.class.php 第 40 行.
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /Applications/MAMP/htdocs/rms/ThinkPHP/Extend/Library/COM/Db/SystemDb.class.php 第 40 行.
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Driver/Db/DbMysql.class.php 第 55 行.
+SQL: SHOW COLUMNS FROM `yingshouinvoice` [ RunTime:0.000365s ]
+ERR: 1146:Table 'rms.yingshouinvoice' doesn't exist
+ [ SQL语句 ] : SHOW COLUMNS FROM `yingshouinvoice`
+NOTIC: [8] Undefined index: align /Applications/MAMP/htdocs/rms/rms/Lib/Action/YingshouInvoiceAction.class.php 第 166 行.
+NOTIC: [8] Undefined index: align /Applications/MAMP/htdocs/rms/rms/Lib/Action/YingshouInvoiceAction.class.php 第 166 行.
+NOTIC: [8] Undefined index: align /Applications/MAMP/htdocs/rms/rms/Lib/Action/YingshouInvoiceAction.class.php 第 166 行.
+NOTIC: [8] Undefined index: align /Applications/MAMP/htdocs/rms/rms/Lib/Action/YingshouInvoiceAction.class.php 第 166 行.
+NOTIC: [8] Undefined index: align /Applications/MAMP/htdocs/rms/rms/Lib/Action/YingshouInvoiceAction.class.php 第 166 行.
+NOTIC: [8] Undefined index: align /Applications/MAMP/htdocs/rms/rms/Lib/Action/YingshouInvoiceAction.class.php 第 183 行.
+NOTIC: [8] Undefined index: align /Applications/MAMP/htdocs/rms/rms/Lib/Action/YingshouInvoiceAction.class.php 第 183 行.
+NOTIC: [8] Undefined index: align /Applications/MAMP/htdocs/rms/rms/Lib/Action/YingshouInvoiceAction.class.php 第 183 行.
+NOTIC: [8] Undefined index: align /Applications/MAMP/htdocs/rms/rms/Lib/Action/YingshouInvoiceAction.class.php 第 183 行.
+NOTIC: [8] Undefined index: align /Applications/MAMP/htdocs/rms/rms/Lib/Action/YingshouInvoiceAction.class.php 第 183 行.
+NOTIC: [8] Use of undefined constant new_link - assumed 'new_link' /Applications/MAMP/htdocs/rms/ThinkPHP/Extend/Library/COM/Db/SystemDb.class.php 第 40 行.
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /Applications/MAMP/htdocs/rms/ThinkPHP/Extend/Library/COM/Db/SystemDb.class.php 第 40 行.
+SQL: SHOW COLUMNS FROM `rms_role_user` [ RunTime:0.000387s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Core/Db.class.php 第 606 行.
+SQL: SELECT * FROM `rms_role_user` WHERE ( user_id=3 ) LIMIT 1   [ RunTime:0.000200s ]
+NOTIC: [8] Use of undefined constant new_link - assumed 'new_link' /Applications/MAMP/htdocs/rms/ThinkPHP/Extend/Library/COM/Db/SystemDb.class.php 第 40 行.
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /Applications/MAMP/htdocs/rms/ThinkPHP/Extend/Library/COM/Db/SystemDb.class.php 第 40 行.
+SQL: SHOW COLUMNS FROM `rms_access` [ RunTime:0.000410s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Core/Db.class.php 第 606 行.
+SQL: SELECT `node_id` FROM `rms_access` WHERE ( `role_id` = 3 )  [ RunTime:0.000183s ]
+NOTIC: [2] Invalid argument supplied for foreach() /Applications/MAMP/htdocs/rms/rms/Lib/Action/YingshouAction.class.php 第 877 行.
+NOTIC: [8] Use of undefined constant new_link - assumed 'new_link' /Applications/MAMP/htdocs/rms/ThinkPHP/Extend/Library/COM/Db/SystemDb.class.php 第 40 行.
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /Applications/MAMP/htdocs/rms/ThinkPHP/Extend/Library/COM/Db/SystemDb.class.php 第 40 行.
+SQL: SHOW COLUMNS FROM `rms_node` [ RunTime:0.000514s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Core/Db.class.php 第 606 行.
+SQL: SELECT * FROM `rms_node` WHERE ( name='companyRevpar' ) LIMIT 1   [ RunTime:0.000253s ]
+NOTIC: [8] Undefined variable: accessArr /Applications/MAMP/htdocs/rms/rms/Lib/Action/YingshouAction.class.php 第 885 行.
+NOTIC: [2] in_array() expects parameter 2 to be array, null given /Applications/MAMP/htdocs/rms/rms/Lib/Action/YingshouAction.class.php 第 885 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Core/Db.class.php 第 606 行.
+SQL: SELECT * FROM `rms_node` WHERE ( name='financeRevpar' ) LIMIT 1   [ RunTime:0.000187s ]
+NOTIC: [8] Undefined variable: accessArr /Applications/MAMP/htdocs/rms/rms/Lib/Action/YingshouAction.class.php 第 892 行.
+NOTIC: [2] in_array() expects parameter 2 to be array, null given /Applications/MAMP/htdocs/rms/rms/Lib/Action/YingshouAction.class.php 第 892 行.
+NOTIC: [8] Undefined variable: revparType /Applications/MAMP/htdocs/rms/rms/Lib/Action/YingshouAction.class.php 第 896 行.
+INFO: [ view_parse ] --START--
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 273 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 168 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 399 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 399 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 399 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 399 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 399 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 399 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 399 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 399 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 399 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 399 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 399 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 399 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 197 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 137 行.
+INFO: ParseTemplate Behavior ::run [ RunTime:0.018958s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.019053s ]
+INFO: [ view_filter ] --START--
+INFO: ContentReplace Behavior ::run [ RunTime:0.000494s ]
+INFO: TokenBuild Behavior ::run [ RunTime:0.000688s ]
+INFO: WriteHtmlCache Behavior ::run [ RunTime:0.000302s ]
+INFO: ShowRuntime Behavior ::run [ RunTime:0.000492s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.002326s ]
+INFO: [ view_end ] --START--
+INFO: ShowPageTrace Behavior ::run [ RunTime:0.001595s ]
+INFO: [ view_end ] --END-- [ RunTime:0.001704s ]
+
+[ 2019-11-05T16:56:40+08:00 ] SQL: YingshouInvoiceindex165WRITE的SQL：verify|N;userid|s:1:"3";userInfo|a:5:{s:6:"userid";s:1:"3";s:4:"name";s:5:"admin";s:8:"rolename";s:15:"系统管理员";s:8:"truename";s:15:"系统管理员";s:10:"department";s:0:"";}Noticepage|s:1:"1";YingshouInvoicelistviewpage|s:1:"1";
+[ 2019-11-05T16:56:40+08:00 ] SQL: YingshouInvoiceACTINO_NAME151READ的SQL：verify|N;userid|s:1:"3";userInfo|a:5:{s:6:"userid";s:1:"3";s:4:"name";s:5:"admin";s:8:"rolename";s:15:"系统管理员";s:8:"truename";s:15:"系统管理员";s:10:"department";s:0:"";}Noticepage|s:1:"1";YingshouInvoicelistviewpage|s:1:"1";
+[ 2019-11-05T16:56:40+08:00 ] 0.0.0.0 /rms/index.php?s=/YingshouInvoice/listview/getDate/2019-11-05.html
+INFO: [ route_check ] --START--
+INFO: CheckRoute Behavior ::run [ RunTime:0.000573s ]
+INFO: [ route_check ] --END-- [ RunTime:0.000682s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Core/Dispatcher.class.php 第 132 行.
+INFO: [ app_begin ] --START--
+INFO: ReadHtmlCache Behavior ::run [ RunTime:0.000625s ]
+INFO: CheckLang Behavior ::run [ RunTime:0.000869s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001675s ]
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /Applications/MAMP/htdocs/rms/ThinkPHP/Extend/Driver/Session/SessionDb.class.php 第 116 行.
+NOTIC: [8] Use of undefined constant ACTINO_NAME - assumed 'ACTINO_NAME' /Applications/MAMP/htdocs/rms/ThinkPHP/Extend/Driver/Session/SessionDb.class.php 第 151 行.
+NOTIC: [8] Use of undefined constant new_link - assumed 'new_link' /Applications/MAMP/htdocs/rms/ThinkPHP/Extend/Library/COM/Db/SystemDb.class.php 第 40 行.
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /Applications/MAMP/htdocs/rms/ThinkPHP/Extend/Library/COM/Db/SystemDb.class.php 第 40 行.
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Driver/Db/DbMysql.class.php 第 55 行.
+SQL: SHOW COLUMNS FROM `rms_role_user` [ RunTime:0.000511s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Core/Db.class.php 第 606 行.
+SQL: SELECT * FROM `rms_role_user` WHERE ( user_id=3 ) LIMIT 1   [ RunTime:0.000183s ]
+NOTIC: [8] Use of undefined constant new_link - assumed 'new_link' /Applications/MAMP/htdocs/rms/ThinkPHP/Extend/Library/COM/Db/SystemDb.class.php 第 40 行.
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /Applications/MAMP/htdocs/rms/ThinkPHP/Extend/Library/COM/Db/SystemDb.class.php 第 40 行.
+SQL: SHOW COLUMNS FROM `rms_access` [ RunTime:0.000924s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Core/Db.class.php 第 606 行.
+SQL: SELECT `node_id` FROM `rms_access` WHERE ( `role_id` = 3 )  [ RunTime:0.000230s ]
+NOTIC: [2] Invalid argument supplied for foreach() /Applications/MAMP/htdocs/rms/rms/Lib/Action/YingshouAction.class.php 第 877 行.
+NOTIC: [8] Use of undefined constant new_link - assumed 'new_link' /Applications/MAMP/htdocs/rms/ThinkPHP/Extend/Library/COM/Db/SystemDb.class.php 第 40 行.
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /Applications/MAMP/htdocs/rms/ThinkPHP/Extend/Library/COM/Db/SystemDb.class.php 第 40 行.
+SQL: SHOW COLUMNS FROM `rms_node` [ RunTime:0.000545s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Core/Db.class.php 第 606 行.
+SQL: SELECT * FROM `rms_node` WHERE ( name='companyRevpar' ) LIMIT 1   [ RunTime:0.000188s ]
+NOTIC: [8] Undefined variable: accessArr /Applications/MAMP/htdocs/rms/rms/Lib/Action/YingshouAction.class.php 第 885 行.
+NOTIC: [2] in_array() expects parameter 2 to be array, null given /Applications/MAMP/htdocs/rms/rms/Lib/Action/YingshouAction.class.php 第 885 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Core/Db.class.php 第 606 行.
+SQL: SELECT * FROM `rms_node` WHERE ( name='financeRevpar' ) LIMIT 1   [ RunTime:0.000281s ]
+NOTIC: [8] Undefined variable: accessArr /Applications/MAMP/htdocs/rms/rms/Lib/Action/YingshouAction.class.php 第 892 行.
+NOTIC: [2] in_array() expects parameter 2 to be array, null given /Applications/MAMP/htdocs/rms/rms/Lib/Action/YingshouAction.class.php 第 892 行.
+NOTIC: [8] Undefined variable: revparType /Applications/MAMP/htdocs/rms/rms/Lib/Action/YingshouAction.class.php 第 896 行.
+NOTIC: [8] Use of undefined constant new_link - assumed 'new_link' /Applications/MAMP/htdocs/rms/ThinkPHP/Extend/Library/COM/Db/SystemDb.class.php 第 40 行.
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /Applications/MAMP/htdocs/rms/ThinkPHP/Extend/Library/COM/Db/SystemDb.class.php 第 40 行.
+SQL: SHOW COLUMNS FROM `yingshouinvoice` [ RunTime:0.000233s ]
+ERR: :Table 'rms.yingshouinvoice' doesn't exist
+ [ SQL语句 ] : SHOW COLUMNS FROM `yingshouinvoice`
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Driver/Db/DbMysql.class.php 第 55 行.
+SQL: SHOW COLUMNS FROM `yingshouinvoice` [ RunTime:0.000480s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Core/Db.class.php 第 606 行.
+SQL: SELECT COUNT(*) AS tp_count FROM `yingshouinvoice` WHERE ( `date` LIKE '2019-11%' ) AND ( `domain` = 'localhost' ) LIMIT 1   [ RunTime:0.000200s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Core/Db.class.php 第 606 行.
+SQL: SELECT `shenhe`,`invoiceid`,`header`,`name`,`number`,`money`,`date` FROM `yingshouinvoice` WHERE ( `date` LIKE '2019-11%' ) AND ( `domain` = 'localhost' ) ORDER BY invoiceid asc LIMIT 0,10   [ RunTime:0.000295s ]
+
+[ 2019-11-05T16:56:40+08:00 ] SQL: YingshouInvoicelistview165WRITE的SQL：verify|N;userid|s:1:"3";userInfo|a:5:{s:6:"userid";s:1:"3";s:4:"name";s:5:"admin";s:8:"rolename";s:15:"系统管理员";s:8:"truename";s:15:"系统管理员";s:10:"department";s:0:"";}Noticepage|s:1:"1";YingshouInvoicelistviewpage|s:1:"1";
+[ 2019-11-05T16:59:38+08:00 ] SQL: YingshouInvoiceACTINO_NAME151READ的SQL：verify|N;userid|s:1:"3";userInfo|a:5:{s:6:"userid";s:1:"3";s:4:"name";s:5:"admin";s:8:"rolename";s:15:"系统管理员";s:8:"truename";s:15:"系统管理员";s:10:"department";s:0:"";}Noticepage|s:1:"1";YingshouInvoicelistviewpage|s:1:"1";
+[ 2019-11-05T16:59:38+08:00 ] 0.0.0.0 /rms/index.php?s=/YingshouInvoice/generalview&_=1572944198427
+INFO: [ route_check ] --START--
+INFO: CheckRoute Behavior ::run [ RunTime:0.001483s ]
+INFO: [ route_check ] --END-- [ RunTime:0.001662s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Core/Dispatcher.class.php 第 132 行.
+INFO: [ app_begin ] --START--
+INFO: ReadHtmlCache Behavior ::run [ RunTime:0.000975s ]
+INFO: CheckLang Behavior ::run [ RunTime:0.003449s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.004652s ]
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /Applications/MAMP/htdocs/rms/ThinkPHP/Extend/Driver/Session/SessionDb.class.php 第 116 行.
+NOTIC: [8] Use of undefined constant ACTINO_NAME - assumed 'ACTINO_NAME' /Applications/MAMP/htdocs/rms/ThinkPHP/Extend/Driver/Session/SessionDb.class.php 第 151 行.
+INFO: [ view_parse ] --START--
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 273 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 168 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 399 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 399 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 399 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 399 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 399 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 399 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 399 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 399 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 399 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 404 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 197 行.
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead /Applications/MAMP/htdocs/rms/ThinkPHP/Lib/Template/ThinkTemplate.class.php 第 137 行.
+INFO: ParseTemplate Behavior ::run [ RunTime:0.016645s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.016818s ]
+INFO: [ view_filter ] --START--
+INFO: ContentReplace Behavior ::run [ RunTime:0.000526s ]
+INFO: TokenBuild Behavior ::run [ RunTime:0.000844s ]
+INFO: WriteHtmlCache Behavior ::run [ RunTime:0.000665s ]
+INFO: ShowRuntime Behavior ::run [ RunTime:0.000682s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.003115s ]
+INFO: [ view_end ] --START--
+INFO: ShowPageTrace Behavior ::run [ RunTime:0.002611s ]
+INFO: [ view_end ] --END-- [ RunTime:0.003075s ]
+
+[ 2019-11-05T16:59:38+08:00 ] SQL: YingshouInvoicegeneralview165WRITE的SQL：verify|N;userid|s:1:"3";userInfo|a:5:{s:6:"userid";s:1:"3";s:4:"name";s:5:"admin";s:8:"rolename";s:15:"系统管理员";s:8:"truename";s:15:"系统管理员";s:10:"department";s:0:"";}Noticepage|s:1:"1";YingshouInvoicelistviewpage|s:1:"1";

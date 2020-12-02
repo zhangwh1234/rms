@@ -10,7 +10,6 @@
 class YingshouSearchDateAction extends YingshouAction{
 
 
-
     // 查看数据的页面
     public function detailview() {
 

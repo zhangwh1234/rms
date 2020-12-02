@@ -15,11 +15,11 @@
                 url: '__URL__/insert',
                 onSubmit: function () {
                     //进行表单验证
-                    if($('#code').val() == ''){
+                    if ($('#code').val() == '') {
                         alert('产品编码不能为空!');
                         return false;
                     }
-                    if($('#name').val() == ''){
+                    if ($('#name').val() == '') {
                         alert('产品名称不能为空!');
                         return false;
                     }
@@ -67,7 +67,12 @@
 
     $(function () {
         PaymentMgrCreateviewModule.init();
-        $('#PaymentMgrCreateviewForm input[name=code]').focus();
+
+        //启动焦点
+        setTimeout(function () {
+            $('#PaymentMgrCreateviewForm input[name=code]').focus();
+            $('#company').val('{$currentcompany}');
+            $('#type').val('{$currenttype}');
+        }, 200);
     })
 </script>
-
